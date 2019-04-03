@@ -1,0 +1,23 @@
+<resources>
+    <string name="app_name">Zalo</string>
+    <string name="register">Đăng ký</string>
+    <string name="log_in">Đăng nhập</string>
+    <string name="vietnamese">Tiếng Việt</string>
+    <string name="english">Tiếng Anh</string>
+    <string name="get_password">Lấy lại mật khẩu</string>
+    <string name="login_description">Vui lòng nhập số điện thoại và mật khẩu để đăng nhập</string>
+    <string name="show_pass">HIỆN</string>
+    <string name="faq"><b><u>Câu hỏi thường gặp</u></b></string>
+    <string name="phone_hint">Số điện thoại</string>
+    <string name="pass_hint">Mật khẩu</string>
+    <string name="title_activity_lobby_ativity2">Trang chủ</string>
+    <string name="chat_tab_title">Tin nhắn</string>
+    <string name="contact_tab_title">Danh bạ</string>
+    <string name="group_tab_title">Nhóm</string>
+    <string name="action_settings">Settings</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="diary_tab_title">Nhật ký</string>
+    <string name="more_tab_title">Thêm</string>
+    <string name="enter_a_message">Tin nhắn</string>
+</resources>

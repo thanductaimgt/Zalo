@@ -20,4 +20,12 @@
     <string name="diary_tab_title">Nhật ký</string>
     <string name="more_tab_title">Thêm</string>
     <string name="enter_a_message">Tin nhắn</string>
+    <string name="official_account">OFFICIAL ACCOUNT</string>
+    <string name="update_contact">Cập nhật danh bạ</string>
+    <string name="update_contact_desc">Nhanh chóng thêm bạn vào Zalo từ danh bạ điện thoại</string>
+    <string name="close_friend">Bạn thân</string>
+    <string name="update_status_desc">Cập nhật trạng thái của bạn và xem bạn bè mình đang...</string>
+    <string name="update_new_friends">Bạn mới cập nhật</string>
+    <string name="all_contact">Tất cả danh bạ</string>
+    <string name="update">Cập nhật</string>
 </resources>

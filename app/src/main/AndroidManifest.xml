@@ -11,17 +11,17 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".screens.lobby.fragments.chat_fragment.chat_activity.ChatActivity"
-            android:parentActivityName=".screens.lobby.LobbyActivity"
+        <activity android:name=".zalo.views.lobby.fragments.chat_fragment.chat_activity.ChatActivity"
+            android:parentActivityName=".zalo.views.lobby.LobbyActivity"
             android:theme="@style/AppTheme.NoActionBar"></activity>
         <activity
-            android:name=".screens.lobby.LobbyActivity"
+            android:name=".zalo.views.lobby.LobbyActivity"
             android:label="@string/title_activity_lobby_ativity2"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".screens.login.LoginActivity"
-            android:parentActivityName=".screens.intro.IntroActivity" />
-        <activity android:name=".screens.intro.IntroActivity">
+            android:name=".zalo.views.login.LoginActivity"
+            android:parentActivityName=".zalo.views.intro.IntroActivity" />
+        <activity android:name=".zalo.views.intro.IntroActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

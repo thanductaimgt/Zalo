@@ -36,4 +36,12 @@ dependencies {
 
     //recyclerView
     implementation 'androidx.recyclerview:recyclerview:1.0.0'
+
+    //cardview
+    implementation 'androidx.cardview:cardview:1.0.0'
+
+    //roomdb
+    def room_version = "2.1.0-alpha06"
+    implementation "androidx.room:room-runtime:$room_version"
+    annotationProcessor "androidx.room:room-compiler:$room_version" // For Kotlin use kapt instead of annotationProcessor
 }

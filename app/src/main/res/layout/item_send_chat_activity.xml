@@ -5,22 +5,36 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <TextView
-        android:textColor="#ffffff"
-        android:id="@+id/sendMsgTextView"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
-        android:background="@android:drawable/editbox_dropdown_dark_frame"
-        android:gravity="end"
-        android:text="TextView"
-        android:textAlignment="viewEnd"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/sendMsgConstraintLayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="@+id/guideline3"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="@dimen/small"
+        android:layout_marginEnd="@dimen/small"
+        android:layout_marginRight="@dimen/small"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content">
+        <TextView
+            android:background="@android:drawable/editbox_background_normal"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/sendMsgTextView"
+            android:text="TextView"
+            android:gravity="end"
+            android:textAlignment="viewEnd"/>
+        <TextView
+            android:id="@+id/sendTimeTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="TextView"
+            app:layout_constraintEnd_toEndOf="@+id/sendMsgConstraintLayout"
+            app:layout_constraintTop_toBottomOf="@+id/sendMsgTextView" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline3"
@@ -28,13 +42,5 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         app:layout_constraintGuide_percent="0.35" />
-
-    <TextView
-        android:id="@+id/sendTimeTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="TextView"
-        app:layout_constraintEnd_toEndOf="@+id/sendMsgTextView"
-        app:layout_constraintTop_toBottomOf="@+id/sendMsgTextView" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

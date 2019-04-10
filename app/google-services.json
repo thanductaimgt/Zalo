@@ -1,0 +1,44 @@
+{
+  "project_info": {
+    "project_number": "345164104932",
+    "firebase_url": "https://zalo-4c204.firebaseio.com",
+    "project_id": "zalo-4c204",
+    "storage_bucket": "zalo-4c204.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:345164104932:android:031e3d35eced4c22",
+        "android_client_info": {
+          "package_name": "vng.zalo.tdtai.zalo"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "345164104932-j2mqka27qgprut65ad940psnchi8fe2f.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "vng.zalo.tdtai.zalo",
+            "certificate_hash": "54cf30f46def6349800b7539d0f357eb7ddd693d"
+          }
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD7rodghzksSI67Uzf7coJhgrEbdhJ1Vks"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "345164104932-5q05t6vboq4brnkb8n3urvcqr9t47n7c.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

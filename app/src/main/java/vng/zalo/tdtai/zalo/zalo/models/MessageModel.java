@@ -1,8 +1,6 @@
-package vng.zalo.tdtai.zalo.zalo.database.model.room;
+package vng.zalo.tdtai.zalo.zalo.models;
 
-import vng.zalo.tdtai.zalo.zalo.utils.Model;
-
-public class MessageModel extends Model {
+public class MessageModel extends DataModel {
     public int msgId;
     public int senderId;
     public String message;

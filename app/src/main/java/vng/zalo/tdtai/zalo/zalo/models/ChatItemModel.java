@@ -1,18 +1,17 @@
-package vng.zalo.tdtai.zalo.zalo.database.model.room;
+package vng.zalo.tdtai.zalo.zalo.models;
 
 import java.util.Date;
 
-import androidx.room.Entity;
-import vng.zalo.tdtai.zalo.zalo.utils.Model;
-
-@Entity(tableName = "ChatItem")
-public class ChatItemModel extends Model {
+public class ChatItemModel extends DataModel {
     public int id;
     public String name;
     public String description;
     public Date date;
     public boolean showIcon;
     public String avatar;
+
+    //mapping firestore data to POJO needs empty constructor
+    public ChatItemModel(){}
 
     public ChatItemModel(int id, String name, String description, Date date, boolean showIcon, String avatar){
         this.id = id;

@@ -1,15 +1,22 @@
-package vng.zalo.tdtai.zalo.zalo.views.lobby.fragments.chat_fragment.chat_activity;
+package vng.zalo.tdtai.zalo.zalo.viewmodels;
+
+import android.app.Application;
+
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
 import java.util.List;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
-import vng.zalo.tdtai.zalo.zalo.database.model.room.MessageModel;
+import vng.zalo.tdtai.zalo.zalo.ZaloApplication;
+import vng.zalo.tdtai.zalo.zalo.models.MessageModel;
 
-class ChatActivityViewModel extends ViewModel {
-    MutableLiveData<List<MessageModel>> liveDataMsgList;
+public class ChatActivityViewModel extends ViewModel {
+    private FirebaseFirestore firestore;
+    public MutableLiveData<List<MessageModel>> liveDataMsgList;
 
-    ChatActivityViewModel(){
+    public ChatActivityViewModel(Application application){
+        firestore = ((ZaloApplication)application).mFireStore;
         List<MessageModel> messageModelList = new ArrayList<>();
         messageModelList.add(new MessageModel(0,1992,"Hi em",987654321,"http://cdn.onlinewebfonts.com/svg/img_311846.png"));
         messageModelList.add(new MessageModel(1,1992,"Chuc mung em",987654322,"http://cdn.onlinewebfonts.com/svg/img_311846.png"));

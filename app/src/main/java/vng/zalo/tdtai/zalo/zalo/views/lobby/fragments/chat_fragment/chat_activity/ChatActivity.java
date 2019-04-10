@@ -1,16 +1,24 @@
 package vng.zalo.tdtai.zalo.zalo.views.lobby.fragments.chat_fragment.chat_activity;
 
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
+import androidx.multidex.MultiDexApplication;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import vng.zalo.tdtai.zalo.R;
-import vng.zalo.tdtai.zalo.zalo.database.model.room.MessageModel;
+import vng.zalo.tdtai.zalo.zalo.ZaloApplication;
+import vng.zalo.tdtai.zalo.zalo.dependencyfactories.ChatActivityFactory;
+import vng.zalo.tdtai.zalo.zalo.models.MessageModel;
+import vng.zalo.tdtai.zalo.zalo.utils.MessageModelDiffCallback;
+import vng.zalo.tdtai.zalo.zalo.viewmodels.ChatActivityViewModel;
 
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -20,9 +28,15 @@ import com.google.android.material.textfield.TextInputEditText;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 import static vng.zalo.tdtai.zalo.zalo.utils.Constants.CHAT_FRAGMENT_PEER_NAME;
 
 public class ChatActivity extends AppCompatActivity implements View.OnClickListener{
+    private static final String TAG = ChatActivity.class.getSimpleName();
+    @Inject
+    MessageModelDiffCallback messageModelDiffCallback;
+
     private RecyclerView recyclerView;
     private TextInputEditText msgTextInputEditText;
     private ImageButton uploadFileImgButton;
@@ -30,7 +44,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
     private ImageButton pictureImgButton;
     private ImageButton sendMsgImgButton;
 
-    ChatActivityViewModel chatActivityViewModel;
+    ChatActivityViewModel viewModel;
     ChatActivityAdapter adapter;
     LinearLayoutManager layoutManager;
 
@@ -43,7 +57,12 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         toolbar.setTitle(getIntent().getStringExtra(CHAT_FRAGMENT_PEER_NAME));
         setSupportActionBar(toolbar);
 
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        ActionBar actionBar = getSupportActionBar();
+        if(actionBar != null){
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        } else {
+            Log.e(TAG,"actionBar is null");
+        }
 
         recyclerView = findViewById(R.id.chatActivityRecyclerView);
 
@@ -51,18 +70,19 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
 //        layoutManager.setStackFromEnd(true);
         recyclerView.setLayoutManager(layoutManager);
 
-        chatActivityViewModel = new ChatActivityViewModel();
+        viewModel = ViewModelProviders.of(this, new ChatActivityFactory(getApplication())).get(ChatActivityViewModel.class);
 
-        adapter = new ChatActivityAdapter(chatActivityViewModel.liveDataMsgList.getValue());
-        chatActivityViewModel.liveDataMsgList.observe(this, new Observer<List<MessageModel>>() {
+        adapter = new ChatActivityAdapter(messageModelDiffCallback);
+        viewModel.liveDataMsgList.observe(this, new Observer<List<MessageModel>>() {
             @Override
             public void onChanged(List<MessageModel> messageModelList) {
-                adapter.updateChanges(messageModelList);
+                adapter.submitList(messageModelList);
+                Log.d(TAG,"onChanged livedata");
             }
         });
 
         recyclerView.setAdapter(adapter);
-        recyclerView.smoothScrollToPosition(adapter.getItemCount()-1);
+        recyclerView.smoothScrollToPosition(Math.max(adapter.getItemCount()-1,0));
 
         pictureImgButton = findViewById(R.id.pictureImgButton);
         sendMsgImgButton = findViewById(R.id.sendMsgImgButton);
@@ -126,8 +146,13 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         switch (v.getId()){
             case R.id.sendMsgImgButton:
                 String textToSend = msgTextInputEditText.getText() == null? "" : msgTextInputEditText.getText().toString();
-                chatActivityViewModel.liveDataMsgList.getValue()
-                        .add(new MessageModel(1,1998,textToSend,999999999,""));
+                List<MessageModel> msgList = viewModel.liveDataMsgList.getValue();
+                if(msgList != null){
+                    msgList.add(new MessageModel(1,1998,textToSend,999999999,""));
+                } else {
+                    Log.e(TAG, "livedata value is null");
+                }
+
                 msgTextInputEditText.setText("");
                 adapter.notifyDataSetChanged();
                 recyclerView.smoothScrollToPosition(adapter.getItemCount()-1);

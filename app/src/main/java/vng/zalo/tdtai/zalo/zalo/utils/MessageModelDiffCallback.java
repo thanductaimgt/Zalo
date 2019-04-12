@@ -12,7 +12,7 @@ public class MessageModelDiffCallback extends DiffUtil.ItemCallback<MessageModel
 
     @Override
     public boolean areItemsTheSame(@NonNull MessageModel oldItem, @NonNull MessageModel newItem) {
-        return oldItem.msgId == newItem.msgId;
+        return oldItem.id.equals(newItem.id);
     }
 
     @Override

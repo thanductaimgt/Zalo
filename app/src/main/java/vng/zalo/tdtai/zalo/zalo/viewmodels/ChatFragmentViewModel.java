@@ -5,10 +5,7 @@ import android.util.Log;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
@@ -16,60 +13,74 @@ import java.util.ArrayList;
 import java.util.List;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 import vng.zalo.tdtai.zalo.zalo.ZaloApplication;
-import vng.zalo.tdtai.zalo.zalo.models.ChatItemModel;
+import vng.zalo.tdtai.zalo.zalo.models.RoomModel;
+
+import static vng.zalo.tdtai.zalo.zalo.utils.Constants.COLLECTION_BELONGS_TO;
+import static vng.zalo.tdtai.zalo.zalo.utils.Constants.COLLECTION_ROOMS;
 
 public class ChatFragmentViewModel extends ViewModel {
-    private FirebaseFirestore firestore;
-    public MutableLiveData<List<ChatItemModel>> liveChatItemList;
+    private FirebaseFirestore fireStore;
+    public MutableLiveData<List<RoomModel>> liveRooms;
     private static final String TAG = ChatFragmentViewModel.class.getSimpleName();
 
-    public ChatFragmentViewModel(Application application){
-        liveChatItemList = new MutableLiveData<>((List<ChatItemModel>) new ArrayList<ChatItemModel>());
+    public ChatFragmentViewModel(Application application) {
+        liveRooms = new MutableLiveData<>((List<RoomModel>) new ArrayList<RoomModel>());
 
-        firestore = ((ZaloApplication)application).mFireStore;
-        CollectionReference usersCollection = firestore.collection("users");
+        fireStore = ((ZaloApplication) application).mFireStore;
 
-        //query data
-        usersCollection.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if(task.isSuccessful()){
-                    List<ChatItemModel> chatItemList = new ArrayList<>();
-                    for(QueryDocumentSnapshot document: task.getResult()){
-                        chatItemList.add(document.toObject(ChatItemModel.class));
-                        Log.d(TAG,"Query successfully");
-                    }
-                    liveChatItemList.setValue(chatItemList);
-                } else {
-                    Log.d(TAG,"Query unsuccessfully");
+        fireStore.collection(COLLECTION_BELONGS_TO)
+                .whereEqualTo("userPhone", ZaloApplication.sCurrentUserPhone)
+                .get()
+                .addOnCompleteListener(new RoomIdsQueryListener());
+    }
+
+    class RoomIdsQueryListener implements OnCompleteListener<QuerySnapshot> {
+        @Override
+        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+            if (task.isSuccessful()) {
+                List<Long> roomIds = new ArrayList<>();
+                for (QueryDocumentSnapshot doc : task.getResult()) {
+                    roomIds.add(doc.getLong("roomId"));
                 }
+                fireStore.collection(COLLECTION_ROOMS)
+                        .get()
+                        .addOnCompleteListener(new RoomsQueryListener(roomIds));
+            } else {
+                Log.d(TAG,"RoomIdsQuery unsuccessful");
             }
-        });
+        }
+    }
 
-        //on data set change
-        usersCollection
-                .addSnapshotListener(new EventListener<QuerySnapshot>() {
-                    @Override
-                    public void onEvent(@Nullable QuerySnapshot value,
-                                        @Nullable FirebaseFirestoreException e) {
-                        if (e != null) {
-                            Log.w(TAG, "Listen failed.", e);
-                            return;
-                        }
+    class RoomsQueryListener implements OnCompleteListener<QuerySnapshot> {
+        private List<Long> roomIds;
+        RoomsQueryListener(List<Long> roomIds){
+            this.roomIds = roomIds;
+        }
 
-                        List<ChatItemModel> chatItemList = new ArrayList<>();
-                        for (QueryDocumentSnapshot doc : value) {
-                            if (doc.get("id") != null) {
-                                chatItemList.add(doc.toObject(ChatItemModel.class));
-                            }
+        @Override
+        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+            if (task.isSuccessful()) {
+                List<RoomModel> rooms = new ArrayList<>();
+                for(QueryDocumentSnapshot doc: task.getResult()){
+                    Long roomId = doc.getLong("id");
+                    if(roomIds.contains(roomId)){
+                        RoomModel room = new RoomModel();
+                        room.id = roomId;
+                        room.name = doc.getString("name");
+                        String roomAvatar = doc.getString("avatar");
+                        if(roomAvatar != null){
+                            room.avatar = roomAvatar;
                         }
-                        liveChatItemList.setValue(chatItemList);
+                        rooms.add(room);
                     }
-                });
+                }
+                liveRooms.setValue(rooms);
+            } else {
+                Log.d(TAG,"RoomsQuery unsuccessful");
+            }
+        }
     }
 }

@@ -10,22 +10,20 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
-import java.text.DateFormat;
-
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 import vng.zalo.tdtai.zalo.R;
 import vng.zalo.tdtai.zalo.zalo.ZaloApplication;
-import vng.zalo.tdtai.zalo.zalo.models.ChatItemModel;
+import vng.zalo.tdtai.zalo.zalo.models.RoomModel;
 import vng.zalo.tdtai.zalo.zalo.models.DataModel;
 import vng.zalo.tdtai.zalo.zalo.utils.ModelViewHolder;
 
-public class ChatFragmentAdapter extends ListAdapter<ChatItemModel, ChatFragmentAdapter.ChatViewHolder> {
+public class ChatFragmentAdapter extends ListAdapter<RoomModel, ChatFragmentAdapter.ChatViewHolder> {
     private ChatFragment chatFragment;
 
-    ChatFragmentAdapter(ChatFragment chatFragment, @NonNull DiffUtil.ItemCallback<ChatItemModel> diffCallback) {
+    ChatFragmentAdapter(ChatFragment chatFragment, @NonNull DiffUtil.ItemCallback<RoomModel> diffCallback) {
         super(diffCallback);
         this.chatFragment = chatFragment;
     }
@@ -69,22 +67,21 @@ public class ChatFragmentAdapter extends ListAdapter<ChatItemModel, ChatFragment
         @Override
         public void bind(DataModel dataModel) {
             itemView.setOnClickListener(chatFragment);
-            ChatItemModel chatItemModel = (ChatItemModel) dataModel;
-            DateFormat dateFormat = ((ZaloApplication) chatFragment.getActivity().getApplication()).mDateFormat;
+            RoomModel room = (RoomModel) dataModel;
 
-            nameTextView.setText(chatItemModel.name);
-            timeTextView.setText(dateFormat.format(chatItemModel.date));
-            descTextView.setText(chatItemModel.description);
+            nameTextView.setText(room.name);
+            timeTextView.setText(ZaloApplication.sDateFormat.format(room.date));
+            descTextView.setText(room.lastMsgContent);
             new Picasso.Builder(avatarImgView.getContext()).listener(new Picasso.Listener() {
                 @Override
                 public void onImageLoadFailed(Picasso picasso, Uri uri, Exception exception) {
                     Log.e(ChatFragmentAdapter.this.getClass().getSimpleName(), exception.getMessage());
                     exception.printStackTrace();
                 }
-            }).build().load(chatItemModel.avatar)
+            }).build().load(room.avatar)
                     .fit()
                     .into(avatarImgView);
-            if (chatItemModel.showIcon)
+            if (room.showIcon)
                 iconImgView.setVisibility(View.VISIBLE);
         }
     }

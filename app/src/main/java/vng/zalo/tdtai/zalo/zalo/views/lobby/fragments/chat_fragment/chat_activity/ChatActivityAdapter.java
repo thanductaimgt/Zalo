@@ -1,38 +1,40 @@
 package vng.zalo.tdtai.zalo.zalo.views.lobby.fragments.chat_fragment.chat_activity;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import com.squareup.picasso.Picasso;
-
 import java.text.DateFormat;
-import java.util.Date;
 import java.util.List;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 import vng.zalo.tdtai.zalo.R;
+import vng.zalo.tdtai.zalo.zalo.ZaloApplication;
 import vng.zalo.tdtai.zalo.zalo.models.MessageModel;
 import vng.zalo.tdtai.zalo.zalo.models.DataModel;
 import vng.zalo.tdtai.zalo.zalo.utils.ModelViewHolder;
-
-import static vng.zalo.tdtai.zalo.zalo.utils.Constants.CURRENT_USER_ID;
 import static vng.zalo.tdtai.zalo.zalo.utils.Constants.VIEW_TYPE_RECEIVER;
 import static vng.zalo.tdtai.zalo.zalo.utils.Constants.VIEW_TYPE_SENDER;
 
 public class ChatActivityAdapter extends ListAdapter<MessageModel,RecyclerView.ViewHolder> {
-    ChatActivityAdapter(@NonNull DiffUtil.ItemCallback<MessageModel> diffCallback) {
+    private ChatActivity chatActivity;
+    private static final String TAG = ChatActivityAdapter.class.getSimpleName();
+
+    ChatActivityAdapter(ChatActivity chatActivity, @NonNull DiffUtil.ItemCallback<MessageModel> diffCallback) {
         super(diffCallback);
+        this.chatActivity = chatActivity;
     }
 
     @Override
     public int getItemViewType(int position) {
-        if(getItem(position).senderId == CURRENT_USER_ID){
+        if(getItem(position).senderPhone.equals(ZaloApplication.sCurrentUserPhone)){
             return VIEW_TYPE_SENDER;
         } else {
             return VIEW_TYPE_RECEIVER;
@@ -74,10 +76,9 @@ public class ChatActivityAdapter extends ListAdapter<MessageModel,RecyclerView.V
         @Override
         public void bind(DataModel dataModel) {
             MessageModel messageModel = (MessageModel) dataModel;
-            DateFormat dateFormat = android.text.format.DateFormat.getDateFormat(sendMsgTextView.getContext());
 
-            sendMsgTextView.setText(messageModel.message);
-            sendTimeTextView.setText(dateFormat.format(new Date(messageModel.timeStamp)));
+            sendMsgTextView.setText(messageModel.content);
+            sendTimeTextView.setText(ZaloApplication.sDateFormat.format(messageModel.createdTime));
         }
     }
 
@@ -98,10 +99,10 @@ public class ChatActivityAdapter extends ListAdapter<MessageModel,RecyclerView.V
             MessageModel messageModel = (MessageModel) dataModel;
             DateFormat dateFormat = android.text.format.DateFormat.getDateFormat(recvMsgTextView.getContext());
 
-            recvMsgTextView.setText(messageModel.message);
-            recvTimeTextView.setText(dateFormat.format(new Date(messageModel.timeStamp)));
+            recvMsgTextView.setText(messageModel.content);
+            recvTimeTextView.setText(dateFormat.format( messageModel.createdTime));
             Picasso.with(recvMsgTextView.getContext())
-                    .load(messageModel.avatarLink)
+                    .load(messageModel.avatar)
                     .fit()
                     .into(recvAvatarImgButton);
         }

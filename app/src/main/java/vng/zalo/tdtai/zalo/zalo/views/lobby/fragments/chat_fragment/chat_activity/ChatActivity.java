@@ -1,11 +1,11 @@
 package vng.zalo.tdtai.zalo.zalo.views.lobby.fragments.chat_fragment.chat_activity;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
-import androidx.multidex.MultiDexApplication;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import vng.zalo.tdtai.zalo.R;
@@ -24,18 +24,20 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.textfield.TextInputEditText;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-import javax.inject.Inject;
-
-import static vng.zalo.tdtai.zalo.zalo.utils.Constants.CHAT_FRAGMENT_PEER_NAME;
+import static vng.zalo.tdtai.zalo.zalo.utils.Constants.COLLECTION_MESSAGES;
+import static vng.zalo.tdtai.zalo.zalo.utils.Constants.ROOM_ID;
+import static vng.zalo.tdtai.zalo.zalo.utils.Constants.ROOM_NAME;
 
 public class ChatActivity extends AppCompatActivity implements View.OnClickListener{
     private static final String TAG = ChatActivity.class.getSimpleName();
-    @Inject
-    MessageModelDiffCallback messageModelDiffCallback;
 
     private RecyclerView recyclerView;
     private TextInputEditText msgTextInputEditText;
@@ -54,7 +56,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_chat);
 
         Toolbar toolbar = findViewById(R.id.toolbar2);
-        toolbar.setTitle(getIntent().getStringExtra(CHAT_FRAGMENT_PEER_NAME));
+        toolbar.setTitle(getIntent().getStringExtra(ROOM_NAME));
         setSupportActionBar(toolbar);
 
         ActionBar actionBar = getSupportActionBar();
@@ -68,21 +70,23 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
 
         layoutManager = new LinearLayoutManager(this);
 //        layoutManager.setStackFromEnd(true);
+
         recyclerView.setLayoutManager(layoutManager);
 
-        viewModel = ViewModelProviders.of(this, new ChatActivityFactory(getApplication())).get(ChatActivityViewModel.class);
+        viewModel = ViewModelProviders.of(this, new ChatActivityFactory(getIntent(), getApplication()))
+                .get(ChatActivityViewModel.class);
 
-        adapter = new ChatActivityAdapter(messageModelDiffCallback);
+        adapter = new ChatActivityAdapter(this, new MessageModelDiffCallback());
         viewModel.liveDataMsgList.observe(this, new Observer<List<MessageModel>>() {
             @Override
             public void onChanged(List<MessageModel> messageModelList) {
                 adapter.submitList(messageModelList);
-                Log.d(TAG,"onChanged livedata");
+                Log.d(TAG,"onChanged liveData");
             }
         });
 
         recyclerView.setAdapter(adapter);
-        recyclerView.smoothScrollToPosition(Math.max(adapter.getItemCount()-1,0));
+//        recyclerView.smoothScrollToPosition(Math.max(adapter.getItemCount()-1,0));
 
         pictureImgButton = findViewById(R.id.pictureImgButton);
         sendMsgImgButton = findViewById(R.id.sendMsgImgButton);
@@ -146,16 +150,41 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         switch (v.getId()){
             case R.id.sendMsgImgButton:
                 String textToSend = msgTextInputEditText.getText() == null? "" : msgTextInputEditText.getText().toString();
-                List<MessageModel> msgList = viewModel.liveDataMsgList.getValue();
+                final List<MessageModel> msgList = viewModel.liveDataMsgList.getValue();
                 if(msgList != null){
-                    msgList.add(new MessageModel(1,1998,textToSend,999999999,""));
+                    final MessageModel message = new MessageModel();
+                    message.id = (long) msgList.size();
+                    message.content = textToSend;
+
+                    Map<String, Object> newMessage = new HashMap<>();
+                    newMessage.put("content",message.content);
+                    newMessage.put("createdTime",message.createdTime);
+                    newMessage.put("id",message.id);
+                    newMessage.put("roomId",getIntent().getLongExtra(ROOM_ID,-1));
+                    newMessage.put("senderPhone",message.senderPhone);
+
+                    ((ZaloApplication)getApplication()).mFireStore
+                            .collection(COLLECTION_MESSAGES)
+                            .document()
+                            .set(newMessage)
+                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void aVoid) {
+                                    msgList.add(message);
+                                    viewModel.liveDataMsgList.setValue(msgList);
+                                }
+                            })
+                            .addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+                                    Log.d(TAG, "Fail to insert message to fireBase");
+                                }
+                            });
                 } else {
-                    Log.e(TAG, "livedata value is null");
+                    Log.d(TAG, "liveData value is null");
                 }
 
                 msgTextInputEditText.setText("");
-                adapter.notifyDataSetChanged();
-                recyclerView.smoothScrollToPosition(adapter.getItemCount()-1);
                 break;
         }
     }

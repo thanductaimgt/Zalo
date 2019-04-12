@@ -16,16 +16,17 @@
         android:layout_marginRight="@dimen/small"
         android:layout_width="0dp"
         android:layout_height="wrap_content">
+
         <TextView
-            android:background="@android:drawable/editbox_background_normal"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
             android:id="@+id/sendMsgTextView"
-            android:text="TextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@android:drawable/editbox_background_normal"
             android:gravity="end"
-            android:textAlignment="viewEnd"/>
+            android:text="TextView"
+            android:textAlignment="viewEnd"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
         <TextView
             android:id="@+id/sendTimeTextView"
             android:layout_width="wrap_content"

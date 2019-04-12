@@ -18,13 +18,14 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import vng.zalo.tdtai.zalo.R;
 import vng.zalo.tdtai.zalo.zalo.dependencyfactories.ChatFragmentViewModelFactory;
-import vng.zalo.tdtai.zalo.zalo.models.ChatItemModel;
+import vng.zalo.tdtai.zalo.zalo.models.RoomModel;
 import vng.zalo.tdtai.zalo.zalo.utils.ChatItemDiffCallback;
 import vng.zalo.tdtai.zalo.zalo.viewmodels.ChatFragmentViewModel;
 import vng.zalo.tdtai.zalo.zalo.views.lobby.fragments.chat_fragment.chat_activity.ChatActivity;
 
-import static vng.zalo.tdtai.zalo.zalo.utils.Constants.CHAT_FRAGMENT_ITEM_POSI;
-import static vng.zalo.tdtai.zalo.zalo.utils.Constants.CHAT_FRAGMENT_PEER_NAME;
+import static vng.zalo.tdtai.zalo.zalo.utils.Constants.ROOM_AVATAR;
+import static vng.zalo.tdtai.zalo.zalo.utils.Constants.ROOM_ID;
+import static vng.zalo.tdtai.zalo.zalo.utils.Constants.ROOM_NAME;
 
 public class ChatFragment extends Fragment implements View.OnClickListener {
     private static final String TAG = ChatFragment.class.getSimpleName();
@@ -32,9 +33,6 @@ public class ChatFragment extends Fragment implements View.OnClickListener {
     private RecyclerView recyclerView;
     private ChatFragmentViewModel viewModel;
     private ChatFragmentAdapter adapter;
-
-//    @Inject
-    ChatItemDiffCallback chatItemDiffCallback = new ChatItemDiffCallback();
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
@@ -50,14 +48,14 @@ public class ChatFragment extends Fragment implements View.OnClickListener {
 
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-        adapter = new ChatFragmentAdapter(this, chatItemDiffCallback);
+        adapter = new ChatFragmentAdapter(this, new ChatItemDiffCallback());
 
         recyclerView.setAdapter(adapter);
 
-        viewModel.liveChatItemList.observe(getViewLifecycleOwner(), new Observer<List<ChatItemModel>>() {
+        viewModel.liveRooms.observe(getViewLifecycleOwner(), new Observer<List<RoomModel>>() {
             @Override
-            public void onChanged(List<ChatItemModel> chatItemList) {
-                adapter.submitList(chatItemList);
+            public void onChanged(List<RoomModel> rooms) {
+                adapter.submitList(rooms);
                 Log.d(TAG,"onChanged livedata");
             }
         });
@@ -69,8 +67,9 @@ public class ChatFragment extends Fragment implements View.OnClickListener {
             case R.id.chatFragmentConstrLayout:
                 int position = recyclerView.getChildLayoutPosition(v);
                 Intent intent = new Intent(getActivity(), ChatActivity.class);
-                intent.putExtra(CHAT_FRAGMENT_ITEM_POSI, adapter.getCurrentList().get(position).id);
-                intent.putExtra(CHAT_FRAGMENT_PEER_NAME, adapter.getCurrentList().get(position).name);
+                intent.putExtra(ROOM_ID, adapter.getCurrentList().get(position).id);
+                intent.putExtra(ROOM_NAME, adapter.getCurrentList().get(position).name);
+                intent.putExtra(ROOM_AVATAR, adapter.getCurrentList().get(position).avatar);
                 startActivity(intent);
         }
     }

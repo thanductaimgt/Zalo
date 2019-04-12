@@ -1,30 +1,70 @@
 package vng.zalo.tdtai.zalo.zalo.viewmodels;
 
 import android.app.Application;
+import android.content.Intent;
+import android.util.Log;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import androidx.annotation.NonNull;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 import vng.zalo.tdtai.zalo.zalo.ZaloApplication;
 import vng.zalo.tdtai.zalo.zalo.models.MessageModel;
 
+import static vng.zalo.tdtai.zalo.zalo.utils.Constants.COLLECTION_MESSAGES;
+import static vng.zalo.tdtai.zalo.zalo.utils.Constants.ROOM_AVATAR;
+import static vng.zalo.tdtai.zalo.zalo.utils.Constants.ROOM_ID;
+
 public class ChatActivityViewModel extends ViewModel {
-    private FirebaseFirestore firestore;
+    private Intent intent;
+    private static final String TAG = ChatActivityViewModel.class.getSimpleName();
+    private FirebaseFirestore fireStore;
     public MutableLiveData<List<MessageModel>> liveDataMsgList;
 
-    public ChatActivityViewModel(Application application){
-        firestore = ((ZaloApplication)application).mFireStore;
-        List<MessageModel> messageModelList = new ArrayList<>();
-        messageModelList.add(new MessageModel(0,1992,"Hi em",987654321,"http://cdn.onlinewebfonts.com/svg/img_311846.png"));
-        messageModelList.add(new MessageModel(1,1992,"Chuc mung em",987654322,"http://cdn.onlinewebfonts.com/svg/img_311846.png"));
-        messageModelList.add(new MessageModel(2,1998,"Thank you chi",987654323,"https://lh3.googleusercontent.com/h4ctnfcavolkVSouRjmgfeyz4Ch_706IL8GO1iqK7JVh9rqd7iIqDlmzMsSd6yNR8w"));
-        messageModelList.add(new MessageModel(3,1998,"I know it",987654324,"https://lh3.googleusercontent.com/h4ctnfcavolkVSouRjmgfeyz4Ch_706IL8GO1iqK7JVh9rqd7iIqDlmzMsSd6yNR8w"));
-        messageModelList.add(new MessageModel(4,1992,"ok",987654325,"http://cdn.onlinewebfonts.com/svg/img_311846.png"));
+    public ChatActivityViewModel(Intent intent, Application application){
+        fireStore = ((ZaloApplication)application).mFireStore;
 
-        liveDataMsgList = new MutableLiveData<>();
-        liveDataMsgList.setValue(messageModelList);
+        liveDataMsgList = new MutableLiveData<>((List<MessageModel>)new ArrayList<MessageModel>());
+
+        this.intent = intent;
+        Long roomId = intent.getLongExtra(ROOM_ID,-1);
+        Log.d(TAG,"roomId: "+roomId);
+
+        fireStore.collection(COLLECTION_MESSAGES)
+                .whereEqualTo("roomId",roomId)
+                .orderBy("id")
+                .get()
+                .addOnCompleteListener(new MessagesQueryListener());
+    }
+
+    class MessagesQueryListener implements OnCompleteListener<QuerySnapshot>{
+
+        @Override
+        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+            if(task.isSuccessful()){
+                Log.d(TAG,"MessagesQuery successful\n"+task.getException());
+                List<MessageModel> messages = new ArrayList<>();
+                for(QueryDocumentSnapshot doc: task.getResult()){
+                    MessageModel message = new MessageModel();
+                    message.id = doc.getLong("id");
+                    message.content = doc.getString("content");
+                    message.avatar = intent.getStringExtra(ROOM_AVATAR);
+                    message.senderPhone = doc.getString("senderPhone");
+
+                    messages.add(message);
+                }
+                liveDataMsgList.setValue(messages);
+            } else {
+                Log.d(TAG,"MessagesQuery unsuccessful\n"+task.getException());
+            }
+        }
     }
 }

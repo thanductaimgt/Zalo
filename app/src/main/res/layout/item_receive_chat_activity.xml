@@ -15,8 +15,8 @@
         app:layout_constraintTop_toTopOf="@+id/recvAvatarImgButton"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/small"
-        android:layout_marginLeft="@dimen/small">
+        android:layout_marginStart="@dimen/size_small_8dp"
+        android:layout_marginLeft="@dimen/size_small_8dp">
         <TextView
             android:id="@+id/recvMsgTextView"
             app:layout_constraintLeft_toLeftOf="parent"

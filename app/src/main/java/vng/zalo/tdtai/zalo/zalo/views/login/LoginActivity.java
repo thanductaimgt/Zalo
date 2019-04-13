@@ -3,7 +3,7 @@ package vng.zalo.tdtai.zalo.zalo.views.login;
 import androidx.appcompat.app.AppCompatActivity;
 import vng.zalo.tdtai.zalo.R;
 import vng.zalo.tdtai.zalo.zalo.ZaloApplication;
-import vng.zalo.tdtai.zalo.zalo.views.lobby.LobbyActivity;
+import vng.zalo.tdtai.zalo.zalo.views.home.HomeActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -30,7 +30,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         clearTextButton.setOnClickListener(this);
         loginButton.setOnClickListener(this);
 
-        getSupportActionBar().setTitle(R.string.log_in);
+        getSupportActionBar().setTitle(R.string.label_log_in);
 
         Button swapButton = findViewById(R.id.swapButton);
         swapButton.setOnClickListener(this);
@@ -50,8 +50,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 String currentPhone = phoneTextInputEditText.getText().toString();
                 String currentPass = passTextInputEditText.getText().toString();
                 if(isCredentialsValid(currentPhone, currentPass)){
-                    Intent startLobbyIntent = new Intent(this, LobbyActivity.class);
-                    ZaloApplication.sCurrentUserPhone = currentPhone;
+                    Intent startLobbyIntent = new Intent(this, HomeActivity.class);
+                    ZaloApplication.currentUserPhone = currentPhone;
                     startActivity(startLobbyIntent);
 //                    finish();
                 }

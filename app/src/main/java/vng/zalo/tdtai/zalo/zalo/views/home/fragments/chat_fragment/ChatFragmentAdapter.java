@@ -1,4 +1,4 @@
-package vng.zalo.tdtai.zalo.zalo.views.lobby.fragments.chat_fragment;
+package vng.zalo.tdtai.zalo.zalo.views.home.fragments.chat_fragment;
 
 import android.net.Uri;
 import android.util.Log;
@@ -70,7 +70,7 @@ public class ChatFragmentAdapter extends ListAdapter<RoomModel, ChatFragmentAdap
             RoomModel room = (RoomModel) dataModel;
 
             nameTextView.setText(room.name);
-            timeTextView.setText(ZaloApplication.sDateFormat.format(room.date));
+            timeTextView.setText(ZaloApplication.dateFormat.format(room.date));
             descTextView.setText(room.lastMsgContent);
             new Picasso.Builder(avatarImgView.getContext()).listener(new Picasso.Listener() {
                 @Override

@@ -8,7 +8,7 @@ import static vng.zalo.tdtai.zalo.zalo.utils.Constants.DEFAULT_AVATAR;
 
 public class MessageModel extends DataModel {
     public Long id;
-    public String senderPhone = ZaloApplication.sCurrentUserPhone;
+    public String senderPhone = ZaloApplication.currentUserPhone;
     public String content = "default content";
     public Date createdTime = new Date();
     public String avatar = DEFAULT_AVATAR;

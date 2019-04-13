@@ -1,4 +1,4 @@
-package vng.zalo.tdtai.zalo.zalo.views.lobby;
+package vng.zalo.tdtai.zalo.zalo.views.home;
 
 import com.google.android.material.tabs.TabLayout;
 
@@ -14,7 +14,7 @@ import android.view.MenuItem;
 
 import vng.zalo.tdtai.zalo.R;
 
-public class LobbyActivity extends AppCompatActivity implements TabLayout.OnTabSelectedListener {
+public class HomeActivity extends AppCompatActivity implements TabLayout.OnTabSelectedListener {
     private ViewPager mViewPager;
 
     @Override
@@ -34,11 +34,11 @@ public class LobbyActivity extends AppCompatActivity implements TabLayout.OnTabS
          * may be best to switch to a
          * androidx.fragment.app.FragmentStatePagerAdapter.
          */
-        LobbyAdapter mLobbyAdapter = new LobbyAdapter(getSupportFragmentManager());
+        HomeAdapter mHomeAdapter = new HomeAdapter(getSupportFragmentManager());
 
         // Set up the ViewPager with the sections adapter.
         mViewPager = findViewById(R.id.viewPager);
-        mViewPager.setAdapter(mLobbyAdapter);
+        mViewPager.setAdapter(mHomeAdapter);
 
         TabLayout tabLayout = findViewById(R.id.tabLayout);
 

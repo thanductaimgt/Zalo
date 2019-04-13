@@ -1,4 +1,4 @@
-package vng.zalo.tdtai.zalo.zalo.views.lobby.fragments.chat_fragment.chat_activity;
+package vng.zalo.tdtai.zalo.zalo.views.home.fragments.chat_fragment.chat_activity;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import vng.zalo.tdtai.zalo.R;
 import vng.zalo.tdtai.zalo.zalo.ZaloApplication;
-import vng.zalo.tdtai.zalo.zalo.dependencyfactories.ChatActivityFactory;
+import vng.zalo.tdtai.zalo.zalo.dependency_factories.chat_activity.ChatActivityViewModelFactory;
 import vng.zalo.tdtai.zalo.zalo.models.MessageModel;
 import vng.zalo.tdtai.zalo.zalo.utils.MessageModelDiffCallback;
 import vng.zalo.tdtai.zalo.zalo.viewmodels.ChatActivityViewModel;
@@ -32,6 +32,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import static vng.zalo.tdtai.zalo.zalo.utils.Constants.COLLECTION_MESSAGES;
 import static vng.zalo.tdtai.zalo.zalo.utils.Constants.ROOM_ID;
 import static vng.zalo.tdtai.zalo.zalo.utils.Constants.ROOM_NAME;
@@ -46,7 +48,9 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
     private ImageButton pictureImgButton;
     private ImageButton sendMsgImgButton;
 
+//    @Inject
     ChatActivityViewModel viewModel;
+
     ChatActivityAdapter adapter;
     LinearLayoutManager layoutManager;
 
@@ -55,7 +59,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
 
-        Toolbar toolbar = findViewById(R.id.toolbar2);
+        Toolbar toolbar = findViewById(R.id.toolbarChatActivity);
         toolbar.setTitle(getIntent().getStringExtra(ROOM_NAME));
         setSupportActionBar(toolbar);
 
@@ -73,11 +77,11 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
 
         recyclerView.setLayoutManager(layoutManager);
 
-        viewModel = ViewModelProviders.of(this, new ChatActivityFactory(getIntent(), getApplication()))
+        viewModel = ViewModelProviders.of(this, new ChatActivityViewModelFactory(getIntent(), getApplication()))
                 .get(ChatActivityViewModel.class);
 
         adapter = new ChatActivityAdapter(this, new MessageModelDiffCallback());
-        viewModel.liveDataMsgList.observe(this, new Observer<List<MessageModel>>() {
+        viewModel.liveMessages.observe(this, new Observer<List<MessageModel>>() {
             @Override
             public void onChanged(List<MessageModel> messageModelList) {
                 adapter.submitList(messageModelList);
@@ -150,7 +154,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         switch (v.getId()){
             case R.id.sendMsgImgButton:
                 String textToSend = msgTextInputEditText.getText() == null? "" : msgTextInputEditText.getText().toString();
-                final List<MessageModel> msgList = viewModel.liveDataMsgList.getValue();
+                final List<MessageModel> msgList = viewModel.liveMessages.getValue();
                 if(msgList != null){
                     final MessageModel message = new MessageModel();
                     message.id = (long) msgList.size();
@@ -163,7 +167,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                     newMessage.put("roomId",getIntent().getLongExtra(ROOM_ID,-1));
                     newMessage.put("senderPhone",message.senderPhone);
 
-                    ((ZaloApplication)getApplication()).mFireStore
+                    ((ZaloApplication)getApplication()).firestore
                             .collection(COLLECTION_MESSAGES)
                             .document()
                             .set(newMessage)
@@ -171,7 +175,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                                 @Override
                                 public void onSuccess(Void aVoid) {
                                     msgList.add(message);
-                                    viewModel.liveDataMsgList.setValue(msgList);
+                                    viewModel.liveMessages.setValue(msgList);
                                 }
                             })
                             .addOnFailureListener(new OnFailureListener() {

@@ -1,31 +1,31 @@
 <resources>
-    <string name="app_name">Zalo</string>
-    <string name="register">Đăng ký</string>
-    <string name="log_in">Đăng nhập</string>
-    <string name="vietnamese">Tiếng Việt</string>
-    <string name="english">Tiếng Anh</string>
-    <string name="get_password">Lấy lại mật khẩu</string>
-    <string name="login_description">Vui lòng nhập số điện thoại và mật khẩu để đăng nhập</string>
-    <string name="show_pass">HIỆN</string>
-    <string name="faq"><b><u>Câu hỏi thường gặp</u></b></string>
-    <string name="phone_hint">Số điện thoại</string>
-    <string name="pass_hint">Mật khẩu</string>
-    <string name="title_activity_lobby_ativity2">Trang chủ</string>
-    <string name="chat_tab_title">Tin nhắn</string>
-    <string name="contact_tab_title">Danh bạ</string>
-    <string name="group_tab_title">Nhóm</string>
-    <string name="action_settings">Settings</string>
+    <string name="label_app_name">Zalo</string>
+    <string name="label_register">Đăng ký</string>
+    <string name="label_log_in">Đăng nhập</string>
+    <string name="label_vietnamese">Tiếng Việt</string>
+    <string name="label_english">Tiếng Anh</string>
+    <string name="label_get_password">Lấy lại mật khẩu</string>
+    <string name="label_home_screen">Trang chủ</string>
+    <string name="label_chat_tab">Tin nhắn</string>
+    <string name="label_contact_tab">Danh bạ</string>
+    <string name="label_group_tab">Nhóm</string>
+    <string name="label_settings">Cài đặt</string>
+    <string name="label_show_password">HIỆN</string>
+    <string name="label_faq"><b><u>Câu hỏi thường gặp</u></b></string>
+    <string name="label_diary_tab">Nhật ký</string>
+    <string name="label_more_tab">Thêm</string>
+    <string name="label_newly_updated_friends">Bạn mới cập nhật</string>
+    <string name="label_all_contacts">Tất cả danh bạ</string>
+    <string name="label_update">Cập nhật</string>
+    <string name="label_official_account_sub_tab">OFFICIAL ACCOUNT</string>
+    <string name="label_update_contact">Cập nhật danh bạ</string>
+    <string name="label_close_friends">Bạn thân</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="diary_tab_title">Nhật ký</string>
-    <string name="more_tab_title">Thêm</string>
-    <string name="enter_a_message">Tin nhắn</string>
-    <string name="official_account">OFFICIAL ACCOUNT</string>
-    <string name="update_contact">Cập nhật danh bạ</string>
-    <string name="update_contact_desc">Nhanh chóng thêm bạn vào Zalo từ danh bạ điện thoại</string>
-    <string name="close_friend">Bạn thân</string>
-    <string name="update_status_desc">Cập nhật trạng thái của bạn và xem bạn bè mình đang...</string>
-    <string name="update_new_friends">Bạn mới cập nhật</string>
-    <string name="all_contact">Tất cả danh bạ</string>
-    <string name="update">Cập nhật</string>
+    <string name="description_login">Vui lòng nhập số điện thoại và mật khẩu để đăng nhập</string>
+    <string name="description_update_contact">Nhanh chóng thêm bạn vào Zalo từ danh bạ điện thoại</string>
+    <string name="description_update_status">Cập nhật trạng thái của bạn và xem bạn bè mình đang&#8230;</string>
+
+    <string name="hint_phone_number">Số điện thoại</string>
+    <string name="hint_password">Mật khẩu</string>
+    <string name="hint_message">Tin nhắn</string>
 </resources>

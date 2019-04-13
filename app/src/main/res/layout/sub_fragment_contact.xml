@@ -6,12 +6,12 @@
     android:orientation="vertical">
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:paddingBottom="@dimen/small"
+        android:paddingBottom="@dimen/size_small_8dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
         <androidx.cardview.widget.CardView
-            android:layout_marginBottom="@dimen/small"
+            android:layout_marginBottom="@dimen/size_small_8dp"
             android:id="@+id/cardViewSuggestFriends"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -25,19 +25,19 @@
         </androidx.cardview.widget.CardView>
 
         <androidx.cardview.widget.CardView
-            android:layout_marginBottom="@dimen/small"
+            android:layout_marginBottom="@dimen/size_small_8dp"
             android:id="@+id/cardViewCloseFriends"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:layout_constraintBottom_toTopOf="@+id/cardViewStatus"
             app:layout_constraintTop_toBottomOf="@+id/cardViewSuggestFriends">
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:padding="@dimen/small"
+                android:padding="@dimen/size_small_8dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
                 <TextView
                     android:textStyle="bold"
-                    android:text="@string/close_friend"
+                    android:text="@string/label_close_friends"
                     android:id="@+id/closeFriendsTextView"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
@@ -45,7 +45,7 @@
                     android:layout_height="wrap_content" />
 
                 <androidx.recyclerview.widget.RecyclerView
-                    android:layout_marginTop="@dimen/small"
+                    android:layout_marginTop="@dimen/size_small_8dp"
                     app:layout_constraintTop_toBottomOf="@id/closeFriendsTextView"
                     android:id="@+id/recyclerViewCloseFriends"
                     android:layout_width="match_parent"
@@ -54,7 +54,7 @@
         </androidx.cardview.widget.CardView>
 
         <androidx.cardview.widget.CardView
-            android:layout_marginBottom="@dimen/small"
+            android:layout_marginBottom="@dimen/size_small_8dp"
             android:id="@+id/cardViewStatus"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -62,7 +62,7 @@
             app:layout_constraintTop_toBottomOf="@+id/cardViewCloseFriends">
 
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:padding="@dimen/small"
+                android:padding="@dimen/size_small_8dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
@@ -70,7 +70,7 @@
                     android:id="@+id/statusTextView"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:text="@string/update_status_desc"
+                    android:text="@string/description_update_status"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent" />
@@ -80,8 +80,8 @@
                     android:id="@+id/statusDescTextView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="@dimen/small"
-                    android:text="@string/update_new_friends"
+                    android:layout_marginBottom="@dimen/size_small_8dp"
+                    android:text="@string/label_newly_updated_friends"
                     app:layout_constraintBottom_toTopOf="@+id/statusTextView"
                     app:layout_constraintEnd_toStartOf="@+id/switch1"
                     app:layout_constraintHorizontal_bias="0.0"
@@ -93,7 +93,7 @@
                     android:id="@+id/switch1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="@dimen/small"
+                    android:layout_marginBottom="@dimen/size_small_8dp"
                     app:layout_constraintBottom_toTopOf="@+id/statusTextView"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.5"
@@ -104,19 +104,19 @@
         </androidx.cardview.widget.CardView>
 
         <androidx.cardview.widget.CardView
-            android:layout_marginBottom="@dimen/medium"
+            android:layout_marginBottom="@dimen/size_medium_16dp"
             android:id="@+id/cardViewAllContacts"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:layout_constraintBottom_toTopOf="@id/updateContactDescTextView"
             app:layout_constraintTop_toBottomOf="@+id/cardViewStatus">
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:padding="@dimen/small"
+                android:padding="@dimen/size_small_8dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
                 <TextView
                     android:textStyle="bold"
-                    android:text="@string/all_contact"
+                    android:text="@string/label_all_contacts"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     android:id="@+id/allContactTextView"
@@ -126,13 +126,13 @@
                     android:textColor="@android:color/holo_blue_light"
                     android:textAllCaps="true"
                     android:textStyle="bold"
-                    android:text="@string/update"
+                    android:text="@string/label_update"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintRight_toRightOf="parent"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
                 <androidx.recyclerview.widget.RecyclerView
-                    android:layout_marginTop="@dimen/small"
+                    android:layout_marginTop="@dimen/size_small_8dp"
                     app:layout_constraintTop_toBottomOf="@id/allContactTextView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
@@ -144,10 +144,10 @@
             android:id="@+id/updateContactDescTextView"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/small"
-            android:layout_marginRight="@dimen/small"
-            android:layout_marginBottom="@dimen/medium"
-            android:text="@string/update_contact_desc"
+            android:layout_marginLeft="@dimen/size_small_8dp"
+            android:layout_marginRight="@dimen/size_small_8dp"
+            android:layout_marginBottom="@dimen/size_medium_16dp"
+            android:text="@string/description_update_contact"
             app:layout_constraintBottom_toTopOf="@id/updateContactButton"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent" />
@@ -156,7 +156,7 @@
             android:id="@+id/updateContactButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/update_contact"
+            android:text="@string/label_update_contact"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent" />

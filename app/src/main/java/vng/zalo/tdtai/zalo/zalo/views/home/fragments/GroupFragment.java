@@ -1,4 +1,4 @@
-package vng.zalo.tdtai.zalo.zalo.views.lobby.fragments;
+package vng.zalo.tdtai.zalo.zalo.views.home.fragments;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;

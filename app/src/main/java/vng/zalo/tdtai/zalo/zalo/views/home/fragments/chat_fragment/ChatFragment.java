@@ -1,4 +1,4 @@
-package vng.zalo.tdtai.zalo.zalo.views.lobby.fragments.chat_fragment;
+package vng.zalo.tdtai.zalo.zalo.views.home.fragments.chat_fragment;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -17,11 +17,11 @@ import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import vng.zalo.tdtai.zalo.R;
-import vng.zalo.tdtai.zalo.zalo.dependencyfactories.ChatFragmentViewModelFactory;
+import vng.zalo.tdtai.zalo.zalo.dependency_factories.ChatFragmentViewModelFactory;
 import vng.zalo.tdtai.zalo.zalo.models.RoomModel;
 import vng.zalo.tdtai.zalo.zalo.utils.ChatItemDiffCallback;
 import vng.zalo.tdtai.zalo.zalo.viewmodels.ChatFragmentViewModel;
-import vng.zalo.tdtai.zalo.zalo.views.lobby.fragments.chat_fragment.chat_activity.ChatActivity;
+import vng.zalo.tdtai.zalo.zalo.views.home.fragments.chat_fragment.chat_activity.ChatActivity;
 
 import static vng.zalo.tdtai.zalo.zalo.utils.Constants.ROOM_AVATAR;
 import static vng.zalo.tdtai.zalo.zalo.utils.Constants.ROOM_ID;

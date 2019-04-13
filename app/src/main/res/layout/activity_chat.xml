@@ -6,10 +6,10 @@
     android:layout_height="match_parent"
     android:focusable="true"
     android:focusableInTouchMode="true"
-    tools:context=".zalo.views.lobby.fragments.chat_fragment.chat_activity.ChatActivity">
+    tools:context=".zalo.views.home.fragments.chat_fragment.chat_activity.ChatActivity">
 
     <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbar2"
+        android:id="@+id/toolbarChatActivity"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:background="?attr/colorPrimary"
@@ -25,11 +25,11 @@
         android:id="@+id/msgTextInputEditText"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/small"
-        android:layout_marginLeft="@dimen/small"
-        android:layout_marginEnd="@dimen/small"
+        android:layout_marginStart="@dimen/size_small_8dp"
+        android:layout_marginLeft="@dimen/size_small_8dp"
+        android:layout_marginEnd="@dimen/size_small_8dp"
         android:ems="10"
-        android:hint="@string/enter_a_message"
+        android:hint="@string/hint_message"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/pictureImgButton"
         app:layout_constraintStart_toEndOf="@+id/emojiImgButton" />
@@ -38,9 +38,9 @@
         android:id="@+id/emojiImgButton"
         android:layout_width="30dp"
         android:layout_height="0dp"
-        android:layout_marginStart="@dimen/small"
-        android:layout_marginLeft="@dimen/small"
-        android:layout_marginBottom="@dimen/small"
+        android:layout_marginStart="@dimen/size_small_8dp"
+        android:layout_marginLeft="@dimen/size_small_8dp"
+        android:layout_marginBottom="@dimen/size_small_8dp"
         app:layout_constraintBottom_toBottomOf="@+id/msgTextInputEditText"
         app:layout_constraintDimensionRatio="h,1:1"
         app:layout_constraintStart_toStartOf="parent"
@@ -50,9 +50,9 @@
         android:id="@+id/pictureImgButton"
         android:layout_width="35dp"
         android:layout_height="0dp"
-        android:layout_marginEnd="@dimen/small"
-        android:layout_marginRight="@dimen/small"
-        android:layout_marginBottom="@dimen/small"
+        android:layout_marginEnd="@dimen/size_small_8dp"
+        android:layout_marginRight="@dimen/size_small_8dp"
+        android:layout_marginBottom="@dimen/size_small_8dp"
         app:layout_constraintBottom_toBottomOf="@+id/msgTextInputEditText"
         app:layout_constraintDimensionRatio="w,1:1"
         app:layout_constraintEnd_toEndOf="parent"
@@ -103,5 +103,5 @@
         app:layout_constraintBottom_toTopOf="@+id/msgTextInputEditText"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/toolbar2" />
+        app:layout_constraintTop_toBottomOf="@+id/toolbarChatActivity" />
 </androidx.constraintlayout.widget.ConstraintLayout>

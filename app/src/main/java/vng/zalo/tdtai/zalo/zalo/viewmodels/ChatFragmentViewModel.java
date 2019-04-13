@@ -29,10 +29,10 @@ public class ChatFragmentViewModel extends ViewModel {
     public ChatFragmentViewModel(Application application) {
         liveRooms = new MutableLiveData<>((List<RoomModel>) new ArrayList<RoomModel>());
 
-        fireStore = ((ZaloApplication) application).mFireStore;
+        fireStore = ((ZaloApplication) application).firestore;
 
         fireStore.collection(COLLECTION_BELONGS_TO)
-                .whereEqualTo("userPhone", ZaloApplication.sCurrentUserPhone)
+                .whereEqualTo("userPhone", ZaloApplication.currentUserPhone)
                 .get()
                 .addOnCompleteListener(new RoomIdsQueryListener());
     }

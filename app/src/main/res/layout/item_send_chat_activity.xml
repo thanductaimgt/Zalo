@@ -11,9 +11,9 @@
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="@+id/guideline3"
         app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginTop="@dimen/small"
-        android:layout_marginEnd="@dimen/small"
-        android:layout_marginRight="@dimen/small"
+        android:layout_marginTop="@dimen/size_small_8dp"
+        android:layout_marginEnd="@dimen/size_small_8dp"
+        android:layout_marginRight="@dimen/size_small_8dp"
         android:layout_width="0dp"
         android:layout_height="wrap_content">
 

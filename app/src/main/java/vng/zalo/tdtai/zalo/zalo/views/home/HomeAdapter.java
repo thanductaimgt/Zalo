@@ -1,23 +1,23 @@
-package vng.zalo.tdtai.zalo.zalo.views.lobby;
+package vng.zalo.tdtai.zalo.zalo.views.home;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapter;
-import vng.zalo.tdtai.zalo.zalo.views.lobby.fragments.chat_fragment.ChatFragment;
-import vng.zalo.tdtai.zalo.zalo.views.lobby.fragments.contact_fragment.ContactFragment;
-import vng.zalo.tdtai.zalo.zalo.views.lobby.fragments.DiaryFragment;
-import vng.zalo.tdtai.zalo.zalo.views.lobby.fragments.GroupFragment;
-import vng.zalo.tdtai.zalo.zalo.views.lobby.fragments.MoreFragment;
+import vng.zalo.tdtai.zalo.zalo.views.home.fragments.chat_fragment.ChatFragment;
+import vng.zalo.tdtai.zalo.zalo.views.home.fragments.contact_fragment.ContactFragment;
+import vng.zalo.tdtai.zalo.zalo.views.home.fragments.DiaryFragment;
+import vng.zalo.tdtai.zalo.zalo.views.home.fragments.GroupFragment;
+import vng.zalo.tdtai.zalo.zalo.views.home.fragments.MoreFragment;
 
-public class LobbyAdapter extends FragmentStatePagerAdapter {
+public class HomeAdapter extends FragmentStatePagerAdapter {
     private Fragment chatFragment;
     private Fragment contactFragment;
     private Fragment groupFragment;
     private Fragment diaryFragment;
     private Fragment moreFragment;
 
-    LobbyAdapter(FragmentManager fm) {
+    HomeAdapter(FragmentManager fm) {
         super(fm);
 
         chatFragment = new ChatFragment();

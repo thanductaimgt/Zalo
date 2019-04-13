@@ -27,12 +27,12 @@ public class ChatActivityViewModel extends ViewModel {
     private Intent intent;
     private static final String TAG = ChatActivityViewModel.class.getSimpleName();
     private FirebaseFirestore fireStore;
-    public MutableLiveData<List<MessageModel>> liveDataMsgList;
+    public MutableLiveData<List<MessageModel>> liveMessages;
 
     public ChatActivityViewModel(Intent intent, Application application){
-        fireStore = ((ZaloApplication)application).mFireStore;
+        fireStore = ((ZaloApplication)application).firestore;
 
-        liveDataMsgList = new MutableLiveData<>((List<MessageModel>)new ArrayList<MessageModel>());
+        liveMessages = new MutableLiveData<>((List<MessageModel>)new ArrayList<MessageModel>());
 
         this.intent = intent;
         Long roomId = intent.getLongExtra(ROOM_ID,-1);
@@ -61,7 +61,7 @@ public class ChatActivityViewModel extends ViewModel {
 
                     messages.add(message);
                 }
-                liveDataMsgList.setValue(messages);
+                liveMessages.setValue(messages);
             } else {
                 Log.d(TAG,"MessagesQuery unsuccessful\n"+task.getException());
             }

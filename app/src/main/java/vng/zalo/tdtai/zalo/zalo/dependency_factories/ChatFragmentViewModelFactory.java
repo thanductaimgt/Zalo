@@ -1,4 +1,4 @@
-package vng.zalo.tdtai.zalo.zalo.dependencyfactories;
+package vng.zalo.tdtai.zalo.zalo.dependency_factories;
 
 import android.app.Application;
 

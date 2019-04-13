@@ -1,6 +1,5 @@
-package vng.zalo.tdtai.zalo.zalo.views.lobby.fragments.chat_fragment.chat_activity;
+package vng.zalo.tdtai.zalo.zalo.views.home.fragments.chat_fragment.chat_activity;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,10 +7,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import com.squareup.picasso.Picasso;
 import java.text.DateFormat;
-import java.util.List;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
@@ -34,7 +31,7 @@ public class ChatActivityAdapter extends ListAdapter<MessageModel,RecyclerView.V
 
     @Override
     public int getItemViewType(int position) {
-        if(getItem(position).senderPhone.equals(ZaloApplication.sCurrentUserPhone)){
+        if(getItem(position).senderPhone.equals(ZaloApplication.currentUserPhone)){
             return VIEW_TYPE_SENDER;
         } else {
             return VIEW_TYPE_RECEIVER;
@@ -78,7 +75,7 @@ public class ChatActivityAdapter extends ListAdapter<MessageModel,RecyclerView.V
             MessageModel messageModel = (MessageModel) dataModel;
 
             sendMsgTextView.setText(messageModel.content);
-            sendTimeTextView.setText(ZaloApplication.sDateFormat.format(messageModel.createdTime));
+            sendTimeTextView.setText(ZaloApplication.dateFormat.format(messageModel.createdTime));
         }
     }
 

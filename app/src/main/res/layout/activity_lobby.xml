@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context=".zalo.views.lobby.LobbyActivity">
+    tools:context=".zalo.views.home.HomeActivity">
 
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/tabLayout"
@@ -18,31 +18,31 @@
             android:id="@+id/chatTabItem"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/chat_tab_title" />
+            android:text="@string/label_chat_tab" />
 
         <com.google.android.material.tabs.TabItem
             android:id="@+id/contactTabItem"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/contact_tab_title" />
+            android:text="@string/label_contact_tab" />
 
         <com.google.android.material.tabs.TabItem
             android:id="@+id/groupTabItem"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/group_tab_title" />
+            android:text="@string/label_group_tab" />
 
         <com.google.android.material.tabs.TabItem
             android:id="@+id/diaryTabItem"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/diary_tab_title" />
+            android:text="@string/label_diary_tab" />
 
         <com.google.android.material.tabs.TabItem
             android:id="@+id/moreTabItem"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/more_tab_title" />
+            android:text="@string/label_more_tab" />
     </com.google.android.material.tabs.TabLayout>
 
     <androidx.viewpager.widget.ViewPager

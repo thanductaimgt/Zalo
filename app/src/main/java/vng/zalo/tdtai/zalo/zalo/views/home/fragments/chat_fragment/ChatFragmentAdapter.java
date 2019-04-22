@@ -31,7 +31,7 @@ public class ChatFragmentAdapter extends ListAdapter<RoomModel, ChatFragmentAdap
     @NonNull
     @Override
     public ChatViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_chat_fragment, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_room, parent, false);
 //        view.setOnClickListener(chatFragment);
         return new ChatViewHolder(view);
     }
@@ -59,7 +59,7 @@ public class ChatFragmentAdapter extends ListAdapter<RoomModel, ChatFragmentAdap
             this.itemView = itemView;
             nameTextView = itemView.findViewById(R.id.nameTextView);
             descTextView = itemView.findViewById(R.id.descTextView);
-            timeTextView = itemView.findViewById(R.id.recvTimeTextView);
+            timeTextView = itemView.findViewById(R.id.receiveTimeTextView);
             iconImgView = itemView.findViewById(R.id.iconImgView);
             avatarImgView = itemView.findViewById(R.id.avatarImgView);
         }

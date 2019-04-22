@@ -7,8 +7,6 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -24,30 +22,30 @@ import vng.zalo.tdtai.zalo.zalo.models.RoomModel;
 import static vng.zalo.tdtai.zalo.zalo.utils.Constants.COLLECTION_BELONGS_TO;
 import static vng.zalo.tdtai.zalo.zalo.utils.Constants.COLLECTION_ROOMS;
 
-public class ChatFragmentViewModel extends ViewModel {
+public class OfficialAccountViewModel extends ViewModel {
     private List<Task<QuerySnapshot>> tasks;
 
-    public MutableLiveData<List<RoomModel>> liveRooms;
-    private static final String TAG = ChatFragmentViewModel.class.getSimpleName();
+    public MutableLiveData<List<RoomModel>> liveOfficialAccounts;
+    private static final String TAG = OfficialAccountViewModel.class.getSimpleName();
 
-    public ChatFragmentViewModel() {
-        liveRooms = new MutableLiveData<>((List<RoomModel>) new ArrayList<RoomModel>());
+    public OfficialAccountViewModel() {
+        liveOfficialAccounts = new MutableLiveData<>((List<RoomModel>) new ArrayList<RoomModel>());
 
         FirebaseFirestore firestore = ZaloApplication.getFirebaseInstance();
 
-        tasks = new ArrayList<>();
-
-        //get roomIds
-        tasks.add(firestore.collection(COLLECTION_BELONGS_TO)
-                .whereEqualTo("userPhone", ZaloApplication.currentUserPhone)
-                .get());
-
-        //get all rooms
-        tasks.add(firestore.collection(COLLECTION_ROOMS)
-                .get());
-
-        Tasks.whenAll(tasks)
-                .addOnCompleteListener(new RoomQueryListener());
+//        tasks = new ArrayList<>();
+//
+//        //get roomIds
+//        tasks.add(firestore.collection(COLLECTION_BELONGS_TO)
+//                .whereEqualTo("userPhone", ZaloApplication.currentUserPhone)
+//                .get());
+//
+//        //get all rooms
+//        tasks.add(firestore.collection(COLLECTION_ROOMS)
+//                .get());
+//
+//        Tasks.whenAll(tasks)
+//                .addOnCompleteListener(new OfficialAccountViewModel.RoomQueryListener());
     }
 
     class RoomQueryListener implements OnCompleteListener<Void> {
@@ -74,7 +72,7 @@ public class ChatFragmentViewModel extends ViewModel {
                         rooms.add(room);
                     }
                 }
-                liveRooms.setValue(rooms);
+                liveOfficialAccounts.setValue(rooms);
             } else {
                 Log.d(TAG, "Room Query fail");
             }

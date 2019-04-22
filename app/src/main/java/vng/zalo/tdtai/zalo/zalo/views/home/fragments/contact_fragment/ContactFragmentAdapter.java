@@ -4,8 +4,8 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapter;
-import vng.zalo.tdtai.zalo.zalo.views.home.fragments.contact_fragment.tab_fragments.ContactSubFragment;
-import vng.zalo.tdtai.zalo.zalo.views.home.fragments.contact_fragment.tab_fragments.OfficialAccountSubFragment;
+import vng.zalo.tdtai.zalo.zalo.views.home.fragments.contact_fragment.contacts.ContactSubFragment;
+import vng.zalo.tdtai.zalo.zalo.views.home.fragments.contact_fragment.official_account.OfficialAccountSubFragment;
 
 public class ContactFragmentAdapter extends FragmentStatePagerAdapter {
     private Fragment officialAccountSubFragment;

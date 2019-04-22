@@ -10,10 +10,12 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import vng.zalo.tdtai.zalo.R;
 import vng.zalo.tdtai.zalo.zalo.ZaloApplication;
-import vng.zalo.tdtai.zalo.zalo.dependency_factories.chat_activity.ChatActivityViewModelFactory;
+import vng.zalo.tdtai.zalo.zalo.dependency_factories.chat_activity.DaggerRoomActivityComponent;
+import vng.zalo.tdtai.zalo.zalo.dependency_factories.chat_activity.RoomActivityModule;
+import vng.zalo.tdtai.zalo.zalo.dependency_factories.chat_activity.RoomActivityViewModelFactory;
 import vng.zalo.tdtai.zalo.zalo.models.MessageModel;
 import vng.zalo.tdtai.zalo.zalo.utils.MessageModelDiffCallback;
-import vng.zalo.tdtai.zalo.zalo.viewmodels.ChatActivityViewModel;
+import vng.zalo.tdtai.zalo.zalo.viewmodels.RoomActivityViewModel;
 
 import android.os.Bundle;
 import android.text.Editable;
@@ -38,8 +40,8 @@ import static vng.zalo.tdtai.zalo.zalo.utils.Constants.COLLECTION_MESSAGES;
 import static vng.zalo.tdtai.zalo.zalo.utils.Constants.ROOM_ID;
 import static vng.zalo.tdtai.zalo.zalo.utils.Constants.ROOM_NAME;
 
-public class ChatActivity extends AppCompatActivity implements View.OnClickListener{
-    private static final String TAG = ChatActivity.class.getSimpleName();
+public class RoomActivity extends AppCompatActivity implements View.OnClickListener{
+    private static final String TAG = RoomActivity.class.getSimpleName();
 
     private RecyclerView recyclerView;
     private TextInputEditText msgTextInputEditText;
@@ -48,18 +50,22 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
     private ImageButton pictureImgButton;
     private ImageButton sendMsgImgButton;
 
-//    @Inject
-    ChatActivityViewModel viewModel;
+    @Inject
+    RoomActivityViewModel viewModel;
 
-    ChatActivityAdapter adapter;
+    RoomActivityAdapter adapter;
     LinearLayoutManager layoutManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_chat);
+        DaggerRoomActivityComponent.builder()
+                .roomActivityModule(new RoomActivityModule(this))
+                .build().inject(this);
 
-        Toolbar toolbar = findViewById(R.id.toolbarChatActivity);
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_room);
+
+        Toolbar toolbar = findViewById(R.id.toolbarRoomActivity);
         toolbar.setTitle(getIntent().getStringExtra(ROOM_NAME));
         setSupportActionBar(toolbar);
 
@@ -70,17 +76,17 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
             Log.e(TAG,"actionBar is null");
         }
 
-        recyclerView = findViewById(R.id.chatActivityRecyclerView);
+        recyclerView = findViewById(R.id.recyclerViewRoomActivity);
 
         layoutManager = new LinearLayoutManager(this);
 //        layoutManager.setStackFromEnd(true);
 
         recyclerView.setLayoutManager(layoutManager);
 
-        viewModel = ViewModelProviders.of(this, new ChatActivityViewModelFactory(getIntent(), getApplication()))
-                .get(ChatActivityViewModel.class);
+//        viewModel = ViewModelProviders.of(this, new RoomActivityViewModelFactory(getIntent(), getApplication()))
+//                .get(RoomActivityViewModel.class);
 
-        adapter = new ChatActivityAdapter(this, new MessageModelDiffCallback());
+        adapter = new RoomActivityAdapter(this, new MessageModelDiffCallback());
         viewModel.liveMessages.observe(this, new Observer<List<MessageModel>>() {
             @Override
             public void onChanged(List<MessageModel> messageModelList) {
@@ -130,7 +136,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_chat_activity, menu);
+        getMenuInflater().inflate(R.menu.menu_room_activity, menu);
         return true;
     }
 
@@ -167,7 +173,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                     newMessage.put("roomId",getIntent().getLongExtra(ROOM_ID,-1));
                     newMessage.put("senderPhone",message.senderPhone);
 
-                    ((ZaloApplication)getApplication()).firestore
+                    ZaloApplication.getFirebaseInstance()
                             .collection(COLLECTION_MESSAGES)
                             .document()
                             .set(newMessage)

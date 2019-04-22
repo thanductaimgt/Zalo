@@ -15,10 +15,6 @@ public class ZaloApplication extends MultiDexApplication{
     public static DateFormat dateFormat;
     public static String currentUserPhone;
 
-    @Inject
-    public FirebaseFirestore firestore;
-//    public
-
     @Override
     public void onCreate() {
         super.onCreate();
@@ -27,9 +23,13 @@ public class ZaloApplication extends MultiDexApplication{
                 .applicationModule(new ApplicationModule(this))
                 .build();
 //        ApplicationComponent applicationComponent = DaggerApplicationComponent.create();
-        applicationComponent.injectInto(this);
+//        applicationComponent.inject(this);
 //        firestore = FirebaseFirestore.getInstance();
         dateFormat = android.text.format.DateFormat.getDateFormat(getApplicationContext());
         currentUserPhone = "0123456789";
+    }
+
+    public static FirebaseFirestore getFirebaseInstance(){
+        return FirebaseFirestore.getInstance();
     }
 }

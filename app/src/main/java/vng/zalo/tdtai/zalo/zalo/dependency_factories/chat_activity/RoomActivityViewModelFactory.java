@@ -6,20 +6,18 @@ import android.content.Intent;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
-import vng.zalo.tdtai.zalo.zalo.viewmodels.ChatActivityViewModel;
+import vng.zalo.tdtai.zalo.zalo.viewmodels.RoomActivityViewModel;
 
-public class ChatActivityViewModelFactory implements ViewModelProvider.Factory {
-    private Application application;
+public class RoomActivityViewModelFactory implements ViewModelProvider.Factory {
     private Intent intent;
 
-    public ChatActivityViewModelFactory(Intent intent, Application application){
-        this.application = application;
+    RoomActivityViewModelFactory(Intent intent){
         this.intent = intent;
     }
 
     @NonNull
     @Override
     public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
-        return (T) new ChatActivityViewModel(intent, application);
+        return (T) new RoomActivityViewModel(intent);
     }
 }

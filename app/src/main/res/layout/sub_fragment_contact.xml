@@ -132,6 +132,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
                 <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/allContactRecyclerView"
                     android:layout_marginTop="@dimen/size_small_8dp"
                     app:layout_constraintTop_toBottomOf="@id/allContactTextView"
                     android:layout_width="match_parent"

@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
@@ -23,7 +22,7 @@
             android:layout_height="wrap_content"
             android:background="@android:drawable/editbox_background_normal"
             android:gravity="end"
-            android:text="TextView"
+            android:text="@string/placeholder_text"
             android:textAlignment="viewEnd"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -31,7 +30,7 @@
             android:id="@+id/sendTimeTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="TextView"
+            android:text="@string/placeholder_text"
             app:layout_constraintEnd_toEndOf="@+id/sendMsgConstraintLayout"
             app:layout_constraintTop_toBottomOf="@+id/sendMsgTextView" />
     </androidx.constraintlayout.widget.ConstraintLayout>

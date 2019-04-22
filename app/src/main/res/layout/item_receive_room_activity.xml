@@ -27,7 +27,7 @@
             android:text="TextView"/>
 
         <TextView
-            android:id="@+id/recvTimeTextView"
+            android:id="@+id/receiveTimeTextView"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:text="TextView"

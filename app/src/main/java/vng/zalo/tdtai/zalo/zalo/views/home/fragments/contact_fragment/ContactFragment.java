@@ -31,7 +31,7 @@ public class ContactFragment extends Fragment implements TabLayout.OnTabSelected
 
         TabLayout tabLayout = view.findViewById(R.id.subContactTabLayout);
         subContactViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
-        tabLayout.setOnTabSelectedListener(this);
+        tabLayout.addOnTabSelectedListener(this);
     }
 
     @Override

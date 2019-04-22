@@ -6,11 +6,11 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.DiffUtil;
 import vng.zalo.tdtai.zalo.zalo.models.RoomModel;
 
-public class ChatItemDiffCallback extends DiffUtil.ItemCallback<RoomModel> {
-    private static final String TAG = ChatItemDiffCallback.class.getSimpleName();
+public class RoomModelDiffCallback extends DiffUtil.ItemCallback<RoomModel> {
+    private static final String TAG = RoomModelDiffCallback.class.getSimpleName();
 
 //    @Inject
-    public ChatItemDiffCallback(){}
+    public RoomModelDiffCallback(){}
 
     @Override
     public boolean areItemsTheSame(@NonNull RoomModel oldItem, @NonNull RoomModel newItem) {

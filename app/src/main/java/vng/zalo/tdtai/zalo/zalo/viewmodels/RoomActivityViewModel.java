@@ -23,14 +23,13 @@ import static vng.zalo.tdtai.zalo.zalo.utils.Constants.COLLECTION_MESSAGES;
 import static vng.zalo.tdtai.zalo.zalo.utils.Constants.ROOM_AVATAR;
 import static vng.zalo.tdtai.zalo.zalo.utils.Constants.ROOM_ID;
 
-public class ChatActivityViewModel extends ViewModel {
+public class RoomActivityViewModel extends ViewModel {
     private Intent intent;
-    private static final String TAG = ChatActivityViewModel.class.getSimpleName();
-    private FirebaseFirestore fireStore;
+    private static final String TAG = RoomActivityViewModel.class.getSimpleName();
     public MutableLiveData<List<MessageModel>> liveMessages;
 
-    public ChatActivityViewModel(Intent intent, Application application){
-        fireStore = ((ZaloApplication)application).firestore;
+    public RoomActivityViewModel(Intent intent){
+        FirebaseFirestore firestore = ZaloApplication.getFirebaseInstance();
 
         liveMessages = new MutableLiveData<>((List<MessageModel>)new ArrayList<MessageModel>());
 
@@ -38,7 +37,7 @@ public class ChatActivityViewModel extends ViewModel {
         Long roomId = intent.getLongExtra(ROOM_ID,-1);
         Log.d(TAG,"roomId: "+roomId);
 
-        fireStore.collection(COLLECTION_MESSAGES)
+        firestore.collection(COLLECTION_MESSAGES)
                 .whereEqualTo("roomId",roomId)
                 .orderBy("id")
                 .get()

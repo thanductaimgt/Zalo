@@ -12,9 +12,19 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".zalo.views.home.fragments.chat_fragment.chat_activity.ChatActivity"
+        <activity
+            android:name=".zalo.views.splash.SplashActivity"
+            android:theme="@style/AppTheme.SplashTheme">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".zalo.views.home.fragments.chat_fragment.chat_activity.RoomActivity"
             android:parentActivityName=".zalo.views.home.HomeActivity"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".zalo.views.home.HomeActivity"
             android:label="@string/label_home_screen"
@@ -22,13 +32,6 @@
         <activity
             android:name=".zalo.views.login.LoginActivity"
             android:parentActivityName=".zalo.views.intro.IntroActivity" />
-        <activity android:name=".zalo.views.intro.IntroActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+        <activity android:name=".zalo.views.intro.IntroActivity" />
     </application>
-
 </manifest>

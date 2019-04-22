@@ -20,13 +20,13 @@ import vng.zalo.tdtai.zalo.zalo.utils.ModelViewHolder;
 import static vng.zalo.tdtai.zalo.zalo.utils.Constants.VIEW_TYPE_RECEIVER;
 import static vng.zalo.tdtai.zalo.zalo.utils.Constants.VIEW_TYPE_SENDER;
 
-public class ChatActivityAdapter extends ListAdapter<MessageModel,RecyclerView.ViewHolder> {
-    private ChatActivity chatActivity;
-    private static final String TAG = ChatActivityAdapter.class.getSimpleName();
+public class RoomActivityAdapter extends ListAdapter<MessageModel,RecyclerView.ViewHolder> {
+    private RoomActivity roomActivity;
+    private static final String TAG = RoomActivityAdapter.class.getSimpleName();
 
-    ChatActivityAdapter(ChatActivity chatActivity, @NonNull DiffUtil.ItemCallback<MessageModel> diffCallback) {
+    RoomActivityAdapter(RoomActivity roomActivity, @NonNull DiffUtil.ItemCallback<MessageModel> diffCallback) {
         super(diffCallback);
-        this.chatActivity = chatActivity;
+        this.roomActivity = roomActivity;
     }
 
     @Override
@@ -42,10 +42,10 @@ public class ChatActivityAdapter extends ListAdapter<MessageModel,RecyclerView.V
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         if(viewType == VIEW_TYPE_SENDER){
-            View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_send_chat_activity,parent,false);
+            View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_send_room_activity,parent,false);
             return new SenderViewHolder(v);
         } else {
-            View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_receive_chat_activity,parent,false);
+            View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_receive_room_activity,parent,false);
             return new ReceiverViewHolder(v);
         }
     }
@@ -87,7 +87,7 @@ public class ChatActivityAdapter extends ListAdapter<MessageModel,RecyclerView.V
         ReceiverViewHolder(@NonNull View itemView) {
             super(itemView);
             recvMsgTextView = itemView.findViewById(R.id.recvMsgTextView);
-            recvTimeTextView = itemView.findViewById(R.id.recvTimeTextView);
+            recvTimeTextView = itemView.findViewById(R.id.receiveTimeTextView);
             recvAvatarImgButton = itemView.findViewById(R.id.recvAvatarImgButton);
         }
 

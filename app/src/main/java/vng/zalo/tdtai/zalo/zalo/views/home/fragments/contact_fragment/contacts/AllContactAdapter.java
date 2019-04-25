@@ -5,7 +5,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
+import android.widget.ImageView;
 
 import androidx.recyclerview.widget.ListAdapter;
 import android.widget.TextView;
@@ -50,7 +50,7 @@ public class AllContactAdapter extends ListAdapter<ContactItemModel, AllContactA
     class ContactViewHolder extends RecyclerView.ViewHolder implements ModelViewHolder {
         View itemView;
         TextView phoneTextView;
-        ImageButton avatarImgButton;
+        ImageView avatarImgButton;
 
         ContactViewHolder(@NonNull View itemView) {
             super(itemView);

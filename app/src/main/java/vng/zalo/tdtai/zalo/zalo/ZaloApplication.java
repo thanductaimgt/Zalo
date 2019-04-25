@@ -18,10 +18,10 @@ public class ZaloApplication extends MultiDexApplication{
     @Override
     public void onCreate() {
         super.onCreate();
-        ApplicationComponent applicationComponent = DaggerApplicationComponent
-                .builder()
-                .applicationModule(new ApplicationModule(this))
-                .build();
+//        ApplicationComponent applicationComponent = DaggerApplicationComponent
+//                .builder()
+//                .applicationModule(new ApplicationModule(this))
+//                .build();
 //        ApplicationComponent applicationComponent = DaggerApplicationComponent.create();
 //        applicationComponent.inject(this);
 //        firestore = FirebaseFirestore.getInstance();

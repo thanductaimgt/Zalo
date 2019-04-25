@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 
 import com.google.android.material.textfield.TextInputEditText;
 
@@ -24,7 +25,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
         phoneTextInputEditText = findViewById(R.id.phoneTextInputEditText);
         passTextInputEditText = findViewById(R.id.passTextInputEditText);
-        ImageButton clearTextButton = findViewById(R.id.clearTextImgButton);
+        ImageView clearTextButton = findViewById(R.id.clearTextImgButton);
         Button loginButton = findViewById(R.id.loginButton);
 
         clearTextButton.setOnClickListener(this);

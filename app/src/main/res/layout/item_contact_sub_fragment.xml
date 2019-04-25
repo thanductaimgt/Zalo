@@ -15,7 +15,7 @@
         app:layout_constraintStart_toStartOf="@+id/guideline6"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <ImageButton
+    <ImageView
         android:id="@+id/avatarImgButtonContact"
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -34,7 +34,7 @@
         app:srcCompat="@drawable/common_google_signin_btn_icon_dark"
         android:contentDescription="@string/description_avatar" />
 
-    <ImageButton
+    <ImageView
         android:id="@+id/iconCallImgButtonContact"
         android:layout_width="0dp"
         android:layout_height="40dp"
@@ -44,10 +44,10 @@
         app:layout_constraintDimensionRatio="h,1:1"
         app:layout_constraintEnd_toStartOf="@+id/iconVideoImgButtonContact"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@android:drawable/ic_menu_call"
-        android:contentDescription="@string/description_video" />
+        app:srcCompat="@drawable/call"
+        android:contentDescription="@string/description_call" />
 
-    <ImageButton
+    <ImageView
         android:id="@+id/iconVideoImgButtonContact"
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -57,8 +57,8 @@
         app:layout_constraintDimensionRatio="h,1:1"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/iconCallImgButtonContact"
-        app:srcCompat="@android:drawable/presence_video_online"
-        android:contentDescription="@string/description_call" />
+        app:srcCompat="@drawable/video"
+        android:contentDescription="@string/description_video" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline6"

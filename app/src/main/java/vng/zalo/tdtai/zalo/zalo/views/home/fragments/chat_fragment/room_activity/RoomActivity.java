@@ -1,18 +1,17 @@
-package vng.zalo.tdtai.zalo.zalo.views.home.fragments.chat_fragment.chat_activity;
+package vng.zalo.tdtai.zalo.zalo.views.home.fragments.chat_fragment.room_activity;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.view.LayoutInflaterCompat;
 import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import vng.zalo.tdtai.zalo.R;
 import vng.zalo.tdtai.zalo.zalo.ZaloApplication;
 import vng.zalo.tdtai.zalo.zalo.dependency_factories.chat_activity.DaggerRoomActivityComponent;
 import vng.zalo.tdtai.zalo.zalo.dependency_factories.chat_activity.RoomActivityModule;
-import vng.zalo.tdtai.zalo.zalo.dependency_factories.chat_activity.RoomActivityViewModelFactory;
 import vng.zalo.tdtai.zalo.zalo.models.MessageModel;
 import vng.zalo.tdtai.zalo.zalo.utils.MessageModelDiffCallback;
 import vng.zalo.tdtai.zalo.zalo.viewmodels.RoomActivityViewModel;
@@ -24,7 +23,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ImageButton;
+import android.widget.ImageView;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -45,10 +44,10 @@ public class RoomActivity extends AppCompatActivity implements View.OnClickListe
 
     private RecyclerView recyclerView;
     private TextInputEditText msgTextInputEditText;
-    private ImageButton uploadFileImgButton;
-    private ImageButton voiceImgButton;
-    private ImageButton pictureImgButton;
-    private ImageButton sendMsgImgButton;
+    private ImageView uploadFileImgButton;
+    private ImageView voiceImgButton;
+    private ImageView pictureImgButton;
+    private ImageView sendMsgImgButton;
 
     @Inject
     RoomActivityViewModel viewModel;

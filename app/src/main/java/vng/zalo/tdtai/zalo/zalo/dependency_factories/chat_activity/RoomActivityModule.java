@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModelProviders;
 import dagger.Module;
 import dagger.Provides;
 import vng.zalo.tdtai.zalo.zalo.viewmodels.RoomActivityViewModel;
-import vng.zalo.tdtai.zalo.zalo.views.home.fragments.chat_fragment.chat_activity.RoomActivity;
+import vng.zalo.tdtai.zalo.zalo.views.home.fragments.chat_fragment.room_activity.RoomActivity;
 
 
 @Module

@@ -21,7 +21,7 @@ import vng.zalo.tdtai.zalo.zalo.dependency_factories.viewmodels_factory.ContactS
 import vng.zalo.tdtai.zalo.zalo.models.ContactItemModel;
 import vng.zalo.tdtai.zalo.zalo.utils.ContactModelDiffCallback;
 import vng.zalo.tdtai.zalo.zalo.viewmodels.ContactSubFragmentViewModel;
-import vng.zalo.tdtai.zalo.zalo.views.home.fragments.chat_fragment.chat_activity.RoomActivity;
+import vng.zalo.tdtai.zalo.zalo.views.home.fragments.chat_fragment.room_activity.RoomActivity;
 
 import static vng.zalo.tdtai.zalo.zalo.utils.Constants.ROOM_AVATAR;
 import static vng.zalo.tdtai.zalo.zalo.utils.Constants.ROOM_ID;

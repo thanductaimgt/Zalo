@@ -2,8 +2,8 @@
     <string name="label_app_name">Zalo</string>
     <string name="label_register">Đăng ký</string>
     <string name="label_log_in">Đăng nhập</string>
-    <string name="label_vietnamese">Tiếng Việt</string>
-    <string name="label_english">Tiếng Anh</string>
+    <string name="label_vietnamese"><b><u>Tiếng Việt</u></b></string>
+    <string name="label_english"><b><u>Tiếng Anh</u></b></string>
     <string name="label_get_password">Lấy lại mật khẩu</string>
     <string name="label_home_screen">Trang chủ</string>
     <string name="label_chat_tab">Tin nhắn</string>

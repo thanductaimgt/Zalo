@@ -1,4 +1,4 @@
-package vng.zalo.tdtai.zalo.zalo.views.home.fragments.chat_fragment.chat_activity;
+package vng.zalo.tdtai.zalo.zalo.views.home.fragments.chat_fragment.room_activity;
 
 import android.view.LayoutInflater;
 import android.view.View;

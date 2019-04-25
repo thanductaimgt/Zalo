@@ -42,7 +42,7 @@
         android:orientation="vertical"
         app:layout_constraintGuide_percent="0.1" />
 
-    <ImageButton
+    <ImageView
         android:id="@+id/recvAvatarImgButton"
         android:layout_width="35dp"
         android:layout_height="0dp"

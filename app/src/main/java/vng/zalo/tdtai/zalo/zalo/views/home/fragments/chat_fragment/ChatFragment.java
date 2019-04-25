@@ -21,7 +21,7 @@ import vng.zalo.tdtai.zalo.zalo.dependency_factories.viewmodels_factory.ChatFrag
 import vng.zalo.tdtai.zalo.zalo.models.RoomModel;
 import vng.zalo.tdtai.zalo.zalo.utils.RoomModelDiffCallback;
 import vng.zalo.tdtai.zalo.zalo.viewmodels.ChatFragmentViewModel;
-import vng.zalo.tdtai.zalo.zalo.views.home.fragments.chat_fragment.chat_activity.RoomActivity;
+import vng.zalo.tdtai.zalo.zalo.views.home.fragments.chat_fragment.room_activity.RoomActivity;
 
 import static vng.zalo.tdtai.zalo.zalo.utils.Constants.ROOM_AVATAR;
 import static vng.zalo.tdtai.zalo.zalo.utils.Constants.ROOM_ID;

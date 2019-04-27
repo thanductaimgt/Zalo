@@ -18,7 +18,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import vng.zalo.tdtai.zalo.R;
 import vng.zalo.tdtai.zalo.zalo.dependency_factories.viewmodels_factory.ChatFragmentViewModelFactory;
-import vng.zalo.tdtai.zalo.zalo.models.RoomModel;
+import vng.zalo.tdtai.zalo.zalo.models.RoomItem;
 import vng.zalo.tdtai.zalo.zalo.utils.RoomModelDiffCallback;
 import vng.zalo.tdtai.zalo.zalo.viewmodels.ChatFragmentViewModel;
 import vng.zalo.tdtai.zalo.zalo.views.home.fragments.chat_fragment.room_activity.RoomActivity;
@@ -52,9 +52,9 @@ public class ChatFragment extends Fragment implements View.OnClickListener {
 
         recyclerView.setAdapter(adapter);
 
-        viewModel.liveRooms.observe(getViewLifecycleOwner(), new Observer<List<RoomModel>>() {
+        viewModel.liveRoomItems.observe(getViewLifecycleOwner(), new Observer<List<RoomItem>>() {
             @Override
-            public void onChanged(List<RoomModel> rooms) {
+            public void onChanged(List<RoomItem> rooms) {
                 adapter.submitList(rooms);
                 Log.d(TAG,"onChanged livedata");
             }

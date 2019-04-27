@@ -16,15 +16,14 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.squareup.picasso.Picasso;
 
 import vng.zalo.tdtai.zalo.R;
-import vng.zalo.tdtai.zalo.zalo.models.ContactItemModel;
 import vng.zalo.tdtai.zalo.zalo.models.DataModel;
-import vng.zalo.tdtai.zalo.zalo.models.RoomModel;
+import vng.zalo.tdtai.zalo.zalo.models.RoomItem;
 import vng.zalo.tdtai.zalo.zalo.utils.ModelViewHolder;
 
-public class OfficialAccountAdapter extends ListAdapter<RoomModel, OfficialAccountAdapter.OfficialAccountViewHolder> {
+public class OfficialAccountAdapter extends ListAdapter<RoomItem, OfficialAccountAdapter.OfficialAccountViewHolder> {
     private OfficialAccountSubFragment officialAccountSubFragment;
 
-    OfficialAccountAdapter(OfficialAccountSubFragment officialAccountSubFragment, @NonNull DiffUtil.ItemCallback<RoomModel> diffCallback) {
+    OfficialAccountAdapter(OfficialAccountSubFragment officialAccountSubFragment, @NonNull DiffUtil.ItemCallback<RoomItem> diffCallback) {
         super(diffCallback);
         this.officialAccountSubFragment = officialAccountSubFragment;
     }
@@ -64,7 +63,7 @@ public class OfficialAccountAdapter extends ListAdapter<RoomModel, OfficialAccou
         @Override
         public void bind(DataModel dataModel) {
             itemView.setOnClickListener(officialAccountSubFragment);
-            RoomModel room = (RoomModel) dataModel;
+            RoomItem room = (RoomItem) dataModel;
 
             nameTextView.setText(room.name);
 

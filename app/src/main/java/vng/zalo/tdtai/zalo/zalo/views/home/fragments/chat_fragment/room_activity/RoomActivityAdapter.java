@@ -14,17 +14,17 @@ import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 import vng.zalo.tdtai.zalo.R;
 import vng.zalo.tdtai.zalo.zalo.ZaloApplication;
-import vng.zalo.tdtai.zalo.zalo.models.MessageModel;
+import vng.zalo.tdtai.zalo.zalo.models.Message;
 import vng.zalo.tdtai.zalo.zalo.models.DataModel;
 import vng.zalo.tdtai.zalo.zalo.utils.ModelViewHolder;
 import static vng.zalo.tdtai.zalo.zalo.utils.Constants.VIEW_TYPE_RECEIVER;
 import static vng.zalo.tdtai.zalo.zalo.utils.Constants.VIEW_TYPE_SENDER;
 
-public class RoomActivityAdapter extends ListAdapter<MessageModel,RecyclerView.ViewHolder> {
+public class RoomActivityAdapter extends ListAdapter<Message,RecyclerView.ViewHolder> {
     private RoomActivity roomActivity;
     private static final String TAG = RoomActivityAdapter.class.getSimpleName();
 
-    RoomActivityAdapter(RoomActivity roomActivity, @NonNull DiffUtil.ItemCallback<MessageModel> diffCallback) {
+    RoomActivityAdapter(RoomActivity roomActivity, @NonNull DiffUtil.ItemCallback<Message> diffCallback) {
         super(diffCallback);
         this.roomActivity = roomActivity;
     }
@@ -72,10 +72,10 @@ public class RoomActivityAdapter extends ListAdapter<MessageModel,RecyclerView.V
 
         @Override
         public void bind(DataModel dataModel) {
-            MessageModel messageModel = (MessageModel) dataModel;
+            Message message = (Message) dataModel;
 
-            sendMsgTextView.setText(messageModel.content);
-            sendTimeTextView.setText(ZaloApplication.dateFormat.format(messageModel.createdTime));
+            sendMsgTextView.setText(message.content);
+            sendTimeTextView.setText(ZaloApplication.dateFormat.format(message.createdTime.toDate()));
         }
     }
 
@@ -86,20 +86,21 @@ public class RoomActivityAdapter extends ListAdapter<MessageModel,RecyclerView.V
 
         ReceiverViewHolder(@NonNull View itemView) {
             super(itemView);
-            recvMsgTextView = itemView.findViewById(R.id.recvMsgTextView);
+            recvMsgTextView = itemView.findViewById(R.id.receiveMsgTextView);
             recvTimeTextView = itemView.findViewById(R.id.receiveTimeTextView);
-            recvAvatarImgButton = itemView.findViewById(R.id.recvAvatarImgButton);
+            recvAvatarImgButton = itemView.findViewById(R.id.receiveAvatarImgButton);
         }
 
         @Override
         public void bind(DataModel dataModel){
-            MessageModel messageModel = (MessageModel) dataModel;
+            Message message = (Message) dataModel;
             DateFormat dateFormat = android.text.format.DateFormat.getDateFormat(recvMsgTextView.getContext());
 
-            recvMsgTextView.setText(messageModel.content);
-            recvTimeTextView.setText(dateFormat.format( messageModel.createdTime));
+            recvMsgTextView.setText(message.content);
+            recvTimeTextView.setText(dateFormat.format( message.createdTime.toDate()));
+
             Picasso.with(recvMsgTextView.getContext())
-                    .load(messageModel.avatar)
+                    .load(message.senderAvatar)
                     .fit()
                     .into(recvAvatarImgButton);
         }

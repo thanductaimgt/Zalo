@@ -70,7 +70,12 @@ public class ChatFragmentAdapter extends ListAdapter<RoomModel, ChatFragmentAdap
             RoomModel room = (RoomModel) dataModel;
 
             nameTextView.setText(room.name);
-            timeTextView.setText(ZaloApplication.dateFormat.format(room.date));
+
+            if(room.lastMgsDate != null)
+                timeTextView.setText(ZaloApplication.dateFormat.format(room.lastMgsDate));
+            else
+                timeTextView.setText("");
+
             descTextView.setText(room.lastMsgContent);
             new Picasso.Builder(avatarImgView.getContext()).listener(new Picasso.Listener() {
                 @Override

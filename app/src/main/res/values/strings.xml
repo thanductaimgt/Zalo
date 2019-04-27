@@ -2,8 +2,8 @@
     <string name="label_app_name">Zalo</string>
     <string name="label_register">Đăng ký</string>
     <string name="label_log_in">Đăng nhập</string>
-    <string name="label_vietnamese"><b><u>Tiếng Việt</u></b></string>
-    <string name="label_english"><b><u>Tiếng Anh</u></b></string>
+    <string name="label_vietnamese"><u>Tiếng Việt</u></string>
+    <string name="label_english"><u>Tiếng Anh</u></string>
     <string name="label_get_password">Lấy lại mật khẩu</string>
     <string name="label_home_screen">Trang chủ</string>
     <string name="label_chat_tab">Tin nhắn</string>
@@ -29,6 +29,8 @@
     <string name="description_unseen">unseen icon</string>
     <string name="description_call">call</string>
     <string name="description_video">video</string>
+    <string name="description_interested_official_accounts">Official Account đã quan tâm</string>
+    <string name="description_find_more_official_accounts">Tìm thêm Official Account</string>
 
     <string name="hint_phone_number">Số điện thoại</string>
     <string name="hint_password">Mật khẩu</string>

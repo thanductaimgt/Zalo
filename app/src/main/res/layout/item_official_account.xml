@@ -7,12 +7,12 @@
     android:orientation="vertical">
 
     <ImageView
-        android:contentDescription="@string/description_avatar"
         android:id="@+id/avatarImgView"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_margin="@dimen/size_medium_16dp"
         android:background="@android:drawable/screen_background_light_transparent"
+        android:contentDescription="@string/description_avatar"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintDimensionRatio="h,1:1"
         app:layout_constraintEnd_toStartOf="@+id/guideline2"
@@ -32,12 +32,12 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
-        android:contentDescription="@string/description_preview_image"
         android:id="@+id/iconImgView"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginEnd="@dimen/size_medium_16dp"
         android:layout_marginRight="@dimen/size_medium_16dp"
+        android:contentDescription="@string/description_preview_image"
         android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -50,7 +50,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.25" />
+        app:layout_constraintGuide_percent="0.25304136" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline7"

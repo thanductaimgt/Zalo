@@ -1,70 +1,117 @@
 package vng.zalo.tdtai.zalo.zalo.viewmodels;
 
-import android.app.Application;
 import android.content.Intent;
 import android.util.Log;
-
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
-
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-
+import java.util.Map;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
-import vng.zalo.tdtai.zalo.zalo.ZaloApplication;
-import vng.zalo.tdtai.zalo.zalo.models.MessageModel;
 
-import static vng.zalo.tdtai.zalo.zalo.utils.Constants.COLLECTION_MESSAGES;
-import static vng.zalo.tdtai.zalo.zalo.utils.Constants.ROOM_AVATAR;
-import static vng.zalo.tdtai.zalo.zalo.utils.Constants.ROOM_ID;
+import javax.annotation.Nullable;
+
+import vng.zalo.tdtai.zalo.zalo.ZaloApplication;
+import vng.zalo.tdtai.zalo.zalo.models.Message;
+import vng.zalo.tdtai.zalo.zalo.models.Room;
+import vng.zalo.tdtai.zalo.zalo.models.RoomMember;
+import vng.zalo.tdtai.zalo.zalo.utils.Constants;
 
 public class RoomActivityViewModel extends ViewModel {
-    private Intent intent;
     private static final String TAG = RoomActivityViewModel.class.getSimpleName();
-    public MutableLiveData<List<MessageModel>> liveMessages;
+
+    private List<Task<QuerySnapshot>> tasks;
+
+    public Room room;
+    public MutableLiveData<List<Message>> liveMessages;
 
     public RoomActivityViewModel(Intent intent){
         FirebaseFirestore firestore = ZaloApplication.getFirebaseInstance();
 
-        liveMessages = new MutableLiveData<>((List<MessageModel>)new ArrayList<MessageModel>());
+        liveMessages = new MutableLiveData<>((List<Message>)new ArrayList<Message>());
 
-        this.intent = intent;
-        String roomId = intent.getStringExtra(ROOM_ID);
-        Log.d(TAG,"roomId: "+roomId);
+        room = new Room();
+        room.avatar = intent.getStringExtra(Constants.ROOM_AVATAR);
+        room.id = intent.getStringExtra(Constants.ROOM_ID);
+        room.name = intent.getStringExtra(Constants.ROOM_NAME);
 
-        firestore.collection(COLLECTION_MESSAGES)
-                .whereEqualTo("roomId",roomId)
-                .orderBy("id")
-                .get()
-                .addOnCompleteListener(new MessagesQueryListener());
+        //create current room reference
+        DocumentReference currentRoom = firestore.collection(Constants.COLLECTION_ROOMS)
+                .document(room.id);
+
+        tasks = new ArrayList<>();
+
+        //get document
+        currentRoom.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if(task.isSuccessful()){
+                    room.createdTime = task.getResult().getTimestamp("createdTime");
+                } else {
+                    Log.d(TAG,"Get document fail");
+                }
+            }
+        });
+
+        //get messages
+        Query getMessagesQuery = currentRoom.collection(Constants.COLLECTION_MESSAGES)
+                .orderBy("createdTime");
+        tasks.add(getMessagesQuery.get());
+        //observe messages change
+        getMessagesQuery.addSnapshotListener(new MessageEventListener());
+
+        //get members
+        tasks.add(currentRoom.collection(Constants.COLLECTION_MEMBERS)
+                .get());
+
+        Tasks.whenAll(tasks).addOnCompleteListener(new RoomQueryListener());
     }
 
-    class MessagesQueryListener implements OnCompleteListener<QuerySnapshot>{
-
+    class MessageEventListener implements EventListener<QuerySnapshot>{
         @Override
-        public void onComplete(@NonNull Task<QuerySnapshot> task) {
-            if(task.isSuccessful()){
-                Log.d(TAG,"MessagesQuery successful\n"+task.getException());
-                List<MessageModel> messages = new ArrayList<>();
-                for(QueryDocumentSnapshot doc: task.getResult()){
-                    MessageModel message = new MessageModel();
-                    message.id = doc.getLong("id");
-                    message.content = doc.getString("content");
-                    message.avatar = intent.getStringExtra(ROOM_AVATAR);
-                    message.senderPhone = doc.getString("senderPhone");
-                    message.createdTime = doc.getDate("createdTime");
+        public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
+            updateLiveMessagesValue(queryDocumentSnapshots);
+        }
+    }
 
-                    messages.add(message);
+    class RoomQueryListener implements OnCompleteListener<Void>{
+        @Override
+        public void onComplete(@NonNull Task<Void> task) {
+            if(task.isSuccessful()){
+                //save members in room
+                Map<String, RoomMember> memberMap = new HashMap<>();
+                for(DocumentSnapshot doc: tasks.get(1).getResult()){
+                    memberMap.put(doc.getString("phone"), RoomMember.docToRoomMember(doc));
                 }
-                liveMessages.setValue(messages);
+                room.memberMap = memberMap;
+
+                //set livedata value
+                updateLiveMessagesValue(tasks.get(0).getResult());
             } else {
-                Log.d(TAG,"MessagesQuery unsuccessful\n"+task.getException());
+                Log.d(TAG,"RoomQuery fail");
             }
+        }
+    }
+
+    void updateLiveMessagesValue(QuerySnapshot docs){
+        //set livedata value
+        if(room.memberMap!=null){
+            List<Message> messages = new ArrayList<>();
+            for(DocumentSnapshot doc: docs){
+                messages.add(Message.docToMessage(doc, room.memberMap));
+            }
+            liveMessages.setValue(messages);
         }
     }
 }

@@ -7,6 +7,7 @@
     tools:context=".zalo.views.intro.IntroActivity">
 
     <androidx.viewpager.widget.ViewPager
+        android:layout_margin="@dimen/size_large_32dp"
         android:id="@+id/viewPager"
         android:layout_width="0dp"
         android:layout_height="0dp"

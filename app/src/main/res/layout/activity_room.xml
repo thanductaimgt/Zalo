@@ -34,6 +34,7 @@
         app:layout_constraintEnd_toStartOf="@id/pictureImgButton"
         app:layout_constraintStart_toEndOf="@+id/emojiImgButton" />
     <ImageView
+        android:contentDescription="@string/description_emoji_icon"
         android:id="@+id/emojiImgButton"
         android:layout_width="30dp"
         android:layout_height="0dp"
@@ -47,6 +48,7 @@
         />
 
     <ImageView
+        android:contentDescription="@string/description_attach_picture_icon"
         android:id="@+id/pictureImgButton"
         android:layout_width="25dp"
         android:layout_height="0dp"
@@ -61,6 +63,7 @@
         app:srcCompat="@drawable/photo" />
 
     <ImageView
+        android:contentDescription="@string/description_send_icon"
         android:id="@+id/sendMsgImgButton"
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -73,6 +76,7 @@
         app:srcCompat="@drawable/send" />
 
     <ImageView
+        android:contentDescription="@string/description_attach_voice_icon"
         android:layout_marginRight="@dimen/icon_space_5dp"
         android:id="@+id/voiceImgButton"
         android:layout_width="0dp"
@@ -86,6 +90,7 @@
         android:layout_marginEnd="@dimen/icon_space_5dp" />
 
     <ImageView
+        android:contentDescription="@string/description_attach_file_icon"
         android:layout_marginRight="@dimen/icon_space_5dp"
         android:id="@+id/uploadFileImgButton"
         android:layout_width="0dp"

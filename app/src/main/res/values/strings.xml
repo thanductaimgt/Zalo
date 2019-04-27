@@ -31,6 +31,12 @@
     <string name="description_video">video</string>
     <string name="description_interested_official_accounts">Official Account đã quan tâm</string>
     <string name="description_find_more_official_accounts">Tìm thêm Official Account</string>
+    <string name="description_clear_text_icon">xóa tất cả</string>
+    <string name="description_emoji_icon">biểu tượng cảm xúc</string>
+    <string name="description_attach_file_icon">chèn tệp</string>
+    <string name="description_attach_voice_icon">chèn âm thanh</string>
+    <string name="description_attach_picture_icon">chèn ảnh</string>
+    <string name="description_send_icon">gửi</string>
 
     <string name="hint_phone_number">Số điện thoại</string>
     <string name="hint_password">Mật khẩu</string>

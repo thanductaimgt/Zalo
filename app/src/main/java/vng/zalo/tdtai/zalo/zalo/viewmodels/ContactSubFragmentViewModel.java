@@ -34,17 +34,17 @@ public class ContactSubFragmentViewModel extends ViewModel {
         FirebaseFirestore firestore = ZaloApplication.getFirebaseInstance();
         liveContacts = new MutableLiveData<>((List<ContactItemModel>) new ArrayList<ContactItemModel>());
 
-        tasks = new ArrayList<>();
-
-        //get contacts'phone
-        tasks.add(firestore.collection(COLLECTION_IS_FRIEND_OF)
-                .whereArrayContains("userPhones", ZaloApplication.currentUserPhone)
-                .get());
-
-        tasks.add(firestore.collection(COLLECTION_USERS)
-                .get());
-
-        Tasks.whenAll(tasks).addOnCompleteListener(new ContactQueryListener());
+//        tasks = new ArrayList<>();
+//
+//        //get contacts'phone
+//        tasks.add(firestore.collection(COLLECTION_IS_FRIEND_OF)
+//                .whereArrayContains("userPhones", ZaloApplication.currentUserPhone)
+//                .get());
+//
+//        tasks.add(firestore.collection(COLLECTION_USERS)
+//                .get());
+//
+//        Tasks.whenAll(tasks).addOnCompleteListener(new ContactQueryListener());
     }
 
     class ContactQueryListener implements OnCompleteListener<Void> {

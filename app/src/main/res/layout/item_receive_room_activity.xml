@@ -4,35 +4,35 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:paddingTop="@dimen/size_small_8dp"
     android:orientation="vertical">
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/recvMsgLinearLayout"
-        app:layout_constraintBottom_toBottomOf="@+id/recvAvatarImgButton"
-        app:layout_constraintEnd_toStartOf="@+id/guideline5"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toEndOf="@+id/recvAvatarImgButton"
-        app:layout_constraintTop_toTopOf="@+id/recvAvatarImgButton"
+        android:id="@+id/receiveMsgLinearLayout"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/size_small_8dp"
-        android:layout_marginLeft="@dimen/size_small_8dp">
+        app:layout_constraintBottom_toBottomOf="@+id/receiveAvatarImgButton"
+        app:layout_constraintEnd_toStartOf="@+id/guideline5"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@id/guideline4"
+        app:layout_constraintTop_toTopOf="@+id/receiveAvatarImgButton">
+
         <TextView
-            android:id="@+id/recvMsgTextView"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            android:background="@android:drawable/editbox_background_normal"
+            android:id="@+id/receiveMsgTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="TextView"/>
+            android:background="@android:drawable/editbox_background_normal"
+            android:text="@string/placeholder_text"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/receiveTimeTextView"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="TextView"
+            android:text="@string/placeholder_text"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/recvMsgTextView" />
+            app:layout_constraintTop_toBottomOf="@id/receiveMsgTextView" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.constraintlayout.widget.Guideline
@@ -40,17 +40,17 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.1" />
+        app:layout_constraintGuide_percent="0.15" />
 
     <ImageView
-        android:id="@+id/recvAvatarImgButton"
-        android:layout_width="35dp"
+        android:id="@+id/receiveAvatarImgButton"
+        android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
+        android:layout_marginStart="@dimen/size_small_8dp"
+        android:layout_marginLeft="@dimen/size_small_8dp"
+        android:layout_marginEnd="@dimen/size_small_8dp"
+        android:layout_marginRight="@dimen/size_small_8dp"
+        android:contentDescription="@string/description_avatar"
         app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintEnd_toStartOf="@+id/guideline4"
         app:layout_constraintStart_toStartOf="parent"

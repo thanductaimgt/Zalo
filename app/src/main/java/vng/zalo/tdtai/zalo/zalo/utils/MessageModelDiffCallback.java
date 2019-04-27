@@ -4,19 +4,19 @@ import javax.inject.Inject;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.DiffUtil;
-import vng.zalo.tdtai.zalo.zalo.models.MessageModel;
+import vng.zalo.tdtai.zalo.zalo.models.Message;
 
-public class MessageModelDiffCallback extends DiffUtil.ItemCallback<MessageModel> {
+public class MessageModelDiffCallback extends DiffUtil.ItemCallback<Message> {
     @Inject
     public MessageModelDiffCallback(){}
 
     @Override
-    public boolean areItemsTheSame(@NonNull MessageModel oldItem, @NonNull MessageModel newItem) {
-        return oldItem.id.equals(newItem.id);
+    public boolean areItemsTheSame(@NonNull Message oldItem, @NonNull Message newItem) {
+        return oldItem.createdTime.equals(newItem.createdTime);
     }
 
     @Override
-    public boolean areContentsTheSame(@NonNull MessageModel oldItem, @NonNull MessageModel newItem) {
+    public boolean areContentsTheSame(@NonNull Message oldItem, @NonNull Message newItem) {
         return oldItem.equals(newItem);
     }
 }

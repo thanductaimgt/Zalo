@@ -24,16 +24,7 @@ public class HomeActivity extends AppCompatActivity implements TabLayout.OnTabSe
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        // Create the adapter that will return a fragment for each of the three
-        // primary sections of the activity.
-        /**
-         * The {@link androidx.viewpager.widget.PagerAdapter} that will provide
-         * fragments for each of the sections. We use a
-         * {@link FragmentPagerAdapter} derivative, which will keep every
-         * loaded fragment in memory. If this becomes too memory intensive, it
-         * may be best to switch to a
-         * androidx.fragment.app.FragmentStatePagerAdapter.
-         */
+
         HomeAdapter mHomeAdapter = new HomeAdapter(getSupportFragmentManager());
 
         // Set up the ViewPager with the sections adapter.
@@ -45,7 +36,7 @@ public class HomeActivity extends AppCompatActivity implements TabLayout.OnTabSe
         //tablayout react to to swipe
         mViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
 
-        tabLayout.setOnTabSelectedListener(this);
+        tabLayout.addOnTabSelectedListener(this);
     }
 
 

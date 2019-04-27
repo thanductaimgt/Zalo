@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -18,14 +19,14 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.Transaction;
 
-import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -35,15 +36,12 @@ import vng.zalo.tdtai.zalo.R;
 import vng.zalo.tdtai.zalo.zalo.ZaloApplication;
 import vng.zalo.tdtai.zalo.zalo.dependency_factories.chat_activity.DaggerRoomActivityComponent;
 import vng.zalo.tdtai.zalo.zalo.dependency_factories.chat_activity.RoomActivityModule;
-import vng.zalo.tdtai.zalo.zalo.models.MessageModel;
+import vng.zalo.tdtai.zalo.zalo.models.Message;
+import vng.zalo.tdtai.zalo.zalo.models.RoomMember;
+import vng.zalo.tdtai.zalo.zalo.utils.Constants;
 import vng.zalo.tdtai.zalo.zalo.utils.MessageModelDiffCallback;
+import vng.zalo.tdtai.zalo.zalo.utils.Utils;
 import vng.zalo.tdtai.zalo.zalo.viewmodels.RoomActivityViewModel;
-
-import static vng.zalo.tdtai.zalo.zalo.utils.Constants.COLLECTION_MESSAGES;
-import static vng.zalo.tdtai.zalo.zalo.utils.Constants.COLLECTION_ROOMS;
-import static vng.zalo.tdtai.zalo.zalo.utils.Constants.ROOM_AVATAR;
-import static vng.zalo.tdtai.zalo.zalo.utils.Constants.ROOM_ID;
-import static vng.zalo.tdtai.zalo.zalo.utils.Constants.ROOM_NAME;
 
 public class RoomActivity extends AppCompatActivity implements View.OnClickListener {
     private static final String TAG = RoomActivity.class.getSimpleName();
@@ -54,8 +52,6 @@ public class RoomActivity extends AppCompatActivity implements View.OnClickListe
     private ImageView voiceImgButton;
     private ImageView pictureImgButton;
     private ImageView sendMsgImgButton;
-
-    private String roomId;
 
     @Inject
     RoomActivityViewModel viewModel;
@@ -73,7 +69,7 @@ public class RoomActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_room);
 
         Toolbar toolbar = findViewById(R.id.toolbarRoomActivity);
-        toolbar.setTitle(getIntent().getStringExtra(ROOM_NAME));
+        toolbar.setTitle(getIntent().getStringExtra(Constants.ROOM_NAME));
         setSupportActionBar(toolbar);
 
         ActionBar actionBar = getSupportActionBar();
@@ -90,17 +86,20 @@ public class RoomActivity extends AppCompatActivity implements View.OnClickListe
 
         recyclerView.setLayoutManager(layoutManager);
 
-//        viewModel = ViewModelProviders.of(this, new RoomActivityViewModelFactory(getIntent(), getApplication()))
-//                .get(RoomActivityViewModel.class);
-
-        adapter = new RoomActivityAdapter(this, new MessageModelDiffCallback());
-        viewModel.liveMessages.observe(this, new Observer<List<MessageModel>>() {
+        viewModel.liveMessages.observe(this, new Observer<List<Message>>() {
             @Override
-            public void onChanged(List<MessageModel> messageModelList) {
-                adapter.submitList(messageModelList);
+            public void onChanged(List<Message> messageList) {
+                adapter.submitList(messageList, new Runnable() {
+                    @Override
+                    public void run() {
+                        recyclerView.smoothScrollToPosition(Math.max(adapter.getItemCount()-1,0));
+                    }
+                });
                 Log.d(TAG, "onChanged liveData");
             }
         });
+
+        adapter = new RoomActivityAdapter(this, new MessageModelDiffCallback());
 
         recyclerView.setAdapter(adapter);
 //        recyclerView.smoothScrollToPosition(Math.max(adapter.getItemCount()-1,0));
@@ -139,8 +138,6 @@ public class RoomActivity extends AppCompatActivity implements View.OnClickListe
         });
 
         sendMsgImgButton.setOnClickListener(this);
-
-        roomId = getIntent().getStringExtra(ROOM_ID);
     }
 
     @Override
@@ -168,74 +165,89 @@ public class RoomActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.sendMsgImgButton:
-                String textToSend = msgTextInputEditText.getText() == null ? "" : msgTextInputEditText.getText().toString();
-                final List<MessageModel> msgList = viewModel.liveMessages.getValue();
-                if (msgList != null) {
-                    final MessageModel message = new MessageModel();
-                    message.id = (long) msgList.size();
-                    message.content = textToSend;
-
-                    final Map<String, Object> newMessage = new HashMap<>();
-                    newMessage.put("content", message.content);
-                    newMessage.put("createdTime", message.createdTime);
-                    newMessage.put("id", message.id);
-                    newMessage.put("senderPhone", message.senderPhone);
-
-                    if (roomId != null) {
-                        newMessage.put("roomId", roomId);
-
-                        addMessage(newMessage, msgList, message);
-                    } else {
-                        Map<String, Object> newRoom = new HashMap<>();
-                        newRoom.put("avatar", getIntent().getStringExtra(ROOM_AVATAR));
-                        newRoom.put("lastMsgDate", new Date());
-                        newRoom.put("name", "");
-
-                        final DocumentReference newRoomDocument = ZaloApplication.getFirebaseInstance()
-                                .collection(COLLECTION_ROOMS)
-                                .document();
-
-                        newRoomDocument.set(newRoom)
-                                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<Void> task) {
-                                        if (task.isSuccessful()) {
-                                            roomId = newRoomDocument.getId();
-                                            newMessage.put("roomId", roomId);
-
-                                            addMessage(newMessage, msgList, message);
-                                        } else {
-                                            Log.d(TAG, "Fail to create new room");
-                                        }
-                                    }
-                                });
-                    }
-                } else {
-                    Log.d(TAG, "liveData value is null");
-                }
+                addMessageToFirestore();
 
                 msgTextInputEditText.setText("");
                 break;
         }
     }
 
-    void addMessage(Map<String, Object> newMessage, final List<MessageModel> msgList, final MessageModel message) {
-        ZaloApplication.getFirebaseInstance()
-                .collection(COLLECTION_MESSAGES)
-                .document()
-                .set(newMessage)
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        msgList.add(message);
-                        viewModel.liveMessages.setValue(msgList);
+    void addMessageToFirestore(){
+        String textToSend = msgTextInputEditText.getText() == null ? "" : msgTextInputEditText.getText().toString();
+
+        final Message message = new Message();
+        message.content = textToSend;
+        message.senderPhone = ZaloApplication.currentUserPhone;
+        message.createdTime = Timestamp.now();
+
+        ZaloApplication.getFirebaseInstance().runTransaction(new Transaction.Function<Void>() {
+            @Nullable
+            @Override
+            public Void apply(@NonNull Transaction transaction){
+                //add message
+                ZaloApplication.getFirebaseInstance()
+                        .collection(Constants.COLLECTION_ROOMS)
+                        .document(viewModel.room.id)
+                        .collection(Constants.COLLECTION_MESSAGES)
+                        .document()
+                        .set(message.toMap());
+
+                //for all users in this room, change last message
+                for(Map.Entry<String, RoomMember> entry :viewModel.room.memberMap.entrySet()){
+                    String curUserPhone = entry.getKey();
+                    String lastMsg = curUserPhone.equals(ZaloApplication.currentUserPhone)? "Tôi: ":(curUserPhone+": ");
+                    lastMsg += message.content;
+                    if(lastMsg.length() > Constants.MAX_TEXT_PREVIEW_LEN){
+                        lastMsg = lastMsg.substring(0,Constants.MAX_TEXT_PREVIEW_LEN) + "...";
                     }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.d(TAG, "Fail to insert message to fireBase");
-                    }
-                });
+
+                    DocumentReference currentRoom = ZaloApplication.getFirebaseInstance()
+                            .collection(Constants.COLLECTION_USERS)
+                            .document(curUserPhone)
+                            .collection(Constants.COLLECTION_ROOMS)
+                            .document(viewModel.room.id);
+
+                    currentRoom.get()
+                            .addOnCompleteListener(new GetRoomQueryListener(currentRoom, lastMsg, message.createdTime));
+                }
+
+                return null;
+            }
+        });
+    }
+
+    class GetRoomQueryListener implements OnCompleteListener<DocumentSnapshot>{
+        private DocumentReference currentRoom;
+        private String lastMsg;
+        private Timestamp lastMsgTime;
+
+        GetRoomQueryListener(DocumentReference currentRoom, String lastMsg, Timestamp lastMsgTime){
+            this.currentRoom = currentRoom;
+            this.lastMsg = lastMsg;
+            this.lastMsgTime = lastMsgTime;
+        }
+        @Override
+        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+            if(task.isSuccessful()){
+                Map<String, Object> newRoomItem = Utils.RoomItemDocumentToMap(task.getResult());
+                newRoomItem.put("lastMsg",lastMsg);
+                newRoomItem.put("lastMsgTime",lastMsgTime);
+                Log.d(TAG, newRoomItem.toString());
+
+                currentRoom.set(newRoomItem)
+                        .addOnCompleteListener(new AddRoomQueryListener());
+            } else {
+                Log.d(TAG,"GetRoomQuery fail");
+            }
+        }
+    }
+
+    class AddRoomQueryListener implements OnCompleteListener<Void>{
+        @Override
+        public void onComplete(@NonNull Task<Void> task) {
+            if(!task.isSuccessful()){
+                Log.d(TAG,"AddRoomQuery fail");
+            }
+        }
     }
 }

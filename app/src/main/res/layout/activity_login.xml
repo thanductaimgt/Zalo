@@ -98,6 +98,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
+        android:contentDescription="@string/description_clear_text_icon"
         android:layout_marginBottom="@dimen/size_small_8dp"
         android:id="@+id/clearTextImgButton"
         android:layout_width="30dp"

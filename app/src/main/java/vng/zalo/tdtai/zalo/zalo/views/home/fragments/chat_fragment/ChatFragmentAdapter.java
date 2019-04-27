@@ -16,14 +16,14 @@ import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 import vng.zalo.tdtai.zalo.R;
 import vng.zalo.tdtai.zalo.zalo.ZaloApplication;
-import vng.zalo.tdtai.zalo.zalo.models.RoomModel;
+import vng.zalo.tdtai.zalo.zalo.models.RoomItem;
 import vng.zalo.tdtai.zalo.zalo.models.DataModel;
 import vng.zalo.tdtai.zalo.zalo.utils.ModelViewHolder;
 
-public class ChatFragmentAdapter extends ListAdapter<RoomModel, ChatFragmentAdapter.ChatViewHolder> {
+public class ChatFragmentAdapter extends ListAdapter<RoomItem, ChatFragmentAdapter.ChatViewHolder> {
     private ChatFragment chatFragment;
 
-    ChatFragmentAdapter(ChatFragment chatFragment, @NonNull DiffUtil.ItemCallback<RoomModel> diffCallback) {
+    ChatFragmentAdapter(ChatFragment chatFragment, @NonNull DiffUtil.ItemCallback<RoomItem> diffCallback) {
         super(diffCallback);
         this.chatFragment = chatFragment;
     }
@@ -67,26 +67,27 @@ public class ChatFragmentAdapter extends ListAdapter<RoomModel, ChatFragmentAdap
         @Override
         public void bind(DataModel dataModel) {
             itemView.setOnClickListener(chatFragment);
-            RoomModel room = (RoomModel) dataModel;
+            RoomItem roomItem = (RoomItem) dataModel;
 
-            nameTextView.setText(room.name);
+            nameTextView.setText(roomItem.name);
 
-            if(room.lastMgsDate != null)
-                timeTextView.setText(ZaloApplication.dateFormat.format(room.lastMgsDate));
+            if(roomItem.lastMsgTime != null)
+                timeTextView.setText(ZaloApplication.dateFormat.format(roomItem.lastMsgTime.toDate()));
             else
                 timeTextView.setText("");
 
-            descTextView.setText(room.lastMsgContent);
+            descTextView.setText(roomItem.lastMsg);
             new Picasso.Builder(avatarImgView.getContext()).listener(new Picasso.Listener() {
                 @Override
                 public void onImageLoadFailed(Picasso picasso, Uri uri, Exception exception) {
                     Log.e(ChatFragmentAdapter.this.getClass().getSimpleName(), exception.getMessage());
                     exception.printStackTrace();
                 }
-            }).build().load(room.avatar)
+            }).build().load(roomItem.avatar)
                     .fit()
                     .into(avatarImgView);
-            if (room.showIcon)
+
+            if (roomItem.unseenMsgNum > 0)
                 iconImgView.setVisibility(View.VISIBLE);
         }
     }

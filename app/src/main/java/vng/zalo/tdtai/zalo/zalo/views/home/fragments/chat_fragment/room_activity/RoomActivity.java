@@ -1,21 +1,5 @@
 package vng.zalo.tdtai.zalo.zalo.views.home.fragments.chat_fragment.room_activity;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import androidx.core.view.LayoutInflaterCompat;
-import androidx.lifecycle.Observer;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import vng.zalo.tdtai.zalo.R;
-import vng.zalo.tdtai.zalo.zalo.ZaloApplication;
-import vng.zalo.tdtai.zalo.zalo.dependency_factories.chat_activity.DaggerRoomActivityComponent;
-import vng.zalo.tdtai.zalo.zalo.dependency_factories.chat_activity.RoomActivityModule;
-import vng.zalo.tdtai.zalo.zalo.models.MessageModel;
-import vng.zalo.tdtai.zalo.zalo.utils.MessageModelDiffCallback;
-import vng.zalo.tdtai.zalo.zalo.viewmodels.RoomActivityViewModel;
-
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -25,21 +9,43 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.lifecycle.Observer;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.firebase.firestore.DocumentReference;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
 
+import vng.zalo.tdtai.zalo.R;
+import vng.zalo.tdtai.zalo.zalo.ZaloApplication;
+import vng.zalo.tdtai.zalo.zalo.dependency_factories.chat_activity.DaggerRoomActivityComponent;
+import vng.zalo.tdtai.zalo.zalo.dependency_factories.chat_activity.RoomActivityModule;
+import vng.zalo.tdtai.zalo.zalo.models.MessageModel;
+import vng.zalo.tdtai.zalo.zalo.utils.MessageModelDiffCallback;
+import vng.zalo.tdtai.zalo.zalo.viewmodels.RoomActivityViewModel;
+
 import static vng.zalo.tdtai.zalo.zalo.utils.Constants.COLLECTION_MESSAGES;
+import static vng.zalo.tdtai.zalo.zalo.utils.Constants.COLLECTION_ROOMS;
+import static vng.zalo.tdtai.zalo.zalo.utils.Constants.ROOM_AVATAR;
 import static vng.zalo.tdtai.zalo.zalo.utils.Constants.ROOM_ID;
 import static vng.zalo.tdtai.zalo.zalo.utils.Constants.ROOM_NAME;
 
-public class RoomActivity extends AppCompatActivity implements View.OnClickListener{
+public class RoomActivity extends AppCompatActivity implements View.OnClickListener {
     private static final String TAG = RoomActivity.class.getSimpleName();
 
     private RecyclerView recyclerView;
@@ -48,6 +54,8 @@ public class RoomActivity extends AppCompatActivity implements View.OnClickListe
     private ImageView voiceImgButton;
     private ImageView pictureImgButton;
     private ImageView sendMsgImgButton;
+
+    private String roomId;
 
     @Inject
     RoomActivityViewModel viewModel;
@@ -69,10 +77,10 @@ public class RoomActivity extends AppCompatActivity implements View.OnClickListe
         setSupportActionBar(toolbar);
 
         ActionBar actionBar = getSupportActionBar();
-        if(actionBar != null){
+        if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
         } else {
-            Log.e(TAG,"actionBar is null");
+            Log.e(TAG, "actionBar is null");
         }
 
         recyclerView = findViewById(R.id.recyclerViewRoomActivity);
@@ -90,7 +98,7 @@ public class RoomActivity extends AppCompatActivity implements View.OnClickListe
             @Override
             public void onChanged(List<MessageModel> messageModelList) {
                 adapter.submitList(messageModelList);
-                Log.d(TAG,"onChanged liveData");
+                Log.d(TAG, "onChanged liveData");
             }
         });
 
@@ -116,7 +124,7 @@ public class RoomActivity extends AppCompatActivity implements View.OnClickListe
 
             @Override
             public void afterTextChanged(Editable s) {
-                if(s.length() == 0){
+                if (s.length() == 0) {
                     sendMsgImgButton.setVisibility(View.GONE);
                     uploadFileImgButton.setVisibility(View.VISIBLE);
                     voiceImgButton.setVisibility(View.VISIBLE);
@@ -131,6 +139,8 @@ public class RoomActivity extends AppCompatActivity implements View.OnClickListe
         });
 
         sendMsgImgButton.setOnClickListener(this);
+
+        roomId = getIntent().getStringExtra(ROOM_ID);
     }
 
     @Override
@@ -156,39 +166,50 @@ public class RoomActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
+        switch (v.getId()) {
             case R.id.sendMsgImgButton:
-                String textToSend = msgTextInputEditText.getText() == null? "" : msgTextInputEditText.getText().toString();
+                String textToSend = msgTextInputEditText.getText() == null ? "" : msgTextInputEditText.getText().toString();
                 final List<MessageModel> msgList = viewModel.liveMessages.getValue();
-                if(msgList != null){
+                if (msgList != null) {
                     final MessageModel message = new MessageModel();
                     message.id = (long) msgList.size();
                     message.content = textToSend;
 
-                    Map<String, Object> newMessage = new HashMap<>();
-                    newMessage.put("content",message.content);
-                    newMessage.put("createdTime",message.createdTime);
-                    newMessage.put("id",message.id);
-                    newMessage.put("roomId",getIntent().getLongExtra(ROOM_ID,-1));
-                    newMessage.put("senderPhone",message.senderPhone);
+                    final Map<String, Object> newMessage = new HashMap<>();
+                    newMessage.put("content", message.content);
+                    newMessage.put("createdTime", message.createdTime);
+                    newMessage.put("id", message.id);
+                    newMessage.put("senderPhone", message.senderPhone);
 
-                    ZaloApplication.getFirebaseInstance()
-                            .collection(COLLECTION_MESSAGES)
-                            .document()
-                            .set(newMessage)
-                            .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                @Override
-                                public void onSuccess(Void aVoid) {
-                                    msgList.add(message);
-                                    viewModel.liveMessages.setValue(msgList);
-                                }
-                            })
-                            .addOnFailureListener(new OnFailureListener() {
-                                @Override
-                                public void onFailure(@NonNull Exception e) {
-                                    Log.d(TAG, "Fail to insert message to fireBase");
-                                }
-                            });
+                    if (roomId != null) {
+                        newMessage.put("roomId", roomId);
+
+                        addMessage(newMessage, msgList, message);
+                    } else {
+                        Map<String, Object> newRoom = new HashMap<>();
+                        newRoom.put("avatar", getIntent().getStringExtra(ROOM_AVATAR));
+                        newRoom.put("lastMsgDate", new Date());
+                        newRoom.put("name", "");
+
+                        final DocumentReference newRoomDocument = ZaloApplication.getFirebaseInstance()
+                                .collection(COLLECTION_ROOMS)
+                                .document();
+
+                        newRoomDocument.set(newRoom)
+                                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        if (task.isSuccessful()) {
+                                            roomId = newRoomDocument.getId();
+                                            newMessage.put("roomId", roomId);
+
+                                            addMessage(newMessage, msgList, message);
+                                        } else {
+                                            Log.d(TAG, "Fail to create new room");
+                                        }
+                                    }
+                                });
+                    }
                 } else {
                     Log.d(TAG, "liveData value is null");
                 }
@@ -196,5 +217,25 @@ public class RoomActivity extends AppCompatActivity implements View.OnClickListe
                 msgTextInputEditText.setText("");
                 break;
         }
+    }
+
+    void addMessage(Map<String, Object> newMessage, final List<MessageModel> msgList, final MessageModel message) {
+        ZaloApplication.getFirebaseInstance()
+                .collection(COLLECTION_MESSAGES)
+                .document()
+                .set(newMessage)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        msgList.add(message);
+                        viewModel.liveMessages.setValue(msgList);
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.d(TAG, "Fail to insert message to fireBase");
+                    }
+                });
     }
 }

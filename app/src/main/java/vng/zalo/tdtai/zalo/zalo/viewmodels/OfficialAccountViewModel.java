@@ -20,6 +20,7 @@ import vng.zalo.tdtai.zalo.zalo.ZaloApplication;
 import vng.zalo.tdtai.zalo.zalo.models.RoomModel;
 
 import static vng.zalo.tdtai.zalo.zalo.utils.Constants.COLLECTION_BELONGS_TO;
+import static vng.zalo.tdtai.zalo.zalo.utils.Constants.COLLECTION_OFFICIAL_ACCOUNTS;
 import static vng.zalo.tdtai.zalo.zalo.utils.Constants.COLLECTION_ROOMS;
 
 public class OfficialAccountViewModel extends ViewModel {
@@ -45,36 +46,27 @@ public class OfficialAccountViewModel extends ViewModel {
 //                .get());
 //
 //        Tasks.whenAll(tasks)
-//                .addOnCompleteListener(new OfficialAccountViewModel.RoomQueryListener());
+//                .addOnCompleteListener(new OfficialAccountViewModel.OfficialAccountQueryListener());
+        firestore.collection(COLLECTION_OFFICIAL_ACCOUNTS).get().addOnCompleteListener(new OfficialAccountQueryListener());
     }
 
-    class RoomQueryListener implements OnCompleteListener<Void> {
+    class OfficialAccountQueryListener implements OnCompleteListener<QuerySnapshot> {
         @Override
-        public void onComplete(@NonNull Task<Void> task) {
+        public void onComplete(@NonNull Task<QuerySnapshot> task) {
             if(task.isSuccessful()){
-                // get roomIds
-                List<Long> roomIds = new ArrayList<>();
-                for (QueryDocumentSnapshot doc : tasks.get(0).getResult()) {
-                    roomIds.add(doc.getLong("roomId"));
+                // get rooms
+                List<RoomModel> rooms = new ArrayList<>();
+                for (QueryDocumentSnapshot doc : task.getResult()) {
+                    RoomModel roomModel = new RoomModel();
+                    roomModel.name = doc.getString("name");
+                    roomModel.avatar = doc.getString("avatar");
+
+                    rooms.add(roomModel);
                 }
 
-                List<RoomModel> rooms = new ArrayList<>();
-                for (QueryDocumentSnapshot doc : tasks.get(1).getResult()) {
-                    Long roomId = doc.getLong("id");
-                    if (roomIds.contains(roomId)) {
-                        RoomModel room = new RoomModel();
-                        room.id = roomId;
-                        room.name = doc.getString("name");
-                        String roomAvatar = doc.getString("avatar");
-                        if (roomAvatar != null) {
-                            room.avatar = roomAvatar;
-                        }
-                        rooms.add(room);
-                    }
-                }
                 liveOfficialAccounts.setValue(rooms);
             } else {
-                Log.d(TAG, "Room Query fail");
+                Log.d(TAG, "OfficialAccount Query fail");
             }
         }
     }

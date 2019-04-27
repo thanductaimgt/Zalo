@@ -13,6 +13,7 @@ public class Constants {
     public static final String COLLECTION_BELONGS_TO = "belongs_to";
     public static final String COLLECTION_MESSAGES = "messages";
     public static final String COLLECTION_IS_FRIEND_OF = "is_friend_of";
+    public static final String COLLECTION_OFFICIAL_ACCOUNTS = "official_accounts";
 
     public static final String DEFAULT_AVATAR = "https://image.flaticon.com/icons/png/512/61/61205.png";
 }

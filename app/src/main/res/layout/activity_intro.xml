@@ -7,10 +7,10 @@
     tools:context=".zalo.views.intro.IntroActivity">
 
     <androidx.viewpager.widget.ViewPager
-        android:background="@drawable/zalo"
         android:id="@+id/viewPager"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:background="@drawable/zalo"
         app:layout_constraintBottom_toTopOf="@+id/guideline"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -46,6 +46,7 @@
         app:layout_constraintGuide_percent="0.5" />
 
     <TextView
+        android:textStyle="bold"
         android:id="@+id/vnmeseButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

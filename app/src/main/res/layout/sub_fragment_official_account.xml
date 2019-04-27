@@ -14,30 +14,47 @@
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content" >
-
-            <LinearLayout
-                android:padding="@dimen/size_small_8dp"
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/itemChatFragmentConstraintLayout"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="horizontal">
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
 
                 <ImageView
-                    android:layout_marginRight="@dimen/size_small_8dp"
-                    android:id="@+id/imageView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    app:srcCompat="@drawable/common_google_signin_btn_icon_dark_focused"
-                    android:layout_marginEnd="@dimen/size_small_8dp"
-                    android:contentDescription="@string/description_avatar" />
+                    android:src="@drawable/official_account"
+                    android:id="@+id/avatarImgView"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_margin="@dimen/size_medium_16dp"
+                    android:background="@android:drawable/screen_background_light_transparent"
+                    android:contentDescription="@string/description_avatar"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintDimensionRatio="h,1:1"
+                    app:layout_constraintEnd_toStartOf="@+id/guideline2"
+                    app:layout_constraintHorizontal_chainStyle="spread_inside"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
-                    android:layout_gravity="center_vertical"
-                    android:id="@+id/textView"
+                    android:id="@+id/nameTextView"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1" />
-            </LinearLayout>
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginRight="8dp"
+                    android:text="@string/description_find_more_official_accounts"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="@+id/guideline2"
+                    app:layout_constraintTop_toTopOf="parent" />
 
+                <androidx.constraintlayout.widget.Guideline
+                    android:id="@+id/guideline2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    app:layout_constraintGuide_percent="0.25304136" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.cardview.widget.CardView>
 
         <androidx.cardview.widget.CardView
@@ -51,6 +68,7 @@
                 android:orientation="vertical">
 
                 <TextView
+                    android:text="@string/description_interested_official_accounts"
                     android:layout_margin="@dimen/size_small_8dp"
                     android:id="@+id/textView2"
                     android:layout_width="match_parent"

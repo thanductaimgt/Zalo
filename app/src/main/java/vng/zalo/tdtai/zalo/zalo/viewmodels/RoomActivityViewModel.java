@@ -34,7 +34,7 @@ public class RoomActivityViewModel extends ViewModel {
         liveMessages = new MutableLiveData<>((List<MessageModel>)new ArrayList<MessageModel>());
 
         this.intent = intent;
-        Long roomId = intent.getLongExtra(ROOM_ID,-1);
+        String roomId = intent.getStringExtra(ROOM_ID);
         Log.d(TAG,"roomId: "+roomId);
 
         firestore.collection(COLLECTION_MESSAGES)
@@ -57,6 +57,7 @@ public class RoomActivityViewModel extends ViewModel {
                     message.content = doc.getString("content");
                     message.avatar = intent.getStringExtra(ROOM_AVATAR);
                     message.senderPhone = doc.getString("senderPhone");
+                    message.createdTime = doc.getDate("createdTime");
 
                     messages.add(message);
                 }

@@ -67,7 +67,10 @@ public class ChatFragment extends Fragment implements View.OnClickListener {
             case R.id.itemChatFragmentConstraintLayout:
                 int position = recyclerView.getChildLayoutPosition(v);
                 Intent intent = new Intent(getActivity(), RoomActivity.class);
-                intent.putExtra(ROOM_ID, adapter.getCurrentList().get(position).id);
+                //room not created in database
+                if(adapter.getCurrentList().get(position).id != null)
+                    intent.putExtra(ROOM_ID, adapter.getCurrentList().get(position).id);
+
                 intent.putExtra(ROOM_NAME, adapter.getCurrentList().get(position).name);
                 intent.putExtra(ROOM_AVATAR, adapter.getCurrentList().get(position).avatar);
                 startActivity(intent);

@@ -12,7 +12,6 @@ import vng.zalo.tdtai.zalo.zalo.dependency_factories.application.ApplicationModu
 import vng.zalo.tdtai.zalo.zalo.dependency_factories.application.DaggerApplicationComponent;
 
 public class ZaloApplication extends MultiDexApplication{
-    public static DateFormat dateFormat;
     public static String currentUserPhone;
 
     @Override
@@ -25,8 +24,6 @@ public class ZaloApplication extends MultiDexApplication{
 //        ApplicationComponent applicationComponent = DaggerApplicationComponent.create();
 //        applicationComponent.inject(this);
 //        firestore = FirebaseFirestore.getInstance();
-        dateFormat = android.text.format.DateFormat.getDateFormat(getApplicationContext());
-        currentUserPhone = "0123456789";
     }
 
     public static FirebaseFirestore getFirebaseInstance(){

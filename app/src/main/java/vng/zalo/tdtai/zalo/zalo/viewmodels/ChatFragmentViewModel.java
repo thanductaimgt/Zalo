@@ -34,7 +34,9 @@ public class ChatFragmentViewModel extends ViewModel {
         public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
             List<RoomItem> roomItems = new ArrayList<>();
             for(DocumentSnapshot doc: queryDocumentSnapshots){
-                roomItems.add(RoomItem.docToRoomItem(doc));
+                RoomItem roomItem = doc.toObject(RoomItem.class);
+                roomItem.roomId = doc.getId();
+                roomItems.add(roomItem);
             }
             liveRoomItems.setValue(roomItems);
         }

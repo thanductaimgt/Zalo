@@ -1,7 +1,13 @@
 <resources>
     <dimen name="activity_horizontal_margin">64dp</dimen>
+
+    <dimen name="size_tiny_4dp">4dp</dimen>
     <dimen name="size_small_8dp">8dp</dimen>
     <dimen name="size_medium_16dp">16dp</dimen>
+    <dimen name="size_large_24dp">24dp</dimen>
     <dimen name="size_large_32dp">32dp</dimen>
-    <dimen name="icon_space_5dp">5dp</dimen>
+    <dimen name="size_huge_48dp">48dp</dimen>
+    <dimen name="size_icon_space_5dp">5dp</dimen>
+    <dimen name="size_small_text_10sp">10sp</dimen>
+    <dimen name="size_room_item_avatar_40dp">40dp</dimen>
 </resources>

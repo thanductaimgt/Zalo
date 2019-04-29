@@ -4,13 +4,27 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
+    <TextView
+        android:visibility="gone"
+        android:textColor="@android:color/white"
+        android:background="@drawable/chat_date_bg"
+        android:layout_marginTop="@dimen/size_small_8dp"
+        android:layout_marginBottom="@dimen/size_small_8dp"
+        android:id="@+id/dateTextViewItemSend"
+        android:text="@string/placeholder_text"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/sendMsgConstraintLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/sendMsgConstraintLayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="@+id/guideline3"
-        app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginTop="@dimen/size_small_8dp"
+        app:layout_constraintStart_toStartOf="@id/guideline3"
+        app:layout_constraintBottom_toBottomOf="parent"
         android:layout_marginEnd="@dimen/size_small_8dp"
         android:layout_marginRight="@dimen/size_small_8dp"
         android:layout_width="0dp"
@@ -20,19 +34,22 @@
             android:id="@+id/sendMsgTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@android:drawable/editbox_background_normal"
+            android:background="@drawable/send_message_bg"
             android:gravity="end"
             android:text="@string/placeholder_text"
             android:textAlignment="viewEnd"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
         <TextView
+            android:textSize="@dimen/size_small_text_10sp"
+            android:layout_marginBottom="@dimen/size_small_8dp"
+            app:layout_constraintBottom_toBottomOf="parent"
             android:id="@+id/sendTimeTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/placeholder_text"
-            app:layout_constraintEnd_toEndOf="@+id/sendMsgConstraintLayout"
-            app:layout_constraintTop_toBottomOf="@+id/sendMsgTextView" />
+            app:layout_constraintEnd_toEndOf="@id/sendMsgConstraintLayout"
+            app:layout_constraintTop_toBottomOf="@id/sendMsgTextView" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 

@@ -44,10 +44,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 phoneTextInputEditText.setText("");
                 break;
             case R.id.loginButton:
-//                ProgressBar progressBar = findViewById(R.id.progressBar);
-//                progressBar.setVisibility(View.VISIBLE);
-//                progressBar.setVisibility(View.GONE);
-//                verifyCredential();
                 String currentPhone = phoneTextInputEditText.getText().toString();
                 String currentPass = passTextInputEditText.getText().toString();
                 if(isCredentialsValid(currentPhone, currentPass)){

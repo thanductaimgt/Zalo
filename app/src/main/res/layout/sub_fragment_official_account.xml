@@ -3,8 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_height="match_parent"
     android:layout_width="match_parent"
-    android:orientation="vertical"
-    >
+    android:orientation="vertical">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -21,16 +20,15 @@
                 android:orientation="vertical">
 
                 <ImageView
-                    android:src="@drawable/official_account"
                     android:id="@+id/avatarImgView"
-                    android:layout_width="0dp"
+                    android:layout_width="@dimen/size_room_item_avatar_40dp"
                     android:layout_height="0dp"
                     android:layout_margin="@dimen/size_medium_16dp"
                     android:background="@android:drawable/screen_background_light_transparent"
                     android:contentDescription="@string/description_avatar"
+                    android:src="@drawable/official_account"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintDimensionRatio="h,1:1"
-                    app:layout_constraintEnd_toStartOf="@+id/guideline2"
                     app:layout_constraintHorizontal_chainStyle="spread_inside"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
@@ -39,20 +37,15 @@
                     android:id="@+id/nameTextView"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="8dp"
-                    android:layout_marginRight="8dp"
+                    android:layout_marginStart="@dimen/size_medium_16dp"
+                    android:layout_marginLeft="@dimen/size_medium_16dp"
+                    android:layout_marginEnd="@dimen/size_small_8dp"
+                    android:layout_marginRight="@dimen/size_small_8dp"
                     android:text="@string/description_find_more_official_accounts"
-                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintBottom_toBottomOf="@id/avatarImgView"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="@+id/guideline2"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <androidx.constraintlayout.widget.Guideline
-                    android:id="@+id/guideline2"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    app:layout_constraintGuide_percent="0.25304136" />
+                    app:layout_constraintStart_toEndOf="@id/avatarImgView"
+                    app:layout_constraintTop_toTopOf="@id/avatarImgView" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.cardview.widget.CardView>
@@ -68,6 +61,7 @@
                 android:orientation="vertical">
 
                 <TextView
+                    android:textStyle="bold"
                     android:text="@string/description_interested_official_accounts"
                     android:layout_margin="@dimen/size_small_8dp"
                     android:id="@+id/textView2"

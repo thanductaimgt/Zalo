@@ -8,44 +8,43 @@
 
     <TextView
         android:id="@+id/nameTextViewContact"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/size_medium_16dp"
+        android:layout_marginLeft="@dimen/size_medium_16dp"
+        android:layout_marginEnd="@dimen/size_small_8dp"
+        android:layout_marginRight="@dimen/size_small_8dp"
         android:text="@string/placeholder_text"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/guideline6"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintBottom_toBottomOf="@id/avatarImgButtonContact"
+        app:layout_constraintEnd_toStartOf="@id/iconCallImgButtonContact"
+        app:layout_constraintStart_toEndOf="@id/avatarImgButtonContact"
+        app:layout_constraintTop_toTopOf="@id/avatarImgButtonContact" />
 
     <ImageView
         android:id="@+id/avatarImgButtonContact"
-        android:layout_width="0dp"
+        android:layout_width="@dimen/size_room_item_avatar_40dp"
         android:layout_height="0dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginRight="16dp"
-        android:layout_marginBottom="16dp"
+        android:layout_margin="@dimen/size_medium_16dp"
+        android:contentDescription="@string/description_avatar"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintDimensionRatio="w,1:1"
-        app:layout_constraintEnd_toStartOf="@+id/guideline6"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.0"
-        app:srcCompat="@drawable/common_google_signin_btn_icon_dark"
-        android:contentDescription="@string/description_avatar" />
+        app:srcCompat="@drawable/common_google_signin_btn_icon_dark" />
 
     <ImageView
         android:id="@+id/iconCallImgButtonContact"
         android:layout_width="0dp"
-        android:layout_height="30dp"
-        android:layout_marginEnd="@dimen/size_medium_16dp"
-        android:layout_marginRight="@dimen/size_medium_16dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_height="@dimen/size_large_24dp"
+        android:layout_marginEnd="@dimen/size_large_24dp"
+        android:layout_marginRight="@dimen/size_large_24dp"
+        android:contentDescription="@string/description_call"
+        app:layout_constraintBottom_toBottomOf="@id/nameTextViewContact"
         app:layout_constraintDimensionRatio="h,1:1"
-        app:layout_constraintEnd_toStartOf="@+id/iconVideoImgButtonContact"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/call"
-        android:contentDescription="@string/description_call" />
+        app:layout_constraintEnd_toStartOf="@id/iconVideoImgButtonContact"
+        app:layout_constraintTop_toTopOf="@id/nameTextViewContact"
+        app:srcCompat="@drawable/call" />
 
     <ImageView
         android:id="@+id/iconVideoImgButtonContact"
@@ -53,18 +52,11 @@
         android:layout_height="0dp"
         android:layout_marginEnd="16dp"
         android:layout_marginRight="16dp"
-        app:layout_constraintBottom_toBottomOf="@+id/iconCallImgButtonContact"
+        app:layout_constraintBottom_toBottomOf="@id/iconCallImgButtonContact"
         app:layout_constraintDimensionRatio="h,1:1"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/iconCallImgButtonContact"
+        app:layout_constraintTop_toTopOf="@id/iconCallImgButtonContact"
         app:srcCompat="@drawable/video"
         android:contentDescription="@string/description_video" />
-
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideline6"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.25" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

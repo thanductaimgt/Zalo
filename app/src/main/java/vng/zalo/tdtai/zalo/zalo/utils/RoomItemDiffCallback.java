@@ -1,25 +1,22 @@
 package vng.zalo.tdtai.zalo.zalo.utils;
 
-import android.util.Log;
-
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.DiffUtil;
 import vng.zalo.tdtai.zalo.zalo.models.RoomItem;
 
-public class RoomModelDiffCallback extends DiffUtil.ItemCallback<RoomItem> {
-    private static final String TAG = RoomModelDiffCallback.class.getSimpleName();
+public class RoomItemDiffCallback extends DiffUtil.ItemCallback<RoomItem> {
+    private static final String TAG = RoomItemDiffCallback.class.getSimpleName();
 
 //    @Inject
-    public RoomModelDiffCallback(){}
+    public RoomItemDiffCallback(){}
 
     @Override
     public boolean areItemsTheSame(@NonNull RoomItem oldItem, @NonNull RoomItem newItem) {
-        return oldItem.id.equals(newItem.id);
+        return oldItem.roomId.equals(newItem.roomId);
     }
 
     @Override
     public boolean areContentsTheSame(@NonNull RoomItem oldItem, @NonNull RoomItem newItem) {
-        Log.d(TAG,"areContentsTheSame"+oldItem.equals(newItem));
         return oldItem.equals(newItem);
     }
 }

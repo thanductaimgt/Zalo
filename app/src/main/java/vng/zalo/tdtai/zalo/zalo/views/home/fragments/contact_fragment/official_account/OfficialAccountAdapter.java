@@ -38,7 +38,7 @@ public class OfficialAccountAdapter extends ListAdapter<RoomItem, OfficialAccoun
 
     @Override
     public void onBindViewHolder(@NonNull OfficialAccountViewHolder holder, int position) {
-        holder.bind(getItem(position));
+        holder.bind(position);
     }
 
     @Override
@@ -57,13 +57,13 @@ public class OfficialAccountAdapter extends ListAdapter<RoomItem, OfficialAccoun
             this.itemView = itemView;
             nameTextView = itemView.findViewById(R.id.nameTextView);
             avatarImgView = itemView.findViewById(R.id.avatarImgView);
-            iconImgView = itemView.findViewById(R.id.iconImgView);
+            iconImgView = itemView.findViewById(R.id.iconTextView);
         }
 
         @Override
-        public void bind(DataModel dataModel) {
+        public void bind(int position) {
             itemView.setOnClickListener(officialAccountSubFragment);
-            RoomItem room = (RoomItem) dataModel;
+            RoomItem room = getItem(position);
 
             nameTextView.setText(room.name);
 

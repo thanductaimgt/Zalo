@@ -32,6 +32,7 @@
         <activity
             android:name=".zalo.views.login.LoginActivity"
             android:parentActivityName=".zalo.views.intro.IntroActivity" />
-        <activity android:name=".zalo.views.intro.IntroActivity" />
+        <activity android:name=".zalo.views.intro.IntroActivity"
+            android:theme="@style/AppTheme.NoActionBar"/>
     </application>
 </manifest>

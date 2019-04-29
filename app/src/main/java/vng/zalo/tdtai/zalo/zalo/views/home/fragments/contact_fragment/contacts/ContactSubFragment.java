@@ -18,7 +18,7 @@ import java.util.List;
 
 import vng.zalo.tdtai.zalo.R;
 import vng.zalo.tdtai.zalo.zalo.dependency_factories.viewmodels_factory.ContactSubFragmentViewModelFactory;
-import vng.zalo.tdtai.zalo.zalo.models.ContactItemModel;
+import vng.zalo.tdtai.zalo.zalo.models.RoomItem;
 import vng.zalo.tdtai.zalo.zalo.utils.ContactModelDiffCallback;
 import vng.zalo.tdtai.zalo.zalo.viewmodels.ContactSubFragmentViewModel;
 import vng.zalo.tdtai.zalo.zalo.views.home.fragments.chat_fragment.room_activity.RoomActivity;
@@ -51,9 +51,9 @@ public class ContactSubFragment extends Fragment implements View.OnClickListener
 
         recyclerView.setAdapter(adapter);
 
-        viewModel.liveContacts.observe(getViewLifecycleOwner(), new Observer<List<ContactItemModel>>() {
+        viewModel.liveContacts.observe(getViewLifecycleOwner(), new Observer<List<RoomItem>>() {
             @Override
-            public void onChanged(List<ContactItemModel> contacts) {
+            public void onChanged(List<RoomItem> contacts) {
                 adapter.submitList(contacts);
                 Log.d(TAG,"onChanged livedata");
             }
@@ -67,12 +67,10 @@ public class ContactSubFragment extends Fragment implements View.OnClickListener
                 int position = recyclerView.getChildLayoutPosition(v);
                 Intent intent = new Intent(getActivity(), RoomActivity.class);
 
-                intent.putExtra(ROOM_ID, (long)0);
-                intent.putExtra(ROOM_NAME, "CONTACT DEFAULT NAME");
-
-//                intent.putExtra(ROOM_ID, adapter.getCurrentList().get(position).id);
-//                intent.putExtra(ROOM_NAME, adapter.getCurrentList().get(position).name);
+                intent.putExtra(ROOM_ID, adapter.getCurrentList().get(position).roomId);
+                intent.putExtra(ROOM_NAME, adapter.getCurrentList().get(position).name);
                 intent.putExtra(ROOM_AVATAR, adapter.getCurrentList().get(position).avatar);
+
                 startActivity(intent);
         }
     }

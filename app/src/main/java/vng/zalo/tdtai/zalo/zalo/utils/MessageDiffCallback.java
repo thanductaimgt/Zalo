@@ -6,9 +6,9 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.DiffUtil;
 import vng.zalo.tdtai.zalo.zalo.models.Message;
 
-public class MessageModelDiffCallback extends DiffUtil.ItemCallback<Message> {
+public class MessageDiffCallback extends DiffUtil.ItemCallback<Message> {
     @Inject
-    public MessageModelDiffCallback(){}
+    public MessageDiffCallback(){}
 
     @Override
     public boolean areItemsTheSame(@NonNull Message oldItem, @NonNull Message newItem) {

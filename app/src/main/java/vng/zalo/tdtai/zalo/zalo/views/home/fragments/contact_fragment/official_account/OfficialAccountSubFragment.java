@@ -20,7 +20,7 @@ import java.util.List;
 import vng.zalo.tdtai.zalo.R;
 import vng.zalo.tdtai.zalo.zalo.dependency_factories.viewmodels_factory.OfficialAccountViewModelFactory;
 import vng.zalo.tdtai.zalo.zalo.models.RoomItem;
-import vng.zalo.tdtai.zalo.zalo.utils.RoomModelDiffCallback;
+import vng.zalo.tdtai.zalo.zalo.utils.RoomItemDiffCallback;
 import vng.zalo.tdtai.zalo.zalo.viewmodels.OfficialAccountViewModel;
 import vng.zalo.tdtai.zalo.zalo.views.home.fragments.chat_fragment.room_activity.RoomActivity;
 
@@ -49,7 +49,7 @@ public class OfficialAccountSubFragment extends Fragment implements View.OnClick
 
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-        adapter = new OfficialAccountAdapter(this, new RoomModelDiffCallback());
+        adapter = new OfficialAccountAdapter(this, new RoomItemDiffCallback());
 
         recyclerView.setAdapter(adapter);
 
@@ -68,7 +68,7 @@ public class OfficialAccountSubFragment extends Fragment implements View.OnClick
             case R.id.itemChatFragmentConstraintLayout:
                 int position = recyclerView.getChildLayoutPosition(v);
                 Intent intent = new Intent(getActivity(), RoomActivity.class);
-                intent.putExtra(ROOM_ID, adapter.getCurrentList().get(position).id);
+                intent.putExtra(ROOM_ID, adapter.getCurrentList().get(position).roomId);
                 intent.putExtra(ROOM_NAME, adapter.getCurrentList().get(position).name);
                 intent.putExtra(ROOM_AVATAR, adapter.getCurrentList().get(position).avatar);
                 startActivity(intent);

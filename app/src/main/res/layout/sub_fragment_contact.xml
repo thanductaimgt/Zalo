@@ -15,7 +15,7 @@
             android:id="@+id/cardViewSuggestFriends"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_constraintBottom_toTopOf="@+id/cardViewCloseFriends"
+            app:layout_constraintBottom_toTopOf="@id/cardViewCloseFriends"
             app:layout_constraintTop_toTopOf="parent">
 
             <androidx.recyclerview.widget.RecyclerView
@@ -29,8 +29,8 @@
             android:id="@+id/cardViewCloseFriends"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_constraintBottom_toTopOf="@+id/cardViewStatus"
-            app:layout_constraintTop_toBottomOf="@+id/cardViewSuggestFriends">
+            app:layout_constraintBottom_toTopOf="@id/cardViewStatus"
+            app:layout_constraintTop_toBottomOf="@id/cardViewSuggestFriends">
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:padding="@dimen/size_small_8dp"
                 android:layout_width="match_parent"
@@ -58,8 +58,8 @@
             android:id="@+id/cardViewStatus"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_constraintBottom_toTopOf="@+id/cardViewAllContacts"
-            app:layout_constraintTop_toBottomOf="@+id/cardViewCloseFriends">
+            app:layout_constraintBottom_toTopOf="@id/cardViewAllContacts"
+            app:layout_constraintTop_toBottomOf="@id/cardViewCloseFriends">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:padding="@dimen/size_small_8dp"
@@ -82,8 +82,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="@dimen/size_small_8dp"
                     android:text="@string/label_newly_updated_friends"
-                    app:layout_constraintBottom_toTopOf="@+id/statusTextView"
-                    app:layout_constraintEnd_toStartOf="@+id/switch1"
+                    app:layout_constraintBottom_toTopOf="@id/statusTextView"
+                    app:layout_constraintEnd_toStartOf="@id/switch1"
                     app:layout_constraintHorizontal_bias="0.0"
                     app:layout_constraintHorizontal_chainStyle="spread_inside"
                     app:layout_constraintStart_toStartOf="parent"
@@ -94,10 +94,10 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="@dimen/size_small_8dp"
-                    app:layout_constraintBottom_toTopOf="@+id/statusTextView"
+                    app:layout_constraintBottom_toTopOf="@id/statusTextView"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.5"
-                    app:layout_constraintStart_toEndOf="@+id/statusDescTextView"
+                    app:layout_constraintStart_toEndOf="@id/statusDescTextView"
                     app:layout_constraintTop_toTopOf="parent" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
@@ -109,7 +109,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:layout_constraintBottom_toTopOf="@id/updateContactDescTextView"
-            app:layout_constraintTop_toBottomOf="@+id/cardViewStatus">
+            app:layout_constraintTop_toBottomOf="@id/cardViewStatus">
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:padding="@dimen/size_small_8dp"
                 android:layout_width="match_parent"

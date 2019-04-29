@@ -19,7 +19,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import vng.zalo.tdtai.zalo.R;
 import vng.zalo.tdtai.zalo.zalo.dependency_factories.viewmodels_factory.ChatFragmentViewModelFactory;
 import vng.zalo.tdtai.zalo.zalo.models.RoomItem;
-import vng.zalo.tdtai.zalo.zalo.utils.RoomModelDiffCallback;
+import vng.zalo.tdtai.zalo.zalo.utils.RoomItemDiffCallback;
 import vng.zalo.tdtai.zalo.zalo.viewmodels.ChatFragmentViewModel;
 import vng.zalo.tdtai.zalo.zalo.views.home.fragments.chat_fragment.room_activity.RoomActivity;
 
@@ -48,14 +48,19 @@ public class ChatFragment extends Fragment implements View.OnClickListener {
 
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-        adapter = new ChatFragmentAdapter(this, new RoomModelDiffCallback());
+        adapter = new ChatFragmentAdapter(this, new RoomItemDiffCallback());
 
         recyclerView.setAdapter(adapter);
 
         viewModel.liveRoomItems.observe(getViewLifecycleOwner(), new Observer<List<RoomItem>>() {
             @Override
             public void onChanged(List<RoomItem> rooms) {
-                adapter.submitList(rooms);
+                adapter.submitList(rooms, new Runnable() {
+                    @Override
+                    public void run() {
+                        Log.d(TAG,viewModel.liveRoomItems.getValue().toString());
+                    }
+                });
                 Log.d(TAG,"onChanged livedata");
             }
         });
@@ -68,8 +73,8 @@ public class ChatFragment extends Fragment implements View.OnClickListener {
                 int position = recyclerView.getChildLayoutPosition(v);
                 Intent intent = new Intent(getActivity(), RoomActivity.class);
                 //room not created in database
-                if(adapter.getCurrentList().get(position).id != null)
-                    intent.putExtra(ROOM_ID, adapter.getCurrentList().get(position).id);
+                if(adapter.getCurrentList().get(position).roomId != null)
+                    intent.putExtra(ROOM_ID, adapter.getCurrentList().get(position).roomId);
 
                 intent.putExtra(ROOM_NAME, adapter.getCurrentList().get(position).name);
                 intent.putExtra(ROOM_AVATAR, adapter.getCurrentList().get(position).avatar);

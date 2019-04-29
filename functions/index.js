@@ -6,10 +6,10 @@ const functions = require('firebase-functions');
 // exports.helloWorld = functions.https.onRequest((request, response) => {
 //  response.send("Hello from Firebase!");
 // });
+
 exports.updateRoomLastMessage = functions.firestore
     .document('rooms/{roomId}/messages/{messageId}')
     .onCreate(async (snap, context) => {
-
       var newMessage = snap.data();
 
       // Get value of the newly added rating

@@ -4,30 +4,48 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingTop="@dimen/size_small_8dp"
     android:orientation="vertical">
+
+    <TextView
+        android:visibility="gone"
+        android:textColor="@android:color/white"
+        android:background="@drawable/chat_date_bg"
+        android:layout_marginTop="@dimen/size_small_8dp"
+        android:layout_marginBottom="@dimen/size_small_8dp"
+        android:id="@+id/dateTextViewItemRecv"
+        android:text="@string/placeholder_text"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/receiveMsgLinearLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/receiveMsgLinearLayout"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="@+id/receiveAvatarImgButton"
-        app:layout_constraintEnd_toStartOf="@+id/guideline5"
+        android:layout_marginStart="@dimen/size_huge_48dp"
+        android:layout_marginLeft="@dimen/size_huge_48dp"
+        app:layout_constraintEnd_toStartOf="@id/guideline5"
         app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toEndOf="@id/guideline4"
-        app:layout_constraintTop_toTopOf="@+id/receiveAvatarImgButton">
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent">
 
         <TextView
             android:id="@+id/receiveMsgTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@android:drawable/editbox_background_normal"
+            android:background="@drawable/recv_message_bg"
             android:text="@string/placeholder_text"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/receiveTimeTextView"
+            android:textSize="@dimen/size_small_text_10sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginBottom="@dimen/size_small_8dp"
+            android:id="@+id/recvTimeTextView"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:text="@string/placeholder_text"
@@ -35,26 +53,20 @@
             app:layout_constraintTop_toBottomOf="@id/receiveMsgTextView" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideline4"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.15" />
-
-    <ImageView
-        android:id="@+id/receiveAvatarImgButton"
-        android:layout_width="0dp"
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/receiveAvatarImgView"
+        android:layout_width="@dimen/size_large_32dp"
         android:layout_height="0dp"
         android:layout_marginStart="@dimen/size_small_8dp"
         android:layout_marginLeft="@dimen/size_small_8dp"
-        android:layout_marginEnd="@dimen/size_small_8dp"
-        android:layout_marginRight="@dimen/size_small_8dp"
+        android:layout_marginTop="@dimen/size_tiny_4dp"
+        android:layout_marginBottom="8dp"
         android:contentDescription="@string/description_avatar"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintDimensionRatio="1:1"
-        app:layout_constraintEnd_toStartOf="@+id/guideline4"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toTopOf="@id/receiveMsgLinearLayout"
+        app:layout_constraintVertical_bias="0.0"
         tools:srcCompat="@tools:sample/avatars" />
 
     <androidx.constraintlayout.widget.Guideline

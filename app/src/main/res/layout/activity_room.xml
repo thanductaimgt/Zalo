@@ -9,7 +9,7 @@
     tools:context=".zalo.views.home.fragments.chat_fragment.room_activity.RoomActivity">
 
     <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbarRoomActivity"
+        android:id="@+id/toolbar"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:background="?attr/colorPrimary"
@@ -20,20 +20,23 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <com.google.android.material.textfield.TextInputEditText
+        android:imeOptions="actionSend"
         android:id="@+id/msgTextInputEditText"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/size_small_8dp"
         android:layout_marginLeft="@dimen/size_small_8dp"
-        android:layout_marginEnd="@dimen/size_small_8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
         android:ems="10"
         android:hint="@string/hint_message"
         android:inputType="textMultiLine"
         android:maxLines="4"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/pictureImgButton"
-        app:layout_constraintStart_toEndOf="@+id/emojiImgButton" />
-    <ImageView
+        app:layout_constraintEnd_toStartOf="@id/uploadFileImgButton"
+        app:layout_constraintStart_toEndOf="@id/emojiImgButton" />
+    <ImageButton
+        android:background="@drawable/emoji"
         android:contentDescription="@string/description_emoji_icon"
         android:id="@+id/emojiImgButton"
         android:layout_width="30dp"
@@ -41,13 +44,13 @@
         android:layout_marginStart="@dimen/size_small_8dp"
         android:layout_marginLeft="@dimen/size_small_8dp"
         android:layout_marginBottom="@dimen/size_small_8dp"
-        app:layout_constraintBottom_toBottomOf="@+id/msgTextInputEditText"
+        app:layout_constraintBottom_toBottomOf="@id/msgTextInputEditText"
         app:layout_constraintDimensionRatio="h,1:1"
         app:layout_constraintStart_toStartOf="parent"
-        app:srcCompat="@drawable/emoji"
         />
 
-    <ImageView
+    <ImageButton
+        android:background="@drawable/photo"
         android:contentDescription="@string/description_attach_picture_icon"
         android:id="@+id/pictureImgButton"
         android:layout_width="25dp"
@@ -55,62 +58,61 @@
         android:layout_marginEnd="@dimen/size_small_8dp"
         android:layout_marginRight="@dimen/size_small_8dp"
         android:layout_marginBottom="@dimen/size_small_8dp"
-        app:layout_constraintBottom_toBottomOf="@+id/msgTextInputEditText"
+        app:layout_constraintBottom_toBottomOf="@id/msgTextInputEditText"
         app:layout_constraintDimensionRatio="w,1:1"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/voiceImgButton"
-        app:srcCompat="@drawable/photo" />
+        app:layout_constraintStart_toEndOf="@id/voiceImgButton" />
 
-    <ImageView
+    <ImageButton
+        android:background="@drawable/send"
         android:contentDescription="@string/description_send_icon"
         android:id="@+id/sendMsgImgButton"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="@+id/pictureImgButton"
+        app:layout_constraintBottom_toBottomOf="@id/pictureImgButton"
         app:layout_constraintDimensionRatio="1:1"
-        app:layout_constraintEnd_toEndOf="@+id/pictureImgButton"
-        app:layout_constraintStart_toStartOf="@+id/pictureImgButton"
-        app:layout_constraintTop_toTopOf="@+id/pictureImgButton"
-        app:srcCompat="@drawable/send" />
+        app:layout_constraintEnd_toEndOf="@id/pictureImgButton"
+        app:layout_constraintStart_toStartOf="@id/pictureImgButton"
+        app:layout_constraintTop_toTopOf="@id/pictureImgButton"/>
 
-    <ImageView
+    <ImageButton
+        android:background="@drawable/mic"
         android:contentDescription="@string/description_attach_voice_icon"
-        android:layout_marginRight="@dimen/icon_space_5dp"
+        android:layout_marginRight="@dimen/size_icon_space_5dp"
         android:id="@+id/voiceImgButton"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toBottomOf="@+id/pictureImgButton"
+        app:layout_constraintBottom_toBottomOf="@id/pictureImgButton"
         app:layout_constraintDimensionRatio="1:1"
-        app:layout_constraintEnd_toStartOf="@+id/pictureImgButton"
-        app:layout_constraintStart_toEndOf="@+id/uploadFileImgButton"
-        app:layout_constraintTop_toTopOf="@+id/pictureImgButton"
-        app:srcCompat="@drawable/mic"
-        android:layout_marginEnd="@dimen/icon_space_5dp" />
+        app:layout_constraintEnd_toStartOf="@id/pictureImgButton"
+        app:layout_constraintStart_toEndOf="@id/uploadFileImgButton"
+        app:layout_constraintTop_toTopOf="@id/pictureImgButton"
+        android:layout_marginEnd="@dimen/size_icon_space_5dp" />
 
-    <ImageView
+    <ImageButton
+        android:background="@drawable/attach_file"
         android:contentDescription="@string/description_attach_file_icon"
-        android:layout_marginRight="@dimen/icon_space_5dp"
+        android:layout_marginRight="@dimen/size_icon_space_5dp"
         android:id="@+id/uploadFileImgButton"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toBottomOf="@+id/pictureImgButton"
+        app:layout_constraintBottom_toBottomOf="@id/pictureImgButton"
         app:layout_constraintDimensionRatio="w,1:1"
-        app:layout_constraintEnd_toStartOf="@+id/voiceImgButton"
+        app:layout_constraintEnd_toStartOf="@id/voiceImgButton"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintHorizontal_chainStyle="packed"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/pictureImgButton"
-        app:srcCompat="@drawable/attach_file"
-        android:layout_marginEnd="@dimen/icon_space_5dp" />
+        app:layout_constraintTop_toTopOf="@id/pictureImgButton"
+        android:layout_marginEnd="@dimen/size_icon_space_5dp" />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerViewRoomActivity"
+        android:id="@+id/recyclerView"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@+id/msgTextInputEditText"
+        app:layout_constraintBottom_toTopOf="@id/msgTextInputEditText"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/toolbarRoomActivity" />
+        app:layout_constraintTop_toBottomOf="@id/toolbar" />
 </androidx.constraintlayout.widget.ConstraintLayout>

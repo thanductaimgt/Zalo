@@ -10,7 +10,6 @@
     <string name="label_contact_tab">Danh bạ</string>
     <string name="label_group_tab">Nhóm</string>
     <string name="label_settings">Cài đặt</string>
-    <string name="label_show_password">HIỆN</string>
     <string name="label_faq"><b><u>Câu hỏi thường gặp</u></b></string>
     <string name="label_diary_tab">Nhật ký</string>
     <string name="label_more_tab">Thêm</string>
@@ -20,27 +19,55 @@
     <string name="label_official_account_sub_tab">OFFICIAL ACCOUNT</string>
     <string name="label_update_contact">Cập nhật danh bạ</string>
     <string name="label_close_friends">Bạn thân</string>
+    <string name="label_find_around">Tìm quanh đây</string>
+    <string name="label_chat_rooms">Phòng trò chuyện</string>
+    <string name="label_shop">Shop</string>
+    <string name="label_stickers">Stickers</string>
+    <string name="label_channel">Channel</string>
+    <string name="label_game">Game</string>
+    <string name="label_e_government">eGovernment</string>
+    <string name="label_bank">Bank</string>
+    <string name="label_food">Food</string>
+    <string name="label_add_group">Tạo nhóm với:</string>
+    <string name="label_joined_groups">Nhóm đã tham gia</string>
+    <string name="label_recent">Gần đây</string>
+
+    <string-array name="sort_group_options">
+        <item>Tên nhóm</item>
+        <item>Hoạt động cuối</item>
+        <item>Nhóm quản lý</item>
+        <item>Nhóm mở</item>
+    </string-array>
 
     <string name="description_login">Vui lòng nhập số điện thoại và mật khẩu để đăng nhập</string>
     <string name="description_update_contact">Nhanh chóng thêm bạn vào Zalo từ danh bạ điện thoại</string>
     <string name="description_update_status">Cập nhật trạng thái của bạn và xem bạn bè mình đang&#8230;</string>
-    <string name="description_avatar">avatar</string>
-    <string name="description_preview_image">preview image</string>
-    <string name="description_unseen">unseen icon</string>
-    <string name="description_call">call</string>
+    <string name="description_avatar">Avatar</string>
+    <string name="description_preview_image">Preview image</string>
+    <string name="description_unseen">Unseen icon</string>
+    <string name="description_call">Call</string>
     <string name="description_video">video</string>
     <string name="description_interested_official_accounts">Official Account đã quan tâm</string>
     <string name="description_find_more_official_accounts">Tìm thêm Official Account</string>
-    <string name="description_clear_text_icon">xóa tất cả</string>
-    <string name="description_emoji_icon">biểu tượng cảm xúc</string>
-    <string name="description_attach_file_icon">chèn tệp</string>
-    <string name="description_attach_voice_icon">chèn âm thanh</string>
-    <string name="description_attach_picture_icon">chèn ảnh</string>
-    <string name="description_send_icon">gửi</string>
+    <string name="description_clear_text_icon">Xóa tất cả</string>
+    <string name="description_emoji_icon">Biểu tượng cảm xúc</string>
+    <string name="description_attach_file_icon">Chèn tệp</string>
+    <string name="description_attach_voice_icon">Chèn âm thanh</string>
+    <string name="description_attach_picture_icon">Chèn ảnh</string>
+    <string name="description_send_icon">Gửi</string>
+    <string name="description_your_profile">Trang cá nhân của bạn</string>
+    <string name="description_post_status_image">Đăng tin</string>
+    <string name="description_shop">Diện chất mùa hạ</string>
+    <string name="description_remind_date">Nhắc hẹn</string>
+    <string name="description_vote">Bình chọn</string>
+    <string name="description_name_group">Đặt tên nhóm</string>
+    <string name="description_create_group">Tạo nhóm mới</string>
 
     <string name="hint_phone_number">Số điện thoại</string>
     <string name="hint_password">Mật khẩu</string>
     <string name="hint_message">Tin nhắn</string>
+    <string name="hint_search_not_clicked">Tìm thành viên</string>
+    <string name="hint_search_clicked">Tìm tên hoặc số điện thoại</string>
 
-    <string name="placeholder_text">text</string>
+    <string name="placeholder_text">Text</string>
 </resources>

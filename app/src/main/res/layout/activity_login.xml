@@ -12,10 +12,10 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
         android:inputType="phone"
-        app:layout_constraintBottom_toTopOf="@+id/passTextInputLayout"
+        app:layout_constraintBottom_toTopOf="@id/passTextInputLayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/loginDescTextView" >
+        app:layout_constraintTop_toBottomOf="@id/loginDescTextView" >
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/phoneTextInputEditText"
@@ -33,10 +33,10 @@
         android:id="@+id/passTextInputLayout"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toTopOf="@+id/loginButton"
+        app:layout_constraintBottom_toTopOf="@id/loginButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/phoneTextInputLayout"
+        app:layout_constraintTop_toBottomOf="@id/phoneTextInputLayout"
         app:passwordToggleEnabled="true" >
         <com.google.android.material.textfield.TextInputEditText
             android:paddingStart="16dp"
@@ -55,10 +55,10 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:text="@string/label_log_in"
-        app:layout_constraintBottom_toTopOf="@+id/getPassTextView"
+        app:layout_constraintBottom_toTopOf="@id/getPassTextView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/passTextInputLayout" />
+        app:layout_constraintTop_toBottomOf="@id/passTextInputLayout" />
 
     <TextView
         android:id="@+id/getPassTextView"
@@ -68,7 +68,7 @@
         android:text="@string/label_get_password"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/loginButton" />
+        app:layout_constraintTop_toBottomOf="@id/loginButton" />
 
     <TextView
         android:id="@+id/faqTextView"
@@ -92,7 +92,7 @@
         android:layout_marginTop="8dp"
         android:layout_marginBottom="16dp"
         android:text="@string/description_login"
-        app:layout_constraintBottom_toTopOf="@+id/phoneTextInputLayout"
+        app:layout_constraintBottom_toTopOf="@id/phoneTextInputLayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -105,7 +105,7 @@
         android:layout_height="0dp"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
-        app:layout_constraintBottom_toBottomOf="@+id/phoneTextInputLayout"
+        app:layout_constraintBottom_toBottomOf="@id/phoneTextInputLayout"
         app:layout_constraintDimensionRatio="h,1:1"
         app:layout_constraintEnd_toEndOf="parent"
         app:srcCompat="@drawable/clear" />

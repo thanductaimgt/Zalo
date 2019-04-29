@@ -1,19 +1,13 @@
 package vng.zalo.tdtai.zalo.zalo;
 
+import androidx.multidex.MultiDexApplication;
+
 import com.google.firebase.firestore.FirebaseFirestore;
 
-import java.text.DateFormat;
-
-import javax.inject.Inject;
-
-import androidx.multidex.MultiDexApplication;
-import vng.zalo.tdtai.zalo.zalo.dependency_factories.application.ApplicationComponent;
-import vng.zalo.tdtai.zalo.zalo.dependency_factories.application.ApplicationModule;
-import vng.zalo.tdtai.zalo.zalo.dependency_factories.application.DaggerApplicationComponent;
+import vng.zalo.tdtai.zalo.zalo.models.UserInfo;
 
 public class ZaloApplication extends MultiDexApplication{
-    public static DateFormat dateFormat;
-    public static String currentUserPhone;
+    public static UserInfo currentUser;
 
     @Override
     public void onCreate() {
@@ -25,8 +19,6 @@ public class ZaloApplication extends MultiDexApplication{
 //        ApplicationComponent applicationComponent = DaggerApplicationComponent.create();
 //        applicationComponent.inject(this);
 //        firestore = FirebaseFirestore.getInstance();
-        dateFormat = android.text.format.DateFormat.getDateFormat(getApplicationContext());
-        currentUserPhone = "0123456789";
     }
 
     public static FirebaseFirestore getFirebaseInstance(){

@@ -14,9 +14,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.squareup.picasso.Picasso;
 
 import vng.zalo.tdtai.zalo.R;
-import vng.zalo.tdtai.zalo.zalo.models.DataModel;
 import vng.zalo.tdtai.zalo.zalo.models.RoomItem;
 import vng.zalo.tdtai.zalo.zalo.utils.ModelViewHolder;
+import vng.zalo.tdtai.zalo.zalo.utils.Utils;
 
 public class AllContactAdapter extends ListAdapter<RoomItem, AllContactAdapter.ContactViewHolder> {
     private ContactSubFragment contactSubFragment;
@@ -61,6 +61,7 @@ public class AllContactAdapter extends ListAdapter<RoomItem, AllContactAdapter.C
             RoomItem roomItem = getItem(position);
 
             phoneTextView.setText(roomItem.name);
+            Utils.formatTextOnNumberOfLines(phoneTextView, 1);
 
             Picasso.with(avatarImgView.getContext())
                     .load(roomItem.avatar)

@@ -7,25 +7,22 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.ImageView;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.textfield.TextInputEditText;
-
-import java.util.List;
 
 import javax.inject.Inject;
 
 import vng.zalo.tdtai.zalo.R;
 import vng.zalo.tdtai.zalo.zalo.dependency_factories.chat_activity.DaggerRoomActivityComponent;
 import vng.zalo.tdtai.zalo.zalo.dependency_factories.chat_activity.RoomActivityModule;
-import vng.zalo.tdtai.zalo.zalo.models.Message;
 import vng.zalo.tdtai.zalo.zalo.utils.Constants;
 import vng.zalo.tdtai.zalo.zalo.utils.MessageDiffCallback;
 import vng.zalo.tdtai.zalo.zalo.viewmodels.RoomActivityViewModel;
@@ -72,17 +69,9 @@ public class RoomActivity extends AppCompatActivity implements View.OnClickListe
 
         recyclerView.setLayoutManager(layoutManager);
 
-        viewModel.liveMessages.observe(this, new Observer<List<Message>>() {
-            @Override
-            public void onChanged(List<Message> messageList) {
-                adapter.submitList(messageList, new Runnable() {
-                    @Override
-                    public void run() {
-                        scrollRecyclerViewToLastPosition();
-                    }
-                });
-                Log.d(TAG, "onChanged liveData");
-            }
+        viewModel.liveMessages.observe(this, messageList -> {
+            adapter.submitList(messageList, this::scrollRecyclerViewToLastPosition);
+            Log.d(TAG, "onChanged liveData");
         });
 
         adapter = new RoomActivityAdapter(this, new MessageDiffCallback());
@@ -96,6 +85,15 @@ public class RoomActivity extends AppCompatActivity implements View.OnClickListe
 
         msgTextInputEditText = findViewById(R.id.msgTextInputEditText);
         msgTextInputEditText.addTextChangedListener(new InputTextListener());
+        msgTextInputEditText.setOnEditorActionListener((v, actionId, event) -> {
+            switch (actionId) {
+                case EditorInfo.IME_ACTION_SEND:
+                    onClickSendMessage();
+                    return true;
+                default:
+                    return false;
+            }
+        });
 
         sendMsgImgButton.setOnClickListener(this);
     }
@@ -125,12 +123,19 @@ public class RoomActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.sendMsgImgButton:
-                String textToSend = msgTextInputEditText.getText() == null ? "" : msgTextInputEditText.getText().toString();
-                viewModel.addMessageToFirestore(textToSend);
+                onClickSendMessage();
+                break;
+            case R.id.pictureImgButton:
 
-                msgTextInputEditText.setText("");
                 break;
         }
+    }
+
+    private void onClickSendMessage() {
+        String messageContent = msgTextInputEditText.getText() == null ? "" : msgTextInputEditText.getText().toString();
+        viewModel.addMessageToFirestore(messageContent);
+
+        msgTextInputEditText.setText("");
     }
 
     class InputTextListener implements TextWatcher {

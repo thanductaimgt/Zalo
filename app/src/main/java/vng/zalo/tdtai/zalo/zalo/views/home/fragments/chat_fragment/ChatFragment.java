@@ -7,18 +7,17 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import java.util.List;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import java.util.Objects;
+
 import vng.zalo.tdtai.zalo.R;
 import vng.zalo.tdtai.zalo.zalo.dependency_factories.viewmodels_factory.ChatFragmentViewModelFactory;
-import vng.zalo.tdtai.zalo.zalo.models.RoomItem;
 import vng.zalo.tdtai.zalo.zalo.utils.RoomItemDiffCallback;
 import vng.zalo.tdtai.zalo.zalo.viewmodels.ChatFragmentViewModel;
 import vng.zalo.tdtai.zalo.zalo.views.home.fragments.chat_fragment.room_activity.RoomActivity;
@@ -52,17 +51,9 @@ public class ChatFragment extends Fragment implements View.OnClickListener {
 
         recyclerView.setAdapter(adapter);
 
-        viewModel.liveRoomItems.observe(getViewLifecycleOwner(), new Observer<List<RoomItem>>() {
-            @Override
-            public void onChanged(List<RoomItem> rooms) {
-                adapter.submitList(rooms, new Runnable() {
-                    @Override
-                    public void run() {
-                        Log.d(TAG,viewModel.liveRoomItems.getValue().toString());
-                    }
-                });
-                Log.d(TAG,"onChanged livedata");
-            }
+        viewModel.liveRoomItems.observe(getViewLifecycleOwner(), rooms -> {
+            adapter.submitList(rooms, () -> Log.d(TAG, Objects.requireNonNull(viewModel.liveRoomItems.getValue()).toString()));
+            Log.d(TAG,"onChanged livedata");
         });
     }
 

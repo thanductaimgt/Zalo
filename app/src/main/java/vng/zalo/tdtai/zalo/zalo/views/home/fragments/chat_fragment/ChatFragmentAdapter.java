@@ -1,21 +1,21 @@
 package vng.zalo.tdtai.zalo.zalo.views.home.fragments.chat_fragment;
 
 import android.graphics.Typeface;
-import android.net.Uri;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
-import com.squareup.picasso.Picasso;
+
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.squareup.picasso.Picasso;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 import vng.zalo.tdtai.zalo.R;
 import vng.zalo.tdtai.zalo.zalo.models.RoomItem;
-import vng.zalo.tdtai.zalo.zalo.models.DataModel;
 import vng.zalo.tdtai.zalo.zalo.utils.Constants;
 import vng.zalo.tdtai.zalo.zalo.utils.ModelViewHolder;
 import vng.zalo.tdtai.zalo.zalo.utils.Utils;
@@ -53,7 +53,7 @@ public class ChatFragmentAdapter extends ListAdapter<RoomItem, ChatFragmentAdapt
         TextView descTextView;
         TextView timeTextView;
         TextView iconTextView;
-        ImageView avatarImgView;
+        CircleImageView avatarImgView;
 
         ChatViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -71,8 +71,9 @@ public class ChatFragmentAdapter extends ListAdapter<RoomItem, ChatFragmentAdapt
             RoomItem roomItem = getItem(position);
 
             nameTextView.setText(roomItem.name);
+            Utils.formatTextOnNumberOfLines(nameTextView, 1);
 
-            if(roomItem.lastMsgTime != null) {
+            if (roomItem.lastMsgTime != null) {
                 String formatTime = Utils.getTimeDiffOrFormatTime(roomItem.lastMsgTime.toDate());
                 timeTextView.setText(formatTime);
             } else {
@@ -80,21 +81,16 @@ public class ChatFragmentAdapter extends ListAdapter<RoomItem, ChatFragmentAdapt
             }
 
             descTextView.setText(roomItem.lastMsg);
-            Utils.formatTextOnOneLine(descTextView);
+            Utils.formatTextOnNumberOfLines(descTextView, 1);
 
-            new Picasso.Builder(avatarImgView.getContext()).listener(new Picasso.Listener() {
-                @Override
-                public void onImageLoadFailed(Picasso picasso, Uri uri, Exception exception) {
-                    Log.e(ChatFragmentAdapter.this.getClass().getSimpleName(), exception.getMessage());
-                    exception.printStackTrace();
-                }
-            }).build().load(roomItem.avatar)
+            Picasso.with(avatarImgView.getContext())
+                    .load(roomItem.avatar)
                     .fit()
                     .into(avatarImgView);
 
             if (roomItem.unseenMsgNum > 0) {
                 String unseenMsgNum = roomItem.unseenMsgNum < Constants.MAX_UNSEEN_MSG_NUM ?
-                        roomItem.unseenMsgNum.toString():(Constants.MAX_UNSEEN_MSG_NUM+"+");
+                        roomItem.unseenMsgNum.toString() : (Constants.MAX_UNSEEN_MSG_NUM + "+");
                 iconTextView.setText(unseenMsgNum);
                 iconTextView.setVisibility(View.VISIBLE);
                 nameTextView.setTypeface(null, Typeface.BOLD);

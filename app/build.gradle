@@ -20,6 +20,10 @@ android {
             multiDexKeepFile file('multidex-config.txt')
         }
     }
+    compileOptions {
+        sourceCompatibility = '1.8'
+        targetCompatibility = '1.8'
+    }
 }
 
 dependencies {
@@ -47,7 +51,7 @@ dependencies {
     implementation 'androidx.cardview:cardview:1.0.0'
 
     //roomdb
-    def room_version = "2.1.0-alpha06"
+    def room_version = "2.1.0-alpha07"
     implementation "androidx.room:room-runtime:$room_version"
     annotationProcessor "androidx.room:room-compiler:$room_version"
     // For Kotlin use kapt instead of annotationProcessor
@@ -70,6 +74,6 @@ dependencies {
     annotationProcessor 'com.google.dagger:dagger-android-processor:2.20'
     annotationProcessor 'com.google.dagger:dagger-compiler:2.20'
 
-    //in-app messaging
-    implementation 'com.google.firebase:firebase-inappmessaging-display:17.1.1'
+    //circular imageView
+    implementation 'de.hdodenhof:circleimageview:3.0.0'
 }

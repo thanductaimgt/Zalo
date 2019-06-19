@@ -4,7 +4,6 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
-import vng.zalo.tdtai.zalo.zalo.viewmodels.ContactSubFragmentViewModel;
 import vng.zalo.tdtai.zalo.zalo.viewmodels.OfficialAccountViewModel;
 
 public class OfficialAccountViewModelFactory implements ViewModelProvider.Factory {

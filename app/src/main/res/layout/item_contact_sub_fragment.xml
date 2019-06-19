@@ -20,20 +20,21 @@
         app:layout_constraintStart_toEndOf="@id/avatarImgButtonContact"
         app:layout_constraintTop_toTopOf="@id/avatarImgButtonContact" />
 
-    <ImageView
+    <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/avatarImgButtonContact"
-        android:layout_width="@dimen/size_room_item_avatar_40dp"
+        android:layout_width="@dimen/size_room_item_avatar_48dp"
         android:layout_height="0dp"
-        android:layout_margin="@dimen/size_medium_16dp"
+        android:layout_margin="@dimen/size_small_8dp"
         android:contentDescription="@string/description_avatar"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintDimensionRatio="w,1:1"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0"
-        app:srcCompat="@drawable/common_google_signin_btn_icon_dark" />
+        app:layout_constraintVertical_bias="0.0" />
 
-    <ImageView
+    <ImageButton
+        android:background="@drawable/call"
+        android:clickable="true"
         android:id="@+id/iconCallImgButtonContact"
         android:layout_width="0dp"
         android:layout_height="@dimen/size_large_24dp"
@@ -44,9 +45,10 @@
         app:layout_constraintDimensionRatio="h,1:1"
         app:layout_constraintEnd_toStartOf="@id/iconVideoImgButtonContact"
         app:layout_constraintTop_toTopOf="@id/nameTextViewContact"
-        app:srcCompat="@drawable/call" />
+        android:focusable="true" />
 
-    <ImageView
+    <ImageButton
+        android:background="@drawable/video"
         android:id="@+id/iconVideoImgButtonContact"
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -56,7 +58,6 @@
         app:layout_constraintDimensionRatio="h,1:1"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@id/iconCallImgButtonContact"
-        app:srcCompat="@drawable/video"
         android:contentDescription="@string/description_video" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

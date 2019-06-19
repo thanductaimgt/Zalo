@@ -31,7 +31,7 @@ public class RoomActivityAdapter extends ListAdapter<Message, RecyclerView.ViewH
 
     @Override
     public int getItemViewType(int position) {
-        if (getItem(position).senderPhone.equals(ZaloApplication.currentUserPhone)) {
+        if (getItem(position).senderPhone.equals(ZaloApplication.currentUser.phone)) {
             return Constants.VIEW_TYPE_SENDER;
         } else {
             return Constants.VIEW_TYPE_RECEIVER;
@@ -86,7 +86,7 @@ public class RoomActivityAdapter extends ListAdapter<Message, RecyclerView.ViewH
             => display date
             */
             if (prevMessage == null ||
-                    !Utils.areInSameDay(curMessage.createdTime.toDate(), prevMessage.createdTime.toDate())) {
+                    Utils.areInDifferentDay(curMessage.createdTime.toDate(), prevMessage.createdTime.toDate())) {
                 dateTextView.setText(dateFormat.format(curMessage.createdTime.toDate()));
                 dateTextView.setVisibility(View.VISIBLE);
             } else {
@@ -100,8 +100,8 @@ public class RoomActivityAdapter extends ListAdapter<Message, RecyclerView.ViewH
             => display message time
             */
             if (nextMessage == null ||
-                    Utils.timeDiffInMillisecond(curMessage.createdTime.toDate(), nextMessage.createdTime.toDate()) > Constants.ONE_MIN_IN_MILLISECOND ||
-                    !Utils.areInSameDay(curMessage.createdTime.toDate(), nextMessage.createdTime.toDate())) {
+                    Utils.timeGapInMillisecond(curMessage.createdTime.toDate(), nextMessage.createdTime.toDate()) > Constants.ONE_MIN_IN_MILLISECOND ||
+                    Utils.areInDifferentDay(curMessage.createdTime.toDate(), nextMessage.createdTime.toDate())) {
                 sendTimeTextView.setVisibility(View.VISIBLE);
                 sendTimeTextView.setText(timeFormat.format(curMessage.createdTime.toDate()));
             } else {
@@ -138,7 +138,7 @@ public class RoomActivityAdapter extends ListAdapter<Message, RecyclerView.ViewH
             => display date
             */
             if (prevMessage == null ||
-                    !Utils.areInSameDay(curMessage.createdTime.toDate(), prevMessage.createdTime.toDate())) {
+                    Utils.areInDifferentDay(curMessage.createdTime.toDate(), prevMessage.createdTime.toDate())) {
                 dateTextView.setText(dateFormat.format(curMessage.createdTime.toDate()));
                 dateTextView.setVisibility(View.VISIBLE);
             } else {
@@ -153,8 +153,8 @@ public class RoomActivityAdapter extends ListAdapter<Message, RecyclerView.ViewH
             */
             boolean displayMessageTime = false;
             if (nextMessage == null ||
-                    Utils.timeDiffInMillisecond(curMessage.createdTime.toDate(), nextMessage.createdTime.toDate()) > Constants.ONE_MIN_IN_MILLISECOND ||
-                    !Utils.areInSameDay(curMessage.createdTime.toDate(), nextMessage.createdTime.toDate())) {
+                    Utils.timeGapInMillisecond(curMessage.createdTime.toDate(), nextMessage.createdTime.toDate()) > Constants.ONE_MIN_IN_MILLISECOND ||
+                    Utils.areInDifferentDay(curMessage.createdTime.toDate(), nextMessage.createdTime.toDate())) {
                 recvTimeTextView.setVisibility(View.VISIBLE);
                 recvTimeTextView.setText(timeFormat.format(curMessage.createdTime.toDate()));
                 displayMessageTime = true;

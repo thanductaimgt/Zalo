@@ -6,19 +6,16 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.util.List;
-
 import vng.zalo.tdtai.zalo.R;
 import vng.zalo.tdtai.zalo.zalo.dependency_factories.viewmodels_factory.ContactSubFragmentViewModelFactory;
-import vng.zalo.tdtai.zalo.zalo.models.RoomItem;
 import vng.zalo.tdtai.zalo.zalo.utils.ContactModelDiffCallback;
 import vng.zalo.tdtai.zalo.zalo.viewmodels.ContactSubFragmentViewModel;
 import vng.zalo.tdtai.zalo.zalo.views.home.fragments.chat_fragment.room_activity.RoomActivity;
@@ -51,12 +48,9 @@ public class ContactSubFragment extends Fragment implements View.OnClickListener
 
         recyclerView.setAdapter(adapter);
 
-        viewModel.liveContacts.observe(getViewLifecycleOwner(), new Observer<List<RoomItem>>() {
-            @Override
-            public void onChanged(List<RoomItem> contacts) {
-                adapter.submitList(contacts);
-                Log.d(TAG,"onChanged livedata");
-            }
+        viewModel.liveContacts.observe(getViewLifecycleOwner(), contacts -> {
+            adapter.submitList(contacts);
+            Log.d(TAG,"onChanged livedata");
         });
     }
 

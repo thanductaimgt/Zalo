@@ -7,15 +7,15 @@
     tools:context=".zalo.views.intro.IntroActivity">
 
     <androidx.viewpager.widget.ViewPager
-        android:layout_margin="@dimen/size_large_32dp"
+        app:layout_constraintTop_toTopOf="parent"
         android:id="@+id/viewPager"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:layout_margin="@dimen/size_large_32dp"
         android:background="@drawable/zalo"
         app:layout_constraintBottom_toTopOf="@id/guideline"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintStart_toStartOf="parent" />
 
     <Button
         android:id="@+id/loginButton"

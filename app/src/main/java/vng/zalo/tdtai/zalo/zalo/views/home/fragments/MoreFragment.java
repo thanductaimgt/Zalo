@@ -17,8 +17,8 @@ import vng.zalo.tdtai.zalo.R;
 import vng.zalo.tdtai.zalo.zalo.ZaloApplication;
 
 public class MoreFragment extends Fragment {
-    ImageView avatarImgView;
-    TextView nameTextView;
+    private ImageView avatarImgView;
+    private TextView nameTextView;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
@@ -32,7 +32,7 @@ public class MoreFragment extends Fragment {
         avatarImgView = view.findViewById(R.id.avatarImgView);
         nameTextView = view.findViewById(R.id.nameTextView);
 
-        Picasso.with(avatarImgView.getContext())
+        Picasso.get()
                 .load(ZaloApplication.currentUser.avatar)
                 .fit()
                 .into(avatarImgView);

@@ -28,6 +28,16 @@
     <string name="label_e_government">eGovernment</string>
     <string name="label_bank">Bank</string>
     <string name="label_food">Food</string>
+    <string name="label_add_group">Tạo nhóm với:</string>
+    <string name="label_joined_groups">Nhóm đã tham gia</string>
+    <string name="label_recent">Gần đây</string>
+
+    <string-array name="sort_group_options">
+        <item>Tên nhóm</item>
+        <item>Hoạt động cuối</item>
+        <item>Nhóm quản lý</item>
+        <item>Nhóm mở</item>
+    </string-array>
 
     <string name="description_login">Vui lòng nhập số điện thoại và mật khẩu để đăng nhập</string>
     <string name="description_update_contact">Nhanh chóng thêm bạn vào Zalo từ danh bạ điện thoại</string>
@@ -48,10 +58,16 @@
     <string name="description_your_profile">Trang cá nhân của bạn</string>
     <string name="description_post_status_image">Đăng tin</string>
     <string name="description_shop">Diện chất mùa hạ</string>
+    <string name="description_remind_date">Nhắc hẹn</string>
+    <string name="description_vote">Bình chọn</string>
+    <string name="description_name_group">Đặt tên nhóm</string>
+    <string name="description_create_group">Tạo nhóm mới</string>
 
     <string name="hint_phone_number">Số điện thoại</string>
     <string name="hint_password">Mật khẩu</string>
     <string name="hint_message">Tin nhắn</string>
+    <string name="hint_search_not_clicked">Tìm thành viên</string>
+    <string name="hint_search_clicked">Tìm tên hoặc số điện thoại</string>
 
     <string name="placeholder_text">Text</string>
 </resources>

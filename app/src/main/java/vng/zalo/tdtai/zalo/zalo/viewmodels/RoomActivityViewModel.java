@@ -94,7 +94,7 @@ public class RoomActivityViewModel extends ViewModel {
             assert roomItem != null;
             if (roomItem.unseenMsgNum > 0 && currentUserPhone.equals(ZaloApplication.currentUser.phone)) {
                 Log.d(TAG, "onEvent set unseen = 0 of " + thisRoomItem.getPath());
-                roomItem.unseenMsgNum = (long) 0;
+                roomItem.unseenMsgNum = 0;
                 thisRoomItem.set(roomItem.toMap())
                         .addOnFailureListener(e1 -> Log.d(TAG, "Change unseenMsgNum = 0 fail"));
             }
@@ -122,6 +122,9 @@ public class RoomActivityViewModel extends ViewModel {
         message.content = content;
         message.senderPhone = ZaloApplication.currentUser.phone;
         message.createdTime = Timestamp.now();
+
+        //edit this
+        message.type = Constants.MESSAGE_TYPE_TEXT;
 
         //add message
         ZaloApplication.getFirebaseInstance()

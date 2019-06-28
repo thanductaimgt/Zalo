@@ -4,12 +4,14 @@ import com.google.firebase.Timestamp;
 import java.util.HashMap;
 import java.util.Map;
 
+import vng.zalo.tdtai.zalo.zalo.utils.Constants;
+
 public class Message extends DataModel {
     public String content;
     public Timestamp createdTime;
     public String senderPhone;
     public String senderAvatar;
-    public Type type = Type.TEXT;
+    public int type;
 
     public Message(){}
 
@@ -19,16 +21,8 @@ public class Message extends DataModel {
         res.put("content",content);
         res.put("createdTime",createdTime);
         res.put("senderPhone",senderPhone);
-        res.put("type",type.name());
+        res.put("type", type);
 
         return res;
-    }
-
-    enum Type{
-        TEXT,
-        IMAGE,
-        EMOJI,
-        FILE,
-        VOICE,
     }
 }

@@ -1,4 +1,4 @@
-package vng.zalo.tdtai.zalo.zalo.views.home.fragments.chat_fragment;
+package vng.zalo.tdtai.zalo.zalo.adapters;
 
 import android.graphics.Typeface;
 import android.view.LayoutInflater;
@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
@@ -20,20 +21,20 @@ import vng.zalo.tdtai.zalo.zalo.utils.Constants;
 import vng.zalo.tdtai.zalo.zalo.utils.ModelViewHolder;
 import vng.zalo.tdtai.zalo.zalo.utils.Utils;
 
-public class ChatFragmentAdapter extends ListAdapter<RoomItem, ChatFragmentAdapter.ChatViewHolder> {
-    private static final String TAG = ChatFragmentAdapter.class.getSimpleName();
+public class RoomItemAdapter extends ListAdapter<RoomItem, RoomItemAdapter.ChatViewHolder> {
+    private static final String TAG = RoomItemAdapter.class.getSimpleName();
 
-    private ChatFragment chatFragment;
+    private Fragment fragment;
 
-    ChatFragmentAdapter(ChatFragment chatFragment, @NonNull DiffUtil.ItemCallback<RoomItem> diffCallback) {
+    public RoomItemAdapter(Fragment fragment, @NonNull DiffUtil.ItemCallback<RoomItem> diffCallback) {
         super(diffCallback);
-        this.chatFragment = chatFragment;
+        this.fragment = fragment;
     }
 
     @NonNull
     @Override
     public ChatViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_chat_fragment, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_room, parent, false);
         return new ChatViewHolder(view);
     }
 
@@ -67,7 +68,7 @@ public class ChatFragmentAdapter extends ListAdapter<RoomItem, ChatFragmentAdapt
 
         @Override
         public void bind(int position) {
-            itemView.setOnClickListener(chatFragment);
+            itemView.setOnClickListener((View.OnClickListener) fragment);
             RoomItem roomItem = getItem(position);
 
             nameTextView.setText(roomItem.name);
@@ -83,14 +84,14 @@ public class ChatFragmentAdapter extends ListAdapter<RoomItem, ChatFragmentAdapt
             descTextView.setText(roomItem.lastMsg);
             Utils.formatTextOnNumberOfLines(descTextView, 1);
 
-            Picasso.with(avatarImgView.getContext())
+            Picasso.get()
                     .load(roomItem.avatar)
                     .fit()
                     .into(avatarImgView);
 
             if (roomItem.unseenMsgNum > 0) {
                 String unseenMsgNum = roomItem.unseenMsgNum < Constants.MAX_UNSEEN_MSG_NUM ?
-                        roomItem.unseenMsgNum.toString() : (Constants.MAX_UNSEEN_MSG_NUM + "+");
+                        String.valueOf(roomItem.unseenMsgNum) : (Constants.MAX_UNSEEN_MSG_NUM + "+");
                 iconTextView.setText(unseenMsgNum);
                 iconTextView.setVisibility(View.VISIBLE);
                 nameTextView.setTypeface(null, Typeface.BOLD);

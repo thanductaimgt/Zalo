@@ -1,339 +1,327 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-        <androidx.cardview.widget.CardView
-            android:id="@+id/cardView"
-            android:layout_width="match_parent"
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/avatarImgView"
+            android:layout_width="@dimen/size_room_item_avatar_48dp"
+            android:layout_height="0dp"
+            android:layout_margin="@dimen/size_medium_16dp"
+            android:layout_marginBottom="@dimen/size_small_8dp"
+            android:contentDescription="@string/description_avatar"
+            android:src="@android:drawable/screen_background_light_transparent"
+            app:layout_constraintDimensionRatio="h,1:1"
+            app:layout_constraintHorizontal_chainStyle="spread_inside"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/nameTextView"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            app:layout_constraintTop_toTopOf="parent">
+            android:layout_marginStart="@dimen/size_medium_16dp"
+            android:layout_marginLeft="@dimen/size_medium_16dp"
+            android:layout_marginEnd="@dimen/size_small_8dp"
+            android:layout_marginRight="@dimen/size_small_8dp"
+            android:layout_marginBottom="@dimen/size_tiny_4dp"
+            app:layout_constraintBottom_toTopOf="@+id/descTextView"
+            app:layout_constraintEnd_toStartOf="@id/postStatusImgView"
+            app:layout_constraintStart_toEndOf="@id/avatarImgView" />
 
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/itemChatFragmentConstraintLayout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
+        <TextView
+            android:id="@+id/descTextView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/size_small_8dp"
+            android:layout_marginRight="@dimen/size_small_8dp"
+            android:text="@string/description_your_profile"
+            android:textColor="@color/colorTextGrey"
+            android:textSize="@dimen/size_small_text_10sp"
+            app:layout_constraintBottom_toBottomOf="@+id/avatarImgView"
+            app:layout_constraintEnd_toStartOf="@id/postStatusImgView"
+            app:layout_constraintStart_toStartOf="@id/nameTextView"
+            app:layout_constraintVertical_bias="0.0" />
 
-                <de.hdodenhof.circleimageview.CircleImageView
-                    android:id="@+id/avatarImgView"
-                    android:layout_width="@dimen/size_room_item_avatar_48dp"
-                    android:layout_height="0dp"
-                    android:layout_margin="@dimen/size_medium_16dp"
-                    android:layout_marginBottom="@dimen/size_small_8dp"
-                    android:contentDescription="@string/description_avatar"
-                    android:src="@android:drawable/screen_background_light_transparent"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintDimensionRatio="h,1:1"
-                    app:layout_constraintHorizontal_chainStyle="spread_inside"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+        <ImageButton
+            android:id="@+id/postStatusImgView"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/size_large_32dp"
+            android:layout_marginEnd="@dimen/size_small_8dp"
+            android:layout_marginRight="@dimen/size_small_8dp"
+            android:background="@drawable/post_status"
+            android:contentDescription="@string/description_post_status_image"
+            app:layout_constraintBottom_toBottomOf="@id/avatarImgView"
+            app:layout_constraintDimensionRatio="w,1:1"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/avatarImgView" />
 
-                <TextView
-                    android:layout_marginBottom="@dimen/size_tiny_4dp"
-                    android:id="@+id/nameTextView"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/size_medium_16dp"
-                    android:layout_marginLeft="@dimen/size_medium_16dp"
-                    android:layout_marginEnd="@dimen/size_small_8dp"
-                    android:layout_marginRight="@dimen/size_small_8dp"
-                    app:layout_constraintBottom_toTopOf="@+id/descTextView"
-                    app:layout_constraintEnd_toStartOf="@id/postStatusImgView"
-                    app:layout_constraintStart_toEndOf="@id/avatarImgView" />
+        <!--find-->
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/avatarFind"
+            android:layout_width="@dimen/size_room_item_avatar_48dp"
+            android:layout_height="0dp"
+            android:layout_marginBottom="@dimen/size_medium_16dp"
+            android:layout_marginRight="@dimen/size_medium_16dp"
+            android:layout_marginLeft="@dimen/size_medium_16dp"
+            android:layout_marginTop="@dimen/size_large_32dp"
+            android:contentDescription="@string/description_avatar"
+            android:src="@drawable/find_around"
+            app:layout_constraintDimensionRatio="h,1:1"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/descTextView" />
 
-                <TextView
-                    android:id="@+id/descTextView"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="@dimen/size_small_8dp"
-                    android:layout_marginRight="@dimen/size_small_8dp"
-                    android:text="@string/description_your_profile"
-                    android:textColor="@color/colorTextGrey"
-                    android:textSize="@dimen/size_small_text_10sp"
-                    app:layout_constraintBottom_toBottomOf="@+id/avatarImgView"
-                    app:layout_constraintEnd_toStartOf="@id/postStatusImgView"
-                    app:layout_constraintStart_toStartOf="@id/nameTextView"
-                    app:layout_constraintVertical_bias="0.0" />
+        <TextView
+            android:id="@+id/titleFind"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/size_medium_16dp"
+            android:layout_marginLeft="@dimen/size_medium_16dp"
+            android:layout_marginEnd="@dimen/size_small_8dp"
+            android:layout_marginRight="@dimen/size_small_8dp"
+            android:text="@string/label_find_around"
+            app:layout_constraintBottom_toBottomOf="@id/avatarFind"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/avatarFind"
+            app:layout_constraintTop_toTopOf="@id/avatarFind" />
 
-                <ImageButton
-                    android:background="@drawable/post_status"
-                    android:contentDescription="@string/description_post_status_image"
-                    android:id="@+id/postStatusImgView"
-                    android:layout_width="0dp"
-                    android:layout_height="@dimen/size_large_32dp"
-                    android:layout_marginEnd="@dimen/size_small_8dp"
-                    android:layout_marginRight="@dimen/size_small_8dp"
-                    app:layout_constraintBottom_toBottomOf="@id/avatarImgView"
-                    app:layout_constraintDimensionRatio="w,1:1"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="@id/avatarImgView"/>
-            </androidx.constraintlayout.widget.ConstraintLayout>
-        </androidx.cardview.widget.CardView>
+        <!--chat rooms-->
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/avatarChatRooms"
+            android:layout_width="@dimen/size_room_item_avatar_48dp"
+            android:layout_height="0dp"
+            android:layout_margin="@dimen/size_medium_16dp"
+            android:contentDescription="@string/description_avatar"
+            android:src="@drawable/chat_rooms"
+            app:layout_constraintDimensionRatio="h,1:1"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/avatarFind" />
 
-        <androidx.cardview.widget.CardView
-            android:layout_marginTop="@dimen/size_small_8dp"
-            app:layout_constraintTop_toBottomOf="@id/cardView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-                <!--find-->
-                <de.hdodenhof.circleimageview.CircleImageView
-                    android:id="@+id/avatarFind"
-                    android:layout_width="@dimen/size_room_item_avatar_48dp"
-                    android:layout_height="0dp"
-                    android:layout_margin="@dimen/size_medium_16dp"
-                    android:contentDescription="@string/description_avatar"
-                    android:src="@drawable/find_around"
-                    app:layout_constraintDimensionRatio="h,1:1"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-                <TextView
-                    android:text="@string/label_find_around"
-                    android:id="@+id/titleFind"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/size_medium_16dp"
-                    android:layout_marginLeft="@dimen/size_medium_16dp"
-                    android:layout_marginEnd="@dimen/size_small_8dp"
-                    android:layout_marginRight="@dimen/size_small_8dp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@id/avatarFind"
-                    app:layout_constraintTop_toTopOf="@id/avatarFind"
-                    app:layout_constraintBottom_toBottomOf="@id/avatarFind"/>
+        <TextView
+            android:id="@+id/titleChatRooms"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/size_medium_16dp"
+            android:layout_marginLeft="@dimen/size_medium_16dp"
+            android:layout_marginEnd="@dimen/size_small_8dp"
+            android:layout_marginRight="@dimen/size_small_8dp"
+            android:text="@string/label_chat_rooms"
+            app:layout_constraintBottom_toBottomOf="@id/avatarChatRooms"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/avatarChatRooms"
+            app:layout_constraintTop_toTopOf="@id/avatarChatRooms" />
 
-                <!--chat rooms-->
-                <de.hdodenhof.circleimageview.CircleImageView
-                    android:src="@drawable/chat_rooms"
-                    android:id="@+id/avatarChatRooms"
-                    android:layout_width="@dimen/size_room_item_avatar_48dp"
-                    android:layout_height="0dp"
-                    android:layout_margin="@dimen/size_medium_16dp"
-                    android:contentDescription="@string/description_avatar"
-                    app:layout_constraintDimensionRatio="h,1:1"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/avatarFind" />
-                <TextView
-                    android:text="@string/label_chat_rooms"
-                    android:id="@+id/titleChatRooms"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/size_medium_16dp"
-                    android:layout_marginLeft="@dimen/size_medium_16dp"
-                    android:layout_marginEnd="@dimen/size_small_8dp"
-                    android:layout_marginRight="@dimen/size_small_8dp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@id/avatarChatRooms"
-                    app:layout_constraintTop_toTopOf="@id/avatarChatRooms"
-                    app:layout_constraintBottom_toBottomOf="@id/avatarChatRooms"/>
+        <!--shop-->
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/avatarShop"
+            android:layout_width="@dimen/size_room_item_avatar_48dp"
+            android:layout_height="0dp"
+            android:layout_margin="@dimen/size_medium_16dp"
+            android:contentDescription="@string/description_avatar"
+            android:src="@drawable/shop"
+            app:layout_constraintDimensionRatio="h,1:1"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/avatarChatRooms" />
 
-                <!--shop-->
-                <de.hdodenhof.circleimageview.CircleImageView
-                    android:src="@drawable/shop"
-                    android:id="@+id/avatarShop"
-                    android:layout_width="@dimen/size_room_item_avatar_48dp"
-                    android:layout_height="0dp"
-                    android:layout_margin="@dimen/size_medium_16dp"
-                    android:contentDescription="@string/description_avatar"
-                    app:layout_constraintDimensionRatio="h,1:1"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/avatarChatRooms" />
+        <TextView
+            android:id="@+id/titleShop"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/size_medium_16dp"
+            android:layout_marginLeft="@dimen/size_medium_16dp"
+            android:layout_marginEnd="@dimen/size_small_8dp"
+            android:layout_marginRight="@dimen/size_small_8dp"
+            android:text="@string/label_shop"
+            app:layout_constraintBottom_toBottomOf="@id/avatarShop"
+            app:layout_constraintEnd_toStartOf="@+id/textView"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toEndOf="@id/avatarShop"
+            app:layout_constraintTop_toTopOf="@id/avatarShop" />
 
-                <TextView
-                    android:id="@+id/titleShop"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/size_medium_16dp"
-                    android:layout_marginLeft="@dimen/size_medium_16dp"
-                    android:layout_marginEnd="@dimen/size_small_8dp"
-                    android:layout_marginRight="@dimen/size_small_8dp"
-                    android:text="@string/label_shop"
-                    app:layout_constraintBottom_toBottomOf="@id/avatarShop"
-                    app:layout_constraintEnd_toStartOf="@+id/textView"
-                    app:layout_constraintHorizontal_bias="0.0"
-                    app:layout_constraintStart_toEndOf="@id/avatarShop"
-                    app:layout_constraintTop_toTopOf="@id/avatarShop" />
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/size_small_8dp"
+            android:text="@string/description_shop"
+            android:textColor="@color/colorTextGrey"
+            app:layout_constraintBottom_toBottomOf="@id/shopDescImgView"
+            app:layout_constraintEnd_toStartOf="@id/shopDescImgView"
+            app:layout_constraintTop_toTopOf="@id/shopDescImgView" />
 
-                <TextView
-                    android:textColor="@color/colorTextGrey"
-                    android:id="@+id/textView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="@dimen/size_small_8dp"
-                    android:text="@string/description_shop"
-                    app:layout_constraintBottom_toBottomOf="@id/shopDescImgView"
-                    app:layout_constraintEnd_toStartOf="@id/shopDescImgView"
-                    app:layout_constraintTop_toTopOf="@id/shopDescImgView" />
-                <ImageView
-                    android:src="@drawable/sale_9k"
-                    android:id="@+id/shopDescImgView"
-                    android:layout_width="@dimen/size_room_item_avatar_48dp"
-                    android:layout_height="0dp"
-                    android:layout_margin="@dimen/size_small_8dp"
-                    android:contentDescription="@string/description_avatar"
-                    app:layout_constraintDimensionRatio="h,1:1"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="@id/avatarShop"
-                    app:layout_constraintBottom_toBottomOf="@id/avatarShop"/>
+        <ImageView
+            android:id="@+id/shopDescImgView"
+            android:layout_width="@dimen/size_room_item_avatar_48dp"
+            android:layout_height="0dp"
+            android:layout_margin="@dimen/size_small_8dp"
+            android:contentDescription="@string/description_avatar"
+            android:src="@drawable/sale_9k"
+            app:layout_constraintBottom_toBottomOf="@id/avatarShop"
+            app:layout_constraintDimensionRatio="h,1:1"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/avatarShop" />
 
-                <!--stickers-->
-                <de.hdodenhof.circleimageview.CircleImageView
-                    android:src="@drawable/stickers"
-                    android:id="@+id/avatarStickers"
-                    android:layout_width="@dimen/size_room_item_avatar_48dp"
-                    android:layout_height="0dp"
-                    android:layout_margin="@dimen/size_medium_16dp"
-                    android:contentDescription="@string/description_avatar"
-                    app:layout_constraintDimensionRatio="h,1:1"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/avatarShop" />
-                <TextView
-                    android:text="@string/label_stickers"
-                    android:id="@+id/titleStickers"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/size_medium_16dp"
-                    android:layout_marginLeft="@dimen/size_medium_16dp"
-                    android:layout_marginEnd="@dimen/size_small_8dp"
-                    android:layout_marginRight="@dimen/size_small_8dp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@id/avatarStickers"
-                    app:layout_constraintTop_toTopOf="@id/avatarStickers"
-                    app:layout_constraintBottom_toBottomOf="@id/avatarStickers"/>
+        <!--stickers-->
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/avatarStickers"
+            android:layout_width="@dimen/size_room_item_avatar_48dp"
+            android:layout_height="0dp"
+            android:layout_margin="@dimen/size_medium_16dp"
+            android:contentDescription="@string/description_avatar"
+            android:src="@drawable/stickers"
+            app:layout_constraintDimensionRatio="h,1:1"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/avatarShop" />
 
-                <!--channel-->
-                <de.hdodenhof.circleimageview.CircleImageView
-                    android:src="@drawable/channel"
-                    android:id="@+id/avatarChannel"
-                    android:layout_width="@dimen/size_room_item_avatar_48dp"
-                    android:layout_height="0dp"
-                    android:layout_margin="@dimen/size_medium_16dp"
-                    android:contentDescription="@string/description_avatar"
-                    app:layout_constraintDimensionRatio="h,1:1"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/avatarStickers" />
-                <TextView
-                    android:text="@string/label_channel"
-                    android:id="@+id/titleChannel"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/size_medium_16dp"
-                    android:layout_marginLeft="@dimen/size_medium_16dp"
-                    android:layout_marginEnd="@dimen/size_small_8dp"
-                    android:layout_marginRight="@dimen/size_small_8dp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@id/avatarChannel"
-                    app:layout_constraintTop_toTopOf="@id/avatarChannel"
-                    app:layout_constraintBottom_toBottomOf="@id/avatarChannel"/>
+        <TextView
+            android:id="@+id/titleStickers"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/size_medium_16dp"
+            android:layout_marginLeft="@dimen/size_medium_16dp"
+            android:layout_marginEnd="@dimen/size_small_8dp"
+            android:layout_marginRight="@dimen/size_small_8dp"
+            android:text="@string/label_stickers"
+            app:layout_constraintBottom_toBottomOf="@id/avatarStickers"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/avatarStickers"
+            app:layout_constraintTop_toTopOf="@id/avatarStickers" />
 
-                <!--Game-->
-                <de.hdodenhof.circleimageview.CircleImageView
-                    android:src="@drawable/game"
-                    android:id="@+id/avatarGame"
-                    android:layout_width="@dimen/size_room_item_avatar_48dp"
-                    android:layout_height="0dp"
-                    android:layout_margin="@dimen/size_medium_16dp"
-                    android:contentDescription="@string/description_avatar"
-                    app:layout_constraintDimensionRatio="h,1:1"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/avatarChannel" />
-                <TextView
-                    android:text="@string/label_game"
-                    android:id="@+id/titleGame"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/size_medium_16dp"
-                    android:layout_marginLeft="@dimen/size_medium_16dp"
-                    android:layout_marginEnd="@dimen/size_small_8dp"
-                    android:layout_marginRight="@dimen/size_small_8dp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@id/avatarGame"
-                    app:layout_constraintTop_toTopOf="@id/avatarGame"
-                    app:layout_constraintBottom_toBottomOf="@id/avatarGame"/>
+        <!--channel-->
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/avatarChannel"
+            android:layout_width="@dimen/size_room_item_avatar_48dp"
+            android:layout_height="0dp"
+            android:layout_margin="@dimen/size_medium_16dp"
+            android:contentDescription="@string/description_avatar"
+            android:src="@drawable/channel"
+            app:layout_constraintDimensionRatio="h,1:1"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/avatarStickers" />
 
-                <!--eGovernment-->
-                <de.hdodenhof.circleimageview.CircleImageView
-                    android:src="@drawable/e_government"
-                    android:id="@+id/avatarEGovernment"
-                    android:layout_width="@dimen/size_room_item_avatar_48dp"
-                    android:layout_height="0dp"
-                    android:layout_margin="@dimen/size_medium_16dp"
-                    android:contentDescription="@string/description_avatar"
-                    app:layout_constraintDimensionRatio="h,1:1"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/avatarGame" />
-                <TextView
-                    android:text="@string/label_e_government"
-                    android:id="@+id/titleEGovernment"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/size_medium_16dp"
-                    android:layout_marginLeft="@dimen/size_medium_16dp"
-                    android:layout_marginEnd="@dimen/size_small_8dp"
-                    android:layout_marginRight="@dimen/size_small_8dp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@id/avatarEGovernment"
-                    app:layout_constraintTop_toTopOf="@id/avatarEGovernment"
-                    app:layout_constraintBottom_toBottomOf="@id/avatarEGovernment"/>
+        <TextView
+            android:id="@+id/titleChannel"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/size_medium_16dp"
+            android:layout_marginLeft="@dimen/size_medium_16dp"
+            android:layout_marginEnd="@dimen/size_small_8dp"
+            android:layout_marginRight="@dimen/size_small_8dp"
+            android:text="@string/label_channel"
+            app:layout_constraintBottom_toBottomOf="@id/avatarChannel"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/avatarChannel"
+            app:layout_constraintTop_toTopOf="@id/avatarChannel" />
 
-                <!--Bank-->
-                <de.hdodenhof.circleimageview.CircleImageView
-                    android:src="@drawable/bank"
-                    android:id="@+id/avatarBank"
-                    android:layout_width="@dimen/size_room_item_avatar_48dp"
-                    android:layout_height="0dp"
-                    android:layout_margin="@dimen/size_medium_16dp"
-                    android:contentDescription="@string/description_avatar"
-                    app:layout_constraintDimensionRatio="h,1:1"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/avatarEGovernment" />
-                <TextView
-                    android:text="@string/label_bank"
-                    android:id="@+id/titleBank"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/size_medium_16dp"
-                    android:layout_marginLeft="@dimen/size_medium_16dp"
-                    android:layout_marginEnd="@dimen/size_small_8dp"
-                    android:layout_marginRight="@dimen/size_small_8dp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@id/avatarBank"
-                    app:layout_constraintTop_toTopOf="@id/avatarBank"
-                    app:layout_constraintBottom_toBottomOf="@id/avatarBank"/>
+        <!--Game-->
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/avatarGame"
+            android:layout_width="@dimen/size_room_item_avatar_48dp"
+            android:layout_height="0dp"
+            android:layout_margin="@dimen/size_medium_16dp"
+            android:contentDescription="@string/description_avatar"
+            android:src="@drawable/game"
+            app:layout_constraintDimensionRatio="h,1:1"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/avatarChannel" />
 
-                <!--Food-->
-                <de.hdodenhof.circleimageview.CircleImageView
-                    android:src="@drawable/food"
-                    android:id="@+id/avatarFood"
-                    android:layout_width="@dimen/size_room_item_avatar_48dp"
-                    android:layout_height="0dp"
-                    android:layout_margin="@dimen/size_medium_16dp"
-                    android:contentDescription="@string/description_avatar"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintDimensionRatio="h,1:1"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/avatarBank" />
-                <TextView
-                    android:text="@string/label_food"
-                    android:id="@+id/titleFood"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/size_medium_16dp"
-                    android:layout_marginLeft="@dimen/size_medium_16dp"
-                    android:layout_marginEnd="@dimen/size_small_8dp"
-                    android:layout_marginRight="@dimen/size_small_8dp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@id/avatarFood"
-                    app:layout_constraintTop_toTopOf="@id/avatarFood"
-                    app:layout_constraintBottom_toBottomOf="@id/avatarFood"/>
-            </androidx.constraintlayout.widget.ConstraintLayout>
-        </androidx.cardview.widget.CardView>
+        <TextView
+            android:id="@+id/titleGame"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/size_medium_16dp"
+            android:layout_marginLeft="@dimen/size_medium_16dp"
+            android:layout_marginEnd="@dimen/size_small_8dp"
+            android:layout_marginRight="@dimen/size_small_8dp"
+            android:text="@string/label_game"
+            app:layout_constraintBottom_toBottomOf="@id/avatarGame"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/avatarGame"
+            app:layout_constraintTop_toTopOf="@id/avatarGame" />
 
+        <!--eGovernment-->
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/avatarEGovernment"
+            android:layout_width="@dimen/size_room_item_avatar_48dp"
+            android:layout_height="0dp"
+            android:layout_margin="@dimen/size_medium_16dp"
+            android:contentDescription="@string/description_avatar"
+            android:src="@drawable/e_government"
+            app:layout_constraintDimensionRatio="h,1:1"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/avatarGame" />
+
+        <TextView
+            android:id="@+id/titleEGovernment"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/size_medium_16dp"
+            android:layout_marginLeft="@dimen/size_medium_16dp"
+            android:layout_marginEnd="@dimen/size_small_8dp"
+            android:layout_marginRight="@dimen/size_small_8dp"
+            android:text="@string/label_e_government"
+            app:layout_constraintBottom_toBottomOf="@id/avatarEGovernment"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/avatarEGovernment"
+            app:layout_constraintTop_toTopOf="@id/avatarEGovernment" />
+
+        <!--Bank-->
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/avatarBank"
+            android:layout_width="@dimen/size_room_item_avatar_48dp"
+            android:layout_height="0dp"
+            android:layout_margin="@dimen/size_medium_16dp"
+            android:contentDescription="@string/description_avatar"
+            android:src="@drawable/bank"
+            app:layout_constraintDimensionRatio="h,1:1"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/avatarEGovernment" />
+
+        <TextView
+            android:id="@+id/titleBank"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/size_medium_16dp"
+            android:layout_marginLeft="@dimen/size_medium_16dp"
+            android:layout_marginEnd="@dimen/size_small_8dp"
+            android:layout_marginRight="@dimen/size_small_8dp"
+            android:text="@string/label_bank"
+            app:layout_constraintBottom_toBottomOf="@id/avatarBank"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/avatarBank"
+            app:layout_constraintTop_toTopOf="@id/avatarBank" />
+
+        <!--Food-->
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/avatarFood"
+            android:layout_width="@dimen/size_room_item_avatar_48dp"
+            android:layout_height="0dp"
+            android:layout_margin="@dimen/size_medium_16dp"
+            android:contentDescription="@string/description_avatar"
+            android:src="@drawable/food"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintDimensionRatio="h,1:1"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/avatarBank" />
+
+        <TextView
+            android:id="@+id/titleFood"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/size_medium_16dp"
+            android:layout_marginLeft="@dimen/size_medium_16dp"
+            android:layout_marginEnd="@dimen/size_small_8dp"
+            android:layout_marginRight="@dimen/size_small_8dp"
+            android:text="@string/label_food"
+            app:layout_constraintBottom_toBottomOf="@id/avatarFood"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/avatarFood"
+            app:layout_constraintTop_toTopOf="@id/avatarFood" />
     </androidx.constraintlayout.widget.ConstraintLayout>
+
 </ScrollView>

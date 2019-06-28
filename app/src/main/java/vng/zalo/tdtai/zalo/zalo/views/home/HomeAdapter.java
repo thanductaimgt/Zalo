@@ -7,7 +7,7 @@ import androidx.fragment.app.FragmentStatePagerAdapter;
 import vng.zalo.tdtai.zalo.zalo.views.home.fragments.chat_fragment.ChatFragment;
 import vng.zalo.tdtai.zalo.zalo.views.home.fragments.contact_fragment.ContactFragment;
 import vng.zalo.tdtai.zalo.zalo.views.home.fragments.DiaryFragment;
-import vng.zalo.tdtai.zalo.zalo.views.home.fragments.GroupFragment;
+import vng.zalo.tdtai.zalo.zalo.views.home.fragments.group_fragment.GroupFragment;
 import vng.zalo.tdtai.zalo.zalo.views.home.fragments.MoreFragment;
 
 public class HomeAdapter extends FragmentStatePagerAdapter {

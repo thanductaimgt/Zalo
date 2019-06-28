@@ -13,7 +13,8 @@ public class RoomItem extends DataModel {
     public String lastMsg;
     public Timestamp lastMsgTime;
     public String name;
-    public Long unseenMsgNum;
+    public int unseenMsgNum;
+    public int roomType;
 
     //mapping firestore data to POJO needs empty constructor
     public RoomItem(){}
@@ -26,6 +27,7 @@ public class RoomItem extends DataModel {
         res.put("lastMsgTime",this.lastMsgTime);
         res.put("name",this.name);
         res.put("unseenMsgNum",this.unseenMsgNum);
+        res.put("roomType",this.roomType);
 
         return res;
     }

@@ -5,12 +5,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
+
 import com.squareup.picasso.Picasso;
+
 import java.text.DateFormat;
+
 import vng.zalo.tdtai.zalo.R;
 import vng.zalo.tdtai.zalo.zalo.ZaloApplication;
 import vng.zalo.tdtai.zalo.zalo.models.Message;
@@ -168,7 +172,7 @@ public class RoomActivityAdapter extends ListAdapter<Message, RecyclerView.ViewH
             => display avatar
             */
             if (displayMessageTime || !nextMessage.senderPhone.equals(curMessage.senderPhone)) {
-                Picasso.with(recvMsgTextView.getContext())
+                Picasso.get()
                         .load(curMessage.senderAvatar)
                         .fit()
                         .into(recvAvatarImgView);

@@ -25,4 +25,13 @@ public class Constants {
     public static final String MINUTE = "phút";
     public static final String HOUR = "giờ";
     public static final String DAY = "ngày";
+
+    public static final int MESSAGE_TYPE_TEXT = 0;
+    public static final int MESSAGE_TYPE_IMAGE = 1;
+    public static final int MESSAGE_TYPE_EMOJI = 2;
+    public static final int MESSAGE_TYPE_FILE = 3;
+    public static final int MESSAGE_TYPE_VOICE = 4;
+
+    public static final Long ROOM_TYPE_PEER = (long)0;
+    public static final Long ROOM_TYPE_GROUP = (long)1;
 }

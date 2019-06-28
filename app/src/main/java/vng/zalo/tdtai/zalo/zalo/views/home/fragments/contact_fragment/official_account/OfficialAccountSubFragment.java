@@ -65,7 +65,7 @@ public class OfficialAccountSubFragment extends Fragment implements View.OnClick
     @Override
     public void onClick(View v) {
         switch (v.getId()){
-            case R.id.itemChatFragmentConstraintLayout:
+            case R.id.itemRoomRootLayout:
                 int position = recyclerView.getChildLayoutPosition(v);
                 Intent intent = new Intent(getActivity(), RoomActivity.class);
                 intent.putExtra(ROOM_ID, adapter.getCurrentList().get(position).roomId);

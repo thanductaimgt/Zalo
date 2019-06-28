@@ -41,7 +41,6 @@ public class RoomActivity extends AppCompatActivity implements View.OnClickListe
     RoomActivityViewModel viewModel;
 
     RoomActivityAdapter adapter;
-    LinearLayoutManager layoutManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,10 +64,6 @@ public class RoomActivity extends AppCompatActivity implements View.OnClickListe
 
         recyclerView = findViewById(R.id.recyclerViewRoomActivity);
 
-        layoutManager = new LinearLayoutManager(this);
-
-        recyclerView.setLayoutManager(layoutManager);
-
         viewModel.liveMessages.observe(this, messageList -> {
             adapter.submitList(messageList, this::scrollRecyclerViewToLastPosition);
             Log.d(TAG, "onChanged liveData");
@@ -77,6 +72,7 @@ public class RoomActivity extends AppCompatActivity implements View.OnClickListe
         adapter = new RoomActivityAdapter(this, new MessageDiffCallback());
 
         recyclerView.setAdapter(adapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         pictureImgButton = findViewById(R.id.pictureImgButton);
         sendMsgImgButton = findViewById(R.id.sendMsgImgButton);

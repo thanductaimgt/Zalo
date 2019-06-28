@@ -63,7 +63,7 @@ public class AllContactAdapter extends ListAdapter<RoomItem, AllContactAdapter.C
             phoneTextView.setText(roomItem.name);
             Utils.formatTextOnNumberOfLines(phoneTextView, 1);
 
-            Picasso.with(avatarImgView.getContext())
+            Picasso.get()
                     .load(roomItem.avatar)
                     .fit()
                     .into(avatarImgView);

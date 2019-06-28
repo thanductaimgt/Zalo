@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.Objects;
 
 import vng.zalo.tdtai.zalo.R;
+import vng.zalo.tdtai.zalo.zalo.adapters.RoomItemAdapter;
 import vng.zalo.tdtai.zalo.zalo.dependency_factories.viewmodels_factory.ChatFragmentViewModelFactory;
 import vng.zalo.tdtai.zalo.zalo.utils.RoomItemDiffCallback;
 import vng.zalo.tdtai.zalo.zalo.viewmodels.ChatFragmentViewModel;
@@ -31,7 +32,7 @@ public class ChatFragment extends Fragment implements View.OnClickListener {
 
     private RecyclerView recyclerView;
     private ChatFragmentViewModel viewModel;
-    private ChatFragmentAdapter adapter;
+    private RoomItemAdapter adapter;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
@@ -45,11 +46,11 @@ public class ChatFragment extends Fragment implements View.OnClickListener {
 
         recyclerView = view.findViewById(R.id.chatFragmentRecyclerView);
 
-        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-
-        adapter = new ChatFragmentAdapter(this, new RoomItemDiffCallback());
+        adapter = new RoomItemAdapter(this, new RoomItemDiffCallback());
 
         recyclerView.setAdapter(adapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        recyclerView.setHasFixedSize(true);
 
         viewModel.liveRoomItems.observe(getViewLifecycleOwner(), rooms -> {
             adapter.submitList(rooms, () -> Log.d(TAG, Objects.requireNonNull(viewModel.liveRoomItems.getValue()).toString()));
@@ -60,7 +61,7 @@ public class ChatFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onClick(View v) {
         switch (v.getId()){
-            case R.id.itemChatFragmentConstraintLayout:
+            case R.id.itemRoomRootLayout:
                 int position = recyclerView.getChildLayoutPosition(v);
                 Intent intent = new Intent(getActivity(), RoomActivity.class);
                 //room not created in database

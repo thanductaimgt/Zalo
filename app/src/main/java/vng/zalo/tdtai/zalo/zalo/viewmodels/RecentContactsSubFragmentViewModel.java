@@ -2,21 +2,23 @@ package vng.zalo.tdtai.zalo.zalo.viewmodels;
 
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
+
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.Query;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import vng.zalo.tdtai.zalo.zalo.ZaloApplication;
 import vng.zalo.tdtai.zalo.zalo.models.RoomItem;
 import vng.zalo.tdtai.zalo.zalo.utils.Constants;
 
-public class ChatFragmentViewModel extends ViewModel {
-    private static final String TAG = ChatFragmentViewModel.class.getSimpleName();
+public class RecentContactsSubFragmentViewModel extends ViewModel {
+    private static final String TAG = RecentContactsSubFragmentViewModel.class.getSimpleName();
 
     public MutableLiveData<List<RoomItem>> liveRoomItems;
 
-    public ChatFragmentViewModel() {
+    public RecentContactsSubFragmentViewModel() {
         liveRoomItems = new MutableLiveData<>(new ArrayList<>());
 
         ZaloApplication.getFirebaseInstance()

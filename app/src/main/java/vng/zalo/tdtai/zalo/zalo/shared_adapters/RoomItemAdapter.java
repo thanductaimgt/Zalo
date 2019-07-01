@@ -1,4 +1,4 @@
-package vng.zalo.tdtai.zalo.zalo.adapters;
+package vng.zalo.tdtai.zalo.zalo.shared_adapters;
 
 import android.graphics.Typeface;
 import android.view.LayoutInflater;
@@ -21,7 +21,7 @@ import vng.zalo.tdtai.zalo.zalo.utils.Constants;
 import vng.zalo.tdtai.zalo.zalo.utils.ModelViewHolder;
 import vng.zalo.tdtai.zalo.zalo.utils.Utils;
 
-public class RoomItemAdapter extends ListAdapter<RoomItem, RoomItemAdapter.ChatViewHolder> {
+public class RoomItemAdapter extends ListAdapter<RoomItem, RoomItemAdapter.RoomItemViewHolder> {
     private static final String TAG = RoomItemAdapter.class.getSimpleName();
 
     private Fragment fragment;
@@ -33,13 +33,13 @@ public class RoomItemAdapter extends ListAdapter<RoomItem, RoomItemAdapter.ChatV
 
     @NonNull
     @Override
-    public ChatViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public RoomItemViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_room, parent, false);
-        return new ChatViewHolder(view);
+        return new RoomItemViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ChatViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull RoomItemViewHolder holder, int position) {
         holder.bind(position);
     }
 
@@ -48,7 +48,7 @@ public class RoomItemAdapter extends ListAdapter<RoomItem, RoomItemAdapter.ChatV
         return getCurrentList().size();
     }
 
-    class ChatViewHolder extends RecyclerView.ViewHolder implements ModelViewHolder {
+    class RoomItemViewHolder extends RecyclerView.ViewHolder implements ModelViewHolder {
         View itemView;
         TextView nameTextView;
         TextView descTextView;
@@ -56,12 +56,12 @@ public class RoomItemAdapter extends ListAdapter<RoomItem, RoomItemAdapter.ChatV
         TextView iconTextView;
         CircleImageView avatarImgView;
 
-        ChatViewHolder(@NonNull View itemView) {
+        RoomItemViewHolder(@NonNull View itemView) {
             super(itemView);
             this.itemView = itemView;
             nameTextView = itemView.findViewById(R.id.nameTextView);
             descTextView = itemView.findViewById(R.id.descTextView);
-            timeTextView = itemView.findViewById(R.id.receiveTimeTextView);
+            timeTextView = itemView.findViewById(R.id.recvTimeTextView);
             iconTextView = itemView.findViewById(R.id.iconTextView);
             avatarImgView = itemView.findViewById(R.id.avatarImgView);
         }

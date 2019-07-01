@@ -45,7 +45,7 @@
             android:textSize="@dimen/size_small_text_10sp"
             app:layout_constraintBottom_toBottomOf="parent"
             android:layout_marginBottom="@dimen/size_small_8dp"
-            android:id="@+id/receiveTimeTextView"
+            android:id="@+id/recvTimeTextView"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:text="@string/placeholder_text"

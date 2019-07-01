@@ -20,10 +20,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.Objects;
 
 import vng.zalo.tdtai.zalo.R;
-import vng.zalo.tdtai.zalo.zalo.dependency_factories.viewmodels_factory.GroupFragmentViewModelFactory;
+import vng.zalo.tdtai.zalo.zalo.dependency_factories.ViewModelFactory;
 import vng.zalo.tdtai.zalo.zalo.utils.RoomItemDiffCallback;
 import vng.zalo.tdtai.zalo.zalo.viewmodels.GroupFragmentViewModel;
-import vng.zalo.tdtai.zalo.zalo.adapters.RoomItemAdapter;
+import vng.zalo.tdtai.zalo.zalo.shared_adapters.RoomItemAdapter;
 import vng.zalo.tdtai.zalo.zalo.views.home.fragments.chat_fragment.room_activity.RoomActivity;
 import vng.zalo.tdtai.zalo.zalo.views.home.fragments.group_fragment.create_group_activity.CreateGroupActivity;
 
@@ -49,9 +49,9 @@ public class GroupFragment extends Fragment implements AdapterView.OnItemSelecte
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        viewModel = ViewModelProviders.of(this, new GroupFragmentViewModelFactory()).get(GroupFragmentViewModel.class);
+        viewModel = ViewModelProviders.of(this, new ViewModelFactory()).get(GroupFragmentViewModel.class);
 
-        recyclerView = view.findViewById(R.id.recyclerViewGroupFragment);
+        recyclerView = view.findViewById(R.id.recyclerView);
 
         adapter = new RoomItemAdapter(this, new RoomItemDiffCallback());//GroupFragmentAdapter(this, new RoomItemDiffCallback());
 

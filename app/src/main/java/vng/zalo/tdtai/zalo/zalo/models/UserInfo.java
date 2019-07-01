@@ -10,4 +10,9 @@ public class UserInfo {
     public Timestamp joinDate;
 
     public UserInfo(){}
+
+    @Override
+    public String toString() {
+        return "{phone: "+phone+", avatar: "+avatar+", birthDate: "+birthDate+"}";
+    }
 }

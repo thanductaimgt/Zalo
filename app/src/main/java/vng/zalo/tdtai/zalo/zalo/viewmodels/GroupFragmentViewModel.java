@@ -19,6 +19,8 @@ public class GroupFragmentViewModel extends ViewModel {
     public GroupFragmentViewModel() {
         liveRoomItems = new MutableLiveData<>(new ArrayList<>());
 
+        Log.d(TAG, ZaloApplication.currentUser.toString());
+
         ZaloApplication.getFirebaseInstance()
                 .collection(Constants.COLLECTION_USERS)
                 .document(ZaloApplication.currentUser.phone)

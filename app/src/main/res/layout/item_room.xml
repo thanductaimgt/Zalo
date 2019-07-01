@@ -21,7 +21,7 @@
         android:id="@+id/nameTextView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        app:layout_constraintEnd_toStartOf="@id/receiveTimeTextView"
+        app:layout_constraintEnd_toStartOf="@id/recvTimeTextView"
         app:layout_constraintStart_toEndOf="@id/avatarImgView"
         app:layout_constraintTop_toTopOf="@id/avatarImgView"
         android:layout_marginStart="@dimen/size_medium_16dp"
@@ -43,7 +43,7 @@
         app:layout_constraintTop_toBottomOf="@id/nameTextView" />
 
     <TextView
-        android:id="@+id/receiveTimeTextView"
+        android:id="@+id/recvTimeTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="@dimen/size_small_8dp"

@@ -18,7 +18,7 @@ public class HomeAdapter extends FragmentStatePagerAdapter {
     private Fragment moreFragment;
 
     HomeAdapter(FragmentManager fm) {
-        super(fm);
+        super(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
 
         chatFragment = new ChatFragment();
         contactFragment = new ContactFragment();

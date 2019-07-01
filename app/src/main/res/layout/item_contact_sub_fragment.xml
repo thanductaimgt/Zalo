@@ -7,7 +7,7 @@
     android:orientation="vertical">
 
     <TextView
-        android:id="@+id/nameTextViewContact"
+        android:id="@+id/phoneTextView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/size_medium_16dp"
@@ -15,13 +15,13 @@
         android:layout_marginEnd="@dimen/size_small_8dp"
         android:layout_marginRight="@dimen/size_small_8dp"
         android:text="@string/placeholder_text"
-        app:layout_constraintBottom_toBottomOf="@id/avatarImgButtonContact"
-        app:layout_constraintEnd_toStartOf="@id/iconCallImgButtonContact"
-        app:layout_constraintStart_toEndOf="@id/avatarImgButtonContact"
-        app:layout_constraintTop_toTopOf="@id/avatarImgButtonContact" />
+        app:layout_constraintBottom_toBottomOf="@id/avatarImgView"
+        app:layout_constraintEnd_toStartOf="@id/callImgButton"
+        app:layout_constraintStart_toEndOf="@id/avatarImgView"
+        app:layout_constraintTop_toTopOf="@id/avatarImgView" />
 
     <de.hdodenhof.circleimageview.CircleImageView
-        android:id="@+id/avatarImgButtonContact"
+        android:id="@+id/avatarImgView"
         android:layout_width="@dimen/size_room_item_avatar_48dp"
         android:layout_height="0dp"
         android:layout_margin="@dimen/size_small_8dp"
@@ -35,29 +35,29 @@
     <ImageButton
         android:background="@drawable/call"
         android:clickable="true"
-        android:id="@+id/iconCallImgButtonContact"
+        android:id="@+id/callImgButton"
         android:layout_width="0dp"
         android:layout_height="@dimen/size_large_24dp"
         android:layout_marginEnd="@dimen/size_large_24dp"
         android:layout_marginRight="@dimen/size_large_24dp"
         android:contentDescription="@string/description_call"
-        app:layout_constraintBottom_toBottomOf="@id/nameTextViewContact"
+        app:layout_constraintBottom_toBottomOf="@id/phoneTextView"
         app:layout_constraintDimensionRatio="h,1:1"
-        app:layout_constraintEnd_toStartOf="@id/iconVideoImgButtonContact"
-        app:layout_constraintTop_toTopOf="@id/nameTextViewContact"
+        app:layout_constraintEnd_toStartOf="@id/videoImgButton"
+        app:layout_constraintTop_toTopOf="@id/phoneTextView"
         android:focusable="true" />
 
     <ImageButton
         android:background="@drawable/video"
-        android:id="@+id/iconVideoImgButtonContact"
+        android:id="@+id/videoImgButton"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginEnd="16dp"
         android:layout_marginRight="16dp"
-        app:layout_constraintBottom_toBottomOf="@id/iconCallImgButtonContact"
+        app:layout_constraintBottom_toBottomOf="@id/callImgButton"
         app:layout_constraintDimensionRatio="h,1:1"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@id/iconCallImgButtonContact"
+        app:layout_constraintTop_toTopOf="@id/callImgButton"
         android:contentDescription="@string/description_video" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

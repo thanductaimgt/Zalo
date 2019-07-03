@@ -32,16 +32,18 @@ class RecentContactsSubFragmentAdapter(private val fragment: Fragment, diffCallb
     inner class RecentContactsViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), ModelViewHolder {
 
         override fun bind(position: Int) {
-            itemView.setOnClickListener(fragment as View.OnClickListener)
-            val roomItem = getItem(position)
+            itemView.apply {
+                setOnClickListener(fragment as View.OnClickListener)
+                val roomItem = getItem(position)
 
-            itemView.nameTextView.text = roomItem.name
-            Utils.formatTextOnNumberOfLines(itemView.nameTextView, 1)
+                nameTextView.text = roomItem.name
+                Utils.formatTextOnNumberOfLines(nameTextView, 1)
 
-            Picasso.get()
-                    .load(roomItem.avatar)
-                    .fit()
-                    .into(itemView.avatarImgView)
+                Picasso.get()
+                        .load(roomItem.avatar)
+                        .fit()
+                        .into(avatarImgView)
+            }
         }
     }
 

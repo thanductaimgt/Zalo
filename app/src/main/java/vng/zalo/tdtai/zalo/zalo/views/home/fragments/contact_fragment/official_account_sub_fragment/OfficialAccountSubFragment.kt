@@ -13,14 +13,14 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.sub_fragment_official_account.*
 import vng.zalo.tdtai.zalo.R
 import vng.zalo.tdtai.zalo.zalo.dependency_factories.ViewModelFactory
-import vng.zalo.tdtai.zalo.zalo.utils.Constants.*
+import vng.zalo.tdtai.zalo.zalo.utils.Constants
 import vng.zalo.tdtai.zalo.zalo.utils.RoomItemDiffCallback
 import vng.zalo.tdtai.zalo.zalo.viewmodels.OfficialAccountViewModel
 import vng.zalo.tdtai.zalo.zalo.views.home.fragments.chat_fragment.room_activity.RoomActivity
 
 class OfficialAccountSubFragment : Fragment(), View.OnClickListener {
     private lateinit var viewModel: OfficialAccountViewModel
-    private lateinit var adapter: OfficialAccountAdapter
+    private lateinit var subFragmentAdapter: OfficialAccountSubFragmentAdapter
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -28,18 +28,21 @@ class OfficialAccountSubFragment : Fragment(), View.OnClickListener {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        initView()
+
         viewModel = ViewModelProviders.of(this, ViewModelFactory()).get(OfficialAccountViewModel::class.java)
-
-        adapter = OfficialAccountAdapter(this, RoomItemDiffCallback())
-        with(recyclerView) {
-            layoutManager = LinearLayoutManager(activity)
-            adapter = this@OfficialAccountSubFragment.adapter
-        }
-
-        viewModel.liveOfficialAccounts.observe(viewLifecycleOwner, Observer{ rooms ->
-            adapter.submitList(rooms)
+        viewModel.liveOfficialAccounts.observe(viewLifecycleOwner, Observer { rooms ->
+            subFragmentAdapter.submitList(rooms)
             Log.d(TAG, "onChanged livedata")
         })
+    }
+
+    private fun initView(){
+        subFragmentAdapter = OfficialAccountSubFragmentAdapter(this, RoomItemDiffCallback())
+        with(recyclerView) {
+            layoutManager = LinearLayoutManager(activity)
+            adapter = this@OfficialAccountSubFragment.subFragmentAdapter
+        }
     }
 
     override fun onClick(v: View) {
@@ -47,12 +50,13 @@ class OfficialAccountSubFragment : Fragment(), View.OnClickListener {
             R.id.itemRoomRootLayout -> {
                 val position = recyclerView.getChildLayoutPosition(v)
 
-                val intent = Intent(activity, RoomActivity::class.java)
-                intent.putExtra(ROOM_ID, adapter.currentList[position].roomId)
-                intent.putExtra(ROOM_NAME, adapter.currentList[position].name)
-                intent.putExtra(ROOM_AVATAR, adapter.currentList[position].avatar)
-
-                startActivity(intent)
+                startActivity(
+                        Intent(activity, RoomActivity::class.java).apply {
+                            putExtra(Constants.ROOM_ID, subFragmentAdapter.currentList[position].roomId)
+                            putExtra(Constants.ROOM_NAME, subFragmentAdapter.currentList[position].name)
+                            putExtra(Constants.ROOM_AVATAR, subFragmentAdapter.currentList[position].avatar)
+                        }
+                )
             }
         }
     }

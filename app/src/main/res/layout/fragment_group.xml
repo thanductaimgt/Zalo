@@ -10,6 +10,10 @@
         android:layout_height="wrap_content">
 
         <androidx.constraintlayout.widget.ConstraintLayout
+            android:paddingTop="@dimen/size_small_8dp"
+            android:paddingBottom="@dimen/size_small_8dp"
+            android:paddingLeft="@dimen/size_medium_16dp"
+            android:paddingRight="@dimen/size_medium_16dp"
             android:id="@+id/createNewGroupLayout"
             android:background="@android:color/white"
             android:layout_width="match_parent"
@@ -17,13 +21,11 @@
             >
 
             <de.hdodenhof.circleimageview.CircleImageView
-                android:src="@drawable/add"
                 android:id="@+id/addGroupImgView"
-                app:layout_constraintBottom_toBottomOf="parent"
-                android:layout_margin="@dimen/size_small_8dp"
-                app:layout_constraintDimensionRatio="1:1"
                 android:layout_width="@dimen/size_huge_48dp"
                 android:layout_height="0dp"
+                android:src="@drawable/add"
+                app:layout_constraintDimensionRatio="1:1"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
             <TextView
@@ -40,7 +42,10 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:padding="@dimen/size_small_8dp"
+            android:paddingTop="@dimen/size_small_8dp"
+            android:paddingBottom="@dimen/size_small_8dp"
+            android:paddingLeft="@dimen/size_medium_16dp"
+            android:paddingRight="@dimen/size_medium_16dp"
             android:layout_marginTop="@dimen/size_small_8dp"
             android:background="@android:color/white"
             android:layout_width="match_parent"
@@ -105,7 +110,7 @@
             android:layout_height="wrap_content">
             <TextView
                 android:layout_marginTop="@dimen/size_small_8dp"
-                android:layout_marginLeft="@dimen/size_small_8dp"
+                android:layout_marginLeft="@dimen/size_medium_16dp"
                 android:textStyle="bold"
                 android:id="@+id/joinedGroupsTV"
                 android:text="@string/label_joined_groups"
@@ -113,16 +118,16 @@
                 app:layout_constraintLeft_toLeftOf="parent"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/size_small_8dp" />
+                android:layout_marginStart="@dimen/size_medium_16dp" />
             <Spinner
                 android:layout_marginTop="@dimen/size_small_8dp"
-                android:layout_marginRight="@dimen/size_small_8dp"
+                android:layout_marginRight="@dimen/size_medium_16dp"
                 android:id="@+id/sortGroupSpinner"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="@dimen/size_small_8dp" />
+                android:layout_marginEnd="@dimen/size_medium_16dp" />
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recyclerView"
                 android:layout_marginTop="@dimen/size_medium_16dp"

@@ -2,7 +2,7 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:orientation="vertical">
 
     <LinearLayout
@@ -15,13 +15,16 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@android:color/white"
+            android:paddingTop="@dimen/size_small_8dp"
+            android:paddingBottom="@dimen/size_small_8dp"
+            android:paddingLeft="@dimen/size_medium_16dp"
+            android:paddingRight="@dimen/size_medium_16dp"
             android:orientation="vertical">
 
             <ImageView
                 android:id="@+id/avatarImgView"
                 android:layout_width="@dimen/size_room_item_avatar_48dp"
                 android:layout_height="0dp"
-                android:layout_margin="@dimen/size_medium_16dp"
                 android:background="@android:drawable/screen_background_light_transparent"
                 android:contentDescription="@string/description_avatar"
                 android:src="@drawable/official_account"
@@ -35,10 +38,8 @@
                 android:id="@+id/nameTextView"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/size_medium_16dp"
                 android:layout_marginLeft="@dimen/size_medium_16dp"
-                android:layout_marginEnd="@dimen/size_small_8dp"
-                android:layout_marginRight="@dimen/size_small_8dp"
+                android:layout_marginRight="@dimen/size_medium_16dp"
                 android:text="@string/description_find_more_official_accounts"
                 app:layout_constraintBottom_toBottomOf="@id/avatarImgView"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -48,6 +49,7 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <LinearLayout
+            android:paddingTop="@dimen/size_small_8dp"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginTop="@dimen/size_small_8dp"
@@ -58,11 +60,13 @@
                 android:id="@+id/textView2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="@dimen/size_small_8dp"
+                android:layout_marginLeft="@dimen/size_medium_16dp"
+                android:layout_marginRight="@dimen/size_medium_16dp"
                 android:text="@string/description_interested_official_accounts"
                 android:textStyle="bold" />
 
             <androidx.recyclerview.widget.RecyclerView
+                android:layout_marginTop="@dimen/size_small_8dp"
                 android:id="@+id/recyclerView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />

@@ -41,7 +41,7 @@
 
     <string name="description_login">Vui lòng nhập số điện thoại và mật khẩu để đăng nhập</string>
     <string name="description_update_contact">Nhanh chóng thêm bạn vào Zalo từ danh bạ điện thoại</string>
-    <string name="description_update_status">Cập nhật trạng thái của bạn và xem bạn bè mình đang&#8230;</string>
+    <string name="description_update_status">Cập nhật trạng thái của bạn và xem bạn bè mình đang nghĩ gì</string>
     <string name="description_avatar">Avatar</string>
     <string name="description_preview_image">Preview image</string>
     <string name="description_unseen">Unseen icon</string>

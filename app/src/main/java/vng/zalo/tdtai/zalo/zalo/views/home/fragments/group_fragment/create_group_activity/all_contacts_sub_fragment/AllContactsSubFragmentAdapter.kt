@@ -13,6 +13,7 @@ import vng.zalo.tdtai.zalo.R
 import vng.zalo.tdtai.zalo.zalo.models.RoomItem
 import vng.zalo.tdtai.zalo.zalo.utils.ModelViewHolder
 import vng.zalo.tdtai.zalo.zalo.utils.Utils
+import vng.zalo.tdtai.zalo.zalo.views.home.fragments.group_fragment.create_group_activity.CreateGroupActivity
 
 class AllContactsSubFragmentAdapter(private val fragment: Fragment, diffCallback: DiffUtil.ItemCallback<RoomItem>) : ListAdapter<RoomItem, AllContactsSubFragmentAdapter.AllContactsViewHolder>(diffCallback) {
 
@@ -32,16 +33,18 @@ class AllContactsSubFragmentAdapter(private val fragment: Fragment, diffCallback
     inner class AllContactsViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), ModelViewHolder {
 
         override fun bind(position: Int) {
-            itemView.setOnClickListener(fragment as View.OnClickListener)
-            val roomItem = getItem(position)
+            itemView.apply {
+                setOnClickListener(fragment as View.OnClickListener)
+                val roomItem = getItem(position)
 
-            itemView.nameTextView.text = roomItem.name
-            Utils.formatTextOnNumberOfLines(itemView.nameTextView, 1)
+                nameTextView.text = roomItem.name
+                Utils.formatTextOnNumberOfLines(nameTextView, 1)
 
-            Picasso.get()
-                    .load(roomItem.avatar)
-                    .fit()
-                    .into(itemView.avatarImgView)
+                Picasso.get()
+                        .load(roomItem.avatar)
+                        .fit()
+                        .into(avatarImgView)
+            }
         }
     }
 

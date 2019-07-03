@@ -1,0 +1,10 @@
+package vng.zalo.tdtai.zalo.zalo.models
+
+import com.google.firebase.Timestamp
+
+data class UserInfo(
+        var phone: String? = null,
+        var avatar: String? = null,
+        var birthDate: Timestamp? = null,
+        var isMale: Boolean? = false,
+        var joinDate: Timestamp? = null)

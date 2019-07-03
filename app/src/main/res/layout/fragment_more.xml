@@ -9,7 +9,10 @@
         android:layout_height="wrap_content">
         <androidx.constraintlayout.widget.ConstraintLayout
             android:background="@android:color/white"
-            android:padding="@dimen/size_medium_16dp"
+            android:paddingTop="@dimen/size_small_8dp"
+            android:paddingBottom="@dimen/size_small_8dp"
+            android:paddingLeft="@dimen/size_medium_16dp"
+            android:paddingRight="@dimen/size_medium_16dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
             <de.hdodenhof.circleimageview.CircleImageView
@@ -67,7 +70,10 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:background="@android:color/white"
-            android:padding="@dimen/size_medium_16dp"
+            android:paddingTop="@dimen/size_small_8dp"
+            android:paddingBottom="@dimen/size_small_8dp"
+            android:paddingLeft="@dimen/size_medium_16dp"
+            android:paddingRight="@dimen/size_medium_16dp"
             android:layout_marginTop="@dimen/size_small_8dp"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
@@ -159,12 +165,13 @@
 
             <ImageView
                 android:id="@+id/shopDescImgView"
-                android:layout_width="@dimen/size_room_item_avatar_48dp"
+                android:adjustViewBounds="true"
+                android:scaleType="fitXY"
+                android:layout_width="wrap_content"
                 android:layout_height="0dp"
                 android:contentDescription="@string/description_avatar"
                 android:src="@drawable/sale_9k"
                 app:layout_constraintBottom_toBottomOf="@id/avatarShop"
-                app:layout_constraintDimensionRatio="h,1:1"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="@id/avatarShop" />
 

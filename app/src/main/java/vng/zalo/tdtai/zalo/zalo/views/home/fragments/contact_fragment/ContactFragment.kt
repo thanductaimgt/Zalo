@@ -18,9 +18,15 @@ class ContactFragment : Fragment(), TabLayout.OnTabSelectedListener {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        viewPager.adapter = ContactFragmentAdapter(childFragmentManager)
+        initView()
+    }
 
-        viewPager.addOnPageChangeListener(TabLayout.TabLayoutOnPageChangeListener(tabLayout))
+    private fun initView(){
+        viewPager.apply {
+            adapter= ContactFragmentAdapter(childFragmentManager)
+            addOnPageChangeListener(TabLayout.TabLayoutOnPageChangeListener(tabLayout))
+        }
+
         tabLayout.addOnTabSelectedListener(this)
     }
 

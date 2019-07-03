@@ -35,12 +35,6 @@ class RoomActivity : AppCompatActivity(), View.OnClickListener {
 
         initView()
 
-        adapter = RoomActivityAdapter(MessageDiffCallback())
-        with(recyclerView){
-            adapter = this@RoomActivity.adapter
-            layoutManager = LinearLayoutManager(this@RoomActivity)
-        }
-
         viewModel.liveMessages.observe(this, Observer{ messageList ->
             adapter.submitList(messageList) { this.scrollRecyclerViewToLastPosition() }
             Log.d(TAG, "onChanged liveData")
@@ -51,21 +45,28 @@ class RoomActivity : AppCompatActivity(), View.OnClickListener {
         toolbar.title = intent.getStringExtra(Constants.ROOM_NAME)
         setSupportActionBar(toolbar)
 
-        val actionBar = supportActionBar
-        actionBar?.setDisplayHomeAsUpEnabled(true) ?: Log.e(TAG, "actionBar is null")
+        supportActionBar?.setDisplayHomeAsUpEnabled(true) ?: Log.e(TAG, "actionBar is null")
 
-        msgTextInputEditText.addTextChangedListener(InputTextListener())
-        msgTextInputEditText.setOnEditorActionListener { _, actionId, _ ->
-            when (actionId) {
-                EditorInfo.IME_ACTION_SEND -> {
-                    onClickSendMessage()
-                    true
+        with(msgTextInputEditText){
+            addTextChangedListener(InputTextListener())
+            setOnEditorActionListener { _, actionId, _ ->
+                when (actionId) {
+                    EditorInfo.IME_ACTION_SEND -> {
+                        onClickSendMessage()
+                        true
+                    }
+                    else -> false
                 }
-                else -> false
             }
         }
 
         sendMsgImgButton.setOnClickListener(this)
+
+        adapter = RoomActivityAdapter(MessageDiffCallback())
+        with(recyclerView){
+            adapter = this@RoomActivity.adapter
+            layoutManager = LinearLayoutManager(this@RoomActivity)
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {

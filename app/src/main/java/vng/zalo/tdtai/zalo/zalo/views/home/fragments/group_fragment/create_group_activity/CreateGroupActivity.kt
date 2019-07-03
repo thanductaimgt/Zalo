@@ -11,16 +11,22 @@ import vng.zalo.tdtai.zalo.R
 import vng.zalo.tdtai.zalo.zalo.models.RoomItem
 
 class CreateGroupActivity : AppCompatActivity(), View.OnClickListener, TabLayout.OnTabSelectedListener {
-    val selectedPeople = ArrayList<RoomItem>()
+    val selectedList = HashSet<RoomItem>()
+    lateinit var adapter: CreateGroupActivityAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_create_group)
 
+        initView()
+    }
+
+    private fun initView(){
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
+        adapter = CreateGroupActivityAdapter(supportFragmentManager)
         with(viewPager){
-            adapter = CreateGroupActivityAdapter(supportFragmentManager)
+            adapter = this@CreateGroupActivity.adapter
             addOnPageChangeListener(TabLayout.TabLayoutOnPageChangeListener(tabLayout))
         }
 
@@ -29,12 +35,14 @@ class CreateGroupActivity : AppCompatActivity(), View.OnClickListener, TabLayout
     }
 
     fun proceedNewClickOnItem(item:RoomItem){
-        if(selectedPeople.contains(item)){
-            selectedPeople.remove(item)
-        } else {
-            selectedPeople.add(item)
+        selectedList.apply {
+            if(contains(item)){
+                remove(item)
+            } else {
+                add(item)
+            }
+            Log.d(TAG, this.toString())
         }
-        Log.d(TAG, selectedPeople.toString())
     }
 
     override fun onTabReselected(tab: TabLayout.Tab) {
@@ -56,7 +64,10 @@ class CreateGroupActivity : AppCompatActivity(), View.OnClickListener, TabLayout
 
     override fun onClick(view: View) {
         when (view.id) {
-            R.id.searchView -> searchView.isIconified = false
+            R.id.searchView -> {
+                searchView.isIconified = false
+                searchViewDescTV.visibility = View.GONE
+            }
         }
     }
 

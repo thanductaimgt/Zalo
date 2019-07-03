@@ -19,10 +19,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <LinearLayout
+        android:gravity="end"
+        android:orientation="vertical"
         android:id="@+id/sendMsgConstraintLayout"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="@id/guideline3"
         app:layout_constraintBottom_toBottomOf="parent"
         android:layout_marginEnd="@dimen/size_small_8dp"
@@ -37,21 +38,15 @@
             android:background="@drawable/send_message_bg"
             android:gravity="end"
             android:text="@string/placeholder_text"
-            android:textAlignment="viewEnd"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:textAlignment="viewEnd"/>
         <TextView
             android:textSize="@dimen/size_small_text_10sp"
             android:layout_marginBottom="@dimen/size_small_8dp"
-            app:layout_constraintBottom_toBottomOf="parent"
             android:id="@+id/sendTimeTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/placeholder_text"
-            app:layout_constraintEnd_toEndOf="@id/sendMsgConstraintLayout"
-            app:layout_constraintTop_toBottomOf="@id/sendMsgTextView" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
+            android:text="@string/placeholder_text"/>
+    </LinearLayout>
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline3"

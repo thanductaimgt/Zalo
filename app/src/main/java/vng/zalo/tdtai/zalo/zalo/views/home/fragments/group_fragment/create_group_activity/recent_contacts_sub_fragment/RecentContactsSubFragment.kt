@@ -5,6 +5,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.forEach
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
@@ -28,19 +29,28 @@ class RecentContactsSubFragment : Fragment(), View.OnClickListener {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        viewModel = ViewModelProviders.of(this, ViewModelFactory()).get(RecentContactsSubFragmentViewModel::class.java)
+        initView()
 
+        viewModel = ViewModelProviders.of(this, ViewModelFactory()).get(RecentContactsSubFragmentViewModel::class.java)
+        viewModel.liveRoomItems.observe(viewLifecycleOwner, Observer{ contacts ->
+            adapter.submitList(contacts)
+            Log.d(TAG, "onChanged livedata")
+        })
+
+    }
+
+    override fun onResume() {
+        super.onResume()
+        updateSelectedListOnScreen()
+    }
+
+    private fun initView(){
         adapter = RecentContactsSubFragmentAdapter(this, RoomItemDiffCallback())
 
         with(recyclerView){
             layoutManager = LinearLayoutManager(activity)
             adapter = this@RecentContactsSubFragment.adapter
         }
-
-        viewModel.liveRoomItems.observe(viewLifecycleOwner, Observer{ contacts ->
-            adapter.submitList(contacts)
-            Log.d(TAG, "onChanged livedata")
-        })
     }
 
     override fun onClick(v: View) {
@@ -48,10 +58,20 @@ class RecentContactsSubFragment : Fragment(), View.OnClickListener {
             R.id.itemRecentContactsLayout -> {
                 v.radioButton.isChecked = !v.radioButton.isChecked
 
-                val curItemPosition = recyclerView.getChildLayoutPosition(v)
-                val curItem = adapter.currentList[curItemPosition]
+                val itemPosition = recyclerView.getChildLayoutPosition(v)
+                val item = adapter.currentList[itemPosition]
 
-                (activity as CreateGroupActivity).proceedNewClickOnItem(curItem)
+                (activity as CreateGroupActivity).proceedNewClickOnItem(item)
+            }
+        }
+    }
+
+    private fun updateSelectedListOnScreen(){
+        recyclerView.apply {
+            forEach {
+                val itemPosition = getChildLayoutPosition(it)
+                val item = this@RecentContactsSubFragment.adapter.currentList[itemPosition]
+                it.radioButton.isChecked = (activity as CreateGroupActivity).selectedList.contains(item)
             }
         }
     }

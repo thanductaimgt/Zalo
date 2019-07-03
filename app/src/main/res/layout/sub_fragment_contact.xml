@@ -25,14 +25,18 @@
             android:layout_marginTop="@dimen/size_small_8dp"
             android:background="@android:color/white"
             android:orientation="vertical"
-            android:padding="@dimen/size_small_8dp">
+            android:paddingTop="@dimen/size_small_8dp"
+            android:paddingBottom="@dimen/size_small_8dp"
+            >
 
             <TextView
+                android:layout_marginLeft="@dimen/size_medium_16dp"
                 android:id="@+id/closeFriendsTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/label_close_friends"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                android:layout_marginStart="@dimen/size_medium_16dp" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recyclerViewCloseFriends"
@@ -48,42 +52,45 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/size_small_8dp"
-            android:padding="@dimen/size_small_8dp"
+            android:paddingTop="@dimen/size_small_8dp"
+            android:paddingBottom="@dimen/size_small_8dp"
             >
 
             <TextView
                 android:id="@+id/statusDescTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/size_small_8dp"
                 android:text="@string/label_newly_updated_friends"
                 android:textStyle="bold"
-                app:layout_constraintBottom_toTopOf="@id/statusTextView"
-                app:layout_constraintEnd_toStartOf="@id/switch1"
-                app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintHorizontal_chainStyle="spread_inside"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                android:layout_marginLeft="@dimen/size_medium_16dp"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toTopOf="@id/switch1"
+                app:layout_constraintBottom_toBottomOf="@id/switch1"
+                android:layout_marginStart="@dimen/size_medium_16dp" />
 
-            <com.google.android.material.switchmaterial.SwitchMaterial
+            <Switch
                 android:id="@+id/switch1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/size_small_8dp"
-                app:layout_constraintBottom_toTopOf="@id/statusTextView"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.5"
-                app:layout_constraintStart_toEndOf="@id/statusDescTextView"
-                app:layout_constraintTop_toTopOf="parent" />
+                android:layout_marginRight="@dimen/size_medium_16dp"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                android:layout_marginEnd="@dimen/size_medium_16dp" />
 
             <TextView
+                android:background="@color/colorBackground"
+                android:padding="@dimen/size_small_8dp"
+                android:layout_marginTop="@dimen/size_medium_16dp"
                 android:id="@+id/statusTextView"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:text="@string/description_update_status"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent" />
+                android:layout_marginLeft="@dimen/size_medium_16dp"
+                android:layout_marginRight="@dimen/size_medium_16dp"
+                app:layout_constraintTop_toBottomOf="@id/statusDescTextView"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
 
@@ -93,10 +100,13 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/size_small_8dp"
-            android:padding="@dimen/size_small_8dp"
+            android:paddingTop="@dimen/size_small_8dp"
+            android:paddingBottom="@dimen/size_small_8dp"
             >
 
             <TextView
+                android:layout_marginLeft="@dimen/size_medium_16dp"
+                android:layout_marginStart="@dimen/size_medium_16dp"
                 android:id="@+id/allContactTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -106,6 +116,8 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
+                android:layout_marginRight="@dimen/size_medium_16dp"
+                android:layout_marginEnd="@dimen/size_medium_16dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/label_update"
@@ -128,9 +140,9 @@
             android:id="@+id/updateContactDescTextView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/size_small_8dp"
+            android:layout_marginLeft="@dimen/size_medium_16dp"
             android:layout_marginTop="@dimen/size_medium_16dp"
-            android:layout_marginRight="@dimen/size_small_8dp"
+            android:layout_marginRight="@dimen/size_medium_16dp"
             android:text="@string/description_update_contact"
             android:textAlignment="center"/>
 
@@ -141,7 +153,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/size_medium_16dp"
-            android:layout_marginBottom="@dimen/size_medium_16dp"
             android:text="@string/label_update_contact"/>
     </LinearLayout>
 </ScrollView>

@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.Picasso
-import kotlinx.android.synthetic.main.item_recent_contacts.view.*
+import kotlinx.android.synthetic.main.item_select_contact.view.*
 import vng.zalo.tdtai.zalo.R
 import vng.zalo.tdtai.zalo.zalo.models.RoomItem
 import vng.zalo.tdtai.zalo.zalo.utils.ModelViewHolder
@@ -17,7 +17,7 @@ import vng.zalo.tdtai.zalo.zalo.utils.Utils
 class RecentContactsSubFragmentAdapter(private val fragment: Fragment, diffCallback: DiffUtil.ItemCallback<RoomItem>) : ListAdapter<RoomItem, RecentContactsSubFragmentAdapter.RecentContactsViewHolder>(diffCallback) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecentContactsViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_recent_contacts, parent, false)
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_select_contact, parent, false)
         return RecentContactsViewHolder(view)
     }
 
@@ -36,8 +36,8 @@ class RecentContactsSubFragmentAdapter(private val fragment: Fragment, diffCallb
                 setOnClickListener(fragment as View.OnClickListener)
                 val roomItem = getItem(position)
 
-                nameTextView.text = roomItem.name
-                Utils.formatTextOnNumberOfLines(nameTextView, 1)
+                groupNameEditText.text = roomItem.name
+                Utils.formatTextOnNumberOfLines(groupNameEditText, 1)
 
                 Picasso.get()
                         .load(roomItem.avatar)

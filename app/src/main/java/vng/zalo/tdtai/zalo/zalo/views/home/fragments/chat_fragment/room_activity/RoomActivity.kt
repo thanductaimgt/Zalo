@@ -16,7 +16,6 @@ import vng.zalo.tdtai.zalo.R
 import vng.zalo.tdtai.zalo.zalo.dependency_factories.chat_activity.DaggerRoomActivityComponent
 import vng.zalo.tdtai.zalo.zalo.dependency_factories.chat_activity.RoomActivityModule
 import vng.zalo.tdtai.zalo.zalo.utils.Constants
-import vng.zalo.tdtai.zalo.zalo.utils.MessageDiffCallback
 import vng.zalo.tdtai.zalo.zalo.viewmodels.RoomActivityViewModel
 import javax.inject.Inject
 import kotlin.math.max
@@ -36,7 +35,10 @@ class RoomActivity : AppCompatActivity(), View.OnClickListener {
         initView()
 
         viewModel.liveMessages.observe(this, Observer{ messageList ->
-            adapter.submitList(messageList) { this.scrollRecyclerViewToLastPosition() }
+            adapter.messages = messageList
+            adapter.notifyDataSetChanged()
+            this.scrollRecyclerViewToLastPosition()
+//            adapter.submitList(messageList) { this.scrollRecyclerViewToLastPosition() }
             Log.d(TAG, "onChanged liveData")
         })
     }
@@ -47,12 +49,12 @@ class RoomActivity : AppCompatActivity(), View.OnClickListener {
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true) ?: Log.e(TAG, "actionBar is null")
 
-        with(msgTextInputEditText){
+        msgEditText.apply{
             addTextChangedListener(InputTextListener())
             setOnEditorActionListener { _, actionId, _ ->
                 when (actionId) {
                     EditorInfo.IME_ACTION_SEND -> {
-                        onClickSendMessage()
+                        sendMessage()
                         true
                     }
                     else -> false
@@ -60,9 +62,9 @@ class RoomActivity : AppCompatActivity(), View.OnClickListener {
             }
         }
 
-        sendMsgImgButton.setOnClickListener(this)
+        sendMsgImgView.setOnClickListener(this)
 
-        adapter = RoomActivityAdapter(MessageDiffCallback())
+        adapter = RoomActivityAdapter()
         with(recyclerView){
             adapter = this@RoomActivity.adapter
             layoutManager = LinearLayoutManager(this@RoomActivity)
@@ -83,15 +85,15 @@ class RoomActivity : AppCompatActivity(), View.OnClickListener {
 
     override fun onClick(v: View) {
         when (v.id) {
-            R.id.sendMsgImgButton -> onClickSendMessage()
+            R.id.sendMsgImgView -> sendMessage()
         }
     }
 
-    private fun onClickSendMessage() {
-        val messageContent = msgTextInputEditText.text.toString()
-        viewModel.addMessageToFirestore(messageContent)
+    private fun sendMessage() {
+        val messageContent = msgEditText.text.toString()
+        viewModel.addNewMessageToFirestore(messageContent)
 
-        msgTextInputEditText.setText("")
+        msgEditText.setText("")
     }
 
     internal inner class InputTextListener : TextWatcher {
@@ -105,12 +107,12 @@ class RoomActivity : AppCompatActivity(), View.OnClickListener {
 
         override fun afterTextChanged(s: Editable) {
             if (s.isEmpty()) {
-                sendMsgImgButton.visibility = View.GONE
+                sendMsgImgView.visibility = View.GONE
                 uploadFileImgButton.visibility = View.VISIBLE
                 voiceImgButton.visibility = View.VISIBLE
                 pictureImgButton.visibility = View.VISIBLE
             } else {
-                sendMsgImgButton.visibility = View.VISIBLE
+                sendMsgImgView.visibility = View.VISIBLE
                 uploadFileImgButton.visibility = View.GONE
                 voiceImgButton.visibility = View.GONE
                 pictureImgButton.visibility = View.INVISIBLE

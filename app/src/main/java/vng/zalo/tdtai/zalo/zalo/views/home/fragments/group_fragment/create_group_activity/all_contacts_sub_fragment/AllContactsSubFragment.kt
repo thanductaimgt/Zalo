@@ -11,7 +11,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.ListAdapter
-import kotlinx.android.synthetic.main.item_recent_contacts.view.*
+import kotlinx.android.synthetic.main.item_select_contact.view.*
 import kotlinx.android.synthetic.main.sub_fragment_recent_contacts.*
 import vng.zalo.tdtai.zalo.R
 import vng.zalo.tdtai.zalo.zalo.dependency_factories.ViewModelFactory
@@ -36,11 +36,10 @@ class AllContactsSubFragment : Fragment(), View.OnClickListener {
             adapter.submitList(contacts)
             Log.d(TAG, "onChanged livedata")
         })
-    }
 
-    override fun onResume() {
-        super.onResume()
-        updateSelectedListOnScreen()
+        (activity as CreateGroupActivity).viewModel.liveRoomItems.observe(viewLifecycleOwner, Observer {
+            updateSelectedListOnScreen()
+        })
     }
 
     private fun initView(){
@@ -70,7 +69,7 @@ class AllContactsSubFragment : Fragment(), View.OnClickListener {
             forEach {
                 val itemPosition = getChildLayoutPosition(it)
                 val item = this@AllContactsSubFragment.adapter.currentList[itemPosition]
-                it.radioButton.isChecked = (activity as CreateGroupActivity).selectedList.contains(item)
+                it.radioButton.isChecked = (activity as CreateGroupActivity).viewModel.liveRoomItems.value!!.contains(item)
             }
         }
     }

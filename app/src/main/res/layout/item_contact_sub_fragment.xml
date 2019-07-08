@@ -33,12 +33,14 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.0" />
 
-    <ImageButton
-        android:background="@drawable/call"
+    <ImageView
+        android:focusable="true"
         android:clickable="true"
+        android:padding="12dp"
+        android:src="@drawable/call"
         android:id="@+id/callImgButton"
         android:layout_width="0dp"
-        android:layout_height="@dimen/size_large_24dp"
+        android:layout_height="@dimen/size_huge_48dp"
         android:layout_marginEnd="@dimen/size_large_24dp"
         android:layout_marginRight="@dimen/size_large_24dp"
         android:contentDescription="@string/description_call"
@@ -46,10 +48,13 @@
         app:layout_constraintDimensionRatio="h,1:1"
         app:layout_constraintEnd_toStartOf="@id/videoImgButton"
         app:layout_constraintTop_toTopOf="@id/phoneTextView"
-        android:focusable="true" />
+         />
 
-    <ImageButton
-        android:background="@drawable/video"
+    <ImageView
+        android:padding="12dp"
+        android:focusable="true"
+        android:clickable="true"
+        android:src="@drawable/video"
         android:id="@+id/videoImgButton"
         android:layout_width="0dp"
         android:layout_height="0dp"

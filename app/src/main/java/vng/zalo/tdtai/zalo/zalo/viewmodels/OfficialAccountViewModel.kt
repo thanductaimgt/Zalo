@@ -6,17 +6,12 @@ import androidx.lifecycle.ViewModel
 
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.gms.tasks.Task
-import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.QueryDocumentSnapshot
 import com.google.firebase.firestore.QuerySnapshot
 
 import java.util.ArrayList
 
 import vng.zalo.tdtai.zalo.zalo.ZaloApplication
 import vng.zalo.tdtai.zalo.zalo.models.RoomItem
-import vng.zalo.tdtai.zalo.zalo.utils.Constants
-
-import vng.zalo.tdtai.zalo.zalo.utils.Constants.COLLECTION_OFFICIAL_ACCOUNTS
 
 class OfficialAccountViewModel : ViewModel() {
     private val tasks: List<Task<QuerySnapshot>>
@@ -26,7 +21,7 @@ class OfficialAccountViewModel : ViewModel() {
     init {
         liveOfficialAccounts = MutableLiveData(ArrayList())
 
-        val firestore = ZaloApplication.firebaseInstance
+        val firestore = ZaloApplication.firebaseFirestore
 
         tasks = ArrayList()
 

@@ -31,6 +31,15 @@
     <string name="label_add_group">Tạo nhóm với:</string>
     <string name="label_joined_groups">Nhóm đã tham gia</string>
     <string name="label_recent">Gần đây</string>
+    <string name="label_update_avatar">Cập nhật hình đại diện</string>
+    <string name="label_take_new_pic">Chụp ảnh mới</string>
+    <string name="label_choose_available_image">Chọn ảnh có sẵn</string>
+    <string name="label_choose_image_from">Chọn ảnh từ</string>
+    <string name="label_me">Tôi</string>
+    <string name="label_just_now">Vừa xong</string>
+    <string name="label_minute">phút</string>
+    <string name="label_hour">giờ</string>
+    <string name="label_day">ngày</string>
 
     <string-array name="sort_group_options">
         <item>Tên nhóm</item>

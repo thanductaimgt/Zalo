@@ -3,7 +3,9 @@
     package="vng.zalo.tdtai.zalo">
 
     <uses-permission android:name="android.permission.INTERNET" />
-
+    <uses-feature android:name="android.hardware.camera"
+        android:required="true" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="18"/>
     <application
         android:name=".zalo.ZaloApplication"
         android:allowBackup="false"
@@ -12,6 +14,15 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme.Zalo">
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="vng.zalo.tdtai.zalo.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
         <activity android:name=".zalo.views.home.fragments.group_fragment.create_group_activity.CreateGroupActivity"
             android:theme="@style/AppTheme.White"
             android:label="@string/description_create_group"

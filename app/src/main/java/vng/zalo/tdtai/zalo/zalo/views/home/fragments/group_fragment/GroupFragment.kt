@@ -19,12 +19,12 @@ import vng.zalo.tdtai.zalo.zalo.dependency_factories.ViewModelFactory
 import vng.zalo.tdtai.zalo.zalo.utils.RoomItemDiffCallback
 import vng.zalo.tdtai.zalo.zalo.viewmodels.GroupFragmentViewModel
 import vng.zalo.tdtai.zalo.zalo.shared_adapters.RoomItemAdapter
-import vng.zalo.tdtai.zalo.zalo.views.home.fragments.chat_fragment.room_activity.RoomActivity
 import vng.zalo.tdtai.zalo.zalo.views.home.fragments.group_fragment.create_group_activity.CreateGroupActivity
 
 import vng.zalo.tdtai.zalo.zalo.utils.Constants.ROOM_AVATAR
 import vng.zalo.tdtai.zalo.zalo.utils.Constants.ROOM_ID
 import vng.zalo.tdtai.zalo.zalo.utils.Constants.ROOM_NAME
+import vng.zalo.tdtai.zalo.zalo.views.home.fragments.chat_fragment.room_activity.RoomActivity
 
 class GroupFragment : Fragment(), AdapterView.OnItemSelectedListener, View.OnClickListener {
 
@@ -65,7 +65,7 @@ class GroupFragment : Fragment(), AdapterView.OnItemSelectedListener, View.OnCli
                 R.array.sort_group_options, android.R.layout.simple_spinner_item)
         // Specify the layout to use when the list of choices appears
         spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        // Apply the adapter to the spinner
+        // Apply the viewPagerAdapter to the spinner
         sortGroupSpinner.adapter = spinnerAdapter
     }
 

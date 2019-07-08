@@ -57,9 +57,7 @@ class ChatFragment : Fragment(), View.OnClickListener {
                         Intent(activity, RoomActivity::class.java).apply {
                             putExtra(Constants.ROOM_NAME, adapter.currentList[position].name)
                             putExtra(Constants.ROOM_AVATAR, adapter.currentList[position].avatar)
-                            //room not created in database
-                            if (adapter.currentList[position].roomId != null)
-                                putExtra(Constants.ROOM_ID, adapter.currentList[position].roomId)
+                            putExtra(Constants.ROOM_ID, adapter.currentList[position].roomId)
                         }
                 )
             }

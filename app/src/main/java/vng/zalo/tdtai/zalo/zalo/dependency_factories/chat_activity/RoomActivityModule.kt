@@ -9,11 +9,11 @@ import vng.zalo.tdtai.zalo.zalo.views.home.fragments.chat_fragment.room_activity
 
 
 @Module
-class RoomActivityModule(private val chatActivity: RoomActivity) {
+class RoomActivityModule(private val roomActivity: RoomActivity) {
 
     @Provides
     internal fun providesViewModel(): RoomActivityViewModel {
-        return ViewModelProviders.of(chatActivity, ViewModelFactory(chatActivity.intent))
+        return ViewModelProviders.of(roomActivity, ViewModelFactory(roomActivity.intent))
                 .get(RoomActivityViewModel::class.java)
     }
 }

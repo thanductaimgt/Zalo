@@ -9,5 +9,7 @@
     <dimen name="size_huge_48dp">48dp</dimen>
     <dimen name="size_icon_space_5dp">5dp</dimen>
     <dimen name="size_small_text_10sp">10sp</dimen>
+    <dimen name="size_user_icon_avatar_40dp">40dp</dimen>
     <dimen name="size_room_item_avatar_48dp">48dp</dimen>
+    <dimen name="size_large_avatar_64dp">64dp</dimen>
 </resources>

@@ -21,7 +21,7 @@ import vng.zalo.tdtai.zalo.zalo.views.home.fragments.chat_fragment.room_activity
 
 class ContactSubFragment : Fragment(), View.OnClickListener {
     private lateinit var viewModel: ContactSubFragmentViewModel
-    private lateinit var subFragmentAdapter: ContactSubFragmentAdapter
+    private lateinit var adapter: ContactSubFragmentAdapter
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.sub_fragment_contact, container, false)
@@ -31,17 +31,17 @@ class ContactSubFragment : Fragment(), View.OnClickListener {
         initView()
 
         viewModel = ViewModelProviders.of(this, ViewModelFactory()).get(ContactSubFragmentViewModel::class.java)
-        viewModel.liveContacts.observe(viewLifecycleOwner, Observer { contacts ->
-            subFragmentAdapter.submitList(contacts)
+        viewModel.liveRoomItems.observe(viewLifecycleOwner, Observer { contacts ->
+            adapter.submitList(contacts)
             Log.d(TAG, "onChanged livedata")
         })
     }
 
     private fun initView(){
-        subFragmentAdapter = ContactSubFragmentAdapter(this, ContactModelDiffCallback())
+        adapter = ContactSubFragmentAdapter(this, ContactModelDiffCallback())
         with(allContactRecyclerView) {
             layoutManager = LinearLayoutManager(activity)
-            adapter = this@ContactSubFragment.subFragmentAdapter
+            adapter = this@ContactSubFragment.adapter
         }
 
         Utils.formatTextOnNumberOfLines(statusTextView, 2)
@@ -54,9 +54,9 @@ class ContactSubFragment : Fragment(), View.OnClickListener {
 
                 startActivity(
                         Intent(activity, RoomActivity::class.java).apply {
-                            putExtra(Constants.ROOM_ID, subFragmentAdapter.currentList[position].roomId)
-                            putExtra(Constants.ROOM_NAME, subFragmentAdapter.currentList[position].name)
-                            putExtra(Constants.ROOM_AVATAR, subFragmentAdapter.currentList[position].avatar)
+                            putExtra(Constants.ROOM_ID, adapter.currentList[position].roomId)
+                            putExtra(Constants.ROOM_NAME, adapter.currentList[position].name)
+                            putExtra(Constants.ROOM_AVATAR, adapter.currentList[position].avatar)
                         }
                 )
             }

@@ -12,16 +12,17 @@ data class RoomItem(var roomId: String? = null,
                     var lastMsgTime: Timestamp? = null,
                     var name: String? = null,
                     var unseenMsgNum: Int = 0,
-                    var roomType: Int? = Constants.ROOM_TYPE_PEER) {
-    
+                    var roomType: Int? = Constants.ROOM_TYPE_PEER,
+                    var lastSenderPhone: String? = null) {
+
     fun toMap(): Map<String, Any?> {
         return HashMap<String, Any?>().apply {
-            put("avatar",avatar)
-            put("lastMsg",lastMsg)
-            put("lastMsgTime",lastMsgTime)
-            put("name",name)
-            put("unseenMsgNum",unseenMsgNum)
-            put("roomType",roomType)
+            put("avatar", avatar)
+            put("lastMsg", lastMsg)
+            put("lastMsgTime", lastMsgTime)
+            put("name", name)
+            put("unseenMsgNum", unseenMsgNum)
+            put("roomType", roomType)
         }
     }
 }

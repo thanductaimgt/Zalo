@@ -4,8 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
 import androidx.fragment.app.Fragment
 
 import com.squareup.picasso.Picasso
@@ -27,6 +25,6 @@ class MoreFragment : Fragment() {
                 .fit()
                 .into(avatarImgView)
 
-        nameTextView.text = ZaloApplication.currentUser!!.phone
+        groupNameEditText.text = ZaloApplication.currentUser!!.phone
     }
 }

@@ -6,39 +6,29 @@ import androidx.lifecycle.ViewModel
 import com.google.firebase.firestore.Query
 import vng.zalo.tdtai.zalo.zalo.ZaloApplication
 import vng.zalo.tdtai.zalo.zalo.models.RoomItem
-import vng.zalo.tdtai.zalo.zalo.utils.Constants
-import java.util.*
+import vng.zalo.tdtai.zalo.zalo.networks.Database
+import vng.zalo.tdtai.zalo.zalo.utils.Utils
 
 class ChatFragmentViewModel : ViewModel() {
 
-    val liveRoomItems: MutableLiveData<List<RoomItem>>
+    val liveRoomItems: MutableLiveData<List<RoomItem>> = MutableLiveData(ArrayList())
 
     init {
-        liveRoomItems = MutableLiveData(ArrayList())
-
-        ZaloApplication.firebaseInstance
-                .collection(Constants.COLLECTION_USERS)
-                .document(ZaloApplication.currentUser!!.phone!!)
-                .collection(Constants.COLLECTION_ROOMS)
-                .orderBy("lastMsgTime", Query.Direction.DESCENDING)
-                .addSnapshotListener { queryDocumentSnapshots, _ ->
-                    val roomItems = ArrayList<RoomItem>()
-                    if (queryDocumentSnapshots != null) {
-                        for (doc in queryDocumentSnapshots) {
-                            roomItems.add(
-                                    doc.toObject(RoomItem::class.java).apply {
-                                        roomId = doc.id
-                                    }
-                            )
+        Log.d(Utils.getTag(object {}),"init ChatFragmentViewModel")
+        Database.addUserRoomsListener(
+                userPhone = ZaloApplication.currentUser!!.phone!!,
+                fieldToOrder = "lastMsgTime",
+                orderDirection = Query.Direction.DESCENDING
+        ) { querySnapshot ->
+            val roomItems = ArrayList<RoomItem>()
+            for (doc in querySnapshot) {
+                roomItems.add(
+                        doc.toObject(RoomItem::class.java).apply {
+                            roomId = doc.id
                         }
-                        liveRoomItems.value = roomItems
-                    } else {
-                        Log.d(TAG, "queryDocumentSnapshots is null")
-                    }
-                }
-    }
-
-    companion object {
-        private val TAG = ChatFragmentViewModel::class.java.simpleName
+                )
+            }
+            liveRoomItems.value = roomItems
+        }
     }
 }

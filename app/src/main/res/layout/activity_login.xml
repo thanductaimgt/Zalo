@@ -1,20 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".zalo.views.login.LoginActivity">
 
+    <TextView
+        android:layout_marginLeft="@dimen/size_medium_16dp"
+        android:layout_marginRight="@dimen/size_medium_16dp"
+        android:id="@+id/loginDescTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/size_small_8dp"
+        android:text="@string/description_login"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/phoneTextInputLayout"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
         android:inputType="phone"
-        app:layout_constraintBottom_toTopOf="@id/passTextInputLayout"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="@dimen/size_small_8dp"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toBottomOf="@id/loginDescTextView" >
 
         <com.google.android.material.textfield.TextInputEditText
@@ -23,25 +35,34 @@
             android:layout_height="wrap_content"
             android:hint="@string/hint_phone_number"
             android:inputType="phone"
-            android:paddingStart="16dp"
-            android:paddingLeft="16dp"
-            android:paddingEnd="16dp"
+            android:paddingLeft="@dimen/size_medium_16dp"
+            android:paddingRight="@dimen/size_medium_16dp"
             android:text="0123456789" />
     </com.google.android.material.textfield.TextInputLayout>
+
+    <ImageView
+        android:id="@+id/clearTextImgButton"
+        android:layout_width="@dimen/size_huge_48dp"
+        android:layout_height="0dp"
+        android:contentDescription="@string/description_clear_text_icon"
+        android:padding="9dp"
+        android:src="@drawable/clear"
+        app:layout_constraintBottom_toBottomOf="@id/phoneTextInputLayout"
+        app:layout_constraintDimensionRatio="h,1:1"
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/passTextInputLayout"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toTopOf="@id/loginButton"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="@dimen/size_small_8dp"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toBottomOf="@id/phoneTextInputLayout"
         app:passwordToggleEnabled="true" >
         <com.google.android.material.textfield.TextInputEditText
-            android:paddingStart="16dp"
-            android:paddingLeft="16dp"
-            android:paddingEnd="16dp"
+            android:paddingLeft="@dimen/size_medium_16dp"
+            android:paddingRight="@dimen/size_medium_16dp"
             android:id="@+id/passTextInputEditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -49,64 +70,36 @@
             android:inputType="textPassword"/>
     </com.google.android.material.textfield.TextInputLayout>
 
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/loadingAnimView"
+        app:lottie_rawRes="@raw/loading"
+        app:lottie_loop="true"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/passTextInputLayout"
+        android:layout_width="@dimen/size_large_avatar_64dp"
+        android:layout_height="@dimen/size_large_avatar_64dp" />
+
     <Button
+        app:layout_goneMarginTop="@dimen/size_small_8dp"
         android:id="@+id/loginButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:text="@string/label_log_in"
-        app:layout_constraintBottom_toTopOf="@id/getPassTextView"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/passTextInputLayout" />
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/loadingAnimView" />
 
     <TextView
         android:id="@+id/getPassTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="@dimen/size_medium_16dp"
         android:text="@string/label_get_password"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/loginButton" />
-
-    <TextView
-        android:id="@+id/faqTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:text="@string/label_faq"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <TextView
-        android:textAlignment="center"
-        android:paddingLeft="16dp"
-        android:paddingRight="16dp"
-        android:id="@+id/loginDescTextView"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="16dp"
-        android:text="@string/description_login"
-        app:layout_constraintBottom_toTopOf="@id/phoneTextInputLayout"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <ImageView
-        android:contentDescription="@string/description_clear_text_icon"
-        android:layout_marginBottom="@dimen/size_small_8dp"
-        android:id="@+id/clearTextImgButton"
-        android:layout_width="30dp"
-        android:layout_height="0dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
-        app:layout_constraintBottom_toBottomOf="@id/phoneTextInputLayout"
-        app:layout_constraintDimensionRatio="h,1:1"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:srcCompat="@drawable/clear" />
 
     <Button
         android:id="@+id/swapButton"
@@ -118,5 +111,15 @@
         android:text="swap"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
+
+    <TextView
+        android:layout_marginBottom="@dimen/size_small_8dp"
+        android:id="@+id/faqTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/label_faq"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,7 +1,6 @@
 package vng.zalo.tdtai.zalo.zalo.views.home.fragments.group_fragment.create_group_activity.all_contacts_sub_fragment
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,7 +10,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.ListAdapter
-import kotlinx.android.synthetic.main.item_recent_contacts.view.*
+import kotlinx.android.synthetic.main.item_select_contact.view.*
 import kotlinx.android.synthetic.main.sub_fragment_recent_contacts.*
 import vng.zalo.tdtai.zalo.R
 import vng.zalo.tdtai.zalo.zalo.dependency_factories.ViewModelFactory
@@ -31,16 +30,14 @@ class AllContactsSubFragment : Fragment(), View.OnClickListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         initView()
 
-        viewModel = ViewModelProviders.of(this, ViewModelFactory()).get(RecentContactsSubFragmentViewModel::class.java)
+        viewModel = ViewModelProviders.of(this, ViewModelFactory.getInstance()).get(RecentContactsSubFragmentViewModel::class.java)
         viewModel.liveRoomItems.observe(viewLifecycleOwner, Observer{ contacts ->
             adapter.submitList(contacts)
-            Log.d(TAG, "onChanged livedata")
         })
-    }
 
-    override fun onResume() {
-        super.onResume()
-        updateSelectedListOnScreen()
+        (activity as CreateGroupActivity).viewModel.liveRoomItems.observe(viewLifecycleOwner, Observer {
+            updateRoomItemsOnScreen(it)
+        })
     }
 
     private fun initView(){
@@ -65,17 +62,13 @@ class AllContactsSubFragment : Fragment(), View.OnClickListener {
         }
     }
 
-    private fun updateSelectedListOnScreen() {
+    private fun updateRoomItemsOnScreen(newRoomItems: List<RoomItem>) {
         recyclerView.apply {
             forEach {
                 val itemPosition = getChildLayoutPosition(it)
                 val item = this@AllContactsSubFragment.adapter.currentList[itemPosition]
-                it.radioButton.isChecked = (activity as CreateGroupActivity).selectedList.contains(item)
+                it.radioButton.isChecked = newRoomItems.contains(item)
             }
         }
-    }
-
-    companion object {
-        private val TAG = AllContactsSubFragment::class.java.simpleName
     }
 }

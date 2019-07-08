@@ -7,8 +7,6 @@ import java.util.Date
 import kotlin.math.max
 
 object Utils {
-    private val TAG = Utils::class.java.simpleName
-
     fun formatTextOnNumberOfLines(tv: TextView, lineNum: Int) {
         tv.viewTreeObserver.addOnGlobalLayoutListener {
             if (tv.layout.lineCount > lineNum) {
@@ -43,5 +41,9 @@ object Utils {
         val formatDate1 = SimpleDateFormat.getDateInstance().format(date1)
         val formatDate2 = SimpleDateFormat.getDateInstance().format(date2)
         return formatDate1 != formatDate2
+    }
+
+    fun getTag(obj: Any): String {
+        return obj.javaClass.enclosingClass?.simpleName + "." + obj.javaClass.enclosingMethod?.name
     }
 }

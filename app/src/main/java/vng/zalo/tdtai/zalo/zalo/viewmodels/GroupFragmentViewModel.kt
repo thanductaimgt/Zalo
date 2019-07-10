@@ -31,8 +31,4 @@ class GroupFragmentViewModel : ViewModel() {
             liveRoomItems.value = roomItems
         }
     }
-
-    companion object {
-        private val TAG = GroupFragmentViewModel::class.java.simpleName
-    }
 }

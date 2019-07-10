@@ -28,8 +28,4 @@ class ContactSubFragmentViewModel : ViewModel() {
             liveRoomItems.value = roomItems
         }
     }
-
-    companion object {
-        private val TAG = ContactSubFragmentViewModel::class.java.simpleName
-    }
 }

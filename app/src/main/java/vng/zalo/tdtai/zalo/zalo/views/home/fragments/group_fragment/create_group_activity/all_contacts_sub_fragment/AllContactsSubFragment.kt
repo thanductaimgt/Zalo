@@ -1,7 +1,6 @@
 package vng.zalo.tdtai.zalo.zalo.views.home.fragments.group_fragment.create_group_activity.all_contacts_sub_fragment
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -31,14 +30,13 @@ class AllContactsSubFragment : Fragment(), View.OnClickListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         initView()
 
-        viewModel = ViewModelProviders.of(this, ViewModelFactory()).get(RecentContactsSubFragmentViewModel::class.java)
+        viewModel = ViewModelProviders.of(this, ViewModelFactory.getInstance()).get(RecentContactsSubFragmentViewModel::class.java)
         viewModel.liveRoomItems.observe(viewLifecycleOwner, Observer{ contacts ->
             adapter.submitList(contacts)
-            Log.d(TAG, "onChanged livedata")
         })
 
         (activity as CreateGroupActivity).viewModel.liveRoomItems.observe(viewLifecycleOwner, Observer {
-            updateSelectedListOnScreen()
+            updateRoomItemsOnScreen(it)
         })
     }
 
@@ -64,17 +62,13 @@ class AllContactsSubFragment : Fragment(), View.OnClickListener {
         }
     }
 
-    private fun updateSelectedListOnScreen() {
+    private fun updateRoomItemsOnScreen(newRoomItems: List<RoomItem>) {
         recyclerView.apply {
             forEach {
                 val itemPosition = getChildLayoutPosition(it)
                 val item = this@AllContactsSubFragment.adapter.currentList[itemPosition]
-                it.radioButton.isChecked = (activity as CreateGroupActivity).viewModel.liveRoomItems.value!!.contains(item)
+                it.radioButton.isChecked = newRoomItems.contains(item)
             }
         }
-    }
-
-    companion object {
-        private val TAG = AllContactsSubFragment::class.java.simpleName
     }
 }

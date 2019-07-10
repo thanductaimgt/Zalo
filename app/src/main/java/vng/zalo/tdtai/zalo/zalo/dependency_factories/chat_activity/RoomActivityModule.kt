@@ -13,7 +13,7 @@ class RoomActivityModule(private val roomActivity: RoomActivity) {
 
     @Provides
     internal fun providesViewModel(): RoomActivityViewModel {
-        return ViewModelProviders.of(roomActivity, ViewModelFactory(roomActivity.intent))
+        return ViewModelProviders.of(roomActivity, ViewModelFactory.getInstance(roomActivity.intent))
                 .get(RoomActivityViewModel::class.java)
     }
 }

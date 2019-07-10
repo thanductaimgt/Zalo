@@ -30,10 +30,10 @@ class ContactSubFragment : Fragment(), View.OnClickListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         initView()
 
-        viewModel = ViewModelProviders.of(this, ViewModelFactory()).get(ContactSubFragmentViewModel::class.java)
+        viewModel = ViewModelProviders.of(this, ViewModelFactory.getInstance()).get(ContactSubFragmentViewModel::class.java)
         viewModel.liveRoomItems.observe(viewLifecycleOwner, Observer { contacts ->
             adapter.submitList(contacts)
-            Log.d(TAG, "onChanged livedata")
+            Log.d(Utils.getTag(object {}), "onChanged livedata")
         })
     }
 
@@ -61,9 +61,5 @@ class ContactSubFragment : Fragment(), View.OnClickListener {
                 )
             }
         }
-    }
-
-    companion object {
-        private val TAG = ContactSubFragment::class.java.simpleName
     }
 }

@@ -24,6 +24,7 @@ import vng.zalo.tdtai.zalo.zalo.views.home.fragments.group_fragment.create_group
 import vng.zalo.tdtai.zalo.zalo.utils.Constants.ROOM_AVATAR
 import vng.zalo.tdtai.zalo.zalo.utils.Constants.ROOM_ID
 import vng.zalo.tdtai.zalo.zalo.utils.Constants.ROOM_NAME
+import vng.zalo.tdtai.zalo.zalo.utils.Utils
 import vng.zalo.tdtai.zalo.zalo.views.home.fragments.chat_fragment.room_activity.RoomActivity
 
 class GroupFragment : Fragment(), AdapterView.OnItemSelectedListener, View.OnClickListener {
@@ -42,11 +43,11 @@ class GroupFragment : Fragment(), AdapterView.OnItemSelectedListener, View.OnCli
 
         initView()
 
-        viewModel = ViewModelProviders.of(this, ViewModelFactory()).get(GroupFragmentViewModel::class.java)
+        viewModel = ViewModelProviders.of(this, ViewModelFactory.getInstance()).get(GroupFragmentViewModel::class.java)
         viewModel.liveRoomItems.observe(viewLifecycleOwner, Observer { rooms ->
-            adapter.submitList(rooms) { Log.d(TAG, viewModel.liveRoomItems.value.toString()) }
-            Log.d(TAG, "onChanged livedata")
-            Log.d(TAG, rooms.toString())
+            adapter.submitList(rooms) { Log.d(Utils.getTag(object {}), viewModel.liveRoomItems.value.toString()) }
+            Log.d(Utils.getTag(object {}), "onChanged livedata")
+            Log.d(Utils.getTag(object {}), rooms.toString())
         })
     }
 
@@ -93,9 +94,5 @@ class GroupFragment : Fragment(), AdapterView.OnItemSelectedListener, View.OnCli
             }
             R.id.createNewGroupLayout -> startActivity(Intent(activity, CreateGroupActivity::class.java))
         }
-    }
-
-    companion object {
-        private val TAG = GroupFragment::class.java.simpleName
     }
 }

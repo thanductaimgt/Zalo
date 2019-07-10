@@ -11,6 +11,7 @@ import vng.zalo.tdtai.zalo.zalo.models.Room
 import vng.zalo.tdtai.zalo.zalo.networks.Database
 import vng.zalo.tdtai.zalo.zalo.utils.Constants
 import java.util.*
+import kotlin.collections.HashMap
 
 class RoomActivityViewModel(intent: Intent) : ViewModel() {
     private var lastMessagesQuerySnapshot: QuerySnapshot? = null
@@ -43,10 +44,21 @@ class RoomActivityViewModel(intent: Intent) : ViewModel() {
         }
 
         //observe to set unseenMsgNum = 0 when new message comes and user is in RoomActivity
-        Database.addUserRoomUnseenMsgNumChangeListener(
-                userPhone = ZaloApplication.currentUser!!.phone!!,
+        val curUserPhone = ZaloApplication.currentUser!!.phone!!
+        Database.addUserRoomChangeListener(
+                userPhone = curUserPhone,
                 roomId = room.id!!
-        )
+        ) { documentSnapshot ->
+            if (documentSnapshot.getLong("unseenMsgNum")!! > 0 && curUserPhone == ZaloApplication.currentUser!!.phone) {
+                Database.updateUserRoom(
+                        userPhone = curUserPhone,
+                        roomId = room.id!!,
+                        fieldsAndValues = HashMap<String, Any>().apply {
+                            put("unseenMsgNum", 0)
+                        }
+                )
+            }
+        }
     }
 
     private fun updateLiveMessagesValue(docs: QuerySnapshot?) {
@@ -77,9 +89,5 @@ class RoomActivityViewModel(intent: Intent) : ViewModel() {
                 curRoom = room,
                 newMessage = message
         )
-    }
-
-    companion object {
-        private val TAG = RoomActivityViewModel::class.java.simpleName
     }
 }

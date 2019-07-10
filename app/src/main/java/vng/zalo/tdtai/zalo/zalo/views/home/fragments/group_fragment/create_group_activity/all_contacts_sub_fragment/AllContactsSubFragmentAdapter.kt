@@ -46,8 +46,4 @@ class AllContactsSubFragmentAdapter(private val fragment: Fragment, diffCallback
             }
         }
     }
-
-    companion object {
-        private val TAG = AllContactsSubFragmentAdapter::class.java.simpleName
-    }
 }

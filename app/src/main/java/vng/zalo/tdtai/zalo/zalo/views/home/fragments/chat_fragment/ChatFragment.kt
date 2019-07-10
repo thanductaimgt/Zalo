@@ -16,6 +16,7 @@ import vng.zalo.tdtai.zalo.zalo.dependency_factories.ViewModelFactory
 import vng.zalo.tdtai.zalo.zalo.shared_adapters.RoomItemAdapter
 import vng.zalo.tdtai.zalo.zalo.utils.Constants
 import vng.zalo.tdtai.zalo.zalo.utils.RoomItemDiffCallback
+import vng.zalo.tdtai.zalo.zalo.utils.Utils
 import vng.zalo.tdtai.zalo.zalo.viewmodels.ChatFragmentViewModel
 import vng.zalo.tdtai.zalo.zalo.views.home.fragments.chat_fragment.room_activity.RoomActivity
 
@@ -31,10 +32,10 @@ class ChatFragment : Fragment(), View.OnClickListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         initView()
 
-        viewModel = ViewModelProviders.of(this, ViewModelFactory()).get(ChatFragmentViewModel::class.java)
+        viewModel = ViewModelProviders.of(this, ViewModelFactory.getInstance()).get(ChatFragmentViewModel::class.java)
         viewModel.liveRoomItems.observe(viewLifecycleOwner, Observer { rooms ->
-            adapter.submitList(rooms) { Log.d(TAG, viewModel.liveRoomItems.value.toString()) }
-            Log.d(TAG, "onChanged livedata")
+            adapter.submitList(rooms) { Log.d(Utils.getTag(object {}), viewModel.liveRoomItems.value.toString()) }
+            Log.d(Utils.getTag(object {}), "onChanged livedata")
         })
     }
 
@@ -62,9 +63,5 @@ class ChatFragment : Fragment(), View.OnClickListener {
                 )
             }
         }
-    }
-
-    companion object {
-        private val TAG = ChatFragment::class.java.simpleName
     }
 }

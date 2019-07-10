@@ -16,6 +16,7 @@ import vng.zalo.tdtai.zalo.R
 import vng.zalo.tdtai.zalo.zalo.dependency_factories.chat_activity.DaggerRoomActivityComponent
 import vng.zalo.tdtai.zalo.zalo.dependency_factories.chat_activity.RoomActivityModule
 import vng.zalo.tdtai.zalo.zalo.utils.Constants
+import vng.zalo.tdtai.zalo.zalo.utils.Utils
 import vng.zalo.tdtai.zalo.zalo.viewmodels.RoomActivityViewModel
 import javax.inject.Inject
 import kotlin.math.max
@@ -39,7 +40,7 @@ class RoomActivity : AppCompatActivity(), View.OnClickListener {
             adapter.notifyDataSetChanged()
             this.scrollRecyclerViewToLastPosition()
 //            adapter.submitList(messageList) { this.scrollRecyclerViewToLastPosition() }
-            Log.d(TAG, "onChanged liveData")
+            Log.d(Utils.getTag(object {}), "onChanged liveData")
         })
     }
 
@@ -47,7 +48,7 @@ class RoomActivity : AppCompatActivity(), View.OnClickListener {
         toolbar.title = intent.getStringExtra(Constants.ROOM_NAME)
         setSupportActionBar(toolbar)
 
-        supportActionBar?.setDisplayHomeAsUpEnabled(true) ?: Log.e(TAG, "actionBar is null")
+        supportActionBar?.setDisplayHomeAsUpEnabled(true) ?: Log.e(Utils.getTag(object {}), "actionBar is null")
 
         msgEditText.apply{
             addTextChangedListener(InputTextListener())
@@ -79,6 +80,10 @@ class RoomActivity : AppCompatActivity(), View.OnClickListener {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when(item.itemId){
             R.id.action_settings -> true
+            android.R.id.home -> {
+                finish()
+                true
+            }
             else -> super.onOptionsItemSelected(item)
         }
     }
@@ -122,9 +127,5 @@ class RoomActivity : AppCompatActivity(), View.OnClickListener {
 
     private fun scrollRecyclerViewToLastPosition() {
         recyclerView.scrollToPosition(max(0, adapter.itemCount - 1))
-    }
-
-    companion object {
-        private val TAG = RoomActivity::class.java.simpleName
     }
 }

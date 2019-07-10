@@ -3,9 +3,15 @@
     package="vng.zalo.tdtai.zalo">
 
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-feature android:name="android.hardware.camera"
+
+    <uses-feature
+        android:name="android.hardware.camera"
         android:required="true" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="18"/>
+
+    <uses-permission
+        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        android:maxSdkVersion="18" />
+
     <application
         android:name=".zalo.ZaloApplication"
         android:allowBackup="false"
@@ -14,6 +20,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme.Zalo">
+        <activity android:name=".zalo.views.register.RegisterActivity"></activity>
+
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="vng.zalo.tdtai.zalo.fileprovider"
@@ -23,10 +31,11 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths" />
         </provider>
-        <activity android:name=".zalo.views.home.fragments.group_fragment.create_group_activity.CreateGroupActivity"
-            android:theme="@style/AppTheme.White"
+
+        <activity
+            android:name=".zalo.views.home.fragments.group_fragment.create_group_activity.CreateGroupActivity"
             android:label="@string/description_create_group"
-            />
+            android:theme="@style/AppTheme.White" />
         <activity
             android:name=".zalo.views.splash.SplashActivity"
             android:theme="@style/AppTheme.SplashTheme">
@@ -39,7 +48,6 @@
         </activity>
         <activity
             android:name=".zalo.views.home.fragments.chat_fragment.room_activity.RoomActivity"
-            android:parentActivityName=".zalo.views.home.HomeActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".zalo.views.home.HomeActivity"

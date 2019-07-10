@@ -43,4 +43,10 @@ object Constants {
 
     const val FOLDER_USER_AVATARS = "user_avatars"
     const val FOLDER_ROOM_AVATARS = "room_avatars"
+
+    const val DEFAULT_STORAGE_BUCKET = "us"
+    const val ROOM_AVATARS_PATH = "room_avatars"
+    const val USER_AVATARS_PATH = "user_avatars"
+
+    const val REGISTER_NAME = "name"
 }

@@ -29,6 +29,7 @@ import vng.zalo.tdtai.zalo.zalo.dependency_factories.ViewModelFactory
 import vng.zalo.tdtai.zalo.zalo.models.Room
 import vng.zalo.tdtai.zalo.zalo.models.RoomMember
 import vng.zalo.tdtai.zalo.zalo.utils.Constants
+import vng.zalo.tdtai.zalo.zalo.utils.Utils
 import vng.zalo.tdtai.zalo.zalo.viewmodels.CreateGroupActivityViewModel
 import vng.zalo.tdtai.zalo.zalo.views.home.fragments.chat_fragment.room_activity.RoomActivity
 import java.io.File
@@ -49,9 +50,16 @@ class CreateGroupActivity : AppCompatActivity(), View.OnClickListener, TabLayout
 
         initView()
 
-        viewModel = ViewModelProviders.of(this, ViewModelFactory()).get(CreateGroupActivityViewModel::class.java)
+        viewModel = ViewModelProviders.of(this, ViewModelFactory.getInstance()).get(CreateGroupActivityViewModel::class.java)
         viewModel.liveRoomItems.observe(this, Observer {
+            Log.d(Utils.getTag(object {}),it.toString())
             recyclerViewAdapter.submitList(it)
+
+            if (it.isEmpty()) {
+                selectedListLayout.visibility = View.GONE
+            } else {
+                selectedListLayout.visibility = View.VISIBLE
+            }
         })
     }
 
@@ -99,14 +107,8 @@ class CreateGroupActivity : AppCompatActivity(), View.OnClickListener, TabLayout
             } else {
                 add(item)
             }
-            Log.d(TAG, this.toString())
+            Log.d(Utils.getTag(object {}), this.toString())
             viewModel.liveRoomItems.value = viewModel.liveRoomItems.value
-        }
-
-        if (viewModel.liveRoomItems.value!!.isEmpty()) {
-            selectedListLayout.visibility = View.GONE
-        } else {
-            selectedListLayout.visibility = View.VISIBLE
         }
     }
 
@@ -139,7 +141,7 @@ class CreateGroupActivity : AppCompatActivity(), View.OnClickListener, TabLayout
                 proceedNewClickOnItem(item)
             }
             R.id.uploadAvatarImgView -> {
-                Log.d(TAG, "uploadAvatarImgView clicked")
+                Log.d(Utils.getTag(object {}), "uploadAvatarImgView clicked")
 
                 bottomSheetDialog.show()
             }
@@ -147,7 +149,7 @@ class CreateGroupActivity : AppCompatActivity(), View.OnClickListener, TabLayout
                 dispatchChoosePictureIntent()
             }
             R.id.takePicTextView -> {
-                Log.d(TAG, "takeNewPicTextView clicked")
+                Log.d(Utils.getTag(object {}), "takeNewPicTextView clicked")
                 dispatchTakePictureIntent()
             }
             R.id.createGroupButton -> {
@@ -238,16 +240,16 @@ class CreateGroupActivity : AppCompatActivity(), View.OnClickListener, TabLayout
             when (requestCode) {
                 Constants.PICK_IMAGE -> Picasso.get().load(data.data).fit().into(uploadAvatarImgView)
                 Constants.TAKE_PICTURE -> {
-                    Log.d(TAG, currentPhotoPath)
+                    Log.d(Utils.getTag(object {}), currentPhotoPath)
                     Picasso.get().load(File(currentPhotoPath)).fit().into(uploadAvatarImgView)
-                    Log.d(TAG, currentPhotoPath)
+                    Log.d(Utils.getTag(object {}), currentPhotoPath)
                 }
             }
             bottomSheetDialog.hide()
         } else if (resultCode != Activity.RESULT_OK) {
-            Log.d(TAG, "resultCode != Activity.RESULT_OK")
+            Log.d(Utils.getTag(object {}), "resultCode != Activity.RESULT_OK")
         } else {
-            Log.d(TAG, "data == null")
+            Log.d(Utils.getTag(object {}), "data == null")
         }
     }
 
@@ -255,7 +257,7 @@ class CreateGroupActivity : AppCompatActivity(), View.OnClickListener, TabLayout
         // Create an image file name
         val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date()).replace('/','_').replace(' ','_')
         val storageDir: File? = getExternalFilesDir(Environment.DIRECTORY_PICTURES)
-        storageDir?:Log.e(TAG, "storageDir is null")
+        storageDir?:Log.e(Utils.getTag(object {}), "storageDir is null")
         return File.createTempFile(
                 "JPEG_${timeStamp}_", /* prefix */
                 ".jpg", /* suffix */
@@ -264,9 +266,5 @@ class CreateGroupActivity : AppCompatActivity(), View.OnClickListener, TabLayout
             // Save a file: path for use with ACTION_VIEW intents
             currentPhotoPath = absolutePath
         }
-    }
-
-    companion object {
-        val TAG = CreateGroupActivity::class.java.simpleName
     }
 }

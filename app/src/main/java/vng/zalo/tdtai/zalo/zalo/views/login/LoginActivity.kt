@@ -12,6 +12,7 @@ import vng.zalo.tdtai.zalo.zalo.models.UserInfo
 import vng.zalo.tdtai.zalo.zalo.utils.Constants
 import vng.zalo.tdtai.zalo.zalo.views.home.HomeActivity
 import android.content.Context
+import vng.zalo.tdtai.zalo.zalo.utils.Utils
 
 
 class LoginActivity : AppCompatActivity(), View.OnClickListener {
@@ -34,6 +35,7 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
         when (v.id) {
             R.id.clearTextImgButton -> phoneTextInputEditText.setText("")
             R.id.loginButton -> {
+                loadingAnimView.playAnimation()
                 val currentPhone = phoneTextInputEditText.text.toString()
                 val currentPass = passTextInputEditText.text.toString()
                 validateCredentials(currentPhone, currentPass) { isLoginSuccess, userInfo ->
@@ -59,7 +61,8 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
                         userInfo.phone = phone
                         callback(true, userInfo)
                     } else {
-                        Log.d(TAG, "task not successful")
+                        Log.d(Utils.getTag(object {}), "task not successful")
+                        loadingAnimView.cancelAnimation()
                     }
                 }
     }
@@ -81,9 +84,5 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
         editor.putBoolean("isLogin",true)
 
         editor.apply()
-    }
-
-    companion object {
-        val TAG = LoginActivity::class.java.simpleName
     }
 }

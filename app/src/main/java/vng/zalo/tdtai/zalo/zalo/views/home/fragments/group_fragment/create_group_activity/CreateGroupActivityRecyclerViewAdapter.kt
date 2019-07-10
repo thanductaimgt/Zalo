@@ -40,8 +40,4 @@ class CreateGroupActivityRecyclerViewAdapter(private val activity: Activity, dif
             }
         }
     }
-
-    companion object {
-        private val TAG = CreateGroupActivityRecyclerViewAdapter::class.java.simpleName
-    }
 }

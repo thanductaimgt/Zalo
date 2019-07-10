@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.forEach
+import androidx.core.view.size
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
@@ -17,6 +18,7 @@ import vng.zalo.tdtai.zalo.R
 import vng.zalo.tdtai.zalo.zalo.dependency_factories.ViewModelFactory
 import vng.zalo.tdtai.zalo.zalo.models.RoomItem
 import vng.zalo.tdtai.zalo.zalo.utils.RoomItemDiffCallback
+import vng.zalo.tdtai.zalo.zalo.utils.Utils
 import vng.zalo.tdtai.zalo.zalo.viewmodels.RecentContactsSubFragmentViewModel
 import vng.zalo.tdtai.zalo.zalo.views.home.fragments.group_fragment.create_group_activity.CreateGroupActivity
 
@@ -31,21 +33,21 @@ class RecentContactsSubFragment : Fragment(), View.OnClickListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         initView()
 
-        viewModel = ViewModelProviders.of(this, ViewModelFactory()).get(RecentContactsSubFragmentViewModel::class.java)
-        viewModel.liveRoomItems.observe(viewLifecycleOwner, Observer{ contacts ->
-            adapter.submitList(contacts)
-            Log.d(TAG, "onChanged livedata")
+        viewModel = ViewModelProviders.of(this, ViewModelFactory.getInstance()).get(RecentContactsSubFragmentViewModel::class.java)
+        viewModel.liveRoomItems.observe(viewLifecycleOwner, Observer {
+            adapter.submitList(it)
         })
 
         (activity as CreateGroupActivity).viewModel.liveRoomItems.observe(viewLifecycleOwner, Observer {
-            updateSelectedListOnScreen()
+            updateRoomItemsOnScreen(it)
         })
+        Log.d(Utils.getTag(object{}),"onViewCreated")
     }
 
-    private fun initView(){
+    private fun initView() {
         adapter = RecentContactsSubFragmentAdapter(this, RoomItemDiffCallback())
 
-        with(recyclerView){
+        recyclerView.apply {
             layoutManager = LinearLayoutManager(activity)
             adapter = this@RecentContactsSubFragment.adapter
         }
@@ -64,17 +66,14 @@ class RecentContactsSubFragment : Fragment(), View.OnClickListener {
         }
     }
 
-    private fun updateSelectedListOnScreen(){
-        recyclerView.apply {
-            forEach {
-                val itemPosition = getChildLayoutPosition(it)
-                val item = this@RecentContactsSubFragment.adapter.currentList[itemPosition]
-                it.radioButton.isChecked = (activity as CreateGroupActivity).viewModel.liveRoomItems.value!!.contains(item)
-            }
+    private fun updateRoomItemsOnScreen(newRoomItems: List<RoomItem>) {
+        Log.d(Utils.getTag(object {}),"updateRoomItemsOnScreen")
+        Log.d(Utils.getTag(object {}),"recyclerView size: "+recyclerView.size)
+        recyclerView.forEach {
+            val itemPosition = recyclerView.getChildLayoutPosition(it)
+            val item = this@RecentContactsSubFragment.adapter.currentList[itemPosition]
+            it.radioButton.isChecked = newRoomItems.contains(item)
+            Log.d(Utils.getTag(object {}), "it.radioButton.isChecked: " + it.radioButton.isChecked)
         }
-    }
-
-    companion object {
-        private val TAG = RecentContactsSubFragment::class.java.simpleName
     }
 }

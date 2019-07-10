@@ -46,8 +46,4 @@ class RecentContactsSubFragmentAdapter(private val fragment: Fragment, diffCallb
             }
         }
     }
-
-    companion object {
-        private val TAG = RecentContactsSubFragmentAdapter::class.java.simpleName
-    }
 }

@@ -15,6 +15,7 @@ import vng.zalo.tdtai.zalo.R
 import vng.zalo.tdtai.zalo.zalo.dependency_factories.ViewModelFactory
 import vng.zalo.tdtai.zalo.zalo.utils.Constants
 import vng.zalo.tdtai.zalo.zalo.utils.RoomItemDiffCallback
+import vng.zalo.tdtai.zalo.zalo.utils.Utils
 import vng.zalo.tdtai.zalo.zalo.viewmodels.OfficialAccountViewModel
 import vng.zalo.tdtai.zalo.zalo.views.home.fragments.chat_fragment.room_activity.RoomActivity
 
@@ -30,10 +31,10 @@ class OfficialAccountSubFragment : Fragment(), View.OnClickListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         initView()
 
-        viewModel = ViewModelProviders.of(this, ViewModelFactory()).get(OfficialAccountViewModel::class.java)
+        viewModel = ViewModelProviders.of(this, ViewModelFactory.getInstance()).get(OfficialAccountViewModel::class.java)
         viewModel.liveOfficialAccounts.observe(viewLifecycleOwner, Observer { rooms ->
             subFragmentAdapter.submitList(rooms)
-            Log.d(TAG, "onChanged livedata")
+            Log.d(Utils.getTag(object {}), "onChanged livedata")
         })
     }
 
@@ -59,9 +60,5 @@ class OfficialAccountSubFragment : Fragment(), View.OnClickListener {
                 )
             }
         }
-    }
-
-    companion object {
-        private val TAG = OfficialAccountSubFragment::class.java.simpleName
     }
 }

@@ -43,7 +43,11 @@ class RoomItemAdapter(private val fragment: Fragment, diffCallback: DiffUtil.Ite
 
                 recvTimeTextView.text = if (roomItem.lastMsgTime != null) Utils.getTimeDiffOrFormatTime(roomItem.lastMsgTime!!.toDate()) else ""
 
-                descTextView.text = String.format("%s: %s", if (roomItem.lastSenderPhone == ZaloApplication.currentUser!!.phone) fragment.getString(R.string.label_me) else roomItem.lastSenderPhone, roomItem.lastMsg)
+                if (roomItem.lastSenderPhone != null) {
+                    descTextView.text = String.format("%s: %s", if (roomItem.lastSenderPhone == ZaloApplication.currentUser!!.phone) fragment.getString(R.string.label_me) else roomItem.lastSenderPhone, roomItem.lastMsg)
+                } else {
+                    descTextView.text = ""
+                }
                 Utils.formatTextOnNumberOfLines(descTextView, 1)
 
                 Picasso.get()
@@ -77,9 +81,5 @@ class RoomItemAdapter(private val fragment: Fragment, diffCallback: DiffUtil.Ite
                 }
             }
         }
-    }
-
-    companion object {
-        private val TAG = RoomItemAdapter::class.java.simpleName
     }
 }

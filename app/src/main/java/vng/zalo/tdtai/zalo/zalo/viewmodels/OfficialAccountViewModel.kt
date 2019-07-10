@@ -12,6 +12,7 @@ import java.util.ArrayList
 
 import vng.zalo.tdtai.zalo.zalo.ZaloApplication
 import vng.zalo.tdtai.zalo.zalo.models.RoomItem
+import vng.zalo.tdtai.zalo.zalo.utils.Utils
 
 class OfficialAccountViewModel : ViewModel() {
     private val tasks: List<Task<QuerySnapshot>>
@@ -56,15 +57,11 @@ class OfficialAccountViewModel : ViewModel() {
 
                     liveOfficialAccounts.value = rooms
                 } else {
-                    Log.d(TAG, "task.result is null")
+                    Log.d(Utils.getTag(object {}), "task.result is null")
                 }
             } else {
-                Log.d(TAG, "OfficialAccount Query fail")
+                Log.d(Utils.getTag(object {}), "OfficialAccount Query fail")
             }
         }
-    }
-
-    companion object {
-        private val TAG = OfficialAccountViewModel::class.java.simpleName
     }
 }

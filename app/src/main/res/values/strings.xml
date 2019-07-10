@@ -4,7 +4,7 @@
     <string name="label_log_in">Đăng nhập</string>
     <string name="label_vietnamese"><u>Tiếng Việt</u></string>
     <string name="label_english"><u>Tiếng Anh</u></string>
-    <string name="label_get_password">Lấy lại mật khẩu</string>
+    <string name="label_get_password"><u><b>Lấy lại mật khẩu</b></u></string>
     <string name="label_home_screen">Trang chủ</string>
     <string name="label_chat_tab">Tin nhắn</string>
     <string name="label_contact_tab">Danh bạ</string>
@@ -40,6 +40,8 @@
     <string name="label_minute">phút</string>
     <string name="label_hour">giờ</string>
     <string name="label_day">ngày</string>
+    <string name="label_continue">Tiếp tục</string>
+    <string name="label_name">Tên</string>
 
     <string-array name="sort_group_options">
         <item>Tên nhóm</item>
@@ -77,6 +79,7 @@
     <string name="hint_message">Tin nhắn</string>
     <string name="hint_search_not_clicked">Tìm thành viên</string>
     <string name="hint_search_clicked">Tìm tên hoặc số điện thoại</string>
+    <string name="hint_full_name">Tên đầy đủ</string>
 
     <string name="placeholder_text">Text</string>
 </resources>

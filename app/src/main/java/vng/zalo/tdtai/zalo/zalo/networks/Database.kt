@@ -60,7 +60,7 @@ class Database {
             }
         }
 
-        fun addRoomAndUserRoom(newRoom: Room, callback: ((roomItem:RoomItem) -> Unit)? = null) {
+        fun addRoomAndUserRoom(newRoom: Room, callback: ((roomItem: RoomItem) -> Unit)? = null) {
             // generate roomId if it's not generated
             if (newRoom.id == null) {
                 newRoom.id = getNewRoomId()
@@ -102,7 +102,7 @@ class Database {
                         .collection(Constants.COLLECTION_USERS)
                         .document(it.key)
                         .collection(Constants.COLLECTION_ROOMS)
-                        .document()
+                        .document(newRoom.id!!)
 
                 batch.set(
                         newRoomItemRef,
@@ -119,8 +119,8 @@ class Database {
             }
         }
 
-        fun addRoomMessagesListener(roomId: String, fieldToOrder: String? = null, orderDirection: Query.Direction = Query.Direction.ASCENDING, callback: ((querySnapshot: QuerySnapshot) -> Unit)? = null) {
-            firebaseFirestore
+        fun addRoomMessagesListener(roomId: String, fieldToOrder: String? = null, orderDirection: Query.Direction = Query.Direction.ASCENDING, callback: ((querySnapshot: QuerySnapshot) -> Unit)? = null):ListenerRegistration {
+            return firebaseFirestore
                     .collection(Constants.COLLECTION_ROOMS)
                     .document(roomId)
                     .collection(Constants.COLLECTION_MESSAGES)
@@ -134,14 +134,14 @@ class Database {
                     }
         }
 
-        fun addUserRoomChangeListener(userPhone: String, roomId: String, callback: ((documentSnapshot: DocumentSnapshot) -> Unit)? = null) {
+        fun addUserRoomChangeListener(userPhone: String, roomId: String, callback: ((documentSnapshot: DocumentSnapshot) -> Unit)? = null):ListenerRegistration {
             val curRoomRef = firebaseFirestore
                     .collection(Constants.COLLECTION_USERS)
                     .document(userPhone)
                     .collection(Constants.COLLECTION_ROOMS)
                     .document(roomId)
 
-            curRoomRef.addSnapshotListener { documentSnapshot, _ ->
+            return curRoomRef.addSnapshotListener { documentSnapshot, _ ->
                 if (documentSnapshot != null) {
                     callback?.invoke(documentSnapshot)
                 } else {
@@ -150,8 +150,8 @@ class Database {
             }
         }
 
-        fun addUserRoomsListener(userPhone: String, fieldToOrder: String? = null, orderDirection: Query.Direction = Query.Direction.ASCENDING, callback: ((querySnapshot: QuerySnapshot) -> Unit)? = null) {
-            firebaseFirestore
+        fun addUserRoomsListener(userPhone: String, fieldToOrder: String? = null, orderDirection: Query.Direction = Query.Direction.ASCENDING, callback: ((querySnapshot: QuerySnapshot) -> Unit)? = null):ListenerRegistration {
+            return firebaseFirestore
                     .collection(Constants.COLLECTION_USERS)
                     .document(userPhone)
                     .collection(Constants.COLLECTION_ROOMS)
@@ -201,6 +201,7 @@ class Database {
                             val memberMap = HashMap<String, RoomMember>()
                             for (doc in (tasks[1].result as QuerySnapshot)) {
                                 val roomMember = doc.toObject(RoomMember::class.java)
+                                Log.d(Utils.getTag(object {}), memberMap.toString())
                                 memberMap[doc.getString("phone")!!] = roomMember
                             }
                             room.memberMap = memberMap

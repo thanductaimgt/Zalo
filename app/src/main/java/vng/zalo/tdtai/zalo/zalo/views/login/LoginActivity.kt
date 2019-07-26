@@ -35,6 +35,7 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
         when (v.id) {
             R.id.clearTextImgButton -> phoneTextInputEditText.setText("")
             R.id.loginButton -> {
+                loadingAnimView.visibility = View.VISIBLE
                 loadingAnimView.playAnimation()
                 val currentPhone = phoneTextInputEditText.text.toString()
                 val currentPass = passTextInputEditText.text.toString()
@@ -44,6 +45,9 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
                         addUserInfoToSharePreferences(userInfo)
                         startActivity(Intent(this, HomeActivity::class.java))
 //                        finish()
+                    } else {
+                        loadingAnimView.cancelAnimation()
+                        loadingAnimView.visibility = View.INVISIBLE
                     }
                 }
             }

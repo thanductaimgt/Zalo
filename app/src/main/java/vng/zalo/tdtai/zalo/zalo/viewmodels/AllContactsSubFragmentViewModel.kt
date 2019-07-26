@@ -1,26 +1,22 @@
 package vng.zalo.tdtai.zalo.zalo.viewmodels
 
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.google.firebase.firestore.ListenerRegistration
-import com.google.firebase.firestore.Query
 import vng.zalo.tdtai.zalo.zalo.ZaloApplication
 import vng.zalo.tdtai.zalo.zalo.models.RoomItem
 import vng.zalo.tdtai.zalo.zalo.networks.Database
-import vng.zalo.tdtai.zalo.zalo.utils.Utils
+import vng.zalo.tdtai.zalo.zalo.utils.Constants
+import java.util.*
 
-class ChatFragmentViewModel : ViewModel() {
+class AllContactsSubFragmentViewModel : ViewModel() {
 
     val liveRoomItems: MutableLiveData<List<RoomItem>> = MutableLiveData(ArrayList())
-    var userRoomListener: ListenerRegistration
 
     init {
-        Log.d(Utils.getTag(object {}),"init ChatFragmentViewModel")
-        userRoomListener = Database.addUserRoomsListener(
+        Database.getUserRooms(
                 userPhone = ZaloApplication.currentUser!!.phone!!,
-                fieldToOrder = "lastMsgTime",
-                orderDirection = Query.Direction.DESCENDING
+                roomType = Constants.ROOM_TYPE_PEER,
+                fieldToOrder = "name"
         ) { querySnapshot ->
             val roomItems = ArrayList<RoomItem>()
             for (doc in querySnapshot) {
@@ -32,10 +28,5 @@ class ChatFragmentViewModel : ViewModel() {
             }
             liveRoomItems.value = roomItems
         }
-    }
-
-    fun removeListeners(){
-        userRoomListener.remove()
-        Log.d(Utils.getTag(object{}),"finalize")
     }
 }

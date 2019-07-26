@@ -128,4 +128,9 @@ class RoomActivity : AppCompatActivity(), View.OnClickListener {
     private fun scrollRecyclerViewToLastPosition() {
         recyclerView.scrollToPosition(max(0, adapter.itemCount - 1))
     }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        viewModel.removeListeners()
+    }
 }

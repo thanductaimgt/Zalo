@@ -16,6 +16,7 @@ class ViewModelFactory private constructor() : ViewModelProvider.Factory {
             RoomActivityViewModel::class.java -> RoomActivityViewModel(intent) as T
             OfficialAccountViewModel::class.java -> OfficialAccountViewModel() as T
             CreateGroupActivityViewModel::class.java -> CreateGroupActivityViewModel() as T
+            AllContactsSubFragmentViewModel::class.java -> AllContactsSubFragmentViewModel() as T
             else -> {
                 RecentContactsSubFragmentViewModel() as T
             }

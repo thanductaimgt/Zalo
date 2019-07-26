@@ -64,4 +64,9 @@ class ChatFragment : Fragment(), View.OnClickListener {
             }
         }
     }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        viewModel.removeListeners()
+    }
 }

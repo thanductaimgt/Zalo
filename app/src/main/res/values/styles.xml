@@ -22,7 +22,27 @@
     </style>
 
     <style name="AppTheme.Zalo" parent="Theme.MaterialComponents.Light">
-        <item name="android:windowBackground">@color/colorBackground</item>
+        <!--<item name="android:windowBackground">@color/colorBackground</item>-->
+        <!-- Buttons -->
+        <item name="materialButtonStyle">@style/ZaloButton</item>
+        <item name="materialButtonOutlinedStyle">@style/Widget.MaterialComponents.Button.OutlinedButton</item>
+        <item name="materialButtonToggleGroupStyle">@style/Widget.MaterialComponents.MaterialButtonToggleGroup</item>
+        <!-- Colors -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimary</item>
+        <!--<item name="colorAccent">?attr/colorSecondary</item>-->
+
+        <item name="android:colorBackground">@color/colorBackground</item>
+        <!--<item name="colorError">@color/design_default_color_error</item>-->
+
+        <!--<item name="actionBarSize">@dimen/mtrl_toolbar_default_height</item>-->
+        <!--<item name="minTouchTargetSize">@dimen/mtrl_min_touch_target_size</item>-->
+    </style>
+
+    <style name="ZaloButton" parent="Widget.MaterialComponents.Button">
+        <item name="cornerRadius">180dp</item>
+        <item name="android:paddingTop">12dp</item>
+        <item name="android:paddingBottom">12dp</item>
     </style>
 
     <style name="AppTheme.White" parent="Theme.MaterialComponents.Light">

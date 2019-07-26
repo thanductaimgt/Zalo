@@ -21,7 +21,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/groupNameEditText"
+        android:id="@+id/nameTextView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toStartOf="@id/recvTimeTextView"
@@ -36,15 +36,15 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/size_small_8dp"
         app:layout_constraintEnd_toStartOf="@id/iconTextView"
-        app:layout_constraintStart_toStartOf="@id/groupNameEditText"
-        app:layout_constraintTop_toBottomOf="@id/groupNameEditText" />
+        app:layout_constraintStart_toStartOf="@id/nameTextView"
+        app:layout_constraintTop_toBottomOf="@id/nameTextView" />
 
     <TextView
         android:id="@+id/recvTimeTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@id/groupNameEditText" />
+        app:layout_constraintTop_toTopOf="@id/nameTextView" />
 
     <TextView
         android:textAlignment="center"

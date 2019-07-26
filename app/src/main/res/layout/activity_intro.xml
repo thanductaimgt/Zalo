@@ -6,45 +6,39 @@
     android:layout_height="match_parent"
     tools:context=".zalo.views.intro.IntroActivity">
 
-    <androidx.viewpager.widget.ViewPager
-        app:layout_constraintTop_toTopOf="parent"
+    <ImageView
+        android:adjustViewBounds="true"
+        android:scaleType="fitXY"
         android:id="@+id/viewPager"
         android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_height="wrap_content"
         android:layout_margin="@dimen/size_large_32dp"
         android:background="@drawable/zalo"
-        app:layout_constraintBottom_toTopOf="@id/guideline"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/loginButton"/>
 
     <Button
+        android:layout_marginLeft="@dimen/size_medium_16dp"
+        android:layout_marginRight="@dimen/size_medium_16dp"
         android:id="@+id/loginButton"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
         android:text="@string/label_log_in"
         app:layout_constraintBottom_toTopOf="@id/registerButton"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/viewPager"
-        app:layout_constraintVertical_chainStyle="packed" />
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"/>
 
     <Button
+        android:layout_marginBottom="@dimen/size_large_24dp"
         android:id="@+id/registerButton"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="@string/label_register"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@id/loginButton"
-        app:layout_constraintStart_toStartOf="@id/loginButton"
-        app:layout_constraintTop_toBottomOf="@id/loginButton" />
-
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideline"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.5" />
+        app:layout_constraintRight_toRightOf="@id/loginButton"
+        app:layout_constraintLeft_toLeftOf="@id/loginButton"
+        app:layout_constraintBottom_toTopOf="@id/vnButton" />
 
     <TextView
         android:textStyle="bold"
@@ -52,20 +46,21 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/label_vietnamese"
-        app:layout_constraintBaseline_toBaselineOf="@id/engButton"
-        app:layout_constraintEnd_toStartOf="@id/engButton"
+        android:layout_marginBottom="@dimen/size_medium_16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintRight_toLeftOf="@id/engButton"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintLeft_toLeftOf="parent" />
 
     <TextView
         android:id="@+id/engButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
         android:text="@string/label_english"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/vnButton"
+        app:layout_constraintBottom_toBottomOf="@id/vnButton"
+        app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@id/vnButton" />
+        app:layout_constraintLeft_toRightOf="@id/vnButton" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

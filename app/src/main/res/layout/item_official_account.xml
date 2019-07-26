@@ -25,7 +25,7 @@
 
     <TextView
         android:text="@string/placeholder_text"
-        android:id="@+id/groupNameEditText"
+        android:id="@+id/nameTextView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/size_medium_16dp"

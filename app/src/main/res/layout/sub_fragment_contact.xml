@@ -148,11 +148,10 @@
 
 
         <Button
-            android:layout_gravity="center_horizontal"
             android:id="@+id/updateContactButton"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/size_medium_16dp"
+            android:layout_margin="@dimen/size_medium_16dp"
             android:text="@string/label_update_contact"/>
     </LinearLayout>
 </ScrollView>

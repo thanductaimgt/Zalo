@@ -1,20 +1,25 @@
 package vng.zalo.tdtai.zalo.zalo.viewmodels
 
 import android.content.Intent
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.firebase.Timestamp
+import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.QuerySnapshot
 import vng.zalo.tdtai.zalo.zalo.ZaloApplication
 import vng.zalo.tdtai.zalo.zalo.models.Message
 import vng.zalo.tdtai.zalo.zalo.models.Room
 import vng.zalo.tdtai.zalo.zalo.networks.Database
 import vng.zalo.tdtai.zalo.zalo.utils.Constants
+import vng.zalo.tdtai.zalo.zalo.utils.Utils
 import java.util.*
 import kotlin.collections.HashMap
 
 class RoomActivityViewModel(intent: Intent) : ViewModel() {
     private var lastMessagesQuerySnapshot: QuerySnapshot? = null
+    private var roomMessagesListener:ListenerRegistration
+    private var userRoomChangeListener:ListenerRegistration
 
     private val room: Room = Room(
             avatar = intent.getStringExtra(Constants.ROOM_AVATAR),
@@ -35,7 +40,7 @@ class RoomActivityViewModel(intent: Intent) : ViewModel() {
         }
 
         //observe messages change
-        Database.addRoomMessagesListener(
+        roomMessagesListener = Database.addRoomMessagesListener(
                 roomId = room.id!!,
                 fieldToOrder = "createdTime"
         ) { querySnapshot ->
@@ -44,14 +49,14 @@ class RoomActivityViewModel(intent: Intent) : ViewModel() {
         }
 
         //observe to set unseenMsgNum = 0 when new message comes and user is in RoomActivity
-        val curUserPhone = ZaloApplication.currentUser!!.phone!!
-        Database.addUserRoomChangeListener(
-                userPhone = curUserPhone,
+        userRoomChangeListener = Database.addUserRoomChangeListener(
+                userPhone = ZaloApplication.currentUser!!.phone!!,
                 roomId = room.id!!
         ) { documentSnapshot ->
-            if (documentSnapshot.getLong("unseenMsgNum")!! > 0 && curUserPhone == ZaloApplication.currentUser!!.phone) {
+            Log.d(Utils.getTag(object {}), documentSnapshot.toString())
+            if (documentSnapshot.getLong("unseenMsgNum")!! > 0) {
                 Database.updateUserRoom(
-                        userPhone = curUserPhone,
+                        userPhone = ZaloApplication.currentUser!!.phone!!,
                         roomId = room.id!!,
                         fieldsAndValues = HashMap<String, Any>().apply {
                             put("unseenMsgNum", 0)
@@ -89,5 +94,11 @@ class RoomActivityViewModel(intent: Intent) : ViewModel() {
                 curRoom = room,
                 newMessage = message
         )
+    }
+
+    fun removeListeners(){
+        roomMessagesListener.remove()
+        userRoomChangeListener.remove()
+        Log.d(Utils.getTag(object{}),"finalize")
     }
 }

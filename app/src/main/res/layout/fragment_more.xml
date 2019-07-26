@@ -29,7 +29,7 @@
 
             <TextView
                 app:layout_constraintTop_toTopOf="@id/avatarImgView"
-                android:id="@+id/groupNameEditText"
+                android:id="@+id/nameTextView"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/size_medium_16dp"
@@ -37,12 +37,12 @@
                 android:layout_marginEnd="@dimen/size_small_8dp"
                 android:layout_marginRight="@dimen/size_small_8dp"
                 android:layout_marginBottom="@dimen/size_tiny_4dp"
-                app:layout_constraintBottom_toTopOf="@+id/descTextView"
+                app:layout_constraintBottom_toTopOf="@id/descTextView"
                 app:layout_constraintEnd_toStartOf="@id/postStatusImgView"
                 app:layout_constraintStart_toEndOf="@id/avatarImgView" />
 
             <TextView
-                app:layout_constraintTop_toBottomOf="@id/groupNameEditText"
+                app:layout_constraintTop_toBottomOf="@id/nameTextView"
                 android:id="@+id/descTextView"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -51,9 +51,9 @@
                 android:text="@string/description_your_profile"
                 android:textColor="@color/colorTextGrey"
                 android:textSize="@dimen/size_small_text_10sp"
-                app:layout_constraintBottom_toBottomOf="@+id/avatarImgView"
+                app:layout_constraintBottom_toBottomOf="@id/avatarImgView"
                 app:layout_constraintEnd_toStartOf="@id/postStatusImgView"
-                app:layout_constraintStart_toStartOf="@id/groupNameEditText"
+                app:layout_constraintStart_toStartOf="@id/nameTextView"
                 app:layout_constraintVertical_bias="0.0" />
 
             <ImageButton
@@ -147,7 +147,7 @@
                 android:layout_marginRight="@dimen/size_small_8dp"
                 android:text="@string/label_shop"
                 app:layout_constraintBottom_toBottomOf="@id/avatarShop"
-                app:layout_constraintEnd_toStartOf="@+id/textView"
+                app:layout_constraintEnd_toStartOf="@id/textView"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toEndOf="@id/avatarShop"
                 app:layout_constraintTop_toTopOf="@id/avatarShop" />

@@ -12,7 +12,6 @@ import com.google.android.material.tabs.TabLayout
 import kotlinx.android.synthetic.main.activity_create_group.*
 import vng.zalo.tdtai.zalo.R
 import vng.zalo.tdtai.zalo.zalo.models.RoomItem
-import vng.zalo.tdtai.zalo.zalo.utils.RoomItemDiffCallback
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import android.content.Intent
 import android.net.Uri
@@ -41,7 +40,7 @@ class CreateGroupActivity : AppCompatActivity(), View.OnClickListener, TabLayout
     private lateinit var viewPagerAdapter: CreateGroupActivityViewPagerAdapter
     private lateinit var recyclerViewAdapter: CreateGroupActivityRecyclerViewAdapter
     private lateinit var bottomSheetDialog: BottomSheetDialog
-    private lateinit var currentPhotoPath:String
+    private var currentPhotoPath: String? = null
     lateinit var viewModel: CreateGroupActivityViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -52,8 +51,9 @@ class CreateGroupActivity : AppCompatActivity(), View.OnClickListener, TabLayout
 
         viewModel = ViewModelProviders.of(this, ViewModelFactory.getInstance()).get(CreateGroupActivityViewModel::class.java)
         viewModel.liveRoomItems.observe(this, Observer {
-            Log.d(Utils.getTag(object {}),it.toString())
-            recyclerViewAdapter.submitList(it)
+            Log.d(Utils.getTag("CreateGroupActivity:onCreate"), it.toString())
+            recyclerViewAdapter.roomItems = it
+            recyclerViewAdapter.notifyDataSetChanged()
 
             if (it.isEmpty()) {
                 selectedListLayout.visibility = View.GONE
@@ -74,13 +74,13 @@ class CreateGroupActivity : AppCompatActivity(), View.OnClickListener, TabLayout
 
         tabLayout.addOnTabSelectedListener(this)
 
-        recyclerViewAdapter = CreateGroupActivityRecyclerViewAdapter(this, RoomItemDiffCallback())
+        recyclerViewAdapter = CreateGroupActivityRecyclerViewAdapter(this)
         recyclerView.apply {
             adapter = recyclerViewAdapter
             layoutManager = LinearLayoutManager(this@CreateGroupActivity, LinearLayoutManager.HORIZONTAL, false)
         }
 
-        groupNameEditText.setOnEditorActionListener { _, actionId, _ ->
+        nameTextView.setOnEditorActionListener { _, actionId, _ ->
             when (actionId) {
                 EditorInfo.IME_ACTION_DONE -> {
                     false
@@ -107,7 +107,6 @@ class CreateGroupActivity : AppCompatActivity(), View.OnClickListener, TabLayout
             } else {
                 add(item)
             }
-            Log.d(Utils.getTag(object {}), this.toString())
             viewModel.liveRoomItems.value = viewModel.liveRoomItems.value
         }
     }
@@ -137,7 +136,7 @@ class CreateGroupActivity : AppCompatActivity(), View.OnClickListener, TabLayout
             }
             R.id.itemUserIconRootLayout -> {
                 val itemPosition = recyclerView.getChildLayoutPosition(view)
-                val item = recyclerViewAdapter.currentList[itemPosition]
+                val item = recyclerViewAdapter.roomItems[itemPosition]
                 proceedNewClickOnItem(item)
             }
             R.id.uploadAvatarImgView -> {
@@ -153,7 +152,7 @@ class CreateGroupActivity : AppCompatActivity(), View.OnClickListener, TabLayout
                 dispatchTakePictureIntent()
             }
             R.id.createGroupButton -> {
-                if(viewModel.liveRoomItems.value!!.size == 1){
+                if (viewModel.liveRoomItems.value!!.size == 1) {
                     val curRoomItem = viewModel.liveRoomItems.value!![0]
 
                     startActivity(
@@ -164,10 +163,10 @@ class CreateGroupActivity : AppCompatActivity(), View.OnClickListener, TabLayout
                             }
                     )
                 } else {
-                    val groupName = if(groupNameEditText.text.toString() != "") {
-                        groupNameEditText.text.toString()
+                    val groupName = if (nameTextView.text.toString() != "") {
+                        nameTextView.text.toString()
                     } else {
-                        viewModel.liveRoomItems.value!!.joinToString(transform = {roomItem -> roomItem.name!!})
+                        viewModel.liveRoomItems.value!!.joinToString(transform = { roomItem -> roomItem.name!! })
                     }
 
                     val curTimestamp = Timestamp.now()
@@ -176,15 +175,20 @@ class CreateGroupActivity : AppCompatActivity(), View.OnClickListener, TabLayout
                             name = groupName,
                             avatar = currentPhotoPath,
                             createdTime = Timestamp.now(),
-                            memberMap = HashMap<String, RoomMember>().apply{
+                            memberMap = HashMap<String, RoomMember>().apply {
                                 viewModel.liveRoomItems.value!!.forEach {
-                                    put(it.name!!, RoomMember(avatar = it.avatar, joinDate = curTimestamp))
+                                    put(it.name!!, RoomMember(
+                                            avatar = it.avatar,
+                                            joinDate = curTimestamp,
+                                            phone = it.name)
+                                    )
                                 }
-                                put(ZaloApplication.currentUser!!.phone!!, RoomMember(avatar = ZaloApplication.currentUser!!.avatar, joinDate = curTimestamp))
+                                put(ZaloApplication.currentUser!!.phone!!, RoomMember(avatar = ZaloApplication.currentUser!!.avatar, joinDate = curTimestamp, phone = ZaloApplication.currentUser!!.phone))
                             }
                     )
+                    Log.d(Utils.getTag(object {}),newRoom.memberMap.toString())
 
-                    viewModel.createRoomInFireStore(newRoom){
+                    viewModel.createRoomInFireStore(newRoom) {
                         startActivity(Intent(this, RoomActivity::class.java).apply {
                             putExtra(Constants.ROOM_ID, it.roomId)
                             putExtra(Constants.ROOM_NAME, it.name)
@@ -196,7 +200,7 @@ class CreateGroupActivity : AppCompatActivity(), View.OnClickListener, TabLayout
         }
     }
 
-    private fun dispatchChoosePictureIntent(){
+    private fun dispatchChoosePictureIntent() {
         val getIntent = Intent(Intent.ACTION_GET_CONTENT)
         getIntent.type = "image/*"
 
@@ -255,9 +259,9 @@ class CreateGroupActivity : AppCompatActivity(), View.OnClickListener, TabLayout
 
     private fun createImageFile(): File {
         // Create an image file name
-        val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date()).replace('/','_').replace(' ','_')
+        val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date()).replace('/', '_').replace(' ', '_')
         val storageDir: File? = getExternalFilesDir(Environment.DIRECTORY_PICTURES)
-        storageDir?:Log.e(Utils.getTag(object {}), "storageDir is null")
+        storageDir ?: Log.e(Utils.getTag(object {}), "storageDir is null")
         return File.createTempFile(
                 "JPEG_${timeStamp}_", /* prefix */
                 ".jpg", /* suffix */

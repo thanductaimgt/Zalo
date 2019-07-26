@@ -25,6 +25,6 @@ class MoreFragment : Fragment() {
                 .fit()
                 .into(avatarImgView)
 
-        groupNameEditText.text = ZaloApplication.currentUser!!.phone
+        nameTextView.text = ZaloApplication.currentUser!!.phone
     }
 }

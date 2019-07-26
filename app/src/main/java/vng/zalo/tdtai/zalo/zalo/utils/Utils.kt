@@ -1,5 +1,6 @@
 package vng.zalo.tdtai.zalo.zalo.utils
 
+import android.util.Log
 import android.widget.TextView
 
 import java.text.SimpleDateFormat
@@ -9,6 +10,7 @@ import kotlin.math.max
 object Utils {
     fun formatTextOnNumberOfLines(tv: TextView, lineNum: Int) {
         tv.viewTreeObserver.addOnGlobalLayoutListener {
+            Log.d(getTag(object {}), "tv.layout.lineCount: "+tv.layout.lineCount.toString())
             if (tv.layout.lineCount > lineNum) {
                 // end is offset of last character
                 val end = max(tv.layout.getLineEnd(lineNum - 1) - 3, 0)

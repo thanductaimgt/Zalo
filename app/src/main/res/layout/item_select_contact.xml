@@ -19,7 +19,7 @@
 
         app:layout_constraintTop_toTopOf="parent" />
     <TextView
-        android:id="@+id/groupNameEditText"
+        android:id="@+id/nameTextView"
         android:layout_marginRight="@dimen/size_medium_16dp"
         android:layout_marginLeft="@dimen/size_medium_16dp"
         app:layout_constraintRight_toLeftOf="@id/radioButton"

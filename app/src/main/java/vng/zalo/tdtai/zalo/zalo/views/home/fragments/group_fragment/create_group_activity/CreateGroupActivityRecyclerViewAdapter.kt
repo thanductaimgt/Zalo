@@ -13,7 +13,8 @@ import vng.zalo.tdtai.zalo.R
 import vng.zalo.tdtai.zalo.zalo.models.RoomItem
 import vng.zalo.tdtai.zalo.zalo.utils.ModelViewHolder
 
-class CreateGroupActivityRecyclerViewAdapter(private val activity: Activity, diffCallback: DiffUtil.ItemCallback<RoomItem>) : ListAdapter<RoomItem, CreateGroupActivityRecyclerViewAdapter.UserIconViewHolder>(diffCallback) {
+class CreateGroupActivityRecyclerViewAdapter(private val activity: Activity) : RecyclerView.Adapter<CreateGroupActivityRecyclerViewAdapter.UserIconViewHolder>() {
+    var roomItems = ArrayList<RoomItem>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): UserIconViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_user_icon, parent, false)
@@ -25,7 +26,7 @@ class CreateGroupActivityRecyclerViewAdapter(private val activity: Activity, dif
     }
 
     override fun getItemCount(): Int {
-        return currentList.size
+        return roomItems.size
     }
 
     inner class UserIconViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), ModelViewHolder {
@@ -34,7 +35,7 @@ class CreateGroupActivityRecyclerViewAdapter(private val activity: Activity, dif
                 setOnClickListener(activity as View.OnClickListener)
 
                 Picasso.get()
-                        .load(getItem(position).avatar)
+                        .load(roomItems[position].avatar)
                         .fit()
                         .into(avatarImgView)
             }

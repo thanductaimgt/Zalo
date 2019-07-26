@@ -38,8 +38,8 @@ class RoomItemAdapter(private val fragment: Fragment, diffCallback: DiffUtil.Ite
                 setOnClickListener(fragment as View.OnClickListener)
                 val roomItem = getItem(position)
 
-                groupNameEditText.text = roomItem.name
-                Utils.formatTextOnNumberOfLines(groupNameEditText, 1)
+                nameTextView.text = roomItem.name
+                Utils.formatTextOnNumberOfLines(nameTextView, 1)
 
                 recvTimeTextView.text = if (roomItem.lastMsgTime != null) Utils.getTimeDiffOrFormatTime(roomItem.lastMsgTime!!.toDate()) else ""
 
@@ -70,12 +70,12 @@ class RoomItemAdapter(private val fragment: Fragment, diffCallback: DiffUtil.Ite
             itemView.apply {
                 if (isSeen) {
                     iconTextView.visibility = View.GONE
-                    groupNameEditText.setTypeface(null, Typeface.NORMAL)
+                    nameTextView.setTypeface(null, Typeface.NORMAL)
                     descTextView.setTypeface(null, Typeface.NORMAL)
                     recvTimeTextView.setTypeface(null, Typeface.NORMAL)
                 } else {
                     iconTextView.visibility = View.VISIBLE
-                    groupNameEditText.setTypeface(null, Typeface.BOLD)
+                    nameTextView.setTypeface(null, Typeface.BOLD)
                     descTextView.setTypeface(null, Typeface.BOLD)
                     recvTimeTextView.setTypeface(null, Typeface.BOLD)
                 }

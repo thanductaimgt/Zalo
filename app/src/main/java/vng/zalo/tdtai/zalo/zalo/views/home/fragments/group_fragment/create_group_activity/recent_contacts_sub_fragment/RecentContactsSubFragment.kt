@@ -11,20 +11,18 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.ListAdapter
 import kotlinx.android.synthetic.main.item_select_contact.view.*
 import kotlinx.android.synthetic.main.sub_fragment_recent_contacts.*
 import vng.zalo.tdtai.zalo.R
 import vng.zalo.tdtai.zalo.zalo.dependency_factories.ViewModelFactory
 import vng.zalo.tdtai.zalo.zalo.models.RoomItem
-import vng.zalo.tdtai.zalo.zalo.utils.RoomItemDiffCallback
 import vng.zalo.tdtai.zalo.zalo.utils.Utils
 import vng.zalo.tdtai.zalo.zalo.viewmodels.RecentContactsSubFragmentViewModel
 import vng.zalo.tdtai.zalo.zalo.views.home.fragments.group_fragment.create_group_activity.CreateGroupActivity
 
 class RecentContactsSubFragment : Fragment(), View.OnClickListener {
     private lateinit var viewModel: RecentContactsSubFragmentViewModel
-    private lateinit var adapter: ListAdapter<RoomItem, RecentContactsSubFragmentAdapter.RecentContactsViewHolder>
+    private lateinit var adapter: RecentContactsSubFragmentAdapter
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.sub_fragment_recent_contacts, container, false)
@@ -35,17 +33,17 @@ class RecentContactsSubFragment : Fragment(), View.OnClickListener {
 
         viewModel = ViewModelProviders.of(this, ViewModelFactory.getInstance()).get(RecentContactsSubFragmentViewModel::class.java)
         viewModel.liveRoomItems.observe(viewLifecycleOwner, Observer {
-            adapter.submitList(it)
+            adapter.roomItems = it
+            adapter.notifyDataSetChanged()
         })
 
         (activity as CreateGroupActivity).viewModel.liveRoomItems.observe(viewLifecycleOwner, Observer {
-            updateRoomItemsOnScreen(it)
+            updateRoomItemsOnScreen(it as List<RoomItem>)
         })
-        Log.d(Utils.getTag(object{}),"onViewCreated")
     }
 
     private fun initView() {
-        adapter = RecentContactsSubFragmentAdapter(this, RoomItemDiffCallback())
+        adapter = RecentContactsSubFragmentAdapter(this)
 
         recyclerView.apply {
             layoutManager = LinearLayoutManager(activity)
@@ -59,7 +57,7 @@ class RecentContactsSubFragment : Fragment(), View.OnClickListener {
                 v.radioButton.isChecked = !v.radioButton.isChecked
 
                 val itemPosition = recyclerView.getChildLayoutPosition(v)
-                val item = adapter.currentList[itemPosition]
+                val item = adapter.roomItems[itemPosition]
 
                 (activity as CreateGroupActivity).proceedNewClickOnItem(item)
             }
@@ -71,7 +69,7 @@ class RecentContactsSubFragment : Fragment(), View.OnClickListener {
         Log.d(Utils.getTag(object {}),"recyclerView size: "+recyclerView.size)
         recyclerView.forEach {
             val itemPosition = recyclerView.getChildLayoutPosition(it)
-            val item = this@RecentContactsSubFragment.adapter.currentList[itemPosition]
+            val item = this@RecentContactsSubFragment.adapter.roomItems[itemPosition]
             it.radioButton.isChecked = newRoomItems.contains(item)
             Log.d(Utils.getTag(object {}), "it.radioButton.isChecked: " + it.radioButton.isChecked)
         }

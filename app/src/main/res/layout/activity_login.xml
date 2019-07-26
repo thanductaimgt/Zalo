@@ -13,7 +13,7 @@
         android:id="@+id/loginDescTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/size_small_8dp"
+        android:layout_marginTop="@dimen/size_medium_16dp"
         android:text="@string/description_login"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -24,7 +24,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:inputType="phone"
-        android:layout_marginTop="@dimen/size_small_8dp"
+        android:layout_marginTop="@dimen/size_medium_16dp"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toBottomOf="@id/loginDescTextView" >
@@ -41,6 +41,7 @@
     </com.google.android.material.textfield.TextInputLayout>
 
     <ImageView
+        android:clickable="true"
         android:id="@+id/clearTextImgButton"
         android:layout_width="@dimen/size_huge_48dp"
         android:layout_height="0dp"
@@ -49,7 +50,8 @@
         android:src="@drawable/clear"
         app:layout_constraintBottom_toBottomOf="@id/phoneTextInputLayout"
         app:layout_constraintDimensionRatio="h,1:1"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        android:focusable="true" />
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/passTextInputLayout"
@@ -71,6 +73,7 @@
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.airbnb.lottie.LottieAnimationView
+        android:visibility="invisible"
         android:id="@+id/loadingAnimView"
         app:lottie_rawRes="@raw/loading"
         app:lottie_loop="true"
@@ -81,9 +84,11 @@
         android:layout_height="@dimen/size_large_avatar_64dp" />
 
     <Button
+        android:layout_marginLeft="@dimen/size_medium_16dp"
+        android:layout_marginRight="@dimen/size_medium_16dp"
         app:layout_goneMarginTop="@dimen/size_small_8dp"
         android:id="@+id/loginButton"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:text="@string/label_log_in"
@@ -92,6 +97,7 @@
         app:layout_constraintTop_toBottomOf="@id/loadingAnimView" />
 
     <TextView
+        android:textColor="@color/colorPrimary"
         android:id="@+id/getPassTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -113,6 +119,7 @@
         app:layout_constraintEnd_toEndOf="parent" />
 
     <TextView
+        android:textColor="@color/colorPrimary"
         android:layout_marginBottom="@dimen/size_small_8dp"
         android:id="@+id/faqTextView"
         android:layout_width="wrap_content"

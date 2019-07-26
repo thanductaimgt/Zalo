@@ -34,7 +34,7 @@ class OfficialAccountSubFragmentAdapter (private val officialAccountSubFragment:
                 setOnClickListener(officialAccountSubFragment)
                 val room = getItem(position)
 
-                groupNameEditText.text = room.name
+                nameTextView.text = room.name
 
                 Picasso.Builder(avatarImgView.context)
                         .build().load(room.avatar)

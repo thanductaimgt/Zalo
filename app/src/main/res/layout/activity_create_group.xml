@@ -25,7 +25,7 @@
 
     <EditText
         app:layout_constraintRight_toRightOf="parent"
-        android:id="@+id/groupNameEditText"
+        android:id="@+id/nameTextView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginRight="@dimen/size_medium_16dp"

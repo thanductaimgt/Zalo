@@ -18,15 +18,21 @@ class CreateGroupActivityViewModel : ViewModel() {
         // path to save room avatar in storage
         val fileStoragePath = "${Constants.ROOM_AVATARS_PATH}/$newRoomId"
 
+        newRoom.id = newRoomId
         // save room avatar in storage
-        Storage.addFile(
-                localPath = newRoom.avatar!!,
-                storagePath = fileStoragePath
-        ) {
-            newRoom.id = newRoomId
-            //change from localPath to storagePath
-            newRoom.avatar = fileStoragePath
+        if (newRoom.avatar != null) {
+            Storage.addFile(
+                    localPath = newRoom.avatar!!,
+                    storagePath = fileStoragePath
+            ) {
+                //change from localPath to storagePath
+                newRoom.avatar = fileStoragePath
 
+                Database.addRoomAndUserRoom(newRoom) {
+                    callback?.invoke(it)
+                }
+            }
+        } else {
             Database.addRoomAndUserRoom(newRoom) {
                 callback?.invoke(it)
             }

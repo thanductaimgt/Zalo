@@ -19,16 +19,6 @@ class GroupFragmentViewModel : ViewModel() {
                 roomType = Constants.ROOM_TYPE_GROUP,
                 fieldToOrder = "lastMsgTime",
                 orderDirection = Query.Direction.DESCENDING
-        ) { querySnapshot ->
-            val roomItems = ArrayList<RoomItem>()
-            for (doc in querySnapshot) {
-                roomItems.add(
-                        doc.toObject(RoomItem::class.java).apply {
-                            roomId = doc.id
-                        }
-                )
-            }
-            liveRoomItems.value = roomItems
-        }
+        ) { liveRoomItems.value = it }
     }
 }

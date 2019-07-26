@@ -20,7 +20,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme.Zalo">
-        <activity android:name=".zalo.views.register.RegisterActivity"></activity>
+        <activity android:name=".zalo.views.activities.RegisterActivity" />
 
         <provider
             android:name="androidx.core.content.FileProvider"
@@ -33,11 +33,11 @@
         </provider>
 
         <activity
-            android:name=".zalo.views.home.fragments.group_fragment.create_group_activity.CreateGroupActivity"
+            android:name=".zalo.views.activities.CreateGroupActivity"
             android:label="@string/description_create_group"
             android:theme="@style/AppTheme.White" />
         <activity
-            android:name=".zalo.views.splash.SplashActivity"
+            android:name=".zalo.views.activities.SplashActivity"
             android:theme="@style/AppTheme.SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -47,17 +47,17 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".zalo.views.home.fragments.chat_fragment.room_activity.RoomActivity"
+            android:name=".zalo.views.activities.RoomActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".zalo.views.home.HomeActivity"
+            android:name=".zalo.views.activities.HomeActivity"
             android:label="@string/label_home_screen"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".zalo.views.login.LoginActivity"
-            android:parentActivityName=".zalo.views.intro.IntroActivity" />
+            android:name=".zalo.views.activities.LoginActivity"
+            android:parentActivityName=".zalo.views.activities.IntroActivity" />
         <activity
-            android:name=".zalo.views.intro.IntroActivity"
+            android:name=".zalo.views.activities.IntroActivity"
             android:theme="@style/AppTheme.NoActionBar" />
     </application>
 

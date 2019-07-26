@@ -1,8 +1,8 @@
 package vng.zalo.tdtai.zalo.zalo.utils
 
 object Constants {
-    const val VIEW_TYPE_SENDER = 0
-    const val VIEW_TYPE_RECEIVER = 1
+    const val VIEW_TYPE_SEND = 0
+    const val VIEW_TYPE_RECEIVE = 1
 
     const val MAX_UNSEEN_MSG_NUM = 50
 
@@ -21,6 +21,8 @@ object Constants {
     const val COLLECTION_MEMBERS = "members"
     const val COLLECTION_CONTACTS = "contacts"
     const val COLLECTION_OFFICIAL_ACCOUNTS = "official_accounts"
+    const val COLLECTION_STICKER_SETS = "sticker_sets"
+    const val COLLECTION_STICKERS = "stickers"
 
     const val JUST_NOW = "Vừa xong"
     const val MINUTE = "phút"
@@ -29,7 +31,7 @@ object Constants {
 
     const val MESSAGE_TYPE_TEXT = 0
     const val MESSAGE_TYPE_IMAGE = 1
-    const val MESSAGE_TYPE_EMOJI = 2
+    const val MESSAGE_TYPE_STICKER = 2
     const val MESSAGE_TYPE_FILE = 3
     const val MESSAGE_TYPE_VOICE = 4
 
@@ -43,10 +45,7 @@ object Constants {
 
     const val FOLDER_USER_AVATARS = "user_avatars"
     const val FOLDER_ROOM_AVATARS = "room_avatars"
-
-    const val DEFAULT_STORAGE_BUCKET = "us"
-    const val ROOM_AVATARS_PATH = "room_avatars"
-    const val USER_AVATARS_PATH = "user_avatars"
+    const val FOLDER_STICKER_SETS = "sticker_sets"
 
     const val REGISTER_NAME = "name"
 }

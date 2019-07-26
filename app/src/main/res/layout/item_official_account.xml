@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:paddingTop="@dimen/size_small_8dp"
-    android:paddingBottom="@dimen/size_small_8dp"
-    android:paddingLeft="@dimen/size_medium_16dp"
-    android:paddingRight="@dimen/size_medium_16dp"
     android:id="@+id/itemRoomRootLayout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:paddingLeft="@dimen/size_medium_16dp"
+    android:paddingTop="@dimen/size_small_8dp"
+    android:paddingRight="@dimen/size_medium_16dp"
+    android:paddingBottom="@dimen/size_small_8dp">
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/avatarImgView"
@@ -24,15 +24,15 @@
         app:layout_constraintVertical_bias="0.0" />
 
     <TextView
-        android:text="@string/placeholder_text"
-        android:id="@+id/groupNameEditText"
+        android:id="@+id/nameTextView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/size_medium_16dp"
         android:layout_marginRight="@dimen/size_medium_16dp"
-        app:layout_constraintRight_toLeftOf="@id/iconTextView"
+        android:text="@string/placeholder_text"
         app:layout_constraintBottom_toBottomOf="@id/avatarImgView"
         app:layout_constraintLeft_toRightOf="@id/avatarImgView"
+        app:layout_constraintRight_toLeftOf="@id/iconTextView"
         app:layout_constraintTop_toTopOf="@id/avatarImgView" />
 
     <ImageView

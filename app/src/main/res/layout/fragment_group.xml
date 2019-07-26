@@ -5,20 +5,19 @@
     android:layout_height="wrap_content">
 
     <LinearLayout
-        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:paddingTop="@dimen/size_small_8dp"
-            android:paddingBottom="@dimen/size_small_8dp"
-            android:paddingLeft="@dimen/size_medium_16dp"
-            android:paddingRight="@dimen/size_medium_16dp"
             android:id="@+id/createNewGroupLayout"
-            android:background="@android:color/white"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            >
+            android:background="@android:color/white"
+            android:paddingLeft="@dimen/size_medium_16dp"
+            android:paddingTop="@dimen/size_small_8dp"
+            android:paddingRight="@dimen/size_medium_16dp"
+            android:paddingBottom="@dimen/size_small_8dp">
 
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/addGroupImgView"
@@ -28,112 +27,116 @@
                 app:layout_constraintDimensionRatio="1:1"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
+
             <TextView
-                android:layout_marginLeft="@dimen/size_small_8dp"
                 android:id="@+id/addGroupDescTextView"
-                android:text="@string/description_create_group"
-                app:layout_constraintBottom_toBottomOf="@id/addGroupImgView"
-                app:layout_constraintTop_toTopOf="@id/addGroupImgView"
-                app:layout_constraintLeft_toRightOf="@id/addGroupImgView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/size_small_8dp" />
+                android:layout_marginStart="@dimen/size_small_8dp"
+                android:text="@string/description_create_group"
+                app:layout_constraintBottom_toBottomOf="@id/addGroupImgView"
+                app:layout_constraintLeft_toRightOf="@id/addGroupImgView"
+                app:layout_constraintTop_toTopOf="@id/addGroupImgView" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:paddingTop="@dimen/size_small_8dp"
-            android:paddingBottom="@dimen/size_small_8dp"
-            android:paddingLeft="@dimen/size_medium_16dp"
-            android:paddingRight="@dimen/size_medium_16dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/size_small_8dp"
             android:background="@android:color/white"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:paddingLeft="@dimen/size_medium_16dp"
+            android:paddingTop="@dimen/size_small_8dp"
+            android:paddingRight="@dimen/size_medium_16dp"
+            android:paddingBottom="@dimen/size_small_8dp">
+
             <TextView
-                android:textStyle="bold"
                 android:id="@+id/createGroupDescTV"
-                android:text="@string/label_add_group"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:text="@string/label_add_group"
+                android:textStyle="bold"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
             <ImageButton
-                android:layout_marginTop="@dimen/size_small_8dp"
                 android:id="@+id/remindDateImgButton"
+                android:layout_width="@dimen/size_huge_48dp"
+                android:layout_height="0dp"
+                android:layout_marginTop="@dimen/size_small_8dp"
                 android:background="@drawable/remind_date"
                 android:contentDescription="@string/description_remind_date"
+                app:layout_constraintDimensionRatio="1:1"
                 app:layout_constraintLeft_toLeftOf="@id/remindDateTV"
                 app:layout_constraintRight_toRightOf="@id/remindDateTV"
-                app:layout_constraintTop_toBottomOf="@id/createGroupDescTV"
-                app:layout_constraintDimensionRatio="1:1"
-                android:layout_width="@dimen/size_huge_48dp"
-                android:layout_height="0dp" />
+                app:layout_constraintTop_toBottomOf="@id/createGroupDescTV" />
+
             <TextView
                 android:id="@+id/remindDateTV"
-                android:layout_marginTop="@dimen/size_small_8dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/remindDateImgButton"
-                android:text="@string/description_remind_date"
-                app:layout_constraintLeft_toLeftOf="parent"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/size_small_8dp"
+                android:text="@string/description_remind_date"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/remindDateImgButton" />
 
             <ImageButton
                 android:id="@+id/voteImgButton"
+                android:layout_width="@dimen/size_huge_48dp"
+                android:layout_height="0dp"
                 android:layout_marginTop="@dimen/size_small_8dp"
                 android:background="@drawable/vote"
                 android:contentDescription="@string/description_remind_date"
+                app:layout_constraintDimensionRatio="1:1"
                 app:layout_constraintLeft_toLeftOf="@id/voteTV"
                 app:layout_constraintRight_toRightOf="@id/voteTV"
-                app:layout_constraintTop_toBottomOf="@id/createGroupDescTV"
-                app:layout_constraintDimensionRatio="1:1"
-                android:layout_width="@dimen/size_huge_48dp"
-                android:layout_height="0dp"/>
+                app:layout_constraintTop_toBottomOf="@id/createGroupDescTV" />
+
             <TextView
-                android:layout_marginLeft="@dimen/size_large_24dp"
                 android:id="@+id/voteTV"
-                android:layout_marginTop="@dimen/size_small_8dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/voteImgButton"
-                android:text="@string/description_vote"
-                app:layout_constraintLeft_toRightOf="@id/remindDateTV"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/size_large_24dp" />
+                android:layout_marginStart="@dimen/size_large_24dp"
+                android:layout_marginTop="@dimen/size_small_8dp"
+                android:text="@string/description_vote"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toRightOf="@id/remindDateTV"
+                app:layout_constraintTop_toBottomOf="@id/voteImgButton" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_marginTop="@dimen/size_small_8dp"
-            android:background="@android:color/white"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/size_small_8dp"
+            android:background="@android:color/white">
+
             <TextView
-                android:layout_marginTop="@dimen/size_small_8dp"
-                android:layout_marginLeft="@dimen/size_medium_16dp"
-                android:textStyle="bold"
                 android:id="@+id/joinedGroupsTV"
-                android:text="@string/label_joined_groups"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintLeft_toLeftOf="parent"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/size_medium_16dp" />
-            <Spinner
+                android:layout_marginStart="@dimen/size_medium_16dp"
                 android:layout_marginTop="@dimen/size_small_8dp"
-                android:layout_marginRight="@dimen/size_medium_16dp"
+                android:text="@string/label_joined_groups"
+                android:textStyle="bold"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <Spinner
                 android:id="@+id/sortGroupSpinner"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="@dimen/size_medium_16dp" />
+                android:layout_marginTop="@dimen/size_small_8dp"
+                android:layout_marginEnd="@dimen/size_medium_16dp"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recyclerView"
-                android:layout_marginTop="@dimen/size_medium_16dp"
-                app:layout_constraintTop_toBottomOf="@id/joinedGroupsTV"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/size_medium_16dp"
+                app:layout_constraintTop_toBottomOf="@id/joinedGroupsTV" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </LinearLayout>
 </ScrollView>

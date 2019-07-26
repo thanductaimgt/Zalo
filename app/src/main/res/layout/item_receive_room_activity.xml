@@ -7,61 +7,68 @@
     android:orientation="vertical">
 
     <TextView
-        android:visibility="gone"
-        android:textColor="@android:color/white"
-        android:background="@drawable/chat_date_bg"
+        android:id="@+id/recvMsgDateTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/size_small_8dp"
         android:layout_marginBottom="@dimen/size_small_8dp"
-        android:id="@+id/dateTextViewItemRecv"
+        android:background="@drawable/chat_date_bg"
         android:text="@string/placeholder_text"
-        app:layout_constraintRight_toRightOf="parent"
+        android:textColor="@android:color/white"
+        app:layout_constraintBottom_toTopOf="@id/recvMsgLayout"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/receiveMsgLinearLayout"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <LinearLayout
-        android:orientation="vertical"
-        android:id="@+id/receiveMsgLinearLayout"
+        android:id="@+id/recvMsgLayout"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/size_huge_48dp"
-        android:layout_marginLeft="@dimen/size_huge_48dp"
+        android:layout_marginStart="@dimen/size_enormous_56dp"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toTopOf="@id/recvMsgAnimView"
         app:layout_constraintEnd_toStartOf="@id/guideline5"
         app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent">
+        app:layout_constraintStart_toStartOf="parent">
 
         <TextView
-            android:id="@+id/receiveMsgTextView"
+            android:id="@+id/recvMsgTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/recv_message_bg"
-            android:text="@string/placeholder_text"/>
-
-        <TextView
-            android:textSize="@dimen/size_small_text_10sp"
-            android:layout_marginBottom="@dimen/size_small_8dp"
-            android:id="@+id/recvTimeTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/placeholder_text"/>
+            android:text="@string/placeholder_text" />
     </LinearLayout>
 
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/recvMsgAnimView"
+        android:layout_width="@dimen/size_sticker_128dp"
+        android:layout_height="@dimen/size_sticker_128dp"
+        app:layout_constraintBottom_toTopOf="@id/recvMsgTimeTextView"
+        app:layout_constraintLeft_toLeftOf="@id/recvMsgLayout"
+        app:lottie_autoPlay="false"
+        app:lottie_enableMergePathsForKitKatAndAbove="true"
+        app:lottie_loop="true"
+        app:lottie_renderMode="software" />
+
+    <TextView
+        android:id="@+id/recvMsgTimeTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/size_small_8dp"
+        android:text="@string/placeholder_text"
+        android:textSize="@dimen/size_small_text_10sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="@id/recvMsgLayout" />
+
     <de.hdodenhof.circleimageview.CircleImageView
-        android:id="@+id/receiveAvatarImgView"
-        android:layout_width="@dimen/size_large_32dp"
+        android:id="@+id/recvAvatarImgView"
+        android:layout_width="@dimen/size_user_icon_avatar_40dp"
         android:layout_height="0dp"
         android:layout_marginStart="@dimen/size_small_8dp"
-        android:layout_marginLeft="@dimen/size_small_8dp"
-        android:layout_marginTop="@dimen/size_tiny_4dp"
-        android:layout_marginBottom="@dimen/size_small_8dp"
         android:contentDescription="@string/description_avatar"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toBottomOf="@id/recvMsgAnimView"
         app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/receiveMsgLinearLayout"
         app:layout_constraintVertical_bias="0.0"
         tools:srcCompat="@tools:sample/avatars" />
 

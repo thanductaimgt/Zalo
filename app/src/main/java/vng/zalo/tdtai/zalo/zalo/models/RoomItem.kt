@@ -7,7 +7,7 @@ import java.util.HashMap
 
 //mapping firestore data to POJO needs empty constructor
 data class RoomItem(var roomId: String? = null,
-                    var avatar: String? = null,
+                    var avatarUrl: String? = null,
                     var lastMsg: String? = null,
                     var lastMsgTime: Timestamp? = null,
                     var name: String? = null,
@@ -17,7 +17,7 @@ data class RoomItem(var roomId: String? = null,
 
     fun toMap(): Map<String, Any?> {
         return HashMap<String, Any?>().apply {
-            put("avatar", avatar)
+            put("avatarUrl", avatarUrl)
             put("lastMsg", lastMsg)
             put("lastMsgTime", lastMsgTime)
             put("name", name)

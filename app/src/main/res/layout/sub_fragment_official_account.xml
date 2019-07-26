@@ -15,11 +15,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@android:color/white"
-            android:paddingTop="@dimen/size_small_8dp"
-            android:paddingBottom="@dimen/size_small_8dp"
+            android:orientation="vertical"
             android:paddingLeft="@dimen/size_medium_16dp"
+            android:paddingTop="@dimen/size_small_8dp"
             android:paddingRight="@dimen/size_medium_16dp"
-            android:orientation="vertical">
+            android:paddingBottom="@dimen/size_small_8dp">
 
             <ImageView
                 android:id="@+id/avatarImgView"
@@ -35,7 +35,7 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
-                android:id="@+id/groupNameEditText"
+                android:id="@+id/nameTextView"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/size_medium_16dp"
@@ -49,12 +49,12 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <LinearLayout
-            android:paddingTop="@dimen/size_small_8dp"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginTop="@dimen/size_small_8dp"
             android:background="@android:color/white"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:paddingTop="@dimen/size_small_8dp">
 
             <TextView
                 android:id="@+id/textView2"
@@ -66,10 +66,10 @@
                 android:textStyle="bold" />
 
             <androidx.recyclerview.widget.RecyclerView
-                android:layout_marginTop="@dimen/size_small_8dp"
                 android:id="@+id/recyclerView"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+                android:layout_height="match_parent"
+                android:layout_marginTop="@dimen/size_small_8dp" />
         </LinearLayout>
     </LinearLayout>
 </ScrollView>

@@ -1,14 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/itemRecentContactsLayout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:paddingTop="@dimen/size_small_8dp"
-    android:paddingBottom="@dimen/size_small_8dp"
     android:paddingLeft="@dimen/size_medium_16dp"
+    android:paddingTop="@dimen/size_small_8dp"
     android:paddingRight="@dimen/size_medium_16dp"
-    >
+    android:paddingBottom="@dimen/size_small_8dp">
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/avatarImgView"
@@ -18,23 +17,25 @@
         app:layout_constraintLeft_toLeftOf="parent"
 
         app:layout_constraintTop_toTopOf="parent" />
+
     <TextView
-        android:id="@+id/groupNameEditText"
-        android:layout_marginRight="@dimen/size_medium_16dp"
-        android:layout_marginLeft="@dimen/size_medium_16dp"
-        app:layout_constraintRight_toLeftOf="@id/radioButton"
-        app:layout_constraintLeft_toRightOf="@id/avatarImgView"
-        app:layout_constraintBottom_toBottomOf="@id/avatarImgView"
-        app:layout_constraintTop_toTopOf="@id/avatarImgView"
+        android:id="@+id/nameTextView"
         android:layout_width="0dp"
-        android:layout_height="wrap_content" />
-    <RadioButton
-        android:clickable="false"
-        android:id="@+id/radioButton"
-        app:layout_constraintRight_toRightOf="parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/size_medium_16dp"
+        android:layout_marginRight="@dimen/size_medium_16dp"
         app:layout_constraintBottom_toBottomOf="@id/avatarImgView"
-        app:layout_constraintTop_toTopOf="@id/avatarImgView"
-        app:layout_constraintDimensionRatio="1:1"
+        app:layout_constraintLeft_toRightOf="@id/avatarImgView"
+        app:layout_constraintRight_toLeftOf="@id/radioButton"
+        app:layout_constraintTop_toTopOf="@id/avatarImgView" />
+
+    <RadioButton
+        android:id="@+id/radioButton"
         android:layout_width="@dimen/size_large_24dp"
-        android:layout_height="0dp" />
+        android:layout_height="0dp"
+        android:clickable="false"
+        app:layout_constraintBottom_toBottomOf="@id/avatarImgView"
+        app:layout_constraintDimensionRatio="1:1"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="@id/avatarImgView" />
 </androidx.constraintlayout.widget.ConstraintLayout>

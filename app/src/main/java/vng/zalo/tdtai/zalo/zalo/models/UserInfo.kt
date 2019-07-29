@@ -4,7 +4,7 @@ import com.google.firebase.Timestamp
 
 data class UserInfo(
         var phone: String? = null,
-        var avatar: String? = null,
+        var avatarUrl: String? = null,
         var birthDate: Timestamp? = null,
         var isMale: Boolean? = false,
         var joinDate: Timestamp? = null)

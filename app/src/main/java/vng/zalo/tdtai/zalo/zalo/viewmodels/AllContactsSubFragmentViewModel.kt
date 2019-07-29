@@ -17,16 +17,6 @@ class AllContactsSubFragmentViewModel : ViewModel() {
                 userPhone = ZaloApplication.currentUser!!.phone!!,
                 roomType = Constants.ROOM_TYPE_PEER,
                 fieldToOrder = "name"
-        ) { querySnapshot ->
-            val roomItems = ArrayList<RoomItem>()
-            for (doc in querySnapshot) {
-                roomItems.add(
-                        doc.toObject(RoomItem::class.java).apply {
-                            roomId = doc.id
-                        }
-                )
-            }
-            liveRoomItems.value = roomItems
-        }
+        ) { liveRoomItems.value = it }
     }
 }

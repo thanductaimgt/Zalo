@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:focusableInTouchMode="true"
     android:focusable="true"
-    tools:context=".zalo.views.home.fragments.group_fragment.create_group_activity.CreateGroupActivity">
+    tools:context=".zalo.views.activities.CreateGroupActivity">
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:clickable="true"

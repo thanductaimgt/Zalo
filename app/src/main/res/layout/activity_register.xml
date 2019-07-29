@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".zalo.views.register.RegisterActivity">
+    tools:context=".zalo.views.activities.RegisterActivity">
     <TextView
         android:id="@+id/inputNameLabelTV"
         android:layout_marginTop="@dimen/size_medium_16dp"

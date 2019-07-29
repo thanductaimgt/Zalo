@@ -5,12 +5,8 @@ import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.firestore.*
 import vng.zalo.tdtai.zalo.zalo.ZaloApplication
-import vng.zalo.tdtai.zalo.zalo.models.Message
-import vng.zalo.tdtai.zalo.zalo.models.Room
-import vng.zalo.tdtai.zalo.zalo.models.RoomItem
-import vng.zalo.tdtai.zalo.zalo.models.RoomMember
+import vng.zalo.tdtai.zalo.zalo.models.*
 import vng.zalo.tdtai.zalo.zalo.utils.Constants
-import vng.zalo.tdtai.zalo.zalo.utils.Utils
 
 class Database {
     companion object {
@@ -55,7 +51,7 @@ class Database {
                 if (task.isSuccessful) {
                     callback?.invoke()
                 } else {
-                    Log.e(Utils.getTag(object {}), "task not successful")
+                    Log.e("addMsgUpdateUsersRoom", "task not successful")
                 }
             }
         }
@@ -83,7 +79,7 @@ class Database {
             // user room are the same for all members when room created
             val newRoomItem = RoomItem(
                     roomId = newRoom.id,
-                    avatar = newRoom.avatar,
+                    avatarUrl = newRoom.avatarUrl,
                     name = newRoom.name,
                     roomType = Constants.ROOM_TYPE_GROUP
             )
@@ -114,12 +110,12 @@ class Database {
                 if (task.isSuccessful) {
                     callback?.invoke(newRoomItem)
                 } else {
-                    Log.e(Utils.getTag(object {}), "task fail")
+                    Log.e("addRoomAndUserRoom", "task fail")
                 }
             }
         }
 
-        fun addRoomMessagesListener(roomId: String, fieldToOrder: String? = null, orderDirection: Query.Direction = Query.Direction.ASCENDING, callback: ((querySnapshot: QuerySnapshot) -> Unit)? = null):ListenerRegistration {
+        fun addRoomMessagesListener(roomId: String, fieldToOrder: String? = null, orderDirection: Query.Direction = Query.Direction.ASCENDING, callback: ((messages: List<Message>) -> Unit)? = null): ListenerRegistration {
             return firebaseFirestore
                     .collection(Constants.COLLECTION_ROOMS)
                     .document(roomId)
@@ -127,14 +123,18 @@ class Database {
                     .let { if (fieldToOrder != null) it.orderBy("createdTime", orderDirection) else it }
                     .addSnapshotListener { querySnapshot, _ ->
                         if (querySnapshot != null) {
-                            callback?.invoke(querySnapshot)
+                            val messages = ArrayList<Message>()
+                            for (doc in querySnapshot) {
+                                messages.add(doc.toObject(Message::class.java))
+                            }
+                            callback?.invoke(messages)
                         } else {
-                            Log.e(Utils.getTag(object {}), "querySnapshot is null")
+                            Log.e("addRoomMessagesListener", "querySnapshot is null")
                         }
                     }
         }
 
-        fun addUserRoomChangeListener(userPhone: String, roomId: String, callback: ((documentSnapshot: DocumentSnapshot) -> Unit)? = null):ListenerRegistration {
+        fun addUserRoomChangeListener(userPhone: String, roomId: String, callback: ((documentSnapshot: DocumentSnapshot) -> Unit)? = null): ListenerRegistration {
             val curRoomRef = firebaseFirestore
                     .collection(Constants.COLLECTION_USERS)
                     .document(userPhone)
@@ -145,12 +145,12 @@ class Database {
                 if (documentSnapshot != null) {
                     callback?.invoke(documentSnapshot)
                 } else {
-                    Log.e(Utils.getTag(object {}), "documentSnapshot is null")
+                    Log.e("addUserRoomChangeLsn", "documentSnapshot is null")
                 }
             }
         }
 
-        fun addUserRoomsListener(userPhone: String, fieldToOrder: String? = null, orderDirection: Query.Direction = Query.Direction.ASCENDING, callback: ((querySnapshot: QuerySnapshot) -> Unit)? = null):ListenerRegistration {
+        fun addUserRoomsListener(userPhone: String, fieldToOrder: String? = null, orderDirection: Query.Direction = Query.Direction.ASCENDING, callback: ((roomItems: List<RoomItem>) -> Unit)? = null): ListenerRegistration {
             return firebaseFirestore
                     .collection(Constants.COLLECTION_USERS)
                     .document(userPhone)
@@ -158,10 +158,18 @@ class Database {
                     .let { if (fieldToOrder != null) it.orderBy(fieldToOrder, orderDirection) else it }
                     .addSnapshotListener { querySnapshot, _ ->
                         if (querySnapshot != null) {
-                            callback?.invoke(querySnapshot)
-                            Log.d(Utils.getTag(object {}), "querySnapshot is not null")
+                            val roomItems = ArrayList<RoomItem>()
+                            for (doc in querySnapshot) {
+                                roomItems.add(
+                                        doc.toObject(RoomItem::class.java).apply {
+                                            roomId = doc.id
+                                        }
+                                )
+                            }
+                            callback?.invoke(roomItems)
+                            Log.d("addUserRoomsListener", "querySnapshot is not null")
                         } else {
-                            Log.d(Utils.getTag(object {}), "querySnapshot is null")
+                            Log.d("addUserRoomsListener", "querySnapshot is null")
                         }
                     }
         }
@@ -194,14 +202,14 @@ class Database {
                         if (tasks[0].isSuccessful) {
                             room.createdTime = (tasks[0].result as DocumentSnapshot).getTimestamp("createdTime")
                         } else {
-                            Log.e(Utils.getTag(object {}), "tasks[0] fail")
+                            Log.e("getRoomInfo", "tasks[0] fail")
                         }
 
                         if (tasks[1].isSuccessful) {
                             val memberMap = HashMap<String, RoomMember>()
                             for (doc in (tasks[1].result as QuerySnapshot)) {
                                 val roomMember = doc.toObject(RoomMember::class.java)
-                                Log.d(Utils.getTag(object {}), memberMap.toString())
+                                Log.d("getRoomInfo", memberMap.toString())
                                 memberMap[doc.getString("phone")!!] = roomMember
                             }
                             room.memberMap = memberMap
@@ -209,12 +217,12 @@ class Database {
                             //set livedata value
                             callback?.invoke(room)
                         } else {
-                            Log.e(Utils.getTag(object {}), "tasks[1] fail")
+                            Log.e("getRoomInfo", "tasks[1] fail")
                         }
                     }
         }
 
-        fun getUserRooms(userPhone: String, roomType: Int? = null, fieldToOrder: String? = null, orderDirection: Query.Direction = Query.Direction.ASCENDING, callback: ((querySnapshot: QuerySnapshot) -> Unit)?) {
+        fun getUserRooms(userPhone: String, roomType: Int? = null, fieldToOrder: String? = null, orderDirection: Query.Direction = Query.Direction.ASCENDING, callback: ((roomItems: List<RoomItem>) -> Unit)?) {
             firebaseFirestore
                     .collection(Constants.COLLECTION_USERS)
                     .document(userPhone)
@@ -225,12 +233,44 @@ class Database {
                     .addOnCompleteListener { task ->
                         if (task.isSuccessful) {
                             if (task.result != null) {
-                                callback?.invoke(task.result!!)
+                                val roomItems = ArrayList<RoomItem>()
+                                for (doc in task.result!!) {
+                                    roomItems.add(
+                                            doc.toObject(RoomItem::class.java).apply {
+                                                roomId = doc.id
+                                            }
+                                    )
+                                }
+                                callback?.invoke(roomItems)
                             } else {
-                                Log.e(Utils.getTag(object {}), "task.result is null")
+                                Log.e("getUserRooms", "task.result is null")
                             }
                         } else {
-                            Log.e(Utils.getTag(object {}), "Contact Query Fail")
+                            Log.e("getUserRooms", "task fail")
+                        }
+                    }
+        }
+
+        fun getUserStickerSets(userPhone: String, callback: ((stickerSets: List<StickerSet>) -> Unit)?) {
+            firebaseFirestore
+                    .collection(Constants.COLLECTION_USERS)
+                    .document(userPhone)
+                    .collection(Constants.COLLECTION_STICKER_SETS)
+                    .get().addOnCompleteListener { task ->
+                        if (task.isSuccessful) {
+                            if (task.result != null) {
+                                val stickerSets = ArrayList<StickerSet>()
+                                for (doc in task.result!!) {
+                                    stickerSets.add(
+                                            doc.toObject(StickerSet::class.java)
+                                    )
+                                }
+                                callback?.invoke(stickerSets)
+                            } else {
+                                Log.e("getUserStickerSets", "task.result is null")
+                            }
+                        } else {
+                            Log.e("getUserStickerSets", "task fail")
                         }
                     }
         }
@@ -246,7 +286,7 @@ class Database {
                         if (task.isSuccessful) {
                             callback?.invoke()
                         } else {
-                            Log.e(Utils.getTag(object {}), "task fail")
+                            Log.e("updateUserRoom", "task fail")
                         }
                     }
         }

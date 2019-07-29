@@ -50,7 +50,7 @@ class OfficialAccountViewModel : ViewModel() {
                         rooms.add(
                                 RoomItem(
                                         name = doc.getString("name"),
-                                        avatar = doc.getString("avatar")
+                                        avatarUrl = doc.getString("avatarUrl")
                                 )
                         )
                     }

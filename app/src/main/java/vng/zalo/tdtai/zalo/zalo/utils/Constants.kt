@@ -21,6 +21,7 @@ object Constants {
     const val COLLECTION_MEMBERS = "members"
     const val COLLECTION_CONTACTS = "contacts"
     const val COLLECTION_OFFICIAL_ACCOUNTS = "official_accounts"
+    const val COLLECTION_STICKER_SETS = "sticker_sets"
 
     const val JUST_NOW = "Vừa xong"
     const val MINUTE = "phút"
@@ -44,9 +45,9 @@ object Constants {
     const val FOLDER_USER_AVATARS = "user_avatars"
     const val FOLDER_ROOM_AVATARS = "room_avatars"
 
-    const val DEFAULT_STORAGE_BUCKET = "us"
     const val ROOM_AVATARS_PATH = "room_avatars"
     const val USER_AVATARS_PATH = "user_avatars"
+    const val STICKER_SETS_PATH = "sticker_sets"
 
     const val REGISTER_NAME = "name"
 }

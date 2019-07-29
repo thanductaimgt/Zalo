@@ -2,15 +2,23 @@ package vng.zalo.tdtai.zalo.zalo.utils
 
 import android.util.Log
 import android.widget.TextView
+import com.google.android.gms.tasks.Task
 
 import java.text.SimpleDateFormat
 import java.util.Date
 import kotlin.math.max
+import android.app.Activity
+import android.content.Context
+import android.view.View
+import android.view.inputmethod.InputMethodManager
+import androidx.core.content.ContextCompat.getSystemService
+
+
 
 object Utils {
     fun formatTextOnNumberOfLines(tv: TextView, lineNum: Int) {
         tv.viewTreeObserver.addOnGlobalLayoutListener {
-            Log.d(getTag(object {}), "tv.layout.lineCount: "+tv.layout.lineCount.toString())
+            Log.d(getTag(object {}), "tv.layout.lineCount: " + tv.layout.lineCount.toString())
             if (tv.layout.lineCount > lineNum) {
                 // end is offset of last character
                 val end = max(tv.layout.getLineEnd(lineNum - 1) - 3, 0)
@@ -47,5 +55,23 @@ object Utils {
 
     fun getTag(obj: Any): String {
         return obj.javaClass.enclosingClass?.simpleName + "." + obj.javaClass.enclosingMethod?.name
+    }
+
+    fun assertTaskSuccessAndResultNotNull(tag: String, task: Task<*>, callback: () -> Unit) {
+        if (task.isSuccessful) {
+            if (task.result != null) {
+                callback.invoke()
+            } else {
+                Log.d(tag, "task.result == null")
+            }
+        } else {
+            Log.d(tag, "task fail")
+        }
+    }
+
+    fun hideKeyboardFrom(context: Context, view: View) {
+        val imm = context.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(view.windowToken, 0)
+        view.clearFocus()
     }
 }

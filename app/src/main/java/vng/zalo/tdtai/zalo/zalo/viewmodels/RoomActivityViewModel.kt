@@ -6,7 +6,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.ListenerRegistration
-import com.google.firebase.firestore.QuerySnapshot
 import vng.zalo.tdtai.zalo.zalo.ZaloApplication
 import vng.zalo.tdtai.zalo.zalo.models.Message
 import vng.zalo.tdtai.zalo.zalo.models.Room
@@ -17,12 +16,11 @@ import java.util.*
 import kotlin.collections.HashMap
 
 class RoomActivityViewModel(intent: Intent) : ViewModel() {
-    private var lastMessagesQuerySnapshot: QuerySnapshot? = null
-    private var roomMessagesListener:ListenerRegistration
-    private var userRoomChangeListener:ListenerRegistration
+    private var lastMessages: List<Message>? = null
+    private var listenerRegistrations= ArrayList<ListenerRegistration>()
 
     private val room: Room = Room(
-            avatar = intent.getStringExtra(Constants.ROOM_AVATAR),
+            avatarUrl = intent.getStringExtra(Constants.ROOM_AVATAR),
             id = intent.getStringExtra(Constants.ROOM_ID),
             name = intent.getStringExtra(Constants.ROOM_NAME)
     )
@@ -35,21 +33,22 @@ class RoomActivityViewModel(intent: Intent) : ViewModel() {
             room.createdTime = it.createdTime
             room.memberMap = it.memberMap
 
-            // update livedata so that messages' sender avatar are displayed
-            updateLiveMessagesValue(lastMessagesQuerySnapshot)
+            // update livedata so that messages' sender avatarUrl are displayed
+            updateLiveMessagesValue(lastMessages)
         }
 
         //observe messages change
-        roomMessagesListener = Database.addRoomMessagesListener(
+        val roomMessagesListener = Database.addRoomMessagesListener(
                 roomId = room.id!!,
                 fieldToOrder = "createdTime"
-        ) { querySnapshot ->
-            updateLiveMessagesValue(querySnapshot)
-            lastMessagesQuerySnapshot = querySnapshot
+        ) { messages ->
+            updateLiveMessagesValue(messages)
+            lastMessages = messages
         }
+        listenerRegistrations.add(roomMessagesListener)
 
         //observe to set unseenMsgNum = 0 when new message comes and user is in RoomActivity
-        userRoomChangeListener = Database.addUserRoomChangeListener(
+        val userRoomChangeListener = Database.addUserRoomChangeListener(
                 userPhone = ZaloApplication.currentUser!!.phone!!,
                 roomId = room.id!!
         ) { documentSnapshot ->
@@ -64,18 +63,14 @@ class RoomActivityViewModel(intent: Intent) : ViewModel() {
                 )
             }
         }
+        listenerRegistrations.add(userRoomChangeListener)
     }
 
-    private fun updateLiveMessagesValue(docs: QuerySnapshot?) {
+    private fun updateLiveMessagesValue(messages: List<Message>?) {
         //set livedata value
-        if (docs != null) {
-            val messages = ArrayList<Message>()
-            for (doc in docs) {
-                messages.add(
-                        doc.toObject(Message::class.java).apply {
-                            senderAvatar = room.memberMap?.get(senderPhone)?.avatar
-                        }
-                )
+        if (messages != null) {
+            messages.forEach {
+                it.senderAvatarUrl = room.memberMap?.get(it.senderPhone)?.avatarUrl
             }
             liveMessages.value = messages
         }
@@ -86,7 +81,7 @@ class RoomActivityViewModel(intent: Intent) : ViewModel() {
                 content = messageContent,
                 createdTime = Timestamp.now(),
                 senderPhone = ZaloApplication.currentUser!!.phone,
-                senderAvatar = ZaloApplication.currentUser!!.avatar,
+                senderAvatarUrl = ZaloApplication.currentUser!!.avatarUrl,
                 type = Constants.MESSAGE_TYPE_TEXT
         )
 
@@ -96,9 +91,8 @@ class RoomActivityViewModel(intent: Intent) : ViewModel() {
         )
     }
 
-    fun removeListeners(){
-        roomMessagesListener.remove()
-        userRoomChangeListener.remove()
-        Log.d(Utils.getTag(object{}),"finalize")
+    fun removeListeners() {
+        listenerRegistrations.forEach { it.remove() }
+        Log.d("removeListeners", "finalize")
     }
 }

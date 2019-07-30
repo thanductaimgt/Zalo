@@ -19,10 +19,5 @@ class ZaloApplication : MultiDexApplication() {
 
     companion object {
         var currentUser: UserInfo? = null
-
-        val firebaseFirestore: FirebaseFirestore
-            get() = FirebaseFirestore.getInstance()
-        val firebaseStorage: FirebaseStorage
-            get() = FirebaseStorage.getInstance()
     }
 }

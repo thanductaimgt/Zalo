@@ -2,16 +2,16 @@ package vng.zalo.tdtai.zalo.zalo.viewmodels
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import vng.zalo.tdtai.zalo.zalo.networks.Storage
+import vng.zalo.tdtai.zalo.zalo.models.Sticker
+import vng.zalo.tdtai.zalo.zalo.models.StickerSet
+import vng.zalo.tdtai.zalo.zalo.networks.Database
 import java.util.*
 
-class StickerSetViewModel(bucket_name: String) : ViewModel() {
+class StickerSetViewModel(bucketName: String) : ViewModel() {
 
-    val liveStickerLinks: MutableLiveData<List<String>> = MutableLiveData(ArrayList())
+    val liveStickerSet: MutableLiveData<StickerSet> = MutableLiveData()
 
     init {
-        Storage.getStickerSetUrls(
-                bucket_name = bucket_name
-        ) { liveStickerLinks.value = it }
+        Database.getStickerSet(bucketName){ liveStickerSet.value = it }
     }
 }

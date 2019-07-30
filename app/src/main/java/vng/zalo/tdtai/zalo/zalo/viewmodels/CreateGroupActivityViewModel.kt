@@ -16,7 +16,7 @@ class CreateGroupActivityViewModel : ViewModel() {
         val newRoomId = Database.getNewRoomId()
 
         // path to save room avatarUrl in storage
-        val fileStoragePath = "${Constants.ROOM_AVATARS_PATH}/$newRoomId"
+        val fileStoragePath = "${Constants.FOLDER_ROOM_AVATARS}/$newRoomId"
 
         newRoom.id = newRoomId
         // save room avatarUrl in storage

@@ -14,12 +14,11 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.item_select_contact.view.*
 import kotlinx.android.synthetic.main.sub_fragment_recent_contacts.*
 import vng.zalo.tdtai.zalo.R
+import vng.zalo.tdtai.zalo.zalo.adapters.RecentContactsSubFragmentAdapter
 import vng.zalo.tdtai.zalo.zalo.factories.ViewModelFactory
 import vng.zalo.tdtai.zalo.zalo.models.RoomItem
-import vng.zalo.tdtai.zalo.zalo.utils.Utils
 import vng.zalo.tdtai.zalo.zalo.viewmodels.RecentContactsSubFragmentViewModel
 import vng.zalo.tdtai.zalo.zalo.views.activities.CreateGroupActivity
-import vng.zalo.tdtai.zalo.zalo.adapters.RecentContactsSubFragmentAdapter
 
 class RecentContactsSubFragment : Fragment(), View.OnClickListener {
     private lateinit var viewModel: RecentContactsSubFragmentViewModel
@@ -66,13 +65,15 @@ class RecentContactsSubFragment : Fragment(), View.OnClickListener {
     }
 
     private fun updateRoomItemsOnScreen(newRoomItems: List<RoomItem>) {
-        Log.d(Utils.getTag(object {}),"updateRoomItemsOnScreen")
-        Log.d(Utils.getTag(object {}),"recyclerView size: "+recyclerView.size)
+        Log.d(TAG,"updateRoomItemsOnScreen.recyclerView size: "+recyclerView.size)
         recyclerView.forEach {
             val itemPosition = recyclerView.getChildLayoutPosition(it)
             val item = this@RecentContactsSubFragment.adapter.roomItems[itemPosition]
             it.radioButton.isChecked = newRoomItems.contains(item)
-            Log.d(Utils.getTag(object {}), "it.radioButton.isChecked: " + it.radioButton.isChecked)
         }
+    }
+
+    companion object{
+        private val TAG = RecentContactsSubFragment::class.java.simpleName
     }
 }

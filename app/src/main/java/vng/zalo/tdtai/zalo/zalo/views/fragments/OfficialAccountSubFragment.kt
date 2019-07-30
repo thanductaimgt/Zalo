@@ -12,13 +12,12 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.sub_fragment_official_account.*
 import vng.zalo.tdtai.zalo.R
+import vng.zalo.tdtai.zalo.zalo.adapters.OfficialAccountSubFragmentAdapter
 import vng.zalo.tdtai.zalo.zalo.factories.ViewModelFactory
 import vng.zalo.tdtai.zalo.zalo.utils.Constants
 import vng.zalo.tdtai.zalo.zalo.utils.RoomItemDiffCallback
-import vng.zalo.tdtai.zalo.zalo.utils.Utils
 import vng.zalo.tdtai.zalo.zalo.viewmodels.OfficialAccountViewModel
 import vng.zalo.tdtai.zalo.zalo.views.activities.RoomActivity
-import vng.zalo.tdtai.zalo.zalo.adapters.OfficialAccountSubFragmentAdapter
 
 class OfficialAccountSubFragment : Fragment(), View.OnClickListener {
     private lateinit var viewModel: OfficialAccountViewModel
@@ -35,7 +34,7 @@ class OfficialAccountSubFragment : Fragment(), View.OnClickListener {
         viewModel = ViewModelProviders.of(this, ViewModelFactory.getInstance()).get(OfficialAccountViewModel::class.java)
         viewModel.liveOfficialAccounts.observe(viewLifecycleOwner, Observer { rooms ->
             subFragmentAdapter.submitList(rooms)
-            Log.d(Utils.getTag(object {}), "onChanged livedata")
+            Log.d(TAG, "onViewCreated.$rooms")
         })
     }
 
@@ -61,5 +60,9 @@ class OfficialAccountSubFragment : Fragment(), View.OnClickListener {
                 )
             }
         }
+    }
+
+    companion object{
+        private val TAG = OfficialAccountSubFragment::class.java.simpleName
     }
 }

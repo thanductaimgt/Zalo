@@ -17,7 +17,7 @@ import kotlin.collections.HashMap
 
 class RoomActivityViewModel(intent: Intent) : ViewModel() {
     private var lastMessages: List<Message>? = null
-    private var listenerRegistrations= ArrayList<ListenerRegistration>()
+    private var listenerRegistrations = ArrayList<ListenerRegistration>()
 
     private val room: Room = Room(
             avatarUrl = intent.getStringExtra(Constants.ROOM_AVATAR),
@@ -52,7 +52,6 @@ class RoomActivityViewModel(intent: Intent) : ViewModel() {
                 userPhone = ZaloApplication.currentUser!!.phone!!,
                 roomId = room.id!!
         ) { documentSnapshot ->
-            Log.d(Utils.getTag(object {}), documentSnapshot.toString())
             if (documentSnapshot.getLong("unseenMsgNum")!! > 0) {
                 Database.updateUserRoom(
                         userPhone = ZaloApplication.currentUser!!.phone!!,
@@ -68,8 +67,8 @@ class RoomActivityViewModel(intent: Intent) : ViewModel() {
 
     private fun updateLiveMessagesValue(messages: List<Message>?) {
         //set livedata value
-        if (messages != null) {
-            messages.forEach {
+        Utils.assertNotNull(messages, TAG, "updateLiveMessagesValue") { messagesNotNull ->
+            messagesNotNull.forEach {
                 it.senderAvatarUrl = room.memberMap?.get(it.senderPhone)?.avatarUrl
             }
             liveMessages.value = messages
@@ -94,5 +93,9 @@ class RoomActivityViewModel(intent: Intent) : ViewModel() {
     fun removeListeners() {
         listenerRegistrations.forEach { it.remove() }
         Log.d("removeListeners", "finalize")
+    }
+
+    companion object {
+        private val TAG = RoomActivityViewModel::class.java.simpleName
     }
 }

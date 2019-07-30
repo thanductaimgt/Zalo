@@ -9,8 +9,8 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.GridLayoutManager
+import com.airbnb.lottie.LottieAnimationView
 import kotlinx.android.synthetic.main.fragment_sticker_set.*
-import kotlinx.android.synthetic.main.item_sticker.*
 import vng.zalo.tdtai.zalo.R
 import vng.zalo.tdtai.zalo.zalo.adapters.StickerSetFragmentAdapter
 import vng.zalo.tdtai.zalo.zalo.factories.ViewModelFactory
@@ -29,8 +29,8 @@ class StickerSetFragment(private val bucket_name: String) : Fragment(), View.OnC
         initView()
 
         viewModel = ViewModelProviders.of(this, ViewModelFactory.getInstance(bucket_name = bucket_name)).get(StickerSetViewModel::class.java)
-        viewModel.liveStickerLinks.observe(viewLifecycleOwner, Observer {
-            adapter.stickerLinks = it
+        viewModel.liveStickerSet.observe(viewLifecycleOwner, Observer {
+            adapter.stickers = it.stickers!!
             adapter.notifyDataSetChanged()
             Log.d("onViewCreated", "adapter.notifyDataSetChanged()")
         })
@@ -41,18 +41,18 @@ class StickerSetFragment(private val bucket_name: String) : Fragment(), View.OnC
         with(recyclerView) {
             layoutManager = GridLayoutManager(activity, COLUMN_NUM)
             adapter = this@StickerSetFragment.adapter
+            setHasFixedSize(true)
         }
-
-        animView.setOnClickListener(this)
     }
 
     override fun onClick(v: View) {
         when (v.id) {
             R.id.animView -> {
-                if (animView.isAnimating) {
-                    animView.resumeAnimation()
+                val lottieAnimView = v as LottieAnimationView
+                if (lottieAnimView.isAnimating) {
+                    lottieAnimView.pauseAnimation()
                 } else {
-                    animView.pauseAnimation()
+                    lottieAnimView.resumeAnimation()
                 }
             }
         }

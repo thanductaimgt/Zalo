@@ -12,46 +12,38 @@ import java.io.File
 
 class Storage {
     companion object {
+        private val TAG = Storage::class.java.simpleName
+
         private val firebaseStorage: FirebaseStorage
             get() = FirebaseStorage.getInstance()
-
-        private val defaultBucketRef: StorageReference
-            get() = firebaseStorage.reference
 
         fun addFile(localPath: String, storagePath: String, callback: (() -> Unit)? = null) {
             val localFileUri = Uri.fromFile(File(localPath))
 
-            val fileStorageRef = defaultBucketRef.child(storagePath)
+            val fileStorageRef = firebaseStorage.reference.child(storagePath)
 
             fileStorageRef.putFile(localFileUri)
                     .addOnCompleteListener { task ->
-                        if (task.isSuccessful) {
+                        Utils.assertTaskSuccess(task, TAG, "addFile") {
                             callback?.invoke()
-                        } else {
-                            Log.e(Utils.getTag(object {}), "task fail")
                         }
                     }
         }
 
-        fun getStickerSetUrls(bucket_name: String, callback: ((List<String>) -> Unit)?) {
-            defaultBucketRef.child("${Constants.STICKER_SETS_PATH}/$bucket_name/").listAll().addOnCompleteListener { task ->
-                Utils.assertTaskSuccessAndResultNotNull(
-                        tag = "getStickerSetUrls",
-                        task = task
-                ) {
+        fun getStickerSetUrls(bucketName: String, callback: ((List<String>) -> Unit)?) {
+            Log.d(TAG, firebaseStorage.reference.child("${Constants.FOLDER_STICKER_SETS}/$bucketName/").path)
+            firebaseStorage.reference.child("${Constants.FOLDER_STICKER_SETS}/$bucketName/").listAll().addOnCompleteListener { task ->
+                Utils.assertTaskSuccessAndResultNotNull(task, TAG, "getStickerSetUrls.listAll") { listResult ->
                     val stickerUrlsTasks = ArrayList<Task<Uri>>()
-                    task.result!!.items.forEach {
+                    listResult.items.forEach {
                         stickerUrlsTasks.add(it.downloadUrl)
                     }
 
                     Tasks.whenAll(stickerUrlsTasks).addOnCompleteListener {
                         val stickerUrls = ArrayList<String>()
-                        stickerUrlsTasks.forEach {
-                            Utils.assertTaskSuccessAndResultNotNull(
-                                    tag = "Tasks.whenAll",
-                                    task = it
-                            ) {
-                                stickerUrls.add(it.result!!.toString())
+                        stickerUrlsTasks.forEachIndexed { index, task ->
+                            Utils.assertTaskSuccessAndResultNotNull(task, TAG, "getStickerSetUrls.task[$index]") { uri ->
+                                stickerUrls.add(uri.toString())
                             }
                         }
 
@@ -59,6 +51,12 @@ class Storage {
                     }
                 }
             }
+        }
+
+        fun addStickerSet(bucketName: String, localPaths:List<String>, callback: (() -> Unit)?){
+            /*
+             */
+            callback?.invoke()
         }
     }
 }

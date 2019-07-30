@@ -11,6 +11,7 @@ import android.view.inputmethod.EditorInfo
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.airbnb.lottie.model.LottieCompositionCache
 import kotlinx.android.synthetic.main.activity_room.*
 import vng.zalo.tdtai.zalo.R
 import vng.zalo.tdtai.zalo.zalo.factories.chat_activity.DaggerRoomActivityComponent
@@ -44,7 +45,7 @@ class RoomActivity : AppCompatActivity(), View.OnClickListener {
             adapter.notifyDataSetChanged()
             this.scrollRecyclerViewToLastPosition()
 //            adapter.submitList(messageList) { this.scrollRecyclerViewToLastPosition() }
-            Log.d(Utils.getTag(object {}), "onChanged liveData")
+            Log.d(TAG, "onCreate.onChanged liveData")
         })
     }
 
@@ -53,7 +54,7 @@ class RoomActivity : AppCompatActivity(), View.OnClickListener {
         setSupportActionBar(toolbar)
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-                ?: Log.e(Utils.getTag(object {}), "actionBar is null")
+                ?: Log.e(TAG, "actionBar is null")
 
         msgEditText.apply {
             addTextChangedListener(InputTextListener())
@@ -172,5 +173,9 @@ class RoomActivity : AppCompatActivity(), View.OnClickListener {
     override fun onDestroy() {
         super.onDestroy()
         viewModel.removeListeners()
+    }
+
+    companion object{
+        private val TAG = RoomActivity::class.java.simpleName
     }
 }

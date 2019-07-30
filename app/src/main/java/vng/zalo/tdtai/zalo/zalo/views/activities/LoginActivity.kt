@@ -11,7 +11,7 @@ import vng.zalo.tdtai.zalo.zalo.ZaloApplication
 import vng.zalo.tdtai.zalo.zalo.models.UserInfo
 import vng.zalo.tdtai.zalo.zalo.utils.Constants
 import android.content.Context
-import vng.zalo.tdtai.zalo.zalo.utils.Utils
+import vng.zalo.tdtai.zalo.zalo.networks.Database
 
 
 class LoginActivity : AppCompatActivity(), View.OnClickListener {
@@ -36,56 +36,58 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
             R.id.loginButton -> {
                 loadingAnimView.visibility = View.VISIBLE
                 loadingAnimView.playAnimation()
-                val currentPhone = phoneTextInputEditText.text.toString()
-                val currentPass = passTextInputEditText.text.toString()
-                validateCredentials(currentPhone, currentPass) { isLoginSuccess, userInfo ->
-                    if (isLoginSuccess) {
-                        ZaloApplication.currentUser = userInfo
-                        addUserInfoToSharePreferences(userInfo)
-                        startActivity(Intent(this, HomeActivity::class.java))
-//                        finish()
-                    } else {
-                        loadingAnimView.cancelAnimation()
-                        loadingAnimView.visibility = View.INVISIBLE
-                    }
-                }
+
+                val phone = phoneTextInputEditText.text.toString()
+                val password = passTextInputEditText.text.toString()
+                validateLoginInfo(phone, password)
             }
-            R.id.swapButton -> phoneTextInputEditText.setText(if (phoneTextInputEditText.text.toString() == "0123456789") "0987654321" else "0123456789")
+            R.id.swapButton -> {
+                phoneTextInputEditText.setText(
+                        when (phoneTextInputEditText.text.toString()) {
+                            "0123456789" -> "0987654321"
+                            "0987654321" -> "0111111111"
+                            else -> "0123456789"
+                        }
+                )
+            }
         }
     }
 
-    private fun validateCredentials(phone: String, pass: String, callback: (isLoginSuccess: Boolean, userInfo: UserInfo) -> Unit) {
-        ZaloApplication.firebaseFirestore.collection(Constants.COLLECTION_USERS)
-                .document(phone)
-                .get()
-                .addOnCompleteListener { task ->
-                    if (task.isSuccessful) {
-                        val userInfo = task.result!!.toObject(UserInfo::class.java)!!
-                        userInfo.phone = phone
-                        callback(true, userInfo)
-                    } else {
-                        Log.d(Utils.getTag(object {}), "task not successful")
-                        loadingAnimView.cancelAnimation()
-                    }
-                }
+    private fun validateLoginInfo(phone: String, password: String) {
+        Database.validateLoginInfo(phone, password) { isLoginSuccess, userInfo ->
+            if (isLoginSuccess) {
+                ZaloApplication.currentUser = userInfo
+                addUserInfoToSharePreferences(userInfo!!)
+                startActivity(Intent(this, HomeActivity::class.java))
+//                        finish()
+            } else {
+                loadingAnimView.cancelAnimation()
+                loadingAnimView.visibility = View.INVISIBLE
+                Log.d(TAG, "login fail")
+            }
+        }
     }
 
-    private fun addUserInfoToSharePreferences(userInfo: UserInfo){
+    private fun addUserInfoToSharePreferences(userInfo: UserInfo) {
         val editor = getSharedPreferences(Constants.SHARE_PREFERENCES_NAME, Context.MODE_PRIVATE).edit()
 
         editor.putString("phone", userInfo.phone)
-        editor.putString("avatarUrl",userInfo.avatarUrl)
+        editor.putString("avatarUrl", userInfo.avatarUrl)
 
-        editor.putLong("birthDateSecs",userInfo.birthDate!!.seconds)
-        editor.putInt("birthDateNanoSecs",userInfo.birthDate!!.nanoseconds)
+        editor.putLong("birthDateSecs", userInfo.birthDate!!.seconds)
+        editor.putInt("birthDateNanoSecs", userInfo.birthDate!!.nanoseconds)
 
-        editor.putBoolean("isMale",userInfo.isMale!!)
+        editor.putBoolean("isMale", userInfo.isMale!!)
 
-        editor.putLong("joinDateSecs",userInfo.joinDate!!.seconds)
-        editor.putInt("joinDateNanoSecs",userInfo.joinDate!!.nanoseconds)
+        editor.putLong("joinDateSecs", userInfo.joinDate!!.seconds)
+        editor.putInt("joinDateNanoSecs", userInfo.joinDate!!.nanoseconds)
 
-        editor.putBoolean("isLogin",true)
+        editor.putBoolean("isLogin", true)
 
         editor.apply()
+    }
+
+    companion object {
+        private val TAG = LoginActivity::class.java.simpleName
     }
 }

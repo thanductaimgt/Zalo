@@ -34,7 +34,7 @@ class ContactSubFragment : Fragment(), View.OnClickListener {
         viewModel = ViewModelProviders.of(this, ViewModelFactory.getInstance()).get(ContactSubFragmentViewModel::class.java)
         viewModel.liveRoomItems.observe(viewLifecycleOwner, Observer { contacts ->
             adapter.submitList(contacts)
-            Log.d(Utils.getTag(object {}), "onChanged livedata")
+            Log.d(TAG, "onViewCreated.onChanged livedata")
         })
     }
 
@@ -62,5 +62,9 @@ class ContactSubFragment : Fragment(), View.OnClickListener {
                 )
             }
         }
+    }
+
+    companion object{
+        private val TAG = ContactSubFragment::class.java.simpleName
     }
 }

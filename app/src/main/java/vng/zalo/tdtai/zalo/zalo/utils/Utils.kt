@@ -1,24 +1,21 @@
 package vng.zalo.tdtai.zalo.zalo.utils
 
-import android.util.Log
-import android.widget.TextView
-import com.google.android.gms.tasks.Task
-
-import java.text.SimpleDateFormat
-import java.util.Date
-import kotlin.math.max
 import android.app.Activity
 import android.content.Context
+import android.util.Log
 import android.view.View
 import android.view.inputmethod.InputMethodManager
-import androidx.core.content.ContextCompat.getSystemService
-
+import android.widget.TextView
+import com.google.android.gms.tasks.Task
+import java.lang.StringBuilder
+import java.text.SimpleDateFormat
+import java.util.*
+import kotlin.math.max
 
 
 object Utils {
     fun formatTextOnNumberOfLines(tv: TextView, lineNum: Int) {
         tv.viewTreeObserver.addOnGlobalLayoutListener {
-            Log.d(getTag(object {}), "tv.layout.lineCount: " + tv.layout.lineCount.toString())
             if (tv.layout.lineCount > lineNum) {
                 // end is offset of last character
                 val end = max(tv.layout.getLineEnd(lineNum - 1) - 3, 0)
@@ -35,7 +32,7 @@ object Utils {
             diffByMillisecond < Constants.ONE_HOUR_IN_MILLISECOND -> formatTime(diffByMillisecond / Constants.ONE_MIN_IN_MILLISECOND.toLong(), Constants.MINUTE)
             diffByMillisecond < Constants.ONE_DAY_IN_MILLISECOND -> formatTime(diffByMillisecond / Constants.ONE_HOUR_IN_MILLISECOND.toLong(), Constants.HOUR)
             diffByMillisecond < Constants.SEVEN_DAYS_IN_MILLISECOND -> formatTime(diffByMillisecond / Constants.ONE_DAY_IN_MILLISECOND.toLong(), Constants.DAY)
-            else -> SimpleDateFormat.getDateTimeInstance().format(date)
+            else -> SimpleDateFormat.getDateInstance().format(date)
         }
     }
 
@@ -53,19 +50,33 @@ object Utils {
         return formatDate1 != formatDate2
     }
 
-    fun getTag(obj: Any): String {
-        return obj.javaClass.enclosingClass?.simpleName + "." + obj.javaClass.enclosingMethod?.name
+//    fun getTag(obj: Any): String {
+//        return obj.javaClass.enclosingClass?.simpleName + "." + obj.javaClass.enclosingMethod?.name
+//    }
+
+    fun <TResult> assertTaskSuccessAndResultNotNull(task: Task<TResult>, tag: String, logMsgPrefix: String, callback: (result: TResult) -> Unit) {
+        assertTaskSuccess(task, tag, logMsgPrefix) {
+            if (task.result != null) {
+                callback.invoke(task.result!!)
+            } else {
+                Log.e(tag, "$logMsgPrefix: task.result is null")
+            }
+        }
     }
 
-    fun assertTaskSuccessAndResultNotNull(tag: String, task: Task<*>, callback: () -> Unit) {
+    fun <TResult>assertTaskSuccess(task: Task<TResult>, tag: String, logMsgPrefix: String? = null, callback: (result:TResult?) -> Unit) {
         if (task.isSuccessful) {
-            if (task.result != null) {
-                callback.invoke()
-            } else {
-                Log.d(tag, "task.result == null")
-            }
+            callback.invoke(task.result)
         } else {
-            Log.d(tag, "task fail")
+            Log.e(tag, "$logMsgPrefix: ${task::class.java.simpleName} fail")
+        }
+    }
+
+    inline fun <reified T> assertNotNull(obj: T?, tag: String, logMsgPrefix: String, callback: (obj: T) -> Unit) {
+        if (obj != null) {
+            callback.invoke(obj)
+        } else {
+            Log.e(tag, "$logMsgPrefix: ${T::class.java.simpleName} is null")
         }
     }
 
@@ -73,5 +84,10 @@ object Utils {
         val imm = context.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(view.windowToken, 0)
         view.clearFocus()
+    }
+
+    fun getStickerBucketNameFromName(name:String):String{
+        val bucketName = StringBuilder(name.toLowerCase())
+        return bucketName.replace(Regex(" "),"_")
     }
 }

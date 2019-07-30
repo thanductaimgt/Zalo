@@ -13,18 +13,15 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.fragment_group.*
-
 import vng.zalo.tdtai.zalo.R
-import vng.zalo.tdtai.zalo.zalo.factories.ViewModelFactory
-import vng.zalo.tdtai.zalo.zalo.utils.RoomItemDiffCallback
-import vng.zalo.tdtai.zalo.zalo.viewmodels.GroupFragmentViewModel
 import vng.zalo.tdtai.zalo.zalo.adapters.RoomItemAdapter
-import vng.zalo.tdtai.zalo.zalo.views.activities.CreateGroupActivity
-
+import vng.zalo.tdtai.zalo.zalo.factories.ViewModelFactory
 import vng.zalo.tdtai.zalo.zalo.utils.Constants.ROOM_AVATAR
 import vng.zalo.tdtai.zalo.zalo.utils.Constants.ROOM_ID
 import vng.zalo.tdtai.zalo.zalo.utils.Constants.ROOM_NAME
-import vng.zalo.tdtai.zalo.zalo.utils.Utils
+import vng.zalo.tdtai.zalo.zalo.utils.RoomItemDiffCallback
+import vng.zalo.tdtai.zalo.zalo.viewmodels.GroupFragmentViewModel
+import vng.zalo.tdtai.zalo.zalo.views.activities.CreateGroupActivity
 import vng.zalo.tdtai.zalo.zalo.views.activities.RoomActivity
 
 class GroupFragment : Fragment(), AdapterView.OnItemSelectedListener, View.OnClickListener {
@@ -45,9 +42,8 @@ class GroupFragment : Fragment(), AdapterView.OnItemSelectedListener, View.OnCli
 
         viewModel = ViewModelProviders.of(this, ViewModelFactory.getInstance()).get(GroupFragmentViewModel::class.java)
         viewModel.liveRoomItems.observe(viewLifecycleOwner, Observer { rooms ->
-            adapter.submitList(rooms) { Log.d(Utils.getTag(object {}), viewModel.liveRoomItems.value.toString()) }
-            Log.d(Utils.getTag(object {}), "onChanged livedata")
-            Log.d(Utils.getTag(object {}), rooms.toString())
+            adapter.submitList(rooms)
+            Log.d(TAG, "onViewCreated.$rooms")
         })
     }
 
@@ -94,5 +90,9 @@ class GroupFragment : Fragment(), AdapterView.OnItemSelectedListener, View.OnCli
             }
             R.id.createNewGroupLayout -> startActivity(Intent(activity, CreateGroupActivity::class.java))
         }
+    }
+
+    companion object{
+        private val TAG = GroupFragment::class.java.simpleName
     }
 }

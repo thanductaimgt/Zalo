@@ -1,4 +1,4 @@
-package vng.zalo.tdtai.zalo.zalo.views.activities
+package vng.zalo.tdtai.zalo.zalo.adapters
 
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager

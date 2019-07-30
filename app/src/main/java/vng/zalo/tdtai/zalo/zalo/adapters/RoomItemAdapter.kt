@@ -36,6 +36,7 @@ class RoomItemAdapter(private val fragment: Fragment, diffCallback: DiffUtil.Ite
         override fun bind(position: Int) {
             itemView.apply {
                 setOnClickListener(fragment as View.OnClickListener)
+
                 val roomItem = getItem(position)
 
                 nameTextView.text = roomItem.name

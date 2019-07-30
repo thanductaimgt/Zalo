@@ -175,7 +175,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="@id/avatarShop" />
 
-            <!--stickers-->
+            <!--stickerUrl-->
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/avatarStickers"
                 android:layout_width="@dimen/size_room_item_avatar_48dp"

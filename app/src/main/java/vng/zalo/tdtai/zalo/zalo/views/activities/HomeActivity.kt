@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.tabs.TabLayout
 import kotlinx.android.synthetic.main.activity_home.*
 import vng.zalo.tdtai.zalo.R
+import vng.zalo.tdtai.zalo.zalo.adapters.HomeAdapter
 
 class HomeActivity : AppCompatActivity(), TabLayout.OnTabSelectedListener {
 

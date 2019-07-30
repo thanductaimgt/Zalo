@@ -11,10 +11,10 @@ import com.google.android.material.tabs.TabLayout
 import kotlinx.android.synthetic.main.fragment_emoji.*
 import vng.zalo.tdtai.zalo.R
 import vng.zalo.tdtai.zalo.zalo.adapters.EmojiFragmentAdapter
-import vng.zalo.tdtai.zalo.zalo.models.StickerSet
 import vng.zalo.tdtai.zalo.zalo.viewmodels.EmojiFragmentViewModel
-import android.widget.ImageView
+import com.airbnb.lottie.LottieAnimationView
 import com.squareup.picasso.Picasso
+import vng.zalo.tdtai.zalo.zalo.models.StickerSetItem
 
 
 class EmojiFragment : Fragment(), TabLayout.OnTabSelectedListener {
@@ -30,7 +30,7 @@ class EmojiFragment : Fragment(), TabLayout.OnTabSelectedListener {
         initView()
 
         viewModel = ViewModelProviders.of(this).get(EmojiFragmentViewModel::class.java)
-        viewModel.liveStickerSets.observe(viewLifecycleOwner, Observer {
+        viewModel.liveStickerSetItems.observe(viewLifecycleOwner, Observer {
             initTabs(it)
         })
     }
@@ -46,28 +46,27 @@ class EmojiFragment : Fragment(), TabLayout.OnTabSelectedListener {
         tabLayout.addOnTabSelectedListener(this)
     }
 
-    private fun initTabs(stickerSets: List<StickerSet>) {
+    private fun initTabs(stickerSets: List<StickerSetItem>) {
         stickerSets.forEach {
-            tabLayout.addTab(tabLayout.newTab().setCustomView(createTabItemView(it.avatarUrl!!)))
-            adapter.stickerSets.add(it)
+            tabLayout.addTab(tabLayout.newTab().setCustomView(createTabItemView(it.stickerUrl)))
+            adapter.stickerSetItems.add(it)
             // must call this when add tab at runtime
             adapter.notifyDataSetChanged()
         }
     }
 
-    private fun createTabItemView(imgUri: String): View {
-        val imageView = ImageView(context)
+    private fun createTabItemView(url: String?): View {
+        val animView = LottieAnimationView(context)
         val params = ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT)
-        imageView.layoutParams = params
-        if (imgUri != "") {
-            Picasso.get().load(imgUri).into(imageView)
-
+        animView.layoutParams = params
+        if (url != null) {
+            Picasso.get().load(url).into(animView)
         } else {
-            imageView.setImageResource(R.drawable.hot_cherry)
+            animView.setImageResource(R.drawable.hot_cherry)
         }
 
-        return imageView
+        return animView
     }
 
     override fun onTabSelected(tab: TabLayout.Tab) {

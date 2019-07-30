@@ -12,11 +12,10 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.fragment_chat.*
 import vng.zalo.tdtai.zalo.R
-import vng.zalo.tdtai.zalo.zalo.factories.ViewModelFactory
 import vng.zalo.tdtai.zalo.zalo.adapters.RoomItemAdapter
+import vng.zalo.tdtai.zalo.zalo.factories.ViewModelFactory
 import vng.zalo.tdtai.zalo.zalo.utils.Constants
 import vng.zalo.tdtai.zalo.zalo.utils.RoomItemDiffCallback
-import vng.zalo.tdtai.zalo.zalo.utils.Utils
 import vng.zalo.tdtai.zalo.zalo.viewmodels.ChatFragmentViewModel
 import vng.zalo.tdtai.zalo.zalo.views.activities.RoomActivity
 
@@ -34,8 +33,8 @@ class ChatFragment : Fragment(), View.OnClickListener {
 
         viewModel = ViewModelProviders.of(this, ViewModelFactory.getInstance()).get(ChatFragmentViewModel::class.java)
         viewModel.liveRoomItems.observe(viewLifecycleOwner, Observer { rooms ->
-            adapter.submitList(rooms) { Log.d(Utils.getTag(object {}), viewModel.liveRoomItems.value.toString()) }
-            Log.d(Utils.getTag(object {}), "onChanged livedata")
+            adapter.submitList(rooms)
+            Log.d(TAG, "onViewCreated.onChanged livedata")
         })
     }
 
@@ -68,5 +67,9 @@ class ChatFragment : Fragment(), View.OnClickListener {
     override fun onDestroyView() {
         super.onDestroyView()
         viewModel.removeListeners()
+    }
+
+    companion object{
+        private val TAG = ChatFragment::class.java.simpleName
     }
 }

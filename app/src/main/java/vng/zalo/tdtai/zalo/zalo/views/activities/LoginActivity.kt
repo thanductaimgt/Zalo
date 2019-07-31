@@ -45,8 +45,8 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
                 phoneTextInputEditText.setText(
                         when (phoneTextInputEditText.text.toString()) {
                             "0123456789" -> "0987654321"
-                            "0987654321" -> "0111111111"
-                            else -> "0123456789"
+                            "0111111111" -> "0123456789"
+                            else -> "0111111111"
                         }
                 )
             }

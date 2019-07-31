@@ -48,6 +48,7 @@ class RoomActivity : AppCompatActivity(), View.OnClickListener {
         viewModel.liveMessages.observe(this, Observer { messageList ->
             adapter.messages = messageList
             adapter.notifyDataSetChanged()
+            //TODO
             this.scrollRecyclerViewToLastPosition()
 //            adapter.submitList(messageList) { this.scrollRecyclerViewToLastPosition() }
         })

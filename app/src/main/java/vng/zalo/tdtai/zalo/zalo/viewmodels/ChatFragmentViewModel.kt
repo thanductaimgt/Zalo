@@ -12,7 +12,7 @@ import vng.zalo.tdtai.zalo.zalo.networks.Database
 class ChatFragmentViewModel : ViewModel() {
 
     val liveRoomItems: MutableLiveData<List<RoomItem>> = MutableLiveData(ArrayList())
-    var listenerRegistrations= ArrayList<ListenerRegistration>()
+    var listenerRegistrations = ArrayList<ListenerRegistration>()
 
     init {
         val userRoomListener = Database.addUserRoomsListener(
@@ -24,7 +24,7 @@ class ChatFragmentViewModel : ViewModel() {
     }
 
     fun removeListeners() {
-        listenerRegistrations.forEach { it.remove()}
+        listenerRegistrations.forEach { it.remove() }
         Log.d("removeListeners", "finalize")
     }
 }

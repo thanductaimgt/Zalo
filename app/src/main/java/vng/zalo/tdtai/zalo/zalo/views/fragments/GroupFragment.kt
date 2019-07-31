@@ -92,7 +92,7 @@ class GroupFragment : Fragment(), AdapterView.OnItemSelectedListener, View.OnCli
         }
     }
 
-    companion object{
+    companion object {
         private val TAG = GroupFragment::class.java.simpleName
     }
 }

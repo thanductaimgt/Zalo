@@ -38,7 +38,7 @@ class OfficialAccountSubFragment : Fragment(), View.OnClickListener {
         })
     }
 
-    private fun initView(){
+    private fun initView() {
         subFragmentAdapter = OfficialAccountSubFragmentAdapter(this, RoomItemDiffCallback())
         with(recyclerView) {
             layoutManager = LinearLayoutManager(activity)
@@ -62,7 +62,7 @@ class OfficialAccountSubFragment : Fragment(), View.OnClickListener {
         }
     }
 
-    companion object{
+    companion object {
         private val TAG = OfficialAccountSubFragment::class.java.simpleName
     }
 }

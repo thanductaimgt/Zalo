@@ -65,7 +65,7 @@ class RecentContactsSubFragment : Fragment(), View.OnClickListener {
     }
 
     private fun updateRoomItemsOnScreen(newRoomItems: List<RoomItem>) {
-        Log.d(TAG,"updateRoomItemsOnScreen.recyclerView size: "+recyclerView.size)
+        Log.d(TAG, "updateRoomItemsOnScreen.recyclerView size: " + recyclerView.size)
         recyclerView.forEach {
             val itemPosition = recyclerView.getChildLayoutPosition(it)
             val item = this@RecentContactsSubFragment.adapter.roomItems[itemPosition]
@@ -73,7 +73,7 @@ class RecentContactsSubFragment : Fragment(), View.OnClickListener {
         }
     }
 
-    companion object{
+    companion object {
         private val TAG = RecentContactsSubFragment::class.java.simpleName
     }
 }

@@ -18,7 +18,7 @@ class HomeActivity : AppCompatActivity(), TabLayout.OnTabSelectedListener {
         initView()
     }
 
-    private fun initView(){
+    private fun initView() {
         setSupportActionBar(toolbar)
 
         viewPager.apply {
@@ -42,7 +42,7 @@ class HomeActivity : AppCompatActivity(), TabLayout.OnTabSelectedListener {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
 
-        return when(item.itemId){
+        return when (item.itemId) {
             R.id.action_settings -> true
             else -> super.onOptionsItemSelected(item)
         }

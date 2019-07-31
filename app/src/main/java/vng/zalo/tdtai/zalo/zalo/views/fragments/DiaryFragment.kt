@@ -6,6 +6,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 
 import androidx.fragment.app.Fragment
 import kotlinx.android.synthetic.main.fragment_diary.*
@@ -33,18 +34,21 @@ class DiaryFragment : Fragment(), View.OnClickListener {
                 startActivity(Intent(context, LoginActivity::class.java))
             }
             R.id.addStickerSet -> {
-                val bucketName = Utils.getStickerBucketNameFromName("Hot Cherry")
-                Log.d(TAG, bucketName)
-                Storage.addStickerSet(bucketName = bucketName, localPaths = ArrayList()) {
-                    Storage.getStickerSetUrls(bucketName) { stickerUrls ->
-                        Database.addStickerSet(bucketName = bucketName, stickerUrls = stickerUrls)
+                val name = editText.text.toString()
+                if (name != "") {
+                    Storage.addStickerSet(name = name, localPaths = ArrayList()) { bucketName ->
+                        Storage.getStickerSetUrls(bucketName = bucketName) { stickerUrls ->
+                            Database.addStickerSet(name = name, bucketName = bucketName, stickerUrls = stickerUrls)
+                        }
                     }
+                } else {
+                    Toast.makeText(context, "sticker set name can not be empty", Toast.LENGTH_SHORT).show()
                 }
             }
         }
     }
 
-    companion object{
+    companion object {
         private val TAG = DiaryFragment::class.java.simpleName
     }
 }

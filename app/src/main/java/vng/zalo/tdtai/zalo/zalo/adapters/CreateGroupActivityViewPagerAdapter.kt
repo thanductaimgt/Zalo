@@ -6,9 +6,9 @@ import androidx.fragment.app.FragmentPagerAdapter
 import vng.zalo.tdtai.zalo.zalo.views.fragments.AllContactsSubFragment
 import vng.zalo.tdtai.zalo.zalo.views.fragments.RecentContactsSubFragment
 
-class CreateGroupActivityViewPagerAdapter(fm: FragmentManager):FragmentPagerAdapter(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT){
+class CreateGroupActivityViewPagerAdapter(fm: FragmentManager) : FragmentPagerAdapter(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
     override fun getItem(position: Int): Fragment {
-        return when(position){
+        return when (position) {
             1 -> AllContactsSubFragment()
             else -> RecentContactsSubFragment()
         }

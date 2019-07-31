@@ -15,6 +15,7 @@ import vng.zalo.tdtai.zalo.R
 import vng.zalo.tdtai.zalo.zalo.adapters.StickerSetFragmentAdapter
 import vng.zalo.tdtai.zalo.zalo.factories.ViewModelFactory
 import vng.zalo.tdtai.zalo.zalo.viewmodels.StickerSetViewModel
+import vng.zalo.tdtai.zalo.zalo.views.activities.RoomActivity
 
 class StickerSetFragment(private val bucket_name: String) : Fragment(), View.OnClickListener {
     private lateinit var viewModel: StickerSetViewModel
@@ -48,12 +49,9 @@ class StickerSetFragment(private val bucket_name: String) : Fragment(), View.OnC
     override fun onClick(v: View) {
         when (v.id) {
             R.id.animView -> {
-                val lottieAnimView = v as LottieAnimationView
-                if (lottieAnimView.isAnimating) {
-                    lottieAnimView.pauseAnimation()
-                } else {
-                    lottieAnimView.resumeAnimation()
-                }
+                val position = recyclerView.getChildLayoutPosition(v)
+                val sticker = adapter.stickers[position]
+                (activity as RoomActivity).sendStickerMessage(sticker)
             }
         }
     }

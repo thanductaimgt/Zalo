@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
@@ -13,6 +14,7 @@ import vng.zalo.tdtai.zalo.R
 import vng.zalo.tdtai.zalo.zalo.adapters.EmojiFragmentAdapter
 import vng.zalo.tdtai.zalo.zalo.viewmodels.EmojiFragmentViewModel
 import com.airbnb.lottie.LottieAnimationView
+import com.airbnb.lottie.RenderMode
 import com.squareup.picasso.Picasso
 import vng.zalo.tdtai.zalo.zalo.models.StickerSetItem
 
@@ -61,7 +63,13 @@ class EmojiFragment : Fragment(), TabLayout.OnTabSelectedListener {
                 ViewGroup.LayoutParams.WRAP_CONTENT)
         animView.layoutParams = params
         if (url != null) {
-            Picasso.get().load(url).into(animView)
+            animView.apply {
+                setAnimationFromUrl(url)
+                enableMergePathsForKitKatAndAbove(true)
+                setRenderMode(RenderMode.SOFTWARE)
+            }
+//            animView.scaleType = ImageView.ScaleType.CENTER_CROP
+//            animView.scale = 0.1f
         } else {
             animView.setImageResource(R.drawable.hot_cherry)
         }

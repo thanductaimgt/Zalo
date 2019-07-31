@@ -7,60 +7,60 @@
     tools:context=".zalo.views.activities.IntroActivity">
 
     <ImageView
-        android:adjustViewBounds="true"
-        android:scaleType="fitXY"
         android:id="@+id/viewPager"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/size_large_32dp"
+        android:adjustViewBounds="true"
         android:background="@drawable/zalo"
-        app:layout_constraintRight_toRightOf="parent"
+        android:scaleType="fitXY"
+        app:layout_constraintBottom_toTopOf="@id/loginButton"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/loginButton"/>
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <Button
-        android:layout_marginLeft="@dimen/size_medium_16dp"
-        android:layout_marginRight="@dimen/size_medium_16dp"
         android:id="@+id/loginButton"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/size_medium_16dp"
+        android:layout_marginRight="@dimen/size_medium_16dp"
         android:text="@string/label_log_in"
         app:layout_constraintBottom_toTopOf="@id/registerButton"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"/>
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent" />
 
     <Button
-        android:layout_marginBottom="@dimen/size_large_24dp"
         android:id="@+id/registerButton"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/size_large_24dp"
         android:text="@string/label_register"
-        app:layout_constraintRight_toRightOf="@id/loginButton"
+        app:layout_constraintBottom_toTopOf="@id/vnButton"
         app:layout_constraintLeft_toLeftOf="@id/loginButton"
-        app:layout_constraintBottom_toTopOf="@id/vnButton" />
+        app:layout_constraintRight_toRightOf="@id/loginButton" />
 
     <TextView
-        android:textStyle="bold"
         android:id="@+id/vnButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/label_vietnamese"
         android:layout_marginBottom="@dimen/size_medium_16dp"
+        android:text="@string/label_vietnamese"
+        android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintRight_toLeftOf="@id/engButton"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintLeft_toLeftOf="parent" />
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@id/engButton" />
 
     <TextView
         android:id="@+id/engButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/label_english"
-        app:layout_constraintTop_toTopOf="@id/vnButton"
         app:layout_constraintBottom_toBottomOf="@id/vnButton"
-        app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintLeft_toRightOf="@id/vnButton" />
+        app:layout_constraintLeft_toRightOf="@id/vnButton"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="@id/vnButton" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

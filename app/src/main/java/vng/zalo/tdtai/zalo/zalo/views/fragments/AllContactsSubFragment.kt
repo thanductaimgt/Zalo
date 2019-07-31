@@ -30,7 +30,7 @@ class AllContactsSubFragment : Fragment(), View.OnClickListener {
         initView()
 
         viewModel = ViewModelProviders.of(this, ViewModelFactory.getInstance()).get(AllContactsSubFragmentViewModel::class.java)
-        viewModel.liveRoomItems.observe(viewLifecycleOwner, Observer{
+        viewModel.liveRoomItems.observe(viewLifecycleOwner, Observer {
             adapter.roomItems = it
             adapter.notifyDataSetChanged()
         })
@@ -40,10 +40,10 @@ class AllContactsSubFragment : Fragment(), View.OnClickListener {
         })
     }
 
-    private fun initView(){
+    private fun initView() {
         adapter = AllContactsSubFragmentAdapter(this)
 
-        with(recyclerView){
+        with(recyclerView) {
             layoutManager = LinearLayoutManager(activity)
             adapter = this@AllContactsSubFragment.adapter
         }

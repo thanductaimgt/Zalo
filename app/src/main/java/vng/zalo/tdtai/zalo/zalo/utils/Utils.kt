@@ -64,7 +64,7 @@ object Utils {
         }
     }
 
-    fun <TResult>assertTaskSuccess(task: Task<TResult>, tag: String, logMsgPrefix: String? = null, callback: (result:TResult?) -> Unit) {
+    fun <TResult> assertTaskSuccess(task: Task<TResult>, tag: String, logMsgPrefix: String? = null, callback: (result: TResult?) -> Unit) {
         if (task.isSuccessful) {
             callback.invoke(task.result)
         } else {
@@ -86,8 +86,8 @@ object Utils {
         view.clearFocus()
     }
 
-    fun getStickerBucketNameFromName(name:String):String{
+    fun getStickerBucketNameFromName(name: String): String {
         val bucketName = StringBuilder(name.toLowerCase())
-        return bucketName.replace(Regex(" "),"_")
+        return bucketName.replace(Regex(" "), "_")
     }
 }

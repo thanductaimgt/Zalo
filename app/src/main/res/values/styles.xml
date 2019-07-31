@@ -25,8 +25,12 @@
         <!--<item name="android:windowBackground">@color/colorBackground</item>-->
         <!-- Buttons -->
         <item name="materialButtonStyle">@style/ZaloButton</item>
-        <item name="materialButtonOutlinedStyle">@style/Widget.MaterialComponents.Button.OutlinedButton</item>
-        <item name="materialButtonToggleGroupStyle">@style/Widget.MaterialComponents.MaterialButtonToggleGroup</item>
+        <item name="materialButtonOutlinedStyle">
+            @style/Widget.MaterialComponents.Button.OutlinedButton
+        </item>
+        <item name="materialButtonToggleGroupStyle">
+            @style/Widget.MaterialComponents.MaterialButtonToggleGroup
+        </item>
         <!-- Colors -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimary</item>
@@ -40,7 +44,7 @@
     </style>
 
     <style name="ZaloButton" parent="Widget.MaterialComponents.Button">
-        <item name="cornerRadius">180dp</item>
+        <item name="cornerRadius">20dp</item>
         <item name="android:paddingTop">12dp</item>
         <item name="android:paddingBottom">12dp</item>
     </style>

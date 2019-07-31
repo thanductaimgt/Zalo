@@ -42,7 +42,7 @@ class RoomItemAdapter(private val fragment: Fragment, diffCallback: DiffUtil.Ite
                 nameTextView.text = roomItem.name
                 Utils.formatTextOnNumberOfLines(nameTextView, 1)
 
-                recvTimeTextView.text = if (roomItem.lastMsgTime != null) Utils.getTimeDiffOrFormatTime(roomItem.lastMsgTime!!.toDate()) else ""
+                recvMsgTimeTextView.text = if (roomItem.lastMsgTime != null) Utils.getTimeDiffOrFormatTime(roomItem.lastMsgTime!!.toDate()) else ""
 
                 if (roomItem.lastSenderPhone != null) {
                     descTextView.text = String.format("%s: %s", if (roomItem.lastSenderPhone == ZaloApplication.currentUser!!.phone) fragment.getString(R.string.label_me) else roomItem.lastSenderPhone, roomItem.lastMsg)
@@ -73,12 +73,12 @@ class RoomItemAdapter(private val fragment: Fragment, diffCallback: DiffUtil.Ite
                     iconTextView.visibility = View.GONE
                     nameTextView.setTypeface(null, Typeface.NORMAL)
                     descTextView.setTypeface(null, Typeface.NORMAL)
-                    recvTimeTextView.setTypeface(null, Typeface.NORMAL)
+                    recvMsgTimeTextView.setTypeface(null, Typeface.NORMAL)
                 } else {
                     iconTextView.visibility = View.VISIBLE
                     nameTextView.setTypeface(null, Typeface.BOLD)
                     descTextView.setTypeface(null, Typeface.BOLD)
-                    recvTimeTextView.setTypeface(null, Typeface.BOLD)
+                    recvMsgTimeTextView.setTypeface(null, Typeface.BOLD)
                 }
             }
         }

@@ -4,11 +4,11 @@
     android:id="@+id/itemRoomRootLayout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingTop="@dimen/size_small_8dp"
-    android:paddingBottom="@dimen/size_small_8dp"
+    android:orientation="vertical"
     android:paddingLeft="@dimen/size_medium_16dp"
+    android:paddingTop="@dimen/size_small_8dp"
     android:paddingRight="@dimen/size_medium_16dp"
-    android:orientation="vertical">
+    android:paddingBottom="@dimen/size_small_8dp">
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/avatarImgView"
@@ -24,11 +24,11 @@
         android:id="@+id/nameTextView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        app:layout_constraintEnd_toStartOf="@id/recvTimeTextView"
-        app:layout_constraintStart_toEndOf="@id/avatarImgView"
-        app:layout_constraintTop_toTopOf="@id/avatarImgView"
         android:layout_marginLeft="@dimen/size_medium_16dp"
-        android:layout_marginRight="@dimen/size_medium_16dp"/>
+        android:layout_marginRight="@dimen/size_medium_16dp"
+        app:layout_constraintEnd_toStartOf="@id/recvMsgTimeTextView"
+        app:layout_constraintStart_toEndOf="@id/avatarImgView"
+        app:layout_constraintTop_toTopOf="@id/avatarImgView" />
 
     <TextView
         android:id="@+id/descTextView"
@@ -40,23 +40,22 @@
         app:layout_constraintTop_toBottomOf="@id/nameTextView" />
 
     <TextView
-        android:id="@+id/recvTimeTextView"
+        android:id="@+id/recvMsgTimeTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@id/nameTextView" />
 
     <TextView
-        android:textAlignment="center"
-        android:textColor="@android:color/white"
         android:id="@+id/iconTextView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginEnd="@dimen/size_small_8dp"
-        android:layout_marginRight="@dimen/size_small_8dp"
+        android:background="@android:drawable/ic_notification_overlay"
+        android:textAlignment="center"
+        android:textColor="@android:color/white"
         android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@id/descTextView"
-        android:background="@android:drawable/ic_notification_overlay" />
+        app:layout_constraintTop_toTopOf="@id/descTextView" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

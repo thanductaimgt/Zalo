@@ -16,12 +16,12 @@ class RegisterActivity : AppCompatActivity(), View.OnClickListener {
         initView()
     }
 
-    private fun initView(){
+    private fun initView() {
         continueButton.setOnClickListener(this)
     }
 
     override fun onClick(p0: View?) {
-        when(p0!!.id){
+        when (p0!!.id) {
 //            R.id.continueButton -> startActivity(Intent(this, a).apply {
 //                putExtra(Constants.REGISTER_NAME, nameTextInputEditText.text.toString())
 //            })

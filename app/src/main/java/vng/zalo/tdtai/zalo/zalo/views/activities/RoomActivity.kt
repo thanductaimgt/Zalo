@@ -9,10 +9,14 @@ import android.view.MenuItem
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.get
+import androidx.core.view.size
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.airbnb.lottie.model.LottieCompositionCache
+import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.activity_room.*
+import kotlinx.android.synthetic.main.item_receive_room_activity.view.*
+import kotlinx.android.synthetic.main.item_send_room_activity.view.*
 import vng.zalo.tdtai.zalo.R
 import vng.zalo.tdtai.zalo.zalo.factories.chat_activity.DaggerRoomActivityComponent
 import vng.zalo.tdtai.zalo.zalo.factories.chat_activity.RoomActivityModule
@@ -20,6 +24,7 @@ import vng.zalo.tdtai.zalo.zalo.utils.Constants
 import vng.zalo.tdtai.zalo.zalo.utils.Utils
 import vng.zalo.tdtai.zalo.zalo.viewmodels.RoomActivityViewModel
 import vng.zalo.tdtai.zalo.zalo.adapters.RoomActivityAdapter
+import vng.zalo.tdtai.zalo.zalo.models.Sticker
 import vng.zalo.tdtai.zalo.zalo.views.fragments.EmojiFragment
 import javax.inject.Inject
 import kotlin.math.max
@@ -45,7 +50,6 @@ class RoomActivity : AppCompatActivity(), View.OnClickListener {
             adapter.notifyDataSetChanged()
             this.scrollRecyclerViewToLastPosition()
 //            adapter.submitList(messageList) { this.scrollRecyclerViewToLastPosition() }
-            Log.d(TAG, "onCreate.onChanged liveData")
         })
     }
 
@@ -61,7 +65,7 @@ class RoomActivity : AppCompatActivity(), View.OnClickListener {
             setOnEditorActionListener { _, actionId, _ ->
                 when (actionId) {
                     EditorInfo.IME_ACTION_SEND -> {
-                        sendMessage()
+                        sendTextMessage()
                         true
                     }
                     else -> false
@@ -78,10 +82,11 @@ class RoomActivity : AppCompatActivity(), View.OnClickListener {
         sendMsgImgView.setOnClickListener(this)
         emojiImgView.setOnClickListener(this)
 
-        adapter = RoomActivityAdapter()
+        adapter = RoomActivityAdapter(recyclerView)
         with(recyclerView) {
             adapter = this@RoomActivity.adapter
             layoutManager = LinearLayoutManager(this@RoomActivity)
+            addOnScrollListener(ScrollListener())
         }
     }
 
@@ -103,7 +108,7 @@ class RoomActivity : AppCompatActivity(), View.OnClickListener {
 
     override fun onClick(v: View) {
         when (v.id) {
-            R.id.sendMsgImgView -> sendMessage()
+            R.id.sendMsgImgView -> sendTextMessage()
             R.id.emojiImgView -> {
                 Utils.hideKeyboardFrom(this, View(this))
                 addOrRemoveEmojiFragment()
@@ -111,11 +116,15 @@ class RoomActivity : AppCompatActivity(), View.OnClickListener {
         }
     }
 
-    private fun sendMessage() {
-        val messageContent = msgEditText.text.toString()
-        viewModel.addNewMessageToFirestore(messageContent)
+    private fun sendTextMessage() {
+        val content = msgEditText.text.toString()
+        viewModel.addNewMessageToFirestore(content, Constants.MESSAGE_TYPE_TEXT)
 
         msgEditText.setText("")
+    }
+
+    fun sendStickerMessage(sticker: Sticker) {
+        viewModel.addNewMessageToFirestore(sticker.url!!, Constants.MESSAGE_TYPE_STICKER)
     }
 
     private fun addOrRemoveEmojiFragment() {
@@ -166,6 +175,33 @@ class RoomActivity : AppCompatActivity(), View.OnClickListener {
         }
     }
 
+    inner class ScrollListener : RecyclerView.OnScrollListener() {
+        override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+            when (newState) {
+                RecyclerView.SCROLL_STATE_IDLE -> resumeAllAttachedToWinDowAnim()
+                else -> pauseAllAnim()
+            }
+        }
+    }
+
+    private fun resumeAllAttachedToWinDowAnim() {
+        for (i in 0 until recyclerView.size) {
+            if (recyclerView[i].sendMsgAnimView?.isAttachedToWindow == true) {
+                recyclerView[i].sendMsgAnimView.resumeAnimation()
+            }
+            if (recyclerView[i].recvMsgAnimView?.isAttachedToWindow == true) {
+                recyclerView[i].recvMsgAnimView.resumeAnimation()
+            }
+        }
+    }
+
+    private fun pauseAllAnim() {
+        for (i in 0 until recyclerView.size) {
+            recyclerView[i].sendMsgAnimView?.pauseAnimation()
+            recyclerView[i].recvMsgAnimView?.pauseAnimation()
+        }
+    }
+
     private fun scrollRecyclerViewToLastPosition() {
         recyclerView.scrollToPosition(max(0, adapter.itemCount - 1))
     }
@@ -175,7 +211,7 @@ class RoomActivity : AppCompatActivity(), View.OnClickListener {
         viewModel.removeListeners()
     }
 
-    companion object{
+    companion object {
         private val TAG = RoomActivity::class.java.simpleName
     }
 }

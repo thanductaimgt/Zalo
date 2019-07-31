@@ -20,7 +20,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme.Zalo">
-        <activity android:name=".zalo.views.activities.RegisterActivity"></activity>
+        <activity android:name=".zalo.views.activities.RegisterActivity" />
 
         <provider
             android:name="androidx.core.content.FileProvider"

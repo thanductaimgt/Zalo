@@ -1,5 +1,6 @@
 package vng.zalo.tdtai.zalo.zalo.networks
 
+import android.util.Log
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.firestore.*
@@ -30,7 +31,11 @@ class Database {
             //for user rooms except for current user, update fields
             curRoom.memberMap!!.forEach {
                 val curUserPhone = it.key
-                val lastMsgPreviewContent = newMessage.content
+                val lastMsgPreviewContent = when (newMessage.type) {
+                    Constants.MESSAGE_TYPE_TEXT -> newMessage.content
+                    Constants.MESSAGE_TYPE_STICKER -> "<Sticker>"
+                    else -> ""
+                }
 
                 batch.update(
                         firebaseFirestore
@@ -279,7 +284,7 @@ class Database {
                     }
         }
 
-        fun addStickerSet(bucketName: String, stickerUrls: List<String>, callback: ((stickerSet: StickerSet) -> Unit)? = null) {
+        fun addStickerSet(name: String, bucketName: String, stickerUrls: List<String>, callback: ((stickerSet: StickerSet) -> Unit)? = null) {
             val stickerSetRef = firebaseFirestore
                     .collection(Constants.COLLECTION_STICKER_SETS)
                     .document(bucketName)
@@ -304,7 +309,7 @@ class Database {
 
             val stickerSet = StickerSet(
                     bucketName = bucketName,
-                    name = bucketName,
+                    name = name,
                     stickers = stickers
             )
 
@@ -321,16 +326,17 @@ class Database {
         }
 
         fun getStickerSet(bucketName: String, callback: (stickerSet: StickerSet) -> Unit) {
-            val stickerSetRef = firebaseFirestore
+            val stickerSetDocRef = firebaseFirestore
                     .collection(Constants.COLLECTION_STICKER_SETS)
                     .document(bucketName)
+            Log.d(TAG, "getStickerSet." + stickerSetDocRef.path)
 
             val tasks = ArrayList<Task<*>>()
 
-            val getStickerSetTask = stickerSetRef.get()
+            val getStickerSetTask = stickerSetDocRef.get()
             tasks.add(getStickerSetTask)
 
-            val getStickersTask = stickerSetRef
+            val getStickersTask = stickerSetDocRef
                     .collection(Constants.COLLECTION_STICKERS)
                     .get()
             tasks.add(getStickersTask)

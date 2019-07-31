@@ -13,13 +13,13 @@ class ContactFragmentAdapter(fm: FragmentManager) : FragmentStatePagerAdapter(fm
     override fun getItem(position: Int): Fragment {
         return when (position) {
             1 -> {
-                if(officialAccountSubFragment == null) {
+                if (officialAccountSubFragment == null) {
                     officialAccountSubFragment = OfficialAccountSubFragment()
                 }
                 officialAccountSubFragment!!
             }
             else -> {
-                if(contactSubFragment == null) {
+                if (contactSubFragment == null) {
                     contactSubFragment = ContactSubFragment()
                 }
                 contactSubFragment!!

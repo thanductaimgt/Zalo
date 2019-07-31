@@ -38,7 +38,7 @@ class ContactSubFragment : Fragment(), View.OnClickListener {
         })
     }
 
-    private fun initView(){
+    private fun initView() {
         adapter = ContactSubFragmentAdapter(this, ContactModelDiffCallback())
         with(allContactRecyclerView) {
             layoutManager = LinearLayoutManager(activity)
@@ -64,7 +64,7 @@ class ContactSubFragment : Fragment(), View.OnClickListener {
         }
     }
 
-    companion object{
+    companion object {
         private val TAG = ContactSubFragment::class.java.simpleName
     }
 }

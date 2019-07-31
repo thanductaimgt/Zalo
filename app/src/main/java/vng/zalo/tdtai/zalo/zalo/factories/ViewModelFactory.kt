@@ -7,12 +7,12 @@ import vng.zalo.tdtai.zalo.zalo.viewmodels.*
 
 class ViewModelFactory private constructor() : ViewModelProvider.Factory {
     private lateinit var intent: Intent
-    private lateinit var bucket_name: String
+    private lateinit var bucketName: String
 
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         return when (modelClass) {
             RoomActivityViewModel::class.java -> RoomActivityViewModel(intent) as T
-            StickerSetViewModel::class.java -> StickerSetViewModel(bucket_name) as T
+            StickerSetViewModel::class.java -> StickerSetViewModel(bucketName) as T
             else -> modelClass.newInstance()
         }
     }
@@ -31,8 +31,8 @@ class ViewModelFactory private constructor() : ViewModelProvider.Factory {
 
             if (intent != null) {
                 instance!!.intent = intent
-            }else if (bucket_name != null){
-                instance!!.bucket_name = bucket_name
+            } else if (bucket_name != null) {
+                instance!!.bucketName = bucket_name
             }
             return instance!!
         }

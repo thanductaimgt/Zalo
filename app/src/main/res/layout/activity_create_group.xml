@@ -4,37 +4,36 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:focusableInTouchMode="true"
     android:focusable="true"
+    android:focusableInTouchMode="true"
     tools:context=".zalo.views.activities.CreateGroupActivity">
 
     <de.hdodenhof.circleimageview.CircleImageView
-        android:clickable="true"
         android:id="@+id/uploadAvatarImgView"
         android:layout_width="@dimen/size_huge_48dp"
         android:layout_height="0dp"
         android:layout_marginStart="@dimen/size_medium_16dp"
-        android:layout_marginLeft="@dimen/size_medium_16dp"
         android:layout_marginTop="@dimen/size_small_8dp"
-        android:src="@drawable/upload_picture"
+        android:clickable="true"
         android:contentDescription="@string/description_avatar"
+        android:focusable="true"
+        android:src="@drawable/upload_picture"
         app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:focusable="true" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
-        app:layout_constraintRight_toRightOf="parent"
         android:id="@+id/nameTextView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginRight="@dimen/size_medium_16dp"
         android:layout_marginLeft="@dimen/size_medium_16dp"
+        android:layout_marginRight="@dimen/size_medium_16dp"
         android:hint="@string/description_name_group"
-        android:inputType="text"
         android:imeOptions="actionDone"
+        android:inputType="text"
         app:layout_constraintBottom_toBottomOf="@id/uploadAvatarImgView"
         app:layout_constraintLeft_toRightOf="@id/uploadAvatarImgView"
+        app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="@id/uploadAvatarImgView" />
 
     <SearchView
@@ -48,14 +47,13 @@
         android:queryHint="@string/hint_search_clicked"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/uploadAvatarImgView"/>
+        app:layout_constraintTop_toBottomOf="@id/uploadAvatarImgView" />
 
     <TextView
         android:id="@+id/searchViewDescTV"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/size_huge_48dp"
-        android:layout_marginLeft="@dimen/size_huge_48dp"
         android:text="@string/hint_search_not_clicked"
         app:layout_constraintBottom_toBottomOf="@id/searchView"
         app:layout_constraintLeft_toLeftOf="@id/searchView"
@@ -93,30 +91,32 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/selectedListLayout"
-        android:visibility="gone"
-        android:background="@android:drawable/editbox_background"
-        app:layout_constraintBottom_toBottomOf="parent"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:background="@android:drawable/editbox_background"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent">
+
         <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
             android:paddingLeft="@dimen/size_small_8dp"
             android:paddingRight="@dimen/size_small_8dp"
-            android:id="@+id/recyclerView"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toTopOf="@id/createGroupButton"
             app:layout_constraintBottom_toBottomOf="@id/createGroupButton"
+            app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toLeftOf="@id/createGroupButton"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"/>
+            app:layout_constraintTop_toTopOf="@id/createGroupButton" />
+
         <ImageButton
-            android:background="@drawable/go"
-            app:layout_constraintBottom_toBottomOf="parent"
             android:id="@+id/createGroupButton"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
             android:layout_width="@dimen/size_huge_48dp"
             android:layout_height="0dp"
+            android:background="@drawable/go"
+            android:contentDescription="@string/description_create_group"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintDimensionRatio="1:1"
-            android:contentDescription="@string/description_create_group" />
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

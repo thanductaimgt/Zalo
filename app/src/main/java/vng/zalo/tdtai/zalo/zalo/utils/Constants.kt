@@ -1,8 +1,8 @@
 package vng.zalo.tdtai.zalo.zalo.utils
 
 object Constants {
-    const val VIEW_TYPE_SENDER = 0
-    const val VIEW_TYPE_RECEIVER = 1
+    const val VIEW_TYPE_SEND = 0
+    const val VIEW_TYPE_RECEIVE = 1
 
     const val MAX_UNSEEN_MSG_NUM = 50
 
@@ -31,7 +31,7 @@ object Constants {
 
     const val MESSAGE_TYPE_TEXT = 0
     const val MESSAGE_TYPE_IMAGE = 1
-    const val MESSAGE_TYPE_EMOJI = 2
+    const val MESSAGE_TYPE_STICKER = 2
     const val MESSAGE_TYPE_FILE = 3
     const val MESSAGE_TYPE_VOICE = 4
 

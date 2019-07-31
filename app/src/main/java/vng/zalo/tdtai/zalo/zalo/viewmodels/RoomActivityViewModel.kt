@@ -75,13 +75,13 @@ class RoomActivityViewModel(intent: Intent) : ViewModel() {
         }
     }
 
-    fun addNewMessageToFirestore(messageContent: String) {
+    fun addNewMessageToFirestore(content: String, type: Int) {
         val message = Message(
-                content = messageContent,
+                content = content,
                 createdTime = Timestamp.now(),
                 senderPhone = ZaloApplication.currentUser!!.phone,
                 senderAvatarUrl = ZaloApplication.currentUser!!.avatarUrl,
-                type = Constants.MESSAGE_TYPE_TEXT
+                type = type
         )
 
         Database.addNewMessageAndUpdateUsersRoom(
@@ -92,7 +92,6 @@ class RoomActivityViewModel(intent: Intent) : ViewModel() {
 
     fun removeListeners() {
         listenerRegistrations.forEach { it.remove() }
-        Log.d("removeListeners", "finalize")
     }
 
     companion object {

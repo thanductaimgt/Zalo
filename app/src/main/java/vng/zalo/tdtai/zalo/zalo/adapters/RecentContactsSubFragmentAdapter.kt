@@ -13,7 +13,7 @@ import vng.zalo.tdtai.zalo.zalo.utils.ModelViewHolder
 import vng.zalo.tdtai.zalo.zalo.utils.Utils
 
 class RecentContactsSubFragmentAdapter(private val fragment: Fragment) : RecyclerView.Adapter<RecentContactsSubFragmentAdapter.RecentContactsViewHolder>() {
-    var roomItems:List<RoomItem> = ArrayList()
+    var roomItems: List<RoomItem> = ArrayList()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecentContactsViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_select_contact, parent, false)

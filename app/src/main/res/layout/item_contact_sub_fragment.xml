@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/itemContactSubFragmentConstraintLayout"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:paddingTop="@dimen/size_small_8dp"
-    android:paddingBottom="@dimen/size_small_8dp"
-    android:paddingLeft="@dimen/size_medium_16dp"
-    android:paddingRight="@dimen/size_medium_16dp"
+    android:id="@+id/itemContactSubFragmentConstraintLayout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:paddingLeft="@dimen/size_medium_16dp"
+    android:paddingTop="@dimen/size_small_8dp"
+    android:paddingRight="@dimen/size_medium_16dp"
+    android:paddingBottom="@dimen/size_small_8dp">
 
     <TextView
         android:id="@+id/phoneTextView"
@@ -34,34 +34,32 @@
         app:layout_constraintVertical_bias="0.0" />
 
     <ImageView
-        android:focusable="true"
-        android:clickable="true"
-        android:padding="12dp"
-        android:src="@drawable/call"
         android:id="@+id/callImgButton"
         android:layout_width="0dp"
         android:layout_height="@dimen/size_huge_48dp"
         android:layout_marginEnd="@dimen/size_large_24dp"
-        android:layout_marginRight="@dimen/size_large_24dp"
+        android:clickable="true"
         android:contentDescription="@string/description_call"
+        android:focusable="true"
+        android:padding="12dp"
+        android:src="@drawable/call"
         app:layout_constraintBottom_toBottomOf="@id/phoneTextView"
         app:layout_constraintDimensionRatio="h,1:1"
         app:layout_constraintEnd_toStartOf="@id/videoImgButton"
-        app:layout_constraintTop_toTopOf="@id/phoneTextView"
-         />
+        app:layout_constraintTop_toTopOf="@id/phoneTextView" />
 
     <ImageView
-        android:padding="12dp"
-        android:focusable="true"
-        android:clickable="true"
-        android:src="@drawable/video"
         android:id="@+id/videoImgButton"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:clickable="true"
+        android:contentDescription="@string/description_video"
+        android:focusable="true"
+        android:padding="12dp"
+        android:src="@drawable/video"
         app:layout_constraintBottom_toBottomOf="@id/callImgButton"
         app:layout_constraintDimensionRatio="h,1:1"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@id/callImgButton"
-        android:contentDescription="@string/description_video" />
+        app:layout_constraintTop_toTopOf="@id/callImgButton" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

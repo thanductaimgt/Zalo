@@ -5,51 +5,57 @@
     android:layout_height="wrap_content">
 
     <TextView
-        android:visibility="gone"
-        android:textColor="@android:color/white"
-        android:background="@drawable/chat_date_bg"
+        android:id="@+id/sendMsgDateTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/size_small_8dp"
         android:layout_marginBottom="@dimen/size_small_8dp"
-        android:id="@+id/dateTextViewItemSend"
+        android:background="@drawable/chat_date_bg"
         android:text="@string/placeholder_text"
-        app:layout_constraintRight_toRightOf="parent"
+        android:textColor="@android:color/white"
+        app:layout_constraintBottom_toTopOf="@id/sendMsgLayout"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/sendMsgConstraintLayout"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <LinearLayout
+        android:id="@+id/sendMsgLayout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/size_small_8dp"
         android:gravity="end"
         android:orientation="vertical"
-        android:id="@+id/sendMsgConstraintLayout"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@id/guideline3"
         app:layout_constraintBottom_toBottomOf="parent"
-        android:layout_marginEnd="@dimen/size_small_8dp"
-        android:layout_marginRight="@dimen/size_small_8dp"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content">
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@id/guideline">
 
         <TextView
             android:id="@+id/sendMsgTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/send_message_bg"
-            android:gravity="end"
-            android:text="@string/placeholder_text"
-            android:textAlignment="viewEnd"/>
+            android:text="@string/placeholder_text" />
+
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/sendMsgAnimView"
+            android:layout_width="@dimen/size_sticker_128dp"
+            android:layout_height="@dimen/size_sticker_128dp"
+            app:lottie_autoPlay="false"
+            app:lottie_enableMergePathsForKitKatAndAbove="true"
+            app:lottie_loop="true"
+            app:lottie_renderMode="software" />
+
         <TextView
-            android:textSize="@dimen/size_small_text_10sp"
-            android:layout_marginBottom="@dimen/size_small_8dp"
-            android:id="@+id/sendTimeTextView"
+            android:id="@+id/sendMsgTimeTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/placeholder_text"/>
+            android:layout_marginBottom="@dimen/size_small_8dp"
+            android:text="@string/placeholder_text"
+            android:textSize="@dimen/size_small_text_10sp" />
     </LinearLayout>
 
     <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideline3"
+        android:id="@+id/guideline"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"

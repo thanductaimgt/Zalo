@@ -16,7 +16,7 @@ class IntroActivity : AppCompatActivity(), View.OnClickListener {
         initView()
     }
 
-    private fun initView(){
+    private fun initView() {
         loginButton.setOnClickListener(this)
         registerButton.setOnClickListener(this)
     }

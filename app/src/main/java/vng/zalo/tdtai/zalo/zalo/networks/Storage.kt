@@ -53,10 +53,11 @@ class Storage {
             }
         }
 
-        fun addStickerSet(bucketName: String, localPaths:List<String>, callback: (() -> Unit)?){
+        fun addStickerSet(name: String, localPaths: List<String>, callback: ((bucketName: String) -> Unit)?) {
             /*
              */
-            callback?.invoke()
+            val bucketName = Utils.getStickerBucketNameFromName(name)
+            callback?.invoke(bucketName)
         }
     }
 }

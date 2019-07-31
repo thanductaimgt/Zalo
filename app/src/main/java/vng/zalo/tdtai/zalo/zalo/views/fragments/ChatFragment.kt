@@ -38,7 +38,7 @@ class ChatFragment : Fragment(), View.OnClickListener {
         })
     }
 
-    private fun initView(){
+    private fun initView() {
         adapter = RoomItemAdapter(this, RoomItemDiffCallback())
 
         with(recyclerView) {
@@ -69,7 +69,7 @@ class ChatFragment : Fragment(), View.OnClickListener {
         viewModel.removeListeners()
     }
 
-    companion object{
+    companion object {
         private val TAG = ChatFragment::class.java.simpleName
     }
 }

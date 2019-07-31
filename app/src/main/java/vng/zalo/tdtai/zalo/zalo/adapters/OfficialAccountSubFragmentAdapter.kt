@@ -13,7 +13,7 @@ import vng.zalo.tdtai.zalo.zalo.models.RoomItem
 import vng.zalo.tdtai.zalo.zalo.utils.ModelViewHolder
 import vng.zalo.tdtai.zalo.zalo.views.fragments.OfficialAccountSubFragment
 
-class OfficialAccountSubFragmentAdapter (private val officialAccountSubFragment: OfficialAccountSubFragment, diffCallback: DiffUtil.ItemCallback<RoomItem>) : ListAdapter<RoomItem, OfficialAccountSubFragmentAdapter.OfficialAccountViewHolder>(diffCallback) {
+class OfficialAccountSubFragmentAdapter(private val officialAccountSubFragment: OfficialAccountSubFragment, diffCallback: DiffUtil.ItemCallback<RoomItem>) : ListAdapter<RoomItem, OfficialAccountSubFragmentAdapter.OfficialAccountViewHolder>(diffCallback) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): OfficialAccountViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_official_account, parent, false)
@@ -31,7 +31,7 @@ class OfficialAccountSubFragmentAdapter (private val officialAccountSubFragment:
     inner class OfficialAccountViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), ModelViewHolder {
 
         override fun bind(position: Int) {
-            with(itemView){
+            with(itemView) {
                 setOnClickListener(officialAccountSubFragment)
                 val room = getItem(position)
 

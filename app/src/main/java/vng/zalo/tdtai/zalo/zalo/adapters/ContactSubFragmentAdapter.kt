@@ -31,7 +31,7 @@ class ContactSubFragmentAdapter(private val contactSubFragment: ContactSubFragme
 
     inner class ContactViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), ModelViewHolder {
         override fun bind(position: Int) {
-            with(itemView){
+            with(itemView) {
                 setOnClickListener(contactSubFragment)
                 val roomItem = getItem(position)
 

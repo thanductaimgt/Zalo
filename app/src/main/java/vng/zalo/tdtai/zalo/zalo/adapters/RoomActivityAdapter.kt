@@ -187,8 +187,4 @@ class RoomActivityAdapter(private val recyclerView: RecyclerView) : RecyclerView
             }
         }
     }
-
-    companion object {
-        private val TAG = RoomActivityAdapter::class.java.simpleName
-    }
 }

@@ -16,6 +16,7 @@ import vng.zalo.tdtai.zalo.zalo.adapters.OfficialAccountSubFragmentAdapter
 import vng.zalo.tdtai.zalo.zalo.factories.ViewModelFactory
 import vng.zalo.tdtai.zalo.zalo.utils.Constants
 import vng.zalo.tdtai.zalo.zalo.utils.RoomItemDiffCallback
+import vng.zalo.tdtai.zalo.zalo.utils.TAG
 import vng.zalo.tdtai.zalo.zalo.viewmodels.OfficialAccountViewModel
 import vng.zalo.tdtai.zalo.zalo.views.activities.RoomActivity
 
@@ -60,9 +61,5 @@ class OfficialAccountSubFragment : Fragment(), View.OnClickListener {
                 )
             }
         }
-    }
-
-    companion object {
-        private val TAG = OfficialAccountSubFragment::class.java.simpleName
     }
 }

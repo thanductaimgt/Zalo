@@ -1,7 +1,6 @@
 package vng.zalo.tdtai.zalo.zalo.viewmodels
 
 import android.content.Intent
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.firebase.Timestamp
@@ -11,6 +10,7 @@ import vng.zalo.tdtai.zalo.zalo.models.Message
 import vng.zalo.tdtai.zalo.zalo.models.Room
 import vng.zalo.tdtai.zalo.zalo.networks.Database
 import vng.zalo.tdtai.zalo.zalo.utils.Constants
+import vng.zalo.tdtai.zalo.zalo.utils.TAG
 import vng.zalo.tdtai.zalo.zalo.utils.Utils
 import java.util.*
 import kotlin.collections.HashMap
@@ -92,9 +92,5 @@ class RoomActivityViewModel(intent: Intent) : ViewModel() {
 
     fun removeListeners() {
         listenerRegistrations.forEach { it.remove() }
-    }
-
-    companion object {
-        private val TAG = RoomActivityViewModel::class.java.simpleName
     }
 }

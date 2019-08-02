@@ -48,4 +48,6 @@ object Constants {
     const val FOLDER_STICKER_SETS = "sticker_sets"
 
     const val REGISTER_NAME = "name"
+
+    const val PROVIDER_AUTHORITY = "vng.zalo.tdtai.zalo.fileprovider"
 }

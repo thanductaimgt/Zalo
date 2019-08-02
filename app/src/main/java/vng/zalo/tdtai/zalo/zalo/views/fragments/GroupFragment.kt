@@ -20,6 +20,7 @@ import vng.zalo.tdtai.zalo.zalo.utils.Constants.ROOM_AVATAR
 import vng.zalo.tdtai.zalo.zalo.utils.Constants.ROOM_ID
 import vng.zalo.tdtai.zalo.zalo.utils.Constants.ROOM_NAME
 import vng.zalo.tdtai.zalo.zalo.utils.RoomItemDiffCallback
+import vng.zalo.tdtai.zalo.zalo.utils.TAG
 import vng.zalo.tdtai.zalo.zalo.viewmodels.GroupFragmentViewModel
 import vng.zalo.tdtai.zalo.zalo.views.activities.CreateGroupActivity
 import vng.zalo.tdtai.zalo.zalo.views.activities.RoomActivity
@@ -90,9 +91,5 @@ class GroupFragment : Fragment(), AdapterView.OnItemSelectedListener, View.OnCli
             }
             R.id.createNewGroupLayout -> startActivity(Intent(activity, CreateGroupActivity::class.java))
         }
-    }
-
-    companion object {
-        private val TAG = GroupFragment::class.java.simpleName
     }
 }

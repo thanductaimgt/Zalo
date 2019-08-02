@@ -38,8 +38,4 @@ class StickerSetFragmentAdapter(private val fragment: Fragment) : RecyclerView.A
             }
         }
     }
-
-    companion object {
-        private val TAG = StickerSetFragmentAdapter::class.java.simpleName
-    }
 }

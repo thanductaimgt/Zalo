@@ -7,11 +7,11 @@ import com.google.firebase.firestore.*
 import vng.zalo.tdtai.zalo.zalo.ZaloApplication
 import vng.zalo.tdtai.zalo.zalo.models.*
 import vng.zalo.tdtai.zalo.zalo.utils.Constants
+import vng.zalo.tdtai.zalo.zalo.utils.TAG
 import vng.zalo.tdtai.zalo.zalo.utils.Utils
 
 class Database {
     companion object {
-        private val TAG = Database::class.java.simpleName
         private val firebaseFirestore: FirebaseFirestore
             get() = FirebaseFirestore.getInstance()
 
@@ -33,7 +33,7 @@ class Database {
                 val curUserPhone = it.key
                 val lastMsgPreviewContent = when (newMessage.type) {
                     Constants.MESSAGE_TYPE_TEXT -> newMessage.content
-                    Constants.MESSAGE_TYPE_STICKER -> "<Sticker>"
+                    Constants.MESSAGE_TYPE_STICKER -> "[Sticker]"
                     else -> ""
                 }
 

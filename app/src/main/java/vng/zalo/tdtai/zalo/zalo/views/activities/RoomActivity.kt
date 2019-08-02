@@ -12,39 +12,35 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.get
 import androidx.core.view.size
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.activity_room.*
 import kotlinx.android.synthetic.main.item_receive_room_activity.view.*
 import kotlinx.android.synthetic.main.item_send_room_activity.view.*
 import vng.zalo.tdtai.zalo.R
-import vng.zalo.tdtai.zalo.zalo.factories.chat_activity.DaggerRoomActivityComponent
-import vng.zalo.tdtai.zalo.zalo.factories.chat_activity.RoomActivityModule
 import vng.zalo.tdtai.zalo.zalo.utils.Constants
 import vng.zalo.tdtai.zalo.zalo.utils.Utils
 import vng.zalo.tdtai.zalo.zalo.viewmodels.RoomActivityViewModel
 import vng.zalo.tdtai.zalo.zalo.adapters.RoomActivityAdapter
+import vng.zalo.tdtai.zalo.zalo.factories.ViewModelFactory
 import vng.zalo.tdtai.zalo.zalo.models.Sticker
 import vng.zalo.tdtai.zalo.zalo.views.fragments.EmojiFragment
-import javax.inject.Inject
 import kotlin.math.max
+import vng.zalo.tdtai.zalo.zalo.utils.TAG
 
 class RoomActivity : AppCompatActivity(), View.OnClickListener {
-    @Inject
-    lateinit var viewModel: RoomActivityViewModel
+    private lateinit var viewModel: RoomActivityViewModel
     private lateinit var adapter: RoomActivityAdapter
     private var emojiFragment: EmojiFragment? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        DaggerRoomActivityComponent.builder()
-                .roomActivityModule(RoomActivityModule(this))
-                .build().inject(this)
-
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_room)
 
         initView()
 
+        viewModel = ViewModelProviders.of(this, ViewModelFactory.getInstance(intent = intent)).get(RoomActivityViewModel::class.java)
         viewModel.liveMessages.observe(this, Observer { messageList ->
             adapter.messages = messageList
             adapter.notifyDataSetChanged()
@@ -210,9 +206,5 @@ class RoomActivity : AppCompatActivity(), View.OnClickListener {
     override fun onDestroy() {
         super.onDestroy()
         viewModel.removeListeners()
-    }
-
-    companion object {
-        private val TAG = RoomActivity::class.java.simpleName
     }
 }

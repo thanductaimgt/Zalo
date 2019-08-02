@@ -7,13 +7,12 @@ import com.google.android.gms.tasks.Tasks
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import vng.zalo.tdtai.zalo.zalo.utils.Constants
+import vng.zalo.tdtai.zalo.zalo.utils.TAG
 import vng.zalo.tdtai.zalo.zalo.utils.Utils
 import java.io.File
 
 class Storage {
     companion object {
-        private val TAG = Storage::class.java.simpleName
-
         private val firebaseStorage: FirebaseStorage
             get() = FirebaseStorage.getInstance()
 

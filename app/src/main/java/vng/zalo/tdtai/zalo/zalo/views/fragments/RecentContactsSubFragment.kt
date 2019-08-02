@@ -17,6 +17,7 @@ import vng.zalo.tdtai.zalo.R
 import vng.zalo.tdtai.zalo.zalo.adapters.RecentContactsSubFragmentAdapter
 import vng.zalo.tdtai.zalo.zalo.factories.ViewModelFactory
 import vng.zalo.tdtai.zalo.zalo.models.RoomItem
+import vng.zalo.tdtai.zalo.zalo.utils.TAG
 import vng.zalo.tdtai.zalo.zalo.viewmodels.RecentContactsSubFragmentViewModel
 import vng.zalo.tdtai.zalo.zalo.views.activities.CreateGroupActivity
 
@@ -71,9 +72,5 @@ class RecentContactsSubFragment : Fragment(), View.OnClickListener {
             val item = this@RecentContactsSubFragment.adapter.roomItems[itemPosition]
             it.radioButton.isChecked = newRoomItems.contains(item)
         }
-    }
-
-    companion object {
-        private val TAG = RecentContactsSubFragment::class.java.simpleName
     }
 }

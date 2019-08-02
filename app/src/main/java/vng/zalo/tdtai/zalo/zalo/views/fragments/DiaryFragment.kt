@@ -47,8 +47,4 @@ class DiaryFragment : Fragment(), View.OnClickListener {
             }
         }
     }
-
-    companion object {
-        private val TAG = DiaryFragment::class.java.simpleName
-    }
 }

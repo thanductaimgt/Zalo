@@ -16,6 +16,7 @@ import vng.zalo.tdtai.zalo.zalo.adapters.RoomItemAdapter
 import vng.zalo.tdtai.zalo.zalo.factories.ViewModelFactory
 import vng.zalo.tdtai.zalo.zalo.utils.Constants
 import vng.zalo.tdtai.zalo.zalo.utils.RoomItemDiffCallback
+import vng.zalo.tdtai.zalo.zalo.utils.TAG
 import vng.zalo.tdtai.zalo.zalo.viewmodels.ChatFragmentViewModel
 import vng.zalo.tdtai.zalo.zalo.views.activities.RoomActivity
 
@@ -67,9 +68,5 @@ class ChatFragment : Fragment(), View.OnClickListener {
     override fun onDestroyView() {
         super.onDestroyView()
         viewModel.removeListeners()
-    }
-
-    companion object {
-        private val TAG = ChatFragment::class.java.simpleName
     }
 }

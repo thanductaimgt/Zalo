@@ -91,3 +91,8 @@ object Utils {
         return bucketName.replace(Regex(" "), "_")
     }
 }
+
+// extension functions
+
+val Any.TAG: String
+    get() = this::class.java.simpleName

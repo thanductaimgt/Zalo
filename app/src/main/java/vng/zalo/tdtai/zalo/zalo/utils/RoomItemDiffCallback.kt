@@ -15,8 +15,4 @@ class RoomItemDiffCallback : DiffUtil.ItemCallback<RoomItem>() {
         Log.d(TAG, if (oldItem == newItem) "same content" else "diff content")
         return oldItem == newItem
     }
-
-    companion object{
-        private val TAG = RoomItemDiffCallback::class.java.simpleName
-    }
 }

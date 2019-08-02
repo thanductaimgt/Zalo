@@ -12,6 +12,7 @@ import vng.zalo.tdtai.zalo.zalo.models.UserInfo
 import vng.zalo.tdtai.zalo.zalo.utils.Constants
 import android.content.Context
 import vng.zalo.tdtai.zalo.zalo.networks.Database
+import vng.zalo.tdtai.zalo.zalo.utils.TAG
 
 
 class LoginActivity : AppCompatActivity(), View.OnClickListener {
@@ -85,9 +86,5 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
         editor.putBoolean("isLogin", true)
 
         editor.apply()
-    }
-
-    companion object {
-        private val TAG = LoginActivity::class.java.simpleName
     }
 }

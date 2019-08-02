@@ -36,6 +36,7 @@ import java.io.File
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
+import vng.zalo.tdtai.zalo.zalo.utils.TAG
 
 class CreateGroupActivity : AppCompatActivity(), View.OnClickListener, TabLayout.OnTabSelectedListener {
     private lateinit var viewPagerAdapter: CreateGroupActivityViewPagerAdapter
@@ -224,7 +225,7 @@ class CreateGroupActivity : AppCompatActivity(), View.OnClickListener, TabLayout
                 photoFile?.also {
                     val photoURI: Uri = FileProvider.getUriForFile(
                             this,
-                            "vng.zalo.tdtai.zalo.fileprovider",
+                            Constants.PROVIDER_AUTHORITY,
                             it
                     )
                     takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI)
@@ -241,7 +242,7 @@ class CreateGroupActivity : AppCompatActivity(), View.OnClickListener, TabLayout
                 when (requestCode) {
                     Constants.PICK_IMAGE -> Picasso.get().load(dataNotNull.data).fit().into(uploadAvatarImgView)
                     Constants.TAKE_PICTURE -> {
-                        Picasso.get().load(File(currentPhotoPath)).fit().into(uploadAvatarImgView)
+                        Picasso.get().load(File(currentPhotoPath!!)).fit().into(uploadAvatarImgView)
                     }
                 }
                 bottomSheetDialog.hide()
@@ -264,9 +265,5 @@ class CreateGroupActivity : AppCompatActivity(), View.OnClickListener, TabLayout
             // Save a file: path for use with ACTION_VIEW intents
             currentPhotoPath = absolutePath
         }
-    }
-
-    companion object {
-        private val TAG = CreateGroupActivity::class.java.simpleName
     }
 }

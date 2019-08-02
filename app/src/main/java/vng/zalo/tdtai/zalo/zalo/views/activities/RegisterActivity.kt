@@ -1,12 +1,10 @@
 package vng.zalo.tdtai.zalo.zalo.views.activities
 
-import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
+import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_register.*
 import vng.zalo.tdtai.zalo.R
-import vng.zalo.tdtai.zalo.zalo.utils.Constants
 
 class RegisterActivity : AppCompatActivity(), View.OnClickListener {
     override fun onCreate(savedInstanceState: Bundle?) {

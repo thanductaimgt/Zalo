@@ -18,6 +18,7 @@ import vng.zalo.tdtai.zalo.zalo.utils.ContactModelDiffCallback
 import vng.zalo.tdtai.zalo.zalo.utils.Utils
 import vng.zalo.tdtai.zalo.zalo.viewmodels.ContactSubFragmentViewModel
 import vng.zalo.tdtai.zalo.zalo.adapters.ContactSubFragmentAdapter
+import vng.zalo.tdtai.zalo.zalo.utils.TAG
 import vng.zalo.tdtai.zalo.zalo.views.activities.RoomActivity
 
 class ContactSubFragment : Fragment(), View.OnClickListener {
@@ -62,9 +63,5 @@ class ContactSubFragment : Fragment(), View.OnClickListener {
                 )
             }
         }
-    }
-
-    companion object {
-        private val TAG = ContactSubFragment::class.java.simpleName
     }
 }

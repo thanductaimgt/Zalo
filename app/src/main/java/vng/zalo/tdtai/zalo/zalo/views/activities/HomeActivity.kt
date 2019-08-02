@@ -4,13 +4,13 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
-import com.google.android.material.tabs.TabLayout
+import androidx.viewpager.widget.ViewPager
 import kotlinx.android.synthetic.main.activity_home.*
 import vng.zalo.tdtai.zalo.R
 import vng.zalo.tdtai.zalo.zalo.adapters.HomeAdapter
 
-class HomeActivity : AppCompatActivity(), TabLayout.OnTabSelectedListener {
-
+class HomeActivity : AppCompatActivity() {
+    private lateinit var prevMenuItem: MenuItem
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
@@ -21,14 +21,37 @@ class HomeActivity : AppCompatActivity(), TabLayout.OnTabSelectedListener {
     private fun initView() {
         setSupportActionBar(toolbar)
 
+        prevMenuItem = bottomNavigationView.menu.getItem(0)
+
         viewPager.apply {
             adapter = HomeAdapter(supportFragmentManager)
+            viewPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
+                override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
 
-            //tabLayout react to to swipe
-            addOnPageChangeListener(TabLayout.TabLayoutOnPageChangeListener(tabLayout))
+                }
+
+                override fun onPageSelected(position: Int) {
+                    prevMenuItem.isChecked = false
+                    prevMenuItem = bottomNavigationView.menu.getItem(position).apply { isChecked = true }
+                }
+
+                override fun onPageScrollStateChanged(state: Int) {
+
+                }
+            })
+            offscreenPageLimit = 5
         }
 
-        tabLayout.addOnTabSelectedListener(this)
+        bottomNavigationView.setOnNavigationItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.navigation_chat -> viewPager.currentItem = 0
+                R.id.navigation_contacts -> viewPager.currentItem = 1
+                R.id.navigation_groups -> viewPager.currentItem = 2
+                R.id.navigation_diary -> viewPager.currentItem = 3
+                R.id.navigation_more -> viewPager.currentItem = 4
+            }
+            false
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -46,17 +69,5 @@ class HomeActivity : AppCompatActivity(), TabLayout.OnTabSelectedListener {
             R.id.action_settings -> true
             else -> super.onOptionsItemSelected(item)
         }
-    }
-
-    override fun onTabSelected(tab: TabLayout.Tab) {
-        viewPager.currentItem = tab.position
-    }
-
-    override fun onTabUnselected(tab: TabLayout.Tab) {
-
-    }
-
-    override fun onTabReselected(tab: TabLayout.Tab) {
-
     }
 }

@@ -9,7 +9,7 @@ import vng.zalo.tdtai.zalo.zalo.views.fragments.DiaryFragment
 import vng.zalo.tdtai.zalo.zalo.views.fragments.GroupFragment
 import vng.zalo.tdtai.zalo.zalo.views.fragments.MoreFragment
 
-class HomeAdapter internal constructor(fm: FragmentManager) : FragmentStatePagerAdapter(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
+class HomeAdapter (fm: FragmentManager) : FragmentStatePagerAdapter(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
 
     override fun getItem(position: Int): Fragment {
         return when (position) {

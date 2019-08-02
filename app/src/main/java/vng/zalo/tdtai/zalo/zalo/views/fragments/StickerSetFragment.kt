@@ -43,6 +43,7 @@ class StickerSetFragment(private val bucket_name: String) : Fragment(), View.OnC
             layoutManager = GridLayoutManager(activity, COLUMN_NUM)
             adapter = this@StickerSetFragment.adapter
             setHasFixedSize(true)
+            setItemViewCacheSize(25)
         }
     }
 

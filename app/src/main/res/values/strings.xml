@@ -7,8 +7,8 @@
     <string name="label_get_password"><u><b>Lấy lại mật khẩu</b></u></string>
     <string name="label_home_screen">Trang chủ</string>
     <string name="label_chat_tab">Tin nhắn</string>
-    <string name="label_contact_tab">Danh bạ</string>
-    <string name="label_group_tab">Nhóm</string>
+    <string name="label_contacts_tab">Danh bạ</string>
+    <string name="label_groups_tab">Nhóm</string>
     <string name="label_settings">Cài đặt</string>
     <string name="label_faq"><b><u>Câu hỏi thường gặp</u></b></string>
     <string name="label_diary_tab">Nhật ký</string>

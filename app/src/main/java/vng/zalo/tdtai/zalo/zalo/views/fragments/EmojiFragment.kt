@@ -17,6 +17,7 @@ import com.airbnb.lottie.LottieAnimationView
 import com.airbnb.lottie.RenderMode
 import com.squareup.picasso.Picasso
 import vng.zalo.tdtai.zalo.zalo.models.StickerSetItem
+import kotlin.math.min
 
 
 class EmojiFragment : Fragment(), TabLayout.OnTabSelectedListener {
@@ -43,6 +44,7 @@ class EmojiFragment : Fragment(), TabLayout.OnTabSelectedListener {
         viewPager.apply {
             adapter = this@EmojiFragment.adapter
             addOnPageChangeListener(TabLayout.TabLayoutOnPageChangeListener(tabLayout))
+            offscreenPageLimit = 5
         }
 
         tabLayout.addOnTabSelectedListener(this)

@@ -84,6 +84,7 @@ class RoomActivity : AppCompatActivity(), View.OnClickListener {
             adapter = this@RoomActivity.adapter
             layoutManager = LinearLayoutManager(this@RoomActivity)
             addOnScrollListener(ScrollListener())
+            setItemViewCacheSize(50)
         }
     }
 

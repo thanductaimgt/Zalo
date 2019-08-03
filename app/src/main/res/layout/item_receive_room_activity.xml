@@ -41,8 +41,8 @@
 
     <com.airbnb.lottie.LottieAnimationView
         android:id="@+id/recvMsgAnimView"
-        android:layout_width="@dimen/size_sticker_128dp"
-        android:layout_height="@dimen/size_sticker_128dp"
+        android:layout_width="@dimen/size_sticker_150dp"
+        android:layout_height="@dimen/size_sticker_150dp"
         app:layout_constraintBottom_toTopOf="@id/recvMsgTimeTextView"
         app:layout_constraintLeft_toLeftOf="@id/recvMsgLayout"
         app:lottie_autoPlay="false"

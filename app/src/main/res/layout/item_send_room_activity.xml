@@ -38,8 +38,8 @@
 
         <com.airbnb.lottie.LottieAnimationView
             android:id="@+id/sendMsgAnimView"
-            android:layout_width="@dimen/size_sticker_128dp"
-            android:layout_height="@dimen/size_sticker_128dp"
+            android:layout_width="@dimen/size_sticker_150dp"
+            android:layout_height="@dimen/size_sticker_150dp"
             app:lottie_autoPlay="false"
             app:lottie_enableMergePathsForKitKatAndAbove="true"
             app:lottie_loop="true"

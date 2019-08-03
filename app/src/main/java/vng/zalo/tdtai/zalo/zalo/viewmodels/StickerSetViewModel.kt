@@ -1,7 +1,10 @@
 package vng.zalo.tdtai.zalo.zalo.viewmodels
 
+import android.os.AsyncTask
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.airbnb.lottie.LottieComposition
+import com.airbnb.lottie.LottieCompositionFactory
 import com.google.firebase.Timestamp
 import vng.zalo.tdtai.zalo.zalo.ZaloApplication
 import vng.zalo.tdtai.zalo.zalo.models.Message

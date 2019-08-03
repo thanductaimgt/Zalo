@@ -32,8 +32,8 @@ class StickerSetFragmentAdapter(private val fragment: Fragment) : RecyclerView.A
             itemView.apply {
                 setOnClickListener(fragment as View.OnClickListener)
 
-                animView.apply {
-                    setAnimationFromUrl(stickers[position].url)
+                if(stickers[position].lottieComposition != null){
+                    animView.setComposition(stickers[position].lottieComposition!!)
                 }
             }
         }

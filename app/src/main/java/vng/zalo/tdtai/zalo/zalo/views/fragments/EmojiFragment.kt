@@ -54,9 +54,9 @@ class EmojiFragment : Fragment(), TabLayout.OnTabSelectedListener {
         stickerSets.forEach {
             tabLayout.addTab(tabLayout.newTab().setCustomView(createTabItemView(it.stickerUrl)))
             adapter.stickerSetItems.add(it)
-            // must call this when add tab at runtime
-            adapter.notifyDataSetChanged()
         }
+        // must call this when add tab at runtime
+        adapter.notifyDataSetChanged()
     }
 
     private fun createTabItemView(url: String?): View {

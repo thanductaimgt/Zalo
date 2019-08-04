@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/itemContactSubFragmentConstraintLayout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -8,9 +9,14 @@
     android:paddingLeft="@dimen/size_medium_16dp"
     android:paddingTop="@dimen/size_small_8dp"
     android:paddingRight="@dimen/size_medium_16dp"
-    android:paddingBottom="@dimen/size_small_8dp">
+    android:paddingBottom="@dimen/size_small_8dp"
+    android:background="?android:attr/selectableItemBackground">
 
     <TextView
+        android:maxLines="1"
+        android:ellipsize="end"
+        android:scrollHorizontally="true"
+        tools:text="a very long name abcxyz0123456789"
         android:id="@+id/phoneTextView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -23,6 +29,7 @@
         app:layout_constraintTop_toTopOf="@id/avatarImgView" />
 
     <de.hdodenhof.circleimageview.CircleImageView
+        tools:src="@drawable/official_account"
         android:id="@+id/avatarImgView"
         android:layout_width="@dimen/size_room_item_avatar_48dp"
         android:layout_height="0dp"
@@ -34,10 +41,11 @@
         app:layout_constraintVertical_bias="0.0" />
 
     <ImageView
+        android:background="?android:attr/selectableItemBackground"
         android:id="@+id/callImgButton"
         android:layout_width="0dp"
         android:layout_height="@dimen/size_huge_48dp"
-        android:layout_marginEnd="@dimen/size_large_24dp"
+        android:layout_marginEnd="@dimen/size_small_8dp"
         android:clickable="true"
         android:contentDescription="@string/description_call"
         android:focusable="true"
@@ -49,6 +57,7 @@
         app:layout_constraintTop_toTopOf="@id/phoneTextView" />
 
     <ImageView
+        android:background="?android:attr/selectableItemBackground"
         android:id="@+id/videoImgButton"
         android:layout_width="0dp"
         android:layout_height="0dp"

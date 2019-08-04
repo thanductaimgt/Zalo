@@ -7,6 +7,8 @@
     android:orientation="vertical">
 
     <TextView
+        android:visibility="gone"
+        tools:visibility="visible"
         android:id="@+id/recvMsgDateTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -32,14 +34,19 @@
         app:layout_constraintStart_toStartOf="parent">
 
         <TextView
+            android:visibility="gone"
+            tools:visibility="visible"
             android:id="@+id/recvMsgTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/recv_message_bg"
-            android:text="@string/placeholder_text" />
+            android:text="@string/placeholder_text"
+            android:layout_marginBottom="1dp"/>
     </LinearLayout>
 
     <com.airbnb.lottie.LottieAnimationView
+        android:visibility="gone"
+        tools:visibility="visible"
         android:id="@+id/recvMsgAnimView"
         android:layout_width="@dimen/size_sticker_150dp"
         android:layout_height="@dimen/size_sticker_150dp"
@@ -51,6 +58,8 @@
         app:lottie_renderMode="software" />
 
     <TextView
+        android:visibility="gone"
+        tools:visibility="visible"
         android:id="@+id/recvMsgTimeTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -61,6 +70,8 @@
         app:layout_constraintLeft_toLeftOf="@id/recvMsgLayout" />
 
     <de.hdodenhof.circleimageview.CircleImageView
+        android:visibility="gone"
+        tools:visibility="visible"
         android:id="@+id/recvAvatarImgView"
         android:layout_width="@dimen/size_user_icon_avatar_40dp"
         android:layout_height="0dp"

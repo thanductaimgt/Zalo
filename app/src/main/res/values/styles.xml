@@ -8,23 +8,23 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
-    <style name="AppTheme.NoActionBar" parent="AppTheme.Zalo">
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
-    </style>
-
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
-    <style name="AppTheme.SplashTheme" parent="AppTheme.NoActionBar">
+    <style name="AppTheme.SplashTheme" parent="AppTheme.NoActionBarLight">
         <item name="android:windowBackground">@drawable/splash_screen</item>
     </style>
 
-    <style name="AppTheme.Zalo" parent="Theme.MaterialComponents.Light">
+    <style name="AppTheme.NoActionBarLight" parent="AppTheme.Light">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="AppTheme.Light" parent="Theme.MaterialComponents.Light">
         <!--<item name="android:windowBackground">@color/colorBackground</item>-->
         <!-- Buttons -->
-        <item name="materialButtonStyle">@style/ZaloButton</item>
+        <item name="materialButtonStyle">@style/RoundedCornersButton</item>
         <item name="materialButtonOutlinedStyle">
             @style/Widget.MaterialComponents.Button.OutlinedButton
         </item>
@@ -37,13 +37,14 @@
         <!--<item name="colorAccent">?attr/colorSecondary</item>-->
 
         <item name="android:colorBackground">@color/colorBackground</item>
+
         <!--<item name="colorError">@color/design_default_color_error</item>-->
 
         <!--<item name="actionBarSize">@dimen/mtrl_toolbar_default_height</item>-->
         <!--<item name="minTouchTargetSize">@dimen/mtrl_min_touch_target_size</item>-->
     </style>
 
-    <style name="ZaloButton" parent="Widget.MaterialComponents.Button">
+    <style name="RoundedCornersButton" parent="Widget.MaterialComponents.Button">
         <item name="cornerRadius">20dp</item>
         <item name="android:paddingTop">12dp</item>
         <item name="android:paddingBottom">12dp</item>

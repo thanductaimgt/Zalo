@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical">
@@ -10,12 +9,14 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <LinearLayout
+            android:focusable="true"
+            android:clickable="true"
             android:id="@+id/itemRoomRootLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@android:color/white"
-            android:orientation="vertical"
+            android:background="?android:attr/selectableItemBackground"
+            android:orientation="horizontal"
             android:paddingLeft="@dimen/size_medium_16dp"
             android:paddingTop="@dimen/size_small_8dp"
             android:paddingRight="@dimen/size_medium_16dp"
@@ -24,34 +25,29 @@
             <ImageView
                 android:id="@+id/avatarImgView"
                 android:layout_width="@dimen/size_room_item_avatar_48dp"
-                android:layout_height="0dp"
-                android:background="@android:drawable/screen_background_light_transparent"
+                android:layout_height="@dimen/size_room_item_avatar_48dp"
                 android:contentDescription="@string/description_avatar"
-                android:src="@drawable/official_account"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintDimensionRatio="h,1:1"
-                app:layout_constraintHorizontal_chainStyle="spread_inside"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                android:src="@drawable/official_account" />
 
             <TextView
                 android:id="@+id/nameTextView"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
                 android:layout_marginLeft="@dimen/size_medium_16dp"
                 android:layout_marginRight="@dimen/size_medium_16dp"
-                android:text="@string/description_find_more_official_accounts"
-                app:layout_constraintBottom_toBottomOf="@id/avatarImgView"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@id/avatarImgView"
-                app:layout_constraintTop_toTopOf="@id/avatarImgView" />
+                android:text="@string/description_find_more_official_accounts" />
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/size_small_8dp"
+            android:background="@color/colorDividerBg" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginTop="@dimen/size_small_8dp"
             android:background="@android:color/white"
             android:orientation="vertical"
             android:paddingTop="@dimen/size_small_8dp">

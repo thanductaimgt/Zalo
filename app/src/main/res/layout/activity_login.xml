@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".zalo.views.activities.LoginActivity">
+    tools:context=".views.activities.LoginActivity">
 
     <TextView
         android:id="@+id/loginDescTextView"
@@ -19,6 +19,9 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <com.google.android.material.textfield.TextInputLayout
+        android:layout_marginStart="@dimen/size_medium_16dp"
+        android:layout_marginEnd="@dimen/size_medium_16dp"
+        app:boxBackgroundColor="@null"
         android:id="@+id/phoneTextInputLayout"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -40,7 +43,7 @@
     </com.google.android.material.textfield.TextInputLayout>
 
     <ImageView
-        android:id="@+id/clearTextImgButton"
+        android:id="@+id/clearTextImgView"
         android:layout_width="@dimen/size_huge_48dp"
         android:layout_height="0dp"
         android:clickable="true"
@@ -50,9 +53,12 @@
         android:src="@drawable/clear"
         app:layout_constraintBottom_toBottomOf="@id/phoneTextInputLayout"
         app:layout_constraintDimensionRatio="h,1:1"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="@id/phoneTextInputLayout" />
 
     <com.google.android.material.textfield.TextInputLayout
+        android:layout_marginStart="@dimen/size_medium_16dp"
+        android:layout_marginEnd="@dimen/size_medium_16dp"
+        app:boxBackgroundColor="@null"
         android:id="@+id/passTextInputLayout"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -73,10 +79,10 @@
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.airbnb.lottie.LottieAnimationView
-        android:id="@+id/loadingAnimView"
+        android:id="@+id/animView"
         android:layout_width="@dimen/size_large_avatar_64dp"
         android:layout_height="@dimen/size_large_avatar_64dp"
-        android:visibility="invisible"
+        android:visibility="gone"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/passTextInputLayout"
@@ -86,6 +92,7 @@
         app:lottie_renderMode="software" />
 
     <Button
+        android:enabled="false"
         android:id="@+id/loginButton"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -95,7 +102,7 @@
         android:text="@string/label_log_in"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/loadingAnimView"
+        app:layout_constraintTop_toBottomOf="@id/animView"
         app:layout_goneMarginTop="@dimen/size_small_8dp" />
 
     <TextView
@@ -110,6 +117,7 @@
         app:layout_constraintTop_toBottomOf="@id/loginButton" />
 
     <Button
+        android:enabled="false"
         android:id="@+id/swapButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

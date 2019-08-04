@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".zalo.views.activities.IntroActivity">
+    tools:context=".views.activities.IntroActivity"
+    android:background="@drawable/intro_bg">
 
     <ImageView
         android:id="@+id/viewPager"
@@ -36,31 +37,45 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/size_large_24dp"
         android:text="@string/label_register"
-        app:layout_constraintBottom_toTopOf="@id/vnButton"
+        app:layout_constraintBottom_toTopOf="@id/vnTextView"
         app:layout_constraintLeft_toLeftOf="@id/loginButton"
         app:layout_constraintRight_toRightOf="@id/loginButton" />
 
     <TextView
-        android:id="@+id/vnButton"
+        android:paddingStart="@dimen/size_large_24dp"
+        android:paddingEnd="@dimen/size_large_24dp"
+        android:paddingTop="@dimen/size_small_8dp"
+        android:paddingBottom="@dimen/size_small_8dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:background="?android:attr/selectableItemBackground"
+        android:id="@+id/vnTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/size_medium_16dp"
+        android:layout_marginBottom="@dimen/size_small_8dp"
         android:text="@string/label_vietnamese"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toLeftOf="@id/engButton" />
+        app:layout_constraintRight_toLeftOf="@id/engTextView" />
 
     <TextView
-        android:id="@+id/engButton"
+        android:paddingStart="@dimen/size_large_24dp"
+        android:paddingEnd="@dimen/size_large_24dp"
+        android:paddingTop="@dimen/size_small_8dp"
+        android:paddingBottom="@dimen/size_small_8dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:background="?android:attr/selectableItemBackground"
+        android:id="@+id/engTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/label_english"
-        app:layout_constraintBottom_toBottomOf="@id/vnButton"
+        app:layout_constraintBottom_toBottomOf="@id/vnTextView"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintLeft_toRightOf="@id/vnButton"
+        app:layout_constraintLeft_toRightOf="@id/vnTextView"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="@id/vnButton" />
+        app:layout_constraintTop_toTopOf="@id/vnTextView" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

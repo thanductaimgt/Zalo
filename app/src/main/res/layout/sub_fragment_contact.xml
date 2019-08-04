@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/colorDividerBg"
     android:orientation="vertical">
 
     <LinearLayout
@@ -10,13 +11,6 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:paddingBottom="@dimen/size_small_8dp">
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerViewSuggestFriends"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@android:color/white" />
-
 
         <LinearLayout
             android:id="@+id/closeFriendsLayout"
@@ -44,6 +38,17 @@
         </LinearLayout>
 
 
+        <TextView
+            android:id="@+id/updateContactDescTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/size_medium_16dp"
+            android:layout_marginTop="@dimen/size_medium_16dp"
+            android:layout_marginRight="@dimen/size_medium_16dp"
+            android:text="@string/description_update_contact"
+            android:textAlignment="center" />
+
+
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/newlyUpdatedFriendsLayout"
             android:layout_width="match_parent"
@@ -53,19 +58,9 @@
             android:paddingTop="@dimen/size_small_8dp"
             android:paddingBottom="@dimen/size_small_8dp">
 
-            <TextView
-                android:id="@+id/statusDescTextView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/size_medium_16dp"
-                android:text="@string/label_newly_updated_friends"
-                android:textStyle="bold"
-                app:layout_constraintBottom_toBottomOf="@id/switch1"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintTop_toTopOf="@id/switch1" />
-
-            <Switch
-                android:id="@+id/switch1"
+            <com.google.android.material.switchmaterial.SwitchMaterial
+                app:useMaterialThemeColors="false"
+                android:id="@+id/updateContactsSwitch"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="@dimen/size_medium_16dp"
@@ -73,18 +68,40 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
-                android:id="@+id/statusTextView"
+                android:id="@+id/statusDescTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/size_medium_16dp"
+                android:text="@string/label_newly_updated_friends"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="@id/updateContactsSwitch"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toTopOf="@id/updateContactsSwitch" />
+
+            <androidx.cardview.widget.CardView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/size_medium_16dp"
                 android:layout_marginTop="@dimen/size_medium_16dp"
+
                 android:layout_marginRight="@dimen/size_medium_16dp"
-                android:background="@color/colorBackground"
-                android:padding="@dimen/size_small_8dp"
-                android:text="@string/description_update_status"
+                app:cardBackgroundColor="@color/colorLine"
+                app:cardCornerRadius="@dimen/size_small_8dp"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/statusDescTextView" />
+                app:layout_constraintTop_toBottomOf="@id/statusDescTextView">
+
+                <TextView
+                    android:id="@+id/statusTextView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:maxLines="2"
+                    android:padding="@dimen/size_small_8dp"
+                    android:scrollHorizontally="true"
+                    android:text="@string/description_update_status" />
+            </androidx.cardview.widget.CardView>
+
         </androidx.constraintlayout.widget.ConstraintLayout>
 
 
@@ -127,16 +144,11 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
 
-        <TextView
-            android:id="@+id/updateContactDescTextView"
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerViewSuggestFriends"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/size_medium_16dp"
-            android:layout_marginTop="@dimen/size_medium_16dp"
-            android:layout_marginRight="@dimen/size_medium_16dp"
-            android:text="@string/description_update_contact"
-            android:textAlignment="center" />
-
+            android:background="@android:color/white" />
 
         <Button
             android:id="@+id/updateContactButton"
@@ -144,5 +156,6 @@
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/size_medium_16dp"
             android:text="@string/label_update_contact" />
+
     </LinearLayout>
 </ScrollView>

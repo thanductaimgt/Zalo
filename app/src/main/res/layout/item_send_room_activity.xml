@@ -2,9 +2,12 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <TextView
+        android:visibility="gone"
+        tools:visibility="visible"
         android:id="@+id/sendMsgDateTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -30,13 +33,19 @@
         app:layout_constraintStart_toStartOf="@id/guideline">
 
         <TextView
+            android:visibility="gone"
+            tools:visibility="visible"
+            android:textColor="@android:color/white"
             android:id="@+id/sendMsgTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/send_message_bg"
-            android:text="@string/placeholder_text" />
+            android:text="@string/placeholder_text"
+            android:layout_marginBottom="1dp"/>
 
         <com.airbnb.lottie.LottieAnimationView
+            android:visibility="gone"
+            tools:visibility="visible"
             android:id="@+id/sendMsgAnimView"
             android:layout_width="@dimen/size_sticker_150dp"
             android:layout_height="@dimen/size_sticker_150dp"
@@ -46,6 +55,8 @@
             app:lottie_renderMode="software" />
 
         <TextView
+            android:visibility="gone"
+            tools:visibility="visible"
             android:id="@+id/sendMsgTimeTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

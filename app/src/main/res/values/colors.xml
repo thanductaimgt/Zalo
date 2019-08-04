@@ -3,7 +3,11 @@
     <color name="colorPrimary">#3489eb</color>
     <color name="colorPrimaryDark">#00574B</color>
     <color name="colorAccent">#D81B60</color>
-    <color name="colorSendMessageBg">#00BFFF</color>
-    <color name="colorBackground">#f2f4f7</color>
-    <color name="colorTextGrey">#848991</color>
+    <color name="colorSendMessageBg">#526aff</color>
+    <color name="colorRecvMessageBg">#ffffff</color>
+    <color name="colorBackground">#ffffff</color>
+    <color name="colorTextGray">#848991</color>
+    <color name="colorDividerBg">#f0f1f7</color>
+    <color name="colorViewPressed">#e8e8e8</color>
+    <color name="colorLine">#f0f1f7</color>
 </resources>

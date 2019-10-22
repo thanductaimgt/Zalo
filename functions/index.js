@@ -7,41 +7,26 @@ const functions = require('firebase-functions');
 //  response.send("Hello from Firebase!");
 // });
 
-exports.updateRoomLastMessage = functions.firestore
-    .document('rooms/{roomId}/messages/{messageId}')
-    .onCreate(async (snap, context) => {
-      var newMessage = snap.data();
+// Listens for new messages added to /messages/:pushId/original and creates an
+// uppercase version of the message to /messages/:pushId/uppercase
+exports.broadCastRoomOnlineStatus = functions.firestore.document('users/{userId}')
+    .onUpdate((snapshot, context) => {
+      // Grab the current value of what was written to the Realtime Database.
+      const message = snapshot.data();
+    //   console.log('Uppercasing', context.params.pushId, original);
+      message.content = message.content.toUpperCase();
+      // You must return a Promise when performing asynchronous tasks inside a Functions such as
+      // writing to the Firebase Realtime Database.
+      // Setting an "uppercase" sibling in the Realtime Database returns a Promise.
+      return snapshot.ref.set(message);
 
-      // Get value of the newly added rating
-      var ratingVal = change.after.data();
+      const newValue = change.after.data();
+      const previousValue = change.before.data();
 
-      // Get a reference to the restaurant
-      var restRef = db.collection('restaurants').doc(context.params.restId);
+      if(newValue.isOnline != oldValue.isOnline){
+          
+      }
 
-      // Update aggregations in a transaction
-      return db.runTransaction(transaction => {
-        return transaction.get(restRef).then(restDoc => {
-          // Compute new number of ratings
-          var newNumRatings = restDoc.data('numRatings') + 1;
-
-          // Compute new average rating
-          var oldRatingTotal = restDoc.data('avgRating') * restDoc.data('numRatings');
-          var newAvgRating = (oldRatingTotal + ratingVal) / newNumRatings;
-
-          // Update restaurant info
-          return transaction.update(restRef, {
-            avgRating: newAvgRating,
-            numRatings: newNumRatings
-          });
-        });
-      });
+      // access a particular field as you would any JS property
+      const name = newValue.name;
     });
-
-    exports.sendNotifications = functions.firestore.document('Notifications/{notifId}')
-        .onCreate(async (snap, context) => {
-
-          const newValue = snap.data();
-
-          // perform desired operations ...
-          // You may not need the notifId value but you have to keep the wildcard in the document path
-        });

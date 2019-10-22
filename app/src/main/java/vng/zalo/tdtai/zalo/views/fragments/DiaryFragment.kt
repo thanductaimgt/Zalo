@@ -1,5 +1,7 @@
 package vng.zalo.tdtai.zalo.views.fragments
 
+import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -10,8 +12,11 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import kotlinx.android.synthetic.main.fragment_diary.*
 import vng.zalo.tdtai.zalo.R
+import vng.zalo.tdtai.zalo.models.UserInfo
 import vng.zalo.tdtai.zalo.networks.Database
 import vng.zalo.tdtai.zalo.networks.Storage
+import vng.zalo.tdtai.zalo.services.NotificationService
+import vng.zalo.tdtai.zalo.utils.Constants
 import vng.zalo.tdtai.zalo.views.activities.LoginActivity
 
 class DiaryFragment : Fragment(), View.OnClickListener {
@@ -29,7 +34,18 @@ class DiaryFragment : Fragment(), View.OnClickListener {
     override fun onClick(v: View) {
         when (v.id) {
             R.id.logoutButton -> {
-                startActivity(Intent(context, LoginActivity::class.java))
+                val editor = context!!.getSharedPreferences(Constants.SHARE_PREFERENCES_NAME, Context.MODE_PRIVATE).edit()
+                editor.putBoolean(UserInfo.FIELD_IS_LOGIN, false)
+                editor.apply()
+
+                startActivity(Intent(context, LoginActivity::class.java).apply {
+                    addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
+                })
+
+                setStatusToOffline()
+
+                context!!.stopService(Intent(context, NotificationService::class.java))
+                (context!! as Activity).finish()
             }
             R.id.addStickerSet -> {
                 val name = editText.text.toString()
@@ -44,5 +60,9 @@ class DiaryFragment : Fragment(), View.OnClickListener {
                 }
             }
         }
+    }
+
+    private fun setStatusToOffline(){
+        Database.setCurrentUserOnlineState(false)
     }
 }

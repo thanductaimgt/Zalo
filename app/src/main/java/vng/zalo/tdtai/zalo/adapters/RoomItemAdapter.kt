@@ -37,21 +37,14 @@ class RoomItemAdapter(private val fragment: Fragment, diffCallback: DiffUtil.Ite
                 val roomItem = currentList[position]
                 when (it) {
                     RoomItem.PAYLOAD_NEW_MESSAGE -> holder.bindLastMessage(roomItem)
+                    RoomItem.PAYLOAD_SEEN_MESSAGE -> holder.bindSeenStatus(roomItem)
+                    RoomItem.PAYLOAD_ONLINE_STATUS -> holder.bindOnlineStatus(roomItem)
                 }
             }
         } else {
             onBindViewHolder(holder, position)
         }
     }
-//
-//    override fun onViewRecycled(holder: RoomItemViewHolder) {
-//        holder.itemView.apply {
-//            descTextView.text = ""
-//            recvMsgTimeTextView.text = ""
-//            avatarImgView.setImageDrawable(null)
-//            iconTextView.visibility = View.GONE
-//        }
-//    }
 
     inner class RoomItemViewHolder(itemView: View) : BindableViewHolder(itemView) {
         override fun bind(position: Int) {
@@ -64,17 +57,29 @@ class RoomItemAdapter(private val fragment: Fragment, diffCallback: DiffUtil.Ite
 
                 Picasso.get()
                         .load(roomItem.avatarUrl)
-                        .error(if (roomItem.roomType == Constants.ROOM_TYPE_PEER) R.drawable.default_peer_avatar else R.drawable.default_group_avatar)
+                        .error(if (roomItem.roomType == RoomItem.TYPE_PEER) R.drawable.default_peer_avatar else R.drawable.default_group_avatar)
                         .fit()
                         .into(avatarImgView)
 
                 bindLastMessage(roomItem)
+                bindSeenStatus(roomItem)
+                bindOnlineStatus(roomItem)
+            }
+        }
+
+        fun bindOnlineStatus(roomItem: RoomItem){
+            itemView.apply {
+//                if(roomItem.isOnline){
+                    onlineStatusImgView.visibility = View.VISIBLE
+//                }else{
+//                    onlineStatusImgView.visibility = View.GONE
+//                }
             }
         }
 
         fun bindLastMessage(roomItem: RoomItem) {
             itemView.apply {
-                recvMsgTimeTextView.text = if (roomItem.lastMsgTime != null) Utils.getTimeDiffFormat(context, roomItem.lastMsgTime!!.toDate()) else ""
+                timeTextView.text = if (roomItem.lastMsgTime != null) Utils.getTimeDiffFormat(context, roomItem.lastMsgTime!!.toDate()) else ""
 
                 descTextView.text = if (roomItem.lastSenderPhone != null) {
                     val senderName =
@@ -85,7 +90,11 @@ class RoomItemAdapter(private val fragment: Fragment, diffCallback: DiffUtil.Ite
 
                     String.format("%s: %s", senderName, roomItem.lastMsg)
                 } else ""
+            }
+        }
 
+        fun bindSeenStatus(roomItem: RoomItem){
+            itemView.apply {
                 if (roomItem.unseenMsgNum > 0) {
                     // if unseenMsgNum > N -> display: [N+]
                     iconTextView.text =
@@ -106,11 +115,11 @@ class RoomItemAdapter(private val fragment: Fragment, diffCallback: DiffUtil.Ite
                 if (isSeen) {
                     iconTextView.visibility = View.GONE
                     descTextView.setTypeface(null, Typeface.NORMAL)
-                    recvMsgTimeTextView.setTypeface(null, Typeface.NORMAL)
+                    timeTextView.setTypeface(null, Typeface.NORMAL)
                 } else {
                     iconTextView.visibility = View.VISIBLE
                     descTextView.setTypeface(null, Typeface.BOLD)
-                    recvMsgTimeTextView.setTypeface(null, Typeface.BOLD)
+                    timeTextView.setTypeface(null, Typeface.BOLD)
                 }
             }
         }

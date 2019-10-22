@@ -1,69 +1,70 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:tools="http://schemas.android.com/tools">
+    tools:background="@drawable/chat_default_bg">
 
     <TextView
-        android:visibility="gone"
-        tools:visibility="visible"
-        android:id="@+id/sendMsgDateTextView"
+        android:id="@+id/dateTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/size_small_8dp"
         android:layout_marginBottom="@dimen/size_small_8dp"
         android:background="@drawable/chat_date_bg"
-        android:text="@string/placeholder_text"
         android:textColor="@android:color/white"
-        app:layout_constraintBottom_toTopOf="@id/sendMsgLayout"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@id/contentTextView"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="01/01/2019"
+        tools:visibility="visible" />
 
-    <LinearLayout
-        android:id="@+id/sendMsgLayout"
-        android:layout_width="0dp"
+    <TextView
+        app:layout_constraintHorizontal_bias="1"
+        android:id="@+id/contentTextView"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="@dimen/size_small_8dp"
-        android:gravity="end"
-        android:orientation="vertical"
+        android:layout_marginEnd="@dimen/size_margin_send_msg_item"
+        android:layout_marginBottom="1dp"
+        android:background="@drawable/send_message_bg"
+        android:textColor="@android:color/white"
+        android:visibility="gone"
+        app:layout_constrainedWidth="true"
+        app:layout_constraintBottom_toTopOf="@id/stickerAnimView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/guideline"
+        tools:text="this is a very long messagessssssssssssssssssssssssssssssssssssssssss"
+        tools:visibility="visible" />
+
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/stickerAnimView"
+        android:layout_width="@dimen/size_sticker_150dp"
+        android:layout_height="@dimen/size_sticker_150dp"
+        android:layout_marginEnd="@dimen/size_margin_send_msg_item"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@id/timeTextView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:lottie_autoPlay="false"
+        app:lottie_enableMergePathsForKitKatAndAbove="true"
+        app:lottie_loop="true"
+        app:lottie_renderMode="software"
+        tools:visibility="visible" />
+
+    <TextView
+        android:id="@+id/timeTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/size_margin_send_msg_item"
+        android:layout_marginBottom="@dimen/size_small_8dp"
+        android:textSize="@dimen/size_small_text_10sp"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@id/guideline">
-
-        <TextView
-            android:visibility="gone"
-            tools:visibility="visible"
-            android:textColor="@android:color/white"
-            android:id="@+id/sendMsgTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/send_message_bg"
-            android:text="@string/placeholder_text"
-            android:layout_marginBottom="1dp"/>
-
-        <com.airbnb.lottie.LottieAnimationView
-            android:visibility="gone"
-            tools:visibility="visible"
-            android:id="@+id/sendMsgAnimView"
-            android:layout_width="@dimen/size_sticker_150dp"
-            android:layout_height="@dimen/size_sticker_150dp"
-            app:lottie_autoPlay="false"
-            app:lottie_enableMergePathsForKitKatAndAbove="true"
-            app:lottie_loop="true"
-            app:lottie_renderMode="software" />
-
-        <TextView
-            android:visibility="gone"
-            tools:visibility="visible"
-            android:id="@+id/sendMsgTimeTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/size_small_8dp"
-            android:text="@string/placeholder_text"
-            android:textSize="@dimen/size_small_text_10sp" />
-    </LinearLayout>
+        tools:text="09:00:00 AM"
+        tools:visibility="visible" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline"

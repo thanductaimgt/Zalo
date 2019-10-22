@@ -1,9 +1,6 @@
 package vng.zalo.tdtai.zalo.utils
 
 object Constants {
-    const val VIEW_TYPE_SEND = 0
-    const val VIEW_TYPE_RECEIVE = 1
-
     const val MAX_UNSEEN_MSG_NUM = 50
 
     const val SEVEN_DAYS_IN_MILLISECOND = 7 * 24 * 3600 * 1000
@@ -24,15 +21,6 @@ object Constants {
     const val COLLECTION_STICKER_SETS = "sticker_sets"
     const val COLLECTION_STICKERS = "stickers"
 
-    const val MESSAGE_TYPE_TEXT = 0
-    const val MESSAGE_TYPE_IMAGE = 1
-    const val MESSAGE_TYPE_STICKER = 2
-    const val MESSAGE_TYPE_FILE = 3
-    const val MESSAGE_TYPE_VOICE = 4
-
-    const val ROOM_TYPE_PEER = 0
-    const val ROOM_TYPE_GROUP = 1
-
     const val PICK_IMAGE = 0
     const val TAKE_PICTURE = 1
 
@@ -47,4 +35,12 @@ object Constants {
     const val PROVIDER_AUTHORITY = "fileprovider"
 
     const val FILE_PREFIX = "ZaloFile_"
+
+    const val CHAT_NOTIFY_CHANNEL_ID = "0"
+    const val CHAT_NOTIFY_CHANNEL_NAME = "Chat Notification Channel"
+
+    const val SHOW_KEYBOARD = "SHOW_KEYBOARD"
+
+    const val NOTIFICATION_PENDING_INTENT = 0
+    const val NOTIFICATION_REPLY_PENDING_INTENT = 1
 }

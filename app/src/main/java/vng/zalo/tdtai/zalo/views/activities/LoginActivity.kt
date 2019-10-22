@@ -72,6 +72,7 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
             if (isLoginSuccess) {
                 ZaloApplication.currentUser = userInfo
                 addUserInfoToSharePreferences(userInfo!!)
+                setStatusToOnline()
                 LottieCompositionFactory.fromRawRes(this, R.raw.success).addListener {
                     animView.apply {
                         repeatCount = 0
@@ -105,19 +106,23 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
     private fun addUserInfoToSharePreferences(userInfo: UserInfo) {
         val editor = getSharedPreferences(Constants.SHARE_PREFERENCES_NAME, Context.MODE_PRIVATE).edit()
 
-        editor.putString("phone", userInfo.phone)
-        editor.putString("avatarUrl", userInfo.avatarUrl)
+        editor.putString(UserInfo.FIELD_PHONE, userInfo.phone)
+        editor.putString(UserInfo.FIELD_AVATAR_URL, userInfo.avatarUrl)
 
-        editor.putLong("birthDateSecs", userInfo.birthDate!!.seconds)
-        editor.putInt("birthDateNanoSecs", userInfo.birthDate!!.nanoseconds)
+        editor.putLong(UserInfo.FIELD_BIRTH_DATE_SECS, userInfo.birthDate!!.seconds)
+        editor.putInt(UserInfo.FIELD_BIRTH_DATE_NANO_SECS, userInfo.birthDate!!.nanoseconds)
 
-        editor.putBoolean("isMale", userInfo.isMale!!)
+        editor.putBoolean(UserInfo.FIELD_IS_MALE, userInfo.isMale!!)
 
-        editor.putLong("joinDateSecs", userInfo.joinDate!!.seconds)
-        editor.putInt("joinDateNanoSecs", userInfo.joinDate!!.nanoseconds)
+        editor.putLong(UserInfo.FIELD_JOIN_DATE_SECS, userInfo.joinDate!!.seconds)
+        editor.putInt(UserInfo.FIELD_JOIN_DATE_NANO_SECS, userInfo.joinDate!!.nanoseconds)
 
-        editor.putBoolean("isLogin", true)
+        editor.putBoolean(UserInfo.FIELD_IS_LOGIN, true)
 
         editor.apply()
+    }
+
+    private fun setStatusToOnline(){
+        Database.setCurrentUserOnlineState(true)
     }
 }

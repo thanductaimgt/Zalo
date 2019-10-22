@@ -15,6 +15,7 @@ import kotlinx.android.synthetic.main.fragment_group.*
 import vng.zalo.tdtai.zalo.R
 import vng.zalo.tdtai.zalo.adapters.RoomItemAdapter
 import vng.zalo.tdtai.zalo.factories.ViewModelFactory
+import vng.zalo.tdtai.zalo.models.RoomItem
 import vng.zalo.tdtai.zalo.utils.Constants
 import vng.zalo.tdtai.zalo.utils.Constants.ROOM_AVATAR
 import vng.zalo.tdtai.zalo.utils.Constants.ROOM_ID
@@ -42,7 +43,7 @@ class GroupFragment : Fragment(), AdapterView.OnItemSelectedListener, View.OnCli
 
         viewModel = ViewModelProvider(activity!!, ViewModelFactory.getInstance()).get(UserRoomItemsViewModel::class.java)
         viewModel.liveRoomItems.observe(viewLifecycleOwner, Observer { roomItems ->
-            adapter.submitList(roomItems.filter { it.roomType == Constants.ROOM_TYPE_GROUP })
+            adapter.submitList(roomItems.filter { it.roomType == RoomItem.TYPE_GROUP })
         })
     }
 

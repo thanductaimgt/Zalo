@@ -13,17 +13,11 @@ class MessageDiffCallback: DiffUtil.ItemCallback<Message>() {
         return oldItem == newItem
     }
 
-//    override fun getChangePayload(oldItem: Message, newItem: Message): Any? {
-//        val res = ArrayList<Int>()
-//        if (oldItem.state != newItem.state) {
-//            res.add(DownloadTask.PAYLOAD_STATE)
-//        }
-//        if (oldItem.downloadedBytes != newItem.downloadedBytes) {
-//            res.add(DownloadTask.PAYLOAD_PROCESS)
-//        }
-////        if (oldItem.totalBytes != newItem.totalBytes) {
-////            res.add(DownloadTask.PAYLOAD_SIZE)
-////        }
-//        return res
-//    }
+    override fun getChangePayload(oldItem: Message, newItem: Message): Any? {
+        val res = ArrayList<Int>()
+        if (oldItem.senderAvatarUrl != newItem.senderAvatarUrl) {
+            res.add(Message.PAYLOAD_AVATAR)
+        }
+        return res
+    }
 }

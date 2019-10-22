@@ -15,8 +15,8 @@ class AllContactsSubFragmentViewModel : ViewModel() {
     init {
         Database.getUserRooms(
                 userPhone = ZaloApplication.currentUser!!.phone!!,
-                roomType = Constants.ROOM_TYPE_PEER,
-                fieldToOrder = "name"
+                roomType = RoomItem.TYPE_PEER,
+                fieldToOrder = RoomItem.FIELD_NAME
         ) { liveRoomItems.value = it }
     }
 }

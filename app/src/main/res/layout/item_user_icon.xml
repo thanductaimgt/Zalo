@@ -8,7 +8,7 @@
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/avatarImgView"
-        android:layout_width="@dimen/size_user_icon_avatar_40dp"
+        android:layout_width="@dimen/size_chat_avatar"
         android:layout_height="0dp"
         app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintLeft_toLeftOf="parent"

@@ -15,7 +15,7 @@
         tools:src="@drawable/official_account"
         android:layout_marginBottom="@dimen/size_medium_16dp"
         android:id="@+id/avatarImgView"
-        android:layout_width="@dimen/size_enormous_56dp"
+        android:layout_width="@dimen/size_margin_recv_msg_item"
         android:layout_height="0dp"
         android:contentDescription="@string/description_avatar"
         app:layout_constraintDimensionRatio="h,1:1"
@@ -24,7 +24,21 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toTopOf="@id/divider"/>
 
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/onlineStatusImgView"
+        tools:visibility="visible"
+        android:visibility="gone"
+        app:civ_border_color="@android:color/white"
+        app:civ_border_width="2dp"
+        app:layout_constraintEnd_toEndOf="@id/avatarImgView"
+        app:layout_constraintBottom_toBottomOf="@id/avatarImgView"
+        android:layout_width="15dp"
+        android:layout_height="0dp"
+        app:layout_constraintDimensionRatio="1:1"
+        android:src="@color/colorOnline"/>
+
     <TextView
+        android:layout_marginStart="16dp"
         tools:text="a very long name abcxyz0123456789abcdefghyjklmnop"
         android:maxLines="1"
         android:ellipsize="end"
@@ -34,13 +48,13 @@
         android:id="@+id/nameTextView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/size_medium_16dp"
-        android:layout_marginRight="@dimen/size_medium_16dp"
-        app:layout_constraintEnd_toStartOf="@id/recvMsgTimeTextView"
+        android:layout_marginEnd="8dp"
+        app:layout_constraintEnd_toStartOf="@id/timeTextView"
         app:layout_constraintStart_toEndOf="@id/avatarImgView"
         app:layout_constraintTop_toTopOf="@id/avatarImgView" />
 
     <TextView
+        android:layout_marginEnd="8dp"
         tools:text="a very long name abcxyz0123456789abcdefghyjklmnop"
         android:scrollHorizontally="true"
         android:ellipsize="end"
@@ -56,22 +70,23 @@
 
     <TextView
         tools:text="20/10/2019"
-        android:id="@+id/recvMsgTimeTextView"
+        android:id="@+id/timeTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@id/nameTextView" />
 
     <TextView
+        tools:text="50+"
+        tools:visibility="visible"
         android:id="@+id/iconTextView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="@dimen/size_small_8dp"
         android:background="@android:drawable/ic_notification_overlay"
         android:textAlignment="center"
         android:textColor="@android:color/white"
         android:visibility="gone"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toEndOf="@id/timeTextView"
         app:layout_constraintTop_toTopOf="@id/descTextView" />
 
     <View

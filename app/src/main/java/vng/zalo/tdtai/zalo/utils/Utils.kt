@@ -53,9 +53,10 @@ object Utils {
         }
     }
 
-    fun <TResult> assertTaskSuccess(task: Task<TResult>, tag: String, logMsgPrefix: String? = null, callback: (result: TResult?) -> Unit) {
+    fun <TResult> assertTaskSuccess(task: Task<TResult>, tag: String, logMsgPrefix: String? = null, callback: ((result: TResult?) -> Unit)?=null) {
         if (task.isSuccessful) {
-            callback.invoke(task.result)
+            callback?.invoke(task.result)
+            Log.d(tag, "$logMsgPrefix: ${task::class.java.simpleName} success")
         } else {
             Log.e(tag, "$logMsgPrefix: ${task::class.java.simpleName} fail")
         }
@@ -70,7 +71,7 @@ object Utils {
     }
 
     fun getStickerBucketNameFromName(name: String): String {
-        val bucketName = StringBuilder(name.toLowerCase())
+        val bucketName = StringBuilder(name.toLowerCase(Locale.US))
         return bucketName.replace(Regex(" "), "_")
     }
 
@@ -126,6 +127,10 @@ object Utils {
     fun showKeyboard(context: Context, view: View) {
         val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.showSoftInput(view, InputMethodManager.SHOW_IMPLICIT)
+    }
+
+    fun getProviderAuthority(context: Context):String{
+        return "${context.applicationContext.packageName}.${Constants.PROVIDER_AUTHORITY}"
     }
 }
 

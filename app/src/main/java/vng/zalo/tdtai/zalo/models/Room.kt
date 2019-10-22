@@ -9,7 +9,12 @@ data class Room(var id: String? = null,
                 var memberMap: Map<String, RoomMember>? = null) {
     fun toMap(): Map<String, Any> {
         return HashMap<String, Any>().apply {
-            put("createdTime", createdTime!!)
+            put(FIELD_CREATED_TIME, createdTime!!)
         }
+    }
+
+    companion object{
+        const val FIELD_CREATED_TIME = "createdTime"
+        const val FIELD_TYPING_MEMBERS_PHONE = "typingMembersPhone"
     }
 }

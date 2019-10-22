@@ -15,14 +15,12 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
-import android.os.Environment
 import android.provider.MediaStore
 import android.widget.FrameLayout
 import androidx.core.content.FileProvider
 import androidx.lifecycle.*
 import androidx.lifecycle.Observer
 import com.google.android.material.bottomsheet.BottomSheetBehavior
-import com.google.android.material.tabs.TabLayout
 import com.google.firebase.Timestamp
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_create_group.recyclerView
@@ -37,7 +35,6 @@ import vng.zalo.tdtai.zalo.utils.Constants
 import vng.zalo.tdtai.zalo.utils.Utils
 import vng.zalo.tdtai.zalo.viewmodels.CreateGroupActivityViewModel
 import java.io.File
-import java.io.IOException
 import java.util.*
 import vng.zalo.tdtai.zalo.utils.TAG
 
@@ -45,7 +42,8 @@ class CreateGroupActivity : AppCompatActivity(), View.OnClickListener {
     private lateinit var viewPagerAdapter: CreateGroupActivityViewPagerAdapter
     private lateinit var recyclerViewAdapter: CreateGroupActivityRecyclerViewAdapter
     private lateinit var bottomSheetDialog: BottomSheetDialog
-    private var currentPhotoUri: String? = null
+    private var curImageUriString: String? = null
+    private var prevImageUriString: String? = null
     lateinit var viewModel: CreateGroupActivityViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -92,7 +90,7 @@ class CreateGroupActivity : AppCompatActivity(), View.OnClickListener {
         bottomSheetDialog.setOnShowListener { dialogInterface ->
             val bottomSheetDialog = dialogInterface as BottomSheetDialog
             val bottomSheet = bottomSheetDialog.findViewById<FrameLayout>(R.id.design_bottom_sheet)
-            BottomSheetBehavior.from(bottomSheet).apply{
+            BottomSheetBehavior.from(bottomSheet).apply {
                 skipCollapsed = true
             }
         }
@@ -172,7 +170,7 @@ class CreateGroupActivity : AppCompatActivity(), View.OnClickListener {
 
             val newRoom = Room(
                     name = groupName,
-                    avatarUrl = currentPhotoUri,
+                    avatarUrl = curImageUriString,
                     createdTime = Timestamp.now(),
                     memberMap = HashMap<String, RoomMember>().apply {
                         viewModel.liveRoomItems.value!!.forEach {
@@ -212,82 +210,59 @@ class CreateGroupActivity : AppCompatActivity(), View.OnClickListener {
     private fun dispatchTakePictureIntent() {
         Intent(MediaStore.ACTION_IMAGE_CAPTURE).also { takePictureIntent ->
             // Ensure that there's a camera activity to handle the intent
-            takePictureIntent.resolveActivity(packageManager)?.also {
+            takePictureIntent.resolveActivity(packageManager)?.let {
                 // Create the File where the photo should go
-                val photoFile: File? = try {
-                    createImageFile()
-                } catch (ex: IOException) {
-                    // Error occurred while creating the File
-                    null
-                }
-                // Continue only if the File was successfully created
-                photoFile?.also {
-                    val photoUri: Uri = FileProvider.getUriForFile(
-                            this,
-                            "${applicationContext.packageName}.${Constants.PROVIDER_AUTHORITY}",
-                            it
-                    )
-                    takePictureIntent.apply {
-                        putExtra(MediaStore.EXTRA_OUTPUT, photoUri)
-                        addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-                    }
+                viewModel.createImageFile(this) { file ->
+                    Utils.assertNotNull(file, TAG, "createImageFile") { fileNotnull ->
+                        prevImageUriString = curImageUriString
+                        curImageUriString = fileNotnull.absolutePath
 
-                    packageManager.queryIntentActivities(takePictureIntent, PackageManager.MATCH_DEFAULT_ONLY).apply {
-                        forEach {resolveInfo->
-                            val packageName = resolveInfo.activityInfo.packageName
-                            grantUriPermission(packageName, photoUri, Intent.FLAG_GRANT_WRITE_URI_PERMISSION or Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                        val photoUri: Uri = FileProvider.getUriForFile(
+                                this,
+                                Utils.getProviderAuthority(this),
+                                fileNotnull
+                        )
+                        takePictureIntent.apply {
+                            putExtra(MediaStore.EXTRA_OUTPUT, photoUri)
+                            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
                         }
-                    }
 
-                    startActivityForResult(takePictureIntent, Constants.TAKE_PICTURE)
+                        packageManager.queryIntentActivities(takePictureIntent, PackageManager.MATCH_DEFAULT_ONLY).apply {
+                            forEach { resolveInfo ->
+                                val packageName = resolveInfo.activityInfo.packageName
+                                grantUriPermission(packageName, photoUri, Intent.FLAG_GRANT_WRITE_URI_PERMISSION or Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                            }
+                        }
+
+                        startActivityForResult(takePictureIntent, Constants.TAKE_PICTURE)
+                    }
                 }
             }
         }
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
+    override fun onActivityResult(requestCode: Int, resultCode: Int, intent: Intent?) {
+        super.onActivityResult(requestCode, resultCode, intent)
         if (resultCode == Activity.RESULT_OK) {
-            Utils.assertNotNull(data, TAG, "onActivityResult.data") { dataNotNull ->
+            Utils.assertNotNull(intent, TAG, "onActivityResult.intent") { intentNotNull ->
                 when (requestCode) {
                     Constants.PICK_IMAGE -> {
-                        //TODO("rxjava here")
-                        deleteZaloFileAtUri(currentPhotoUri)
-                        currentPhotoUri = Utils.cloneFileToPictureDir(this, dataNotNull.data!!)
-                        Picasso.get().load(File(currentPhotoUri!!)).fit().into(uploadAvatarImgView)
+                        viewModel.processPickedImage(this, curImageUriString, intentNotNull.data!!) {
+                            prevImageUriString = curImageUriString
+                            curImageUriString = it
+                            Picasso.get().load(File(curImageUriString!!)).fit().into(uploadAvatarImgView)
+                        }
                     }
                     Constants.TAKE_PICTURE -> {
-                        Picasso.get().load(File(currentPhotoUri!!)).fit().into(uploadAvatarImgView)
+                        // delete previous image when taking new one
+                        viewModel.deleteZaloFileAtUri(prevImageUriString)
+                        Picasso.get().load(File(curImageUriString!!)).fit().into(uploadAvatarImgView)
                     }
                 }
                 bottomSheetDialog.dismiss()
             }
         } else {
             Log.d(TAG, "resultCode != Activity.RESULT_OK")
-        }
-    }
-
-    private fun createImageFile(): File {
-        // Create an image file name
-        val storageDir: File? = getExternalFilesDir(Environment.DIRECTORY_PICTURES)
-        storageDir ?: Log.e(TAG, "storageDir is null")
-        return File.createTempFile(
-                "${Constants.FILE_PREFIX}${Date().time}", /* prefix */
-                ".jpg", /* suffix */
-                storageDir /* directory */
-        ).apply {
-            // Save a file: path for use with ACTION_VIEW intents
-            // delete previous image when taking new one
-            deleteZaloFileAtUri(currentPhotoUri)
-            currentPhotoUri = absolutePath
-        }
-    }
-
-    private fun deleteZaloFileAtUri(uriString:String?){
-        uriString?.let {
-            if(Utils.parseFileName(uriString).startsWith(Constants.FILE_PREFIX)){
-                File(uriString).delete()
-            }
         }
     }
 }

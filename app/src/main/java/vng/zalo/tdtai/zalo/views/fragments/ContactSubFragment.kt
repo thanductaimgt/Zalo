@@ -13,6 +13,7 @@ import kotlinx.android.synthetic.main.sub_fragment_contact.*
 import vng.zalo.tdtai.zalo.R
 import vng.zalo.tdtai.zalo.adapters.ContactSubFragmentAdapter
 import vng.zalo.tdtai.zalo.factories.ViewModelFactory
+import vng.zalo.tdtai.zalo.models.RoomItem
 import vng.zalo.tdtai.zalo.utils.Constants
 import vng.zalo.tdtai.zalo.utils.RoomItemDiffCallback
 import vng.zalo.tdtai.zalo.viewmodels.UserRoomItemsViewModel
@@ -32,7 +33,7 @@ class ContactSubFragment : Fragment(), View.OnClickListener {
 
         viewModel = ViewModelProvider(activity!!, ViewModelFactory.getInstance()).get(UserRoomItemsViewModel::class.java)
         viewModel.liveRoomItems.observe(viewLifecycleOwner, Observer { roomItems ->
-            adapter.submitList(roomItems.filter { it.roomType == Constants.ROOM_TYPE_PEER }.sortedBy { it.name })
+            adapter.submitList(roomItems.filter { it.roomType == RoomItem.TYPE_PEER }.sortedBy { it.name })
         })
     }
 

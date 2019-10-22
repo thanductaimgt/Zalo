@@ -7,7 +7,11 @@ data class Sticker(var id: String? = null,
                    var lottieComposition: LottieComposition?=null) {
     fun toMap(): Map<String, Any> {
         return HashMap<String, Any>().apply {
-            put("url", url!!)
+            put(FIELD_URL, url!!)
         }
+    }
+
+    companion object{
+        const val FIELD_URL = "url"
     }
 }

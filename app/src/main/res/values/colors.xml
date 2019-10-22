@@ -10,4 +10,5 @@
     <color name="colorDividerBg">#f0f1f7</color>
     <color name="colorViewPressed">#e8e8e8</color>
     <color name="colorLine">#f0f1f7</color>
+    <color name="colorOnline">#5afc03</color>
 </resources>

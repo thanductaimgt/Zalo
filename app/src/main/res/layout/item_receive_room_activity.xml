@@ -4,87 +4,104 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    tools:background="@drawable/chat_default_bg">
 
     <TextView
-        android:visibility="gone"
-        tools:visibility="visible"
-        android:id="@+id/recvMsgDateTextView"
+        android:id="@+id/dateTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/size_small_8dp"
         android:layout_marginBottom="@dimen/size_small_8dp"
         android:background="@drawable/chat_date_bg"
-        android:text="@string/placeholder_text"
         android:textColor="@android:color/white"
-        app:layout_constraintBottom_toTopOf="@id/recvMsgLayout"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@id/contentTextView"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="01/01/2019"
+        tools:visibility="visible" />
 
-    <LinearLayout
-        android:id="@+id/recvMsgLayout"
-        android:layout_width="0dp"
+    <TextView
+        android:id="@+id/contentTextView"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/size_enormous_56dp"
-        android:orientation="vertical"
-        app:layout_constraintBottom_toTopOf="@id/recvMsgAnimView"
-        app:layout_constraintEnd_toStartOf="@id/guideline5"
+        android:layout_marginStart="@dimen/size_margin_recv_msg_item"
+        android:layout_marginBottom="1dp"
+        android:background="@drawable/recv_message_bg"
+        android:visibility="gone"
+        app:layout_constrainedWidth="true"
+        app:layout_constraintBottom_toTopOf="@id/typingAnimView"
+        app:layout_constraintEnd_toStartOf="@id/guideline"
         app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent">
-
-        <TextView
-            android:visibility="gone"
-            tools:visibility="visible"
-            android:id="@+id/recvMsgTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/recv_message_bg"
-            android:text="@string/placeholder_text"
-            android:layout_marginBottom="1dp"/>
-    </LinearLayout>
+        app:layout_constraintStart_toStartOf="parent"
+        tools:text="This is a ver long messagesssssssssssssssssssssssssssssssssssss"
+        tools:visibility="visible" />
 
     <com.airbnb.lottie.LottieAnimationView
-        android:visibility="gone"
-        tools:visibility="visible"
-        android:id="@+id/recvMsgAnimView"
+        android:id="@+id/stickerAnimView"
         android:layout_width="@dimen/size_sticker_150dp"
         android:layout_height="@dimen/size_sticker_150dp"
-        app:layout_constraintBottom_toTopOf="@id/recvMsgTimeTextView"
-        app:layout_constraintLeft_toLeftOf="@id/recvMsgLayout"
+        android:layout_marginStart="@dimen/size_margin_recv_msg_item"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@id/timeTextView"
+        app:layout_constraintLeft_toLeftOf="parent"
         app:lottie_autoPlay="false"
         app:lottie_enableMergePathsForKitKatAndAbove="true"
         app:lottie_loop="true"
-        app:lottie_renderMode="software" />
+        app:lottie_renderMode="software"
+        tools:visibility="visible" />
+
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/typingAnimView"
+        android:layout_width="wrap_content"
+        android:layout_height="29dp"
+        android:layout_marginStart="@dimen/size_margin_recv_msg_item"
+        android:layout_marginBottom="1dp"
+        android:background="@drawable/recv_message_bg"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@id/stickerAnimView"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:lottie_autoPlay="true"
+        app:lottie_enableMergePathsForKitKatAndAbove="true"
+        app:lottie_loop="true"
+        app:lottie_rawRes="@raw/typing"
+        app:lottie_renderMode="software"
+        tools:visibility="visible" />
 
     <TextView
-        android:visibility="gone"
-        tools:visibility="visible"
-        android:id="@+id/recvMsgTimeTextView"
+        android:id="@+id/timeTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/size_margin_recv_msg_item"
         android:layout_marginBottom="@dimen/size_small_8dp"
-        android:text="@string/placeholder_text"
         android:textSize="@dimen/size_small_text_10sp"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="@id/recvMsgLayout" />
+        app:layout_constraintStart_toStartOf="parent"
+        tools:text="09:00:00 AM"
+        tools:visibility="visible" />
 
     <de.hdodenhof.circleimageview.CircleImageView
-        android:visibility="gone"
-        tools:visibility="visible"
-        android:id="@+id/recvAvatarImgView"
-        android:layout_width="@dimen/size_user_icon_avatar_40dp"
+        app:civ_circle_background_color="@android:color/white"
+        android:id="@+id/avatarImgView"
+        android:layout_width="@dimen/size_chat_avatar"
         android:layout_height="0dp"
         android:layout_marginStart="@dimen/size_small_8dp"
+        android:layout_marginTop="2dp"
         android:contentDescription="@string/description_avatar"
-        app:layout_constraintBottom_toBottomOf="@id/recvMsgAnimView"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@id/stickerAnimView"
         app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintVertical_bias="0.0"
-        tools:srcCompat="@tools:sample/avatars" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1"
+        tools:src="@drawable/default_peer_avatar"
+        tools:visibility="visible" />
 
     <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideline5"
+        android:id="@+id/guideline"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"

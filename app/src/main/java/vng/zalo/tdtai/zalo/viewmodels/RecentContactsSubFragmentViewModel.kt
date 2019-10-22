@@ -16,8 +16,8 @@ class RecentContactsSubFragmentViewModel : ViewModel() {
     init {
         Database.getUserRooms(
                 userPhone = ZaloApplication.currentUser!!.phone!!,
-                roomType = Constants.ROOM_TYPE_PEER,
-                fieldToOrder = "lastMsgTime",
+                roomType = RoomItem.TYPE_PEER,
+                fieldToOrder = RoomItem.FIELD_LAST_MSG_TIME,
                 orderDirection = Query.Direction.DESCENDING
         ) { liveRoomItems.value = it }
     }

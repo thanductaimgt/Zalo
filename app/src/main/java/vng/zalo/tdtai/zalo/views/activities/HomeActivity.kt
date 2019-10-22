@@ -1,5 +1,6 @@
 package vng.zalo.tdtai.zalo.views.activities
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -8,12 +9,15 @@ import androidx.viewpager.widget.ViewPager
 import kotlinx.android.synthetic.main.activity_home.*
 import vng.zalo.tdtai.zalo.R
 import vng.zalo.tdtai.zalo.adapters.HomeAdapter
+import vng.zalo.tdtai.zalo.services.NotificationService
 
 class HomeActivity : AppCompatActivity() {
     private lateinit var prevMenuItem: MenuItem
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
+
+        startService(Intent(this, NotificationService::class.java))
 
         initView()
     }

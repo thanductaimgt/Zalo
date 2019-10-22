@@ -2,10 +2,11 @@ package vng.zalo.tdtai.zalo.views.fragments
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.get
+import androidx.core.view.isNotEmpty
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -16,9 +17,9 @@ import vng.zalo.tdtai.zalo.adapters.RoomItemAdapter
 import vng.zalo.tdtai.zalo.factories.ViewModelFactory
 import vng.zalo.tdtai.zalo.utils.Constants
 import vng.zalo.tdtai.zalo.utils.RoomItemDiffCallback
-import vng.zalo.tdtai.zalo.utils.TAG
 import vng.zalo.tdtai.zalo.viewmodels.UserRoomItemsViewModel
 import vng.zalo.tdtai.zalo.views.activities.RoomActivity
+
 
 class ChatFragment : Fragment(), View.OnClickListener {
     private lateinit var viewModel: UserRoomItemsViewModel
@@ -34,8 +35,16 @@ class ChatFragment : Fragment(), View.OnClickListener {
 
         viewModel = ViewModelProvider(this, ViewModelFactory.getInstance()).get(UserRoomItemsViewModel::class.java)
         viewModel.liveRoomItems.observe(viewLifecycleOwner, Observer { rooms ->
-            adapter.submitList(rooms)
-            Log.d(TAG, "onViewCreated.onChanged livedata")
+            adapter.submitList(rooms){
+                if(recyclerView.isNotEmpty()){
+                    // save index and top position
+                    val layoutManager = (recyclerView.layoutManager as LinearLayoutManager)
+                    val index = layoutManager.findFirstVisibleItemPosition()
+                    val firstView = recyclerView[0]
+                    val top = firstView.top - recyclerView.paddingTop
+                    layoutManager.scrollToPositionWithOffset(index, top)
+                }
+            }
         })
     }
 

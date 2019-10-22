@@ -3,37 +3,38 @@ package vng.zalo.tdtai.zalo.views.activities
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.util.TypedValue
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.NotificationManagerCompat
+import androidx.core.view.forEachIndexed
 import androidx.core.view.get
-import androidx.core.view.size
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.activity_room.*
-import kotlinx.android.synthetic.main.item_receive_room_activity.view.*
-import kotlinx.android.synthetic.main.item_send_room_activity.view.*
 import vng.zalo.tdtai.zalo.R
+import vng.zalo.tdtai.zalo.ZaloApplication
 import vng.zalo.tdtai.zalo.adapters.RoomActivityAdapter
 import vng.zalo.tdtai.zalo.factories.ViewModelFactory
+import vng.zalo.tdtai.zalo.models.Message
 import vng.zalo.tdtai.zalo.models.Sticker
 import vng.zalo.tdtai.zalo.utils.Constants
 import vng.zalo.tdtai.zalo.utils.MessageDiffCallback
-import vng.zalo.tdtai.zalo.utils.TAG
 import vng.zalo.tdtai.zalo.utils.Utils
 import vng.zalo.tdtai.zalo.viewmodels.RoomActivityViewModel
 import vng.zalo.tdtai.zalo.views.fragments.EmojiFragment
+
 
 class RoomActivity : AppCompatActivity(), View.OnClickListener {
     private lateinit var viewModel: RoomActivityViewModel
     private lateinit var adapter: RoomActivityAdapter
     private var emojiFragment: EmojiFragment? = null
+    private var isMessageJustSentByMe = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,19 +42,50 @@ class RoomActivity : AppCompatActivity(), View.OnClickListener {
 
         initView()
 
+        NotificationManagerCompat.from(this).cancel(intent.getStringExtra(Constants.ROOM_ID).hashCode())
+
         viewModel = ViewModelProvider(this, ViewModelFactory.getInstance(intent = intent)).get(RoomActivityViewModel::class.java)
         viewModel.liveMessages.observe(this, Observer { messages ->
-            Log.d(TAG, "are two list diff?: ${messages != adapter.currentList}")
-            adapter.submitList(messages)
+            val typings = viewModel.getTypingMessages(viewModel.liveTypingMembersPhone.value!!)
+            val messagesWithTypings = ArrayList<Message>().apply {
+                addAll(typings)
+                addAll(messages)
+            }
+
+            submitMessages(messagesWithTypings)
+        })
+        viewModel.liveTypingMembersPhone.observe(this, Observer { phones ->
+            val typings = viewModel.getTypingMessages(phones)
+            val messages = viewModel.liveMessages.value!!
+            val messagesWithTypings = ArrayList<Message>().apply {
+                addAll(typings)
+                addAll(messages)
+            }
+
+            submitMessages(messagesWithTypings)
         })
     }
 
+    override fun onResume() {
+        super.onResume()
+        // stop receiving chat notifications of this room when in active state
+        ZaloApplication.currentRoomId = intent.getStringExtra(Constants.ROOM_ID)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        // start receiving chat notifications of this room when in inactive state,
+        ZaloApplication.currentRoomId = null
+        // remove from typing list if inactive
+        viewModel.removeCurUserFromCurRoomTypingMembers()
+    }
+
     private fun initView() {
-        toolbar.title = intent.getStringExtra(Constants.ROOM_NAME)
-        setSupportActionBar(toolbar)
+        setSupportActionBar(toolbar.apply {
+            title = intent.getStringExtra(Constants.ROOM_NAME)
+        })
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-                ?: Log.e(TAG, "actionBar is null")
 
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
             val outValue = TypedValue()
@@ -76,6 +108,9 @@ class RoomActivity : AppCompatActivity(), View.OnClickListener {
                     else -> false
                 }
             }
+            if (intent.getBooleanExtra(Constants.SHOW_KEYBOARD, false)) {
+                requestFocus()
+            }
         }
 
         msgEditText.setOnClickListener(this)
@@ -83,7 +118,7 @@ class RoomActivity : AppCompatActivity(), View.OnClickListener {
         emojiImgView.setOnClickListener(this)
         uploadFileImgView.setOnClickListener(this)
 
-        adapter = RoomActivityAdapter(MessageDiffCallback())
+        adapter = RoomActivityAdapter(this, MessageDiffCallback())
         with(recyclerView) {
             adapter = this@RoomActivity.adapter
             layoutManager = LinearLayoutManager(this@RoomActivity).apply { reverseLayout = true }
@@ -93,9 +128,8 @@ class RoomActivity : AppCompatActivity(), View.OnClickListener {
 
         msgEditText.setOnFocusChangeListener { _, b ->
             if (b) {
-                msgEditText.post {
-                    Utils.showKeyboard(this, msgEditText)
-                }
+                frameLayout.visibility = View.GONE
+                Utils.showKeyboard(this, msgEditText)
             } else {
                 Utils.hideKeyboard(this@RoomActivity, rootView)
             }
@@ -104,10 +138,23 @@ class RoomActivity : AppCompatActivity(), View.OnClickListener {
 //        rootView.viewTreeObserver.addOnGlobalLayoutListener {
 //            val heightDiff = rootView.rootView.height - rootView.height
 //            if (heightDiff > Utils.dpToPx(this@RoomActivity, 200)) { // if more than 200 dp, it's probably a keyboard...
-//                keyboardSize = Utils.pxToDp(this@RoomActivity, heightDiff.toFloat())
-//                Log.d(TAG, "addOnGlobalLayoutListener.keyboardSize: $keyboardSize")
+////                keyboardSize = Utils.pxToDp(this@RoomActivity, heightDiff.toFloat())
+////                Log.d(TAG, "addOnGlobalLayoutListener.keyboardSize: $keyboardSize")
+//                frameLayout.visibility = View.GONE
 //            }
 //        }
+    }
+
+    @Synchronized
+    private fun submitMessages(messages: List<Message>) {
+        val newMessages = if (adapter.currentList === messages) ArrayList<Message>().apply { addAll(messages) } else messages
+        adapter.submitList(newMessages) {
+            val isLastMessageCompletelyVisible = (recyclerView.layoutManager as LinearLayoutManager).findFirstCompletelyVisibleItemPosition() <= 1
+            if (isLastMessageCompletelyVisible || isMessageJustSentByMe) {
+                recyclerView.scrollToPosition(0)
+                isMessageJustSentByMe = false
+            }
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -131,10 +178,7 @@ class RoomActivity : AppCompatActivity(), View.OnClickListener {
             R.id.sendMsgImgView -> sendTextMessage()
             R.id.emojiImgView -> {
                 Utils.hideKeyboard(this@RoomActivity, rootView)
-                addOrRemoveEmojiFragment()
-            }
-            R.id.msgEditText -> {
-                frameLayout.visibility = View.GONE
+                showOrHideEmojiFragment()
             }
             R.id.uploadFileImgView -> {
 //                val sheetView = layoutInflater.inflate(R.layout.navi_bot_activity_create_group, null)
@@ -149,16 +193,17 @@ class RoomActivity : AppCompatActivity(), View.OnClickListener {
 
     private fun sendTextMessage() {
         val content = msgEditText.text.toString()
-        viewModel.addNewMessageToFirestore(content, Constants.MESSAGE_TYPE_TEXT)
+        isMessageJustSentByMe = true
+        viewModel.addNewMessageToFirestore(content, Message.TYPE_TEXT)
 
         msgEditText.setText("")
     }
 
     fun sendStickerMessage(sticker: Sticker) {
-        viewModel.addNewMessageToFirestore(sticker.url!!, Constants.MESSAGE_TYPE_STICKER)
+        viewModel.addNewMessageToFirestore(sticker.url!!, Message.TYPE_STICKER)
     }
 
-    private fun addOrRemoveEmojiFragment() {
+    private fun showOrHideEmojiFragment() {
         if (frameLayout.visibility == View.GONE) {
             if (emojiFragment == null) {
                 emojiFragment = EmojiFragment()
@@ -184,7 +229,6 @@ class RoomActivity : AppCompatActivity(), View.OnClickListener {
 
     internal inner class InputTextListener : TextWatcher {
         override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {
-
         }
 
         override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
@@ -197,11 +241,15 @@ class RoomActivity : AppCompatActivity(), View.OnClickListener {
                 uploadFileImgView.visibility = View.VISIBLE
                 voiceImgView.visibility = View.VISIBLE
                 pictureImgView.visibility = View.VISIBLE
+
+                viewModel.removeCurUserFromCurRoomTypingMembers()
             } else {
                 sendMsgImgView.visibility = View.VISIBLE
                 uploadFileImgView.visibility = View.GONE
                 voiceImgView.visibility = View.GONE
                 pictureImgView.visibility = View.INVISIBLE
+
+                viewModel.addCurUserToCurRoomTypingMembers()
             }
         }
     }
@@ -209,32 +257,29 @@ class RoomActivity : AppCompatActivity(), View.OnClickListener {
     inner class ScrollListener : RecyclerView.OnScrollListener() {
         override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
             when (newState) {
-                RecyclerView.SCROLL_STATE_IDLE -> resumeAllAttachedToWinDowAnim()
-                else -> pauseAllAnim()
+                RecyclerView.SCROLL_STATE_IDLE -> resumeAllVisibleAnim()
+                else -> pauseAllVisibleAnim()
             }
         }
     }
 
-    private fun resumeAllAttachedToWinDowAnim() {
-        for (i in 0 until recyclerView.size) {
-            if (recyclerView[i].sendMsgAnimView?.isAttachedToWindow == true) {
-                recyclerView[i].sendMsgAnimView.resumeAnimation()
-            }
-            if (recyclerView[i].recvMsgAnimView?.isAttachedToWindow == true) {
-                recyclerView[i].recvMsgAnimView.resumeAnimation()
-            }
+    private fun resumeAllVisibleAnim() {
+        recyclerView.forEachIndexed { i, _ ->
+            getMessageViewHolder(i).stickerAnimView.resumeAnimation()
         }
     }
 
-    private fun pauseAllAnim() {
-        for (i in 0 until recyclerView.size) {
-            recyclerView[i].sendMsgAnimView?.pauseAnimation()
-            recyclerView[i].recvMsgAnimView?.pauseAnimation()
+    private fun pauseAllVisibleAnim() {
+        recyclerView.forEachIndexed { i, _ ->
+            getMessageViewHolder(i).stickerAnimView.pauseAnimation()
         }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        viewModel.removeListeners()
+    private fun getMessageViewHolder(position:Int): RoomActivityAdapter.MessageViewHolder{
+        return recyclerView.getChildViewHolder(recyclerView[position]) as RoomActivityAdapter.MessageViewHolder
+    }
+
+    fun isRecyclerViewIdle():Boolean{
+        return recyclerView.scrollState == RecyclerView.SCROLL_STATE_IDLE
     }
 }

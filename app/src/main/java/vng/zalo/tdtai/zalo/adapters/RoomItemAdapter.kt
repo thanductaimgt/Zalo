@@ -12,7 +12,7 @@ import kotlinx.android.synthetic.main.item_room.view.*
 import vng.zalo.tdtai.zalo.R
 import vng.zalo.tdtai.zalo.ZaloApplication
 import vng.zalo.tdtai.zalo.models.RoomItem
-import vng.zalo.tdtai.zalo.utils.BindableViewHolder
+import vng.zalo.tdtai.zalo.abstracts.BindableViewHolder
 import vng.zalo.tdtai.zalo.utils.Constants
 import vng.zalo.tdtai.zalo.utils.Utils
 
@@ -59,6 +59,7 @@ class RoomItemAdapter(private val fragment: Fragment, diffCallback: DiffUtil.Ite
                         .load(roomItem.avatarUrl)
                         .error(if (roomItem.roomType == RoomItem.TYPE_PEER) R.drawable.default_peer_avatar else R.drawable.default_group_avatar)
                         .fit()
+                        .centerInside()
                         .into(avatarImgView)
 
                 bindLastMessage(roomItem)
@@ -83,7 +84,7 @@ class RoomItemAdapter(private val fragment: Fragment, diffCallback: DiffUtil.Ite
 
                 descTextView.text = if (roomItem.lastSenderPhone != null) {
                     val senderName =
-                            if (roomItem.lastSenderPhone == ZaloApplication.currentUser!!.phone)
+                            if (roomItem.lastSenderPhone == ZaloApplication.curUser!!.phone)
                                 context.getString(R.string.label_me)
                             else
                                 roomItem.lastSenderPhone

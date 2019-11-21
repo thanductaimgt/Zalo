@@ -1,6 +1,5 @@
 package vng.zalo.tdtai.zalo.adapters
 
-import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,7 +9,7 @@ import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.item_contact_sub_fragment.view.*
 import vng.zalo.tdtai.zalo.R
 import vng.zalo.tdtai.zalo.models.RoomItem
-import vng.zalo.tdtai.zalo.utils.BindableViewHolder
+import vng.zalo.tdtai.zalo.abstracts.BindableViewHolder
 import vng.zalo.tdtai.zalo.views.fragments.ContactSubFragment
 
 class ContactSubFragmentAdapter(private val contactSubFragment: ContactSubFragment, diffCallback: DiffUtil.ItemCallback<RoomItem>) : ListAdapter<RoomItem, ContactSubFragmentAdapter.ContactViewHolder>(diffCallback) {
@@ -27,7 +26,6 @@ class ContactSubFragmentAdapter(private val contactSubFragment: ContactSubFragme
     inner class ContactViewHolder(itemView: View) : BindableViewHolder(itemView) {
         override fun bind(position: Int) {
             with(itemView) {
-                setOnClickListener(contactSubFragment)
                 val roomItem = getItem(position)
 
                 phoneTextView.text = roomItem.name
@@ -35,14 +33,11 @@ class ContactSubFragmentAdapter(private val contactSubFragment: ContactSubFragme
                 Picasso.get()
                         .load(roomItem.avatarUrl)
                         .fit()
+                        .centerInside()
                         .into(avatarImgView)
 
-                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-                    val outValue = TypedValue()
-                    context!!.theme.resolveAttribute(android.R.attr.selectableItemBackgroundBorderless, outValue, true)
-                    callImgButton.setBackgroundResource(outValue.resourceId)
-                    videoImgButton.setBackgroundResource(outValue.resourceId)
-                }
+                voiceCallImgView.setOnClickListener(contactSubFragment)
+                setOnClickListener(contactSubFragment)
             }
         }
     }

@@ -17,10 +17,10 @@
             android:layout_height="wrap_content"
             android:background="?android:attr/selectableItemBackground"
             android:orientation="horizontal"
-            android:paddingLeft="@dimen/size_medium_16dp"
-            android:paddingTop="@dimen/size_small_8dp"
-            android:paddingRight="@dimen/size_medium_16dp"
-            android:paddingBottom="@dimen/size_small_8dp">
+            android:paddingLeft="16dp"
+            android:paddingTop="8dp"
+            android:paddingRight="16dp"
+            android:paddingBottom="8dp">
 
             <ImageView
                 android:id="@+id/avatarImgView"
@@ -34,30 +34,30 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:layout_marginLeft="@dimen/size_medium_16dp"
-                android:layout_marginRight="@dimen/size_medium_16dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
                 android:text="@string/description_find_more_official_accounts" />
 
         </LinearLayout>
 
         <View
             android:layout_width="match_parent"
-            android:layout_height="@dimen/size_small_8dp"
-            android:background="@color/colorDividerBg" />
+            android:layout_height="8dp"
+            android:background="@color/lightDividerBg" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@android:color/white"
             android:orientation="vertical"
-            android:paddingTop="@dimen/size_small_8dp">
+            android:paddingTop="8dp">
 
             <TextView
                 android:id="@+id/textView2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/size_medium_16dp"
-                android:layout_marginRight="@dimen/size_medium_16dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
                 android:text="@string/description_interested_official_accounts"
                 android:textStyle="bold" />
 
@@ -65,7 +65,7 @@
                 android:id="@+id/recyclerView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginTop="@dimen/size_small_8dp" />
+                android:layout_marginTop="8dp" />
         </LinearLayout>
     </LinearLayout>
 </ScrollView>

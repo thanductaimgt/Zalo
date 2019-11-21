@@ -6,14 +6,14 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:paddingStart="@dimen/size_large_24dp"
-    android:paddingTop="@dimen/size_medium_16dp"
-    android:paddingEnd="@dimen/size_medium_16dp"
     android:background="?android:attr/selectableItemBackground">
 
     <de.hdodenhof.circleimageview.CircleImageView
+        app:civ_circle_background_color="@android:color/white"
         tools:src="@drawable/official_account"
-        android:layout_marginBottom="@dimen/size_medium_16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginStart="16dp"
         android:id="@+id/avatarImgView"
         android:layout_width="@dimen/size_margin_recv_msg_item"
         android:layout_height="0dp"
@@ -35,11 +35,11 @@
         android:layout_width="15dp"
         android:layout_height="0dp"
         app:layout_constraintDimensionRatio="1:1"
-        android:src="@color/colorOnline"/>
+        android:src="@color/online"/>
 
     <TextView
         android:layout_marginStart="16dp"
-        tools:text="a very long name abcxyz0123456789abcdefghyjklmnop"
+        tools:text="a very long nameeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
         android:maxLines="1"
         android:ellipsize="end"
         android:scrollHorizontally="true"
@@ -54,8 +54,9 @@
         app:layout_constraintTop_toTopOf="@id/avatarImgView" />
 
     <TextView
+        android:textSize="@dimen/sizeTextSmall"
         android:layout_marginEnd="8dp"
-        tools:text="a very long name abcxyz0123456789abcdefghyjklmnop"
+        tools:text="a very long messagessssssssssssssssssssssssssssssssssssssssssssssssssssssssss"
         android:scrollHorizontally="true"
         android:ellipsize="end"
         android:maxLines="1"
@@ -63,12 +64,15 @@
         android:id="@+id/descTextView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/size_small_8dp"
+        android:layout_marginTop="8dp"
         app:layout_constraintEnd_toStartOf="@id/iconTextView"
         app:layout_constraintStart_toStartOf="@id/nameTextView"
         app:layout_constraintTop_toBottomOf="@id/nameTextView" />
 
     <TextView
+        android:layout_marginEnd="8dp"
+        app:layout_constraintBottom_toBottomOf="@id/nameTextView"
+        android:textSize="@dimen/sizeTextSmall"
         tools:text="20/10/2019"
         android:id="@+id/timeTextView"
         android:layout_width="wrap_content"
@@ -77,6 +81,8 @@
         app:layout_constraintTop_toTopOf="@id/nameTextView" />
 
     <TextView
+        app:layout_constraintBottom_toBottomOf="@id/descTextView"
+        android:textSize="@dimen/sizeTextSmall"
         tools:text="50+"
         tools:visibility="visible"
         android:id="@+id/iconTextView"
@@ -94,7 +100,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_width="0dp"
         android:layout_height="1dp"
-        android:background="@color/colorLine"
+        android:background="@color/lightLine"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="@id/descTextView" />
 </androidx.constraintlayout.widget.ConstraintLayout>

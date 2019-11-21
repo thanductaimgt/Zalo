@@ -1,11 +1,14 @@
 package vng.zalo.tdtai.zalo.networks
 
+import android.content.Context
 import android.util.Log
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.firestore.*
 import vng.zalo.tdtai.zalo.ZaloApplication
 import vng.zalo.tdtai.zalo.models.*
+import vng.zalo.tdtai.zalo.models.message.CallMessage
+import vng.zalo.tdtai.zalo.models.message.Message
 import vng.zalo.tdtai.zalo.utils.Constants
 import vng.zalo.tdtai.zalo.utils.TAG
 import vng.zalo.tdtai.zalo.utils.Utils
@@ -15,7 +18,7 @@ class Database {
         private val firebaseFirestore: FirebaseFirestore
             get() = FirebaseFirestore.getInstance()
 
-        fun addNewMessageAndUpdateUsersRoom(curRoom: Room, newMessage: Message, callback: (() -> Unit)? = null) {
+        fun addNewMessageAndUpdateUsersRoom(context: Context, curRoom: Room, newMessage: Message, callback: (() -> Unit)? = null) {
             val batch = firebaseFirestore.batch()
 
             //create message
@@ -31,7 +34,7 @@ class Database {
             //for user rooms except for current user, update fields
             curRoom.memberMap!!.forEach {
                 val curUserPhone = it.key
-                val lastMsgPreviewContent = newMessage.getPreviewContent()
+                val lastMsgPreviewContent = newMessage.getPreviewContent(context)
 
                 batch.update(
                         firebaseFirestore
@@ -43,7 +46,7 @@ class Database {
                             put(RoomItem.FIELD_LAST_SENDER_PHONE, newMessage.senderPhone)
                             put(RoomItem.FIELD_LAST_MSG, lastMsgPreviewContent)
                             put(RoomItem.FIELD_LAST_MSG_TIME, newMessage.createdTime)
-                            if (curUserPhone != ZaloApplication.currentUser!!.phone)
+                            if (curUserPhone != ZaloApplication.curUser!!.phone)
                                 put(RoomItem.FIELD_UNSEEN_MSG_NUM, FieldValue.increment(1))
                         }
                 )
@@ -121,7 +124,11 @@ class Database {
                         Utils.assertNotNull(querySnapshot, TAG, "addRoomMessagesListener") { querySnapshotNotNull ->
                             val messages = ArrayList<Message>()
                             for (doc in querySnapshotNotNull) {
-                                messages.add(doc.toObject(Message::class.java))
+                                val messageClass = when (doc.getLong(Message.FIELD_TYPE)) {
+                                    Message.TYPE_CALL.toLong() -> CallMessage::class.java
+                                    else -> Message::class.java
+                                }
+                                messages.add(doc.toObject(messageClass))
                             }
                             callback?.invoke(messages)
                         }
@@ -163,18 +170,18 @@ class Database {
                     }
         }
 
-        fun validateLoginInfo(phone: String, password: String, callback: (isLoginSuccess: Boolean, userInfo: UserInfo?) -> Unit) {
+        fun validateLoginInfo(phone: String, password: String, callback: (user: User?) -> Unit) {
             firebaseFirestore.collection(Constants.COLLECTION_USERS)
                     .document(phone)
                     .get()
                     .addOnCompleteListener { task ->
                         Utils.assertTaskSuccess(task, TAG, "assertLoginSuccess") { result ->
                             if (result != null) {
-                                val userInfo = result.toObject(UserInfo::class.java)!!
-                                userInfo.phone = phone
-                                callback(true, userInfo)
+                                val user = result.toObject(User::class.java)!!
+                                user.phone = phone
+                                callback(user)
                             } else {
-                                callback(false, null)
+                                callback(null)
                             }
                         }
                     }
@@ -223,6 +230,28 @@ class Database {
 
                             //set livedata value
                             callback?.invoke(room)
+                        }
+                    }
+        }
+
+        fun getUserRoom(phone: String, callback: (roomItem: RoomItem) -> Unit) {
+            //current room reference
+            firebaseFirestore
+                    .collection(Constants.COLLECTION_USERS)
+                    .document(ZaloApplication.curUser!!.phone!!)
+                    .collection(Constants.COLLECTION_ROOMS)
+                    .whereEqualTo(RoomItem.FIELD_NAME, phone)
+                    .get()
+                    .addOnCompleteListener {
+                        Utils.assertTaskSuccessAndResultNotNull(it, TAG, "getUserRoom") { querySnapshot ->
+                            querySnapshot.forEach { documentSnapshot ->
+                                val roomItem = documentSnapshot.toObject(RoomItem::class.java).apply {
+                                    this.roomId = documentSnapshot.id
+                                }
+
+                                //set livedata value
+                                callback(roomItem)
+                            }
                         }
                     }
         }
@@ -379,7 +408,7 @@ class Database {
                     firebaseFirestore
                             .collection(Constants.COLLECTION_ROOMS)
                             .document(roomId)
-                            .update(Room.FIELD_TYPING_MEMBERS_PHONE, FieldValue.arrayUnion(ZaloApplication.currentUser!!.phone)),
+                            .update(Room.FIELD_TYPING_MEMBERS_PHONE, FieldValue.arrayUnion(ZaloApplication.curUser!!.phone)),
                     TAG,
                     "addCurrentUserToRoomTypingMembers"
             )
@@ -390,7 +419,7 @@ class Database {
                     firebaseFirestore
                             .collection(Constants.COLLECTION_ROOMS)
                             .document(roomId)
-                            .update(Room.FIELD_TYPING_MEMBERS_PHONE, FieldValue.arrayRemove(ZaloApplication.currentUser!!.phone)),
+                            .update(Room.FIELD_TYPING_MEMBERS_PHONE, FieldValue.arrayRemove(ZaloApplication.curUser!!.phone)),
                     TAG,
                     "removeCurrentUserToRoomTypingMembers"
             )
@@ -400,12 +429,12 @@ class Database {
             Utils.assertTaskSuccess(
                     firebaseFirestore
                             .collection(Constants.COLLECTION_USERS)
-                            .document(ZaloApplication.currentUser!!.phone!!)
-                            .update(UserInfo.FIELD_IS_ONLINE, isOnline),
+                            .document(ZaloApplication.curUser!!.phone!!)
+                            .update(User.FIELD_IS_ONLINE, isOnline),
                     TAG,
                     "setCurrentUserOnlineState"
             )
-            Log.d(TAG, ZaloApplication.currentUser!!.phone )
+            Log.d(TAG, ZaloApplication.curUser!!.phone)
         }
     }
 }

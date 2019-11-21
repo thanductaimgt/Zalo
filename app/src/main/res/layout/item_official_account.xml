@@ -6,17 +6,17 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:paddingLeft="@dimen/size_medium_16dp"
-    android:paddingTop="@dimen/size_small_8dp"
-    android:paddingRight="@dimen/size_medium_16dp"
-    android:paddingBottom="@dimen/size_small_8dp">
+    android:paddingLeft="16dp"
+    android:paddingTop="8dp"
+    android:paddingRight="16dp"
+    android:paddingBottom="8dp">
 
     <de.hdodenhof.circleimageview.CircleImageView
         tools:src="@drawable/app_icon"
         android:id="@+id/avatarImgView"
         android:layout_width="@dimen/size_room_item_avatar_48dp"
         android:layout_height="0dp"
-        android:background="@android:drawable/screen_background_light_transparent"
+        app:civ_circle_background_color="@android:color/white"
         android:contentDescription="@string/description_avatar"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintDimensionRatio="h,1:1"
@@ -29,8 +29,8 @@
         android:id="@+id/nameTextView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/size_medium_16dp"
-        android:layout_marginRight="@dimen/size_medium_16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
         tools:text="Shopee Vietnam"
         app:layout_constraintBottom_toBottomOf="@id/avatarImgView"
         app:layout_constraintLeft_toRightOf="@id/avatarImgView"

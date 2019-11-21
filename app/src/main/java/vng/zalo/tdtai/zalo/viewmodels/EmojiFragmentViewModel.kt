@@ -10,7 +10,7 @@ class EmojiFragmentViewModel : ViewModel() {
     val liveStickerSetItems: MutableLiveData<List<StickerSetItem>> = MutableLiveData(ArrayList())
 
     init {
-        Database.getUserStickerSetItems(ZaloApplication.currentUser!!.phone!!) {
+        Database.getUserStickerSetItems(ZaloApplication.curUser!!.phone!!) {
             liveStickerSetItems.value = it
         }
     }

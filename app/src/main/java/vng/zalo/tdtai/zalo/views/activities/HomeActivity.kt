@@ -2,16 +2,34 @@ package vng.zalo.tdtai.zalo.views.activities
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.PopupMenu
 import androidx.viewpager.widget.ViewPager
 import kotlinx.android.synthetic.main.activity_home.*
 import vng.zalo.tdtai.zalo.R
 import vng.zalo.tdtai.zalo.adapters.HomeAdapter
 import vng.zalo.tdtai.zalo.services.NotificationService
+import vng.zalo.tdtai.zalo.utils.Utils
 
-class HomeActivity : AppCompatActivity() {
+
+class HomeActivity : AppCompatActivity(), View.OnClickListener {
+    override fun onClick(v: View) {
+        when (v.id) {
+            R.id.searchImgView -> {
+                searchEditText.requestFocus()
+                Utils.showKeyboard(this, searchEditText)
+            }
+            R.id.createGroupImgView -> {
+                startActivity(Intent(this, CreateGroupActivity::class.java))
+            }
+            R.id.moreImgView -> displayPopupMenu(v)
+        }
+    }
+
     private lateinit var prevMenuItem: MenuItem
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -23,8 +41,6 @@ class HomeActivity : AppCompatActivity() {
     }
 
     private fun initView() {
-        setSupportActionBar(toolbar)
-
         prevMenuItem = bottomNavigationView.menu.getItem(0)
 
         viewPager.apply {
@@ -56,22 +72,32 @@ class HomeActivity : AppCompatActivity() {
             }
             false
         }
-    }
 
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        menuInflater.inflate(R.menu.menu_home_activity, menu)
-        return true
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-
-        return when (item.itemId) {
-            R.id.action_settings -> true
-            else -> super.onOptionsItemSelected(item)
+        searchEditText.setOnFocusChangeListener { _, hasFocused ->
+            if (hasFocused) {
+                Utils.showKeyboard(this, searchEditText)
+            } else {
+                Utils.hideKeyboard(this, rootView)
+            }
         }
+
+        searchImgView.setOnClickListener(this)
+        createGroupImgView.setOnClickListener(this)
+        moreImgView.setOnClickListener(this)
+    }
+
+    private fun displayPopupMenu(view: View) {
+        //Creating the instance of PopupMenu
+        val popupMenu = PopupMenu(this, view)
+
+        popupMenu.menuInflater.inflate(R.menu.menu_home_activity, popupMenu.menu)
+        popupMenu.setOnMenuItemClickListener {
+            when (it.itemId) {
+
+            }
+            true
+        }
+
+        popupMenu.show() //showing popup menu
     }
 }

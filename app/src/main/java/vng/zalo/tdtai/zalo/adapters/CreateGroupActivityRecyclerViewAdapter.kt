@@ -9,7 +9,7 @@ import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.item_room.view.*
 import vng.zalo.tdtai.zalo.R
 import vng.zalo.tdtai.zalo.models.RoomItem
-import vng.zalo.tdtai.zalo.utils.BindableViewHolder
+import vng.zalo.tdtai.zalo.abstracts.BindableViewHolder
 
 class CreateGroupActivityRecyclerViewAdapter(private val activity: Activity) : RecyclerView.Adapter<CreateGroupActivityRecyclerViewAdapter.UserIconViewHolder>() {
     var roomItems = ArrayList<RoomItem>()
@@ -35,6 +35,7 @@ class CreateGroupActivityRecyclerViewAdapter(private val activity: Activity) : R
                 Picasso.get()
                         .load(roomItems[position].avatarUrl)
                         .fit()
+                        .centerInside()
                         .into(avatarImgView)
             }
         }

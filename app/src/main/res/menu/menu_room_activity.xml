@@ -3,8 +3,18 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".views.activities.RoomActivity">
     <item
-        android:id="@+id/action_settings"
-        android:orderInCategory="100"
-        android:title="@string/label_settings"
-        app:showAsAction="never" />
+        android:id="@+id/action_call"
+        android:icon="@drawable/call2"
+        android:title="@string/description_voice_call"
+        app:showAsAction="ifRoom" />
+    <item
+        android:icon="@drawable/video2"
+        android:id="@+id/action_video"
+        android:title="@string/description_video_call"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/action_more"
+        android:icon="@drawable/more2"
+        android:title="@string/label_more_tab"
+        app:showAsAction="ifRoom" />
 </menu>

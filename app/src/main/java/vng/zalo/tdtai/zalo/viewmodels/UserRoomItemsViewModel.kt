@@ -15,7 +15,7 @@ class UserRoomItemsViewModel : ViewModel() {
 
     init {
         val userRoomsListener = Database.addUserRoomsListener(
-                userPhone = ZaloApplication.currentUser!!.phone!!,
+                userPhone = ZaloApplication.curUser!!.phone!!,
                 fieldToOrder = RoomItem.FIELD_LAST_MSG_TIME,
                 orderDirection = Query.Direction.DESCENDING
         ) { liveRoomItems.value = it }

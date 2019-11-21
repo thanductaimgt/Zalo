@@ -2,17 +2,63 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/rootView"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
     android:orientation="vertical"
     tools:context=".views.activities.HomeActivity">
 
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbar"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/colorPrimary"
-        android:theme="?attr/actionBarTheme" />
+        android:layout_height="@dimen/size_action_bar_height"
+        android:background="@drawable/action_bar_bg"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/searchImgView"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:padding="14dp"
+            android:src="@drawable/search"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <EditText
+            android:id="@+id/searchEditText"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:background="@null"
+            android:hint="@string/hint_search_friends_messages"
+            android:inputType="text"
+            android:textColor="@color/whiteText"
+            android:textColorHint="@color/weakWhiteText"
+            android:textSize="@dimen/sizeTextNormal"
+            app:layout_constraintEnd_toStartOf="@id/createGroupImgView"
+            app:layout_constraintStart_toEndOf="@id/searchImgView" />
+
+        <ImageView
+            android:id="@+id/createGroupImgView"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:padding="8dp"
+            android:src="@drawable/create_group"
+            app:layout_constraintDimensionRatio="1:1"
+            app:layout_constraintEnd_toStartOf="@id/moreImgView" />
+
+        <ImageView
+            android:id="@+id/moreImgView"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:padding="8dp"
+            android:src="@drawable/add2"
+            app:layout_constraintDimensionRatio="1:1"
+            app:layout_constraintEnd_toEndOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.viewpager.widget.ViewPager
         android:id="@+id/viewPager"
@@ -25,7 +71,7 @@
         android:id="@+id/bottomNavigationView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:itemIconTint="@color/colorPrimary"
-        app:itemTextColor="@color/colorPrimary"
+        app:itemIconTint="@color/lightPrimary"
+        app:itemTextColor="@color/lightPrimary"
         app:menu="@menu/menu_navigation_home_activity" />
 </LinearLayout>

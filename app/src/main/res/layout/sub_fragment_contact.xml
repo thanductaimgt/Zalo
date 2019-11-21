@@ -3,30 +3,30 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorDividerBg"
-    android:orientation="vertical">
-
+    android:background="@color/lightDividerBg"
+    android:orientation="vertical"
+    android:descendantFocusability="blocksDescendants">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:paddingBottom="@dimen/size_small_8dp">
+        android:paddingBottom="8dp">
 
         <LinearLayout
             android:id="@+id/closeFriendsLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/size_small_8dp"
+            android:layout_marginTop="8dp"
             android:background="@android:color/white"
             android:orientation="vertical"
-            android:paddingTop="@dimen/size_small_8dp"
-            android:paddingBottom="@dimen/size_small_8dp">
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp">
 
             <TextView
                 android:id="@+id/closeFriendsTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/size_medium_16dp"
+                android:layout_marginStart="16dp"
                 android:text="@string/label_close_friends"
                 android:textStyle="bold" />
 
@@ -34,7 +34,7 @@
                 android:id="@+id/recyclerViewCloseFriends"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/size_small_8dp" />
+                android:layout_marginTop="8dp" />
         </LinearLayout>
 
 
@@ -42,9 +42,9 @@
             android:id="@+id/updateContactDescTextView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/size_medium_16dp"
-            android:layout_marginTop="@dimen/size_medium_16dp"
-            android:layout_marginRight="@dimen/size_medium_16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginRight="16dp"
             android:text="@string/description_update_contact"
             android:textAlignment="center" />
 
@@ -53,17 +53,17 @@
             android:id="@+id/newlyUpdatedFriendsLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/size_small_8dp"
+            android:layout_marginTop="8dp"
             android:background="@android:color/white"
-            android:paddingTop="@dimen/size_small_8dp"
-            android:paddingBottom="@dimen/size_small_8dp">
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp">
 
             <com.google.android.material.switchmaterial.SwitchMaterial
                 app:useMaterialThemeColors="false"
                 android:id="@+id/updateContactsSwitch"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="@dimen/size_medium_16dp"
+                android:layout_marginEnd="16dp"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -71,7 +71,7 @@
                 android:id="@+id/statusDescTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/size_medium_16dp"
+                android:layout_marginStart="16dp"
                 android:text="@string/label_newly_updated_friends"
                 android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="@id/updateContactsSwitch"
@@ -81,12 +81,12 @@
             <androidx.cardview.widget.CardView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/size_medium_16dp"
-                android:layout_marginTop="@dimen/size_medium_16dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginTop="16dp"
 
-                android:layout_marginRight="@dimen/size_medium_16dp"
-                app:cardBackgroundColor="@color/colorLine"
-                app:cardCornerRadius="@dimen/size_small_8dp"
+                android:layout_marginRight="16dp"
+                app:cardBackgroundColor="@color/lightLine"
+                app:cardCornerRadius="8dp"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/statusDescTextView">
@@ -97,7 +97,7 @@
                     android:layout_height="wrap_content"
                     android:ellipsize="end"
                     android:maxLines="2"
-                    android:padding="@dimen/size_small_8dp"
+                    android:padding="8dp"
                     android:scrollHorizontally="true"
                     android:text="@string/description_update_status" />
             </androidx.cardview.widget.CardView>
@@ -109,16 +109,16 @@
             android:id="@+id/allContactsLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/size_small_8dp"
+            android:layout_marginTop="8dp"
             android:background="@android:color/white"
-            android:paddingTop="@dimen/size_small_8dp"
-            android:paddingBottom="@dimen/size_small_8dp">
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp">
 
             <TextView
                 android:id="@+id/allContactTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/size_medium_16dp"
+                android:layout_marginStart="16dp"
                 android:text="@string/label_all_contacts"
                 android:textStyle="bold"
                 app:layout_constraintLeft_toLeftOf="parent"
@@ -127,7 +127,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="@dimen/size_medium_16dp"
+                android:layout_marginEnd="16dp"
                 android:text="@string/label_update"
                 android:textAllCaps="true"
                 android:textColor="@android:color/holo_blue_light"
@@ -139,7 +139,7 @@
                 android:id="@+id/allContactRecyclerView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/size_small_8dp"
+                android:layout_marginTop="8dp"
                 app:layout_constraintTop_toBottomOf="@id/allContactTextView" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -154,7 +154,7 @@
             android:id="@+id/updateContactButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/size_medium_16dp"
+            android:layout_margin="16dp"
             android:text="@string/label_update_contact" />
 
     </LinearLayout>

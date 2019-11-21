@@ -38,7 +38,7 @@ class RecentContactsSubFragment : Fragment(), View.OnClickListener {
             adapter.notifyDataSetChanged()
         })
 
-        (activity as CreateGroupActivity).viewModel.liveRoomItems.observe(viewLifecycleOwner, Observer {
+        (activity as CreateGroupActivity).viewModel.liveSelectedRoomItems.observe(viewLifecycleOwner, Observer {
             updateRoomItemsOnScreen(it as List<RoomItem>)
         })
     }

@@ -6,7 +6,6 @@ import com.google.firebase.firestore.Query
 import vng.zalo.tdtai.zalo.ZaloApplication
 import vng.zalo.tdtai.zalo.models.RoomItem
 import vng.zalo.tdtai.zalo.networks.Database
-import vng.zalo.tdtai.zalo.utils.Constants
 import java.util.*
 
 class RecentContactsSubFragmentViewModel : ViewModel() {
@@ -15,7 +14,7 @@ class RecentContactsSubFragmentViewModel : ViewModel() {
 
     init {
         Database.getUserRooms(
-                userPhone = ZaloApplication.currentUser!!.phone!!,
+                userPhone = ZaloApplication.curUser!!.phone!!,
                 roomType = RoomItem.TYPE_PEER,
                 fieldToOrder = RoomItem.FIELD_LAST_MSG_TIME,
                 orderDirection = Query.Direction.DESCENDING

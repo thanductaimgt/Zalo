@@ -1,45 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingBottom="@dimen/size_small_8dp">
+        android:paddingBottom="8dp">
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/avatarImgView"
             android:layout_width="@dimen/size_room_item_avatar_48dp"
             android:layout_height="0dp"
-            android:layout_marginStart="@dimen/size_medium_16dp"
-            android:layout_marginTop="@dimen/size_small_8dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
             android:contentDescription="@string/description_avatar"
             android:src="@android:drawable/screen_background_light_transparent"
+            app:civ_circle_background_color="@android:color/white"
             app:layout_constraintDimensionRatio="h,1:1"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            tools:src="@drawable/default_peer_avatar" />
 
         <TextView
-            android:textStyle="bold"
             android:id="@+id/nameTextView"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/size_medium_16dp"
-            android:layout_marginEnd="@dimen/size_small_8dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="8dp"
+            android:textStyle="bold"
             app:layout_constraintBottom_toTopOf="@id/descTextView"
             app:layout_constraintEnd_toStartOf="@id/postStatusImgView"
             app:layout_constraintStart_toEndOf="@id/avatarImgView"
-            app:layout_constraintTop_toTopOf="@id/avatarImgView" />
+            app:layout_constraintTop_toTopOf="@id/avatarImgView"
+            tools:text="0123456789" />
 
         <TextView
             android:id="@+id/descTextView"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="@dimen/size_small_8dp"
+            android:layout_marginEnd="8dp"
             android:text="@string/description_your_profile"
-            android:textColor="@color/colorTextGray"
+            android:textColor="@color/lightTextGray"
             android:textSize="@dimen/size_small_text_10sp"
             app:layout_constraintBottom_toBottomOf="@id/avatarImgView"
             app:layout_constraintEnd_toStartOf="@id/postStatusImgView"
@@ -47,15 +51,14 @@
             app:layout_constraintTop_toBottomOf="@id/nameTextView" />
 
         <ImageView
-            android:focusable="true"
-            android:clickable="true"
-            android:background="?android:attr/selectableItemBackground"
             android:id="@+id/postStatusImgView"
             android:layout_width="0dp"
-            android:layout_height="@dimen/size_large_32dp"
-            android:layout_marginEnd="@dimen/size_medium_16dp"
-            android:src="@drawable/post_status"
+            android:layout_height="48dp"
+            android:layout_marginEnd="16dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="@string/description_post_status_image"
+            android:padding="8dp"
+            android:src="@drawable/post_status"
             app:layout_constraintBottom_toBottomOf="@id/avatarImgView"
             app:layout_constraintDimensionRatio="w,1:1"
             app:layout_constraintRight_toRightOf="parent"
@@ -64,9 +67,9 @@
         <View
             android:id="@+id/divider1"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/size_small_8dp"
-            android:layout_marginTop="@dimen/size_small_8dp"
-            android:background="@color/colorDividerBg"
+            android:layout_height="8dp"
+            android:layout_marginTop="8dp"
+            android:background="@color/lightDividerBg"
             app:layout_constraintTop_toBottomOf="@id/avatarImgView" />
 
         <!--find-->
@@ -74,8 +77,8 @@
             android:id="@+id/avatarFind"
             android:layout_width="@dimen/size_room_item_avatar_48dp"
             android:layout_height="0dp"
-            android:layout_marginStart="@dimen/size_medium_16dp"
-            android:layout_marginTop="@dimen/size_small_8dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
             android:contentDescription="@string/description_avatar"
             android:src="@drawable/find_around"
             app:layout_constraintDimensionRatio="h,1:1"
@@ -87,8 +90,8 @@
 
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/size_medium_16dp"
-            android:layout_marginEnd="@dimen/size_medium_16dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
             android:text="@string/label_find_around"
             app:layout_constraintBottom_toBottomOf="@id/avatarFind"
             app:layout_constraintEnd_toEndOf="parent"
@@ -100,8 +103,8 @@
             android:id="@+id/avatarChatRooms"
             android:layout_width="@dimen/size_room_item_avatar_48dp"
             android:layout_height="0dp"
-            android:layout_marginStart="@dimen/size_medium_16dp"
-            android:layout_marginTop="@dimen/size_medium_16dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
             android:contentDescription="@string/description_avatar"
             android:src="@drawable/chat_rooms"
             app:layout_constraintDimensionRatio="h,1:1"
@@ -113,8 +116,8 @@
 
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/size_medium_16dp"
-            android:layout_marginEnd="@dimen/size_medium_16dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
             android:text="@string/label_chat_rooms"
             app:layout_constraintBottom_toBottomOf="@id/avatarChatRooms"
             app:layout_constraintEnd_toEndOf="parent"
@@ -127,8 +130,8 @@
 
             android:layout_width="@dimen/size_room_item_avatar_48dp"
             android:layout_height="0dp"
-            android:layout_marginStart="@dimen/size_medium_16dp"
-            android:layout_marginTop="@dimen/size_medium_16dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
             android:contentDescription="@string/description_avatar"
             android:src="@drawable/shop"
             app:layout_constraintDimensionRatio="h,1:1"
@@ -139,8 +142,8 @@
             android:id="@+id/titleShop"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/size_medium_16dp"
-            android:layout_marginEnd="@dimen/size_small_8dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="8dp"
             android:text="@string/label_shop"
             app:layout_constraintBottom_toBottomOf="@id/avatarShop"
             app:layout_constraintEnd_toStartOf="@id/textView"
@@ -152,9 +155,9 @@
             android:id="@+id/textView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/size_small_8dp"
+            android:layout_margin="8dp"
             android:text="@string/description_shop"
-            android:textColor="@color/colorTextGray"
+            android:textColor="@color/lightTextGray"
             app:layout_constraintBottom_toBottomOf="@id/shopDescImgView"
             app:layout_constraintEnd_toStartOf="@id/shopDescImgView"
             app:layout_constraintTop_toTopOf="@id/shopDescImgView" />
@@ -164,7 +167,7 @@
 
             android:layout_width="wrap_content"
             android:layout_height="0dp"
-            android:layout_marginEnd="@dimen/size_medium_16dp"
+            android:layout_marginEnd="16dp"
             android:adjustViewBounds="true"
             android:contentDescription="@string/description_avatar"
             android:scaleType="fitXY"
@@ -179,8 +182,8 @@
 
             android:layout_width="@dimen/size_room_item_avatar_48dp"
             android:layout_height="0dp"
-            android:layout_marginStart="@dimen/size_medium_16dp"
-            android:layout_marginTop="@dimen/size_medium_16dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
             android:contentDescription="@string/description_avatar"
             android:src="@drawable/stickers"
             app:layout_constraintDimensionRatio="h,1:1"
@@ -192,8 +195,8 @@
 
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/size_medium_16dp"
-            android:layout_marginEnd="@dimen/size_medium_16dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
             android:text="@string/label_stickers"
             app:layout_constraintBottom_toBottomOf="@id/avatarStickers"
             app:layout_constraintEnd_toEndOf="parent"
@@ -206,8 +209,8 @@
 
             android:layout_width="@dimen/size_room_item_avatar_48dp"
             android:layout_height="0dp"
-            android:layout_marginStart="@dimen/size_medium_16dp"
-            android:layout_marginTop="@dimen/size_medium_16dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
             android:contentDescription="@string/description_avatar"
             android:src="@drawable/channel"
             app:layout_constraintDimensionRatio="h,1:1"
@@ -219,8 +222,8 @@
 
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/size_medium_16dp"
-            android:layout_marginEnd="@dimen/size_medium_16dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
             android:text="@string/label_channel"
             app:layout_constraintBottom_toBottomOf="@id/avatarChannel"
             app:layout_constraintEnd_toEndOf="parent"
@@ -233,8 +236,8 @@
 
             android:layout_width="@dimen/size_room_item_avatar_48dp"
             android:layout_height="0dp"
-            android:layout_marginStart="@dimen/size_medium_16dp"
-            android:layout_marginTop="@dimen/size_medium_16dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
             android:contentDescription="@string/description_avatar"
             android:src="@drawable/game"
             app:layout_constraintDimensionRatio="h,1:1"
@@ -246,8 +249,8 @@
 
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/size_medium_16dp"
-            android:layout_marginEnd="@dimen/size_medium_16dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
             android:text="@string/label_game"
             app:layout_constraintBottom_toBottomOf="@id/avatarGame"
             app:layout_constraintEnd_toEndOf="parent"
@@ -260,8 +263,8 @@
 
             android:layout_width="@dimen/size_room_item_avatar_48dp"
             android:layout_height="0dp"
-            android:layout_marginStart="@dimen/size_medium_16dp"
-            android:layout_marginTop="@dimen/size_medium_16dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
             android:contentDescription="@string/description_avatar"
             android:src="@drawable/e_government"
             app:layout_constraintDimensionRatio="h,1:1"
@@ -273,8 +276,8 @@
 
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/size_medium_16dp"
-            android:layout_marginEnd="@dimen/size_medium_16dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
             android:text="@string/label_e_government"
             app:layout_constraintBottom_toBottomOf="@id/avatarEGovernment"
             app:layout_constraintEnd_toEndOf="parent"
@@ -287,8 +290,8 @@
 
             android:layout_width="@dimen/size_room_item_avatar_48dp"
             android:layout_height="0dp"
-            android:layout_marginStart="@dimen/size_medium_16dp"
-            android:layout_marginTop="@dimen/size_medium_16dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
             android:contentDescription="@string/description_avatar"
             android:src="@drawable/bank"
             app:layout_constraintDimensionRatio="h,1:1"
@@ -300,8 +303,8 @@
 
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/size_medium_16dp"
-            android:layout_marginEnd="@dimen/size_medium_16dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
             android:text="@string/label_bank"
             app:layout_constraintBottom_toBottomOf="@id/avatarBank"
             app:layout_constraintEnd_toEndOf="parent"
@@ -314,8 +317,8 @@
 
             android:layout_width="@dimen/size_room_item_avatar_48dp"
             android:layout_height="0dp"
-            android:layout_marginStart="@dimen/size_medium_16dp"
-            android:layout_marginTop="@dimen/size_medium_16dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
             android:contentDescription="@string/description_avatar"
             android:src="@drawable/food"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -328,8 +331,8 @@
 
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/size_medium_16dp"
-            android:layout_marginEnd="@dimen/size_medium_16dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
             android:text="@string/label_food"
             app:layout_constraintBottom_toBottomOf="@id/avatarFood"
             app:layout_constraintEnd_toEndOf="parent"

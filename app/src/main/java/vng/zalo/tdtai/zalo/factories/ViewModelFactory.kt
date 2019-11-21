@@ -3,6 +3,7 @@ package vng.zalo.tdtai.zalo.factories
 import android.content.Intent
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import vng.zalo.tdtai.zalo.viewmodels.CallActivityViewModel
 import vng.zalo.tdtai.zalo.viewmodels.RoomActivityViewModel
 import vng.zalo.tdtai.zalo.viewmodels.StickerSetViewModel
 
@@ -14,6 +15,7 @@ class ViewModelFactory private constructor() : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         return when (modelClass) {
             RoomActivityViewModel::class.java -> RoomActivityViewModel(intent) as T
+            CallActivityViewModel::class.java -> CallActivityViewModel(intent) as T
             StickerSetViewModel::class.java -> StickerSetViewModel(bucketName) as T
             else -> modelClass.newInstance()
         }

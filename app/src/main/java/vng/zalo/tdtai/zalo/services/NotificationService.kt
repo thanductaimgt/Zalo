@@ -73,7 +73,7 @@ class NotificationService : Service() {
 
     private fun startListenForNewMessages() {
         val userRoomsListener = Database.addUserRoomsListener(
-                userPhone = ZaloApplication.currentUser!!.phone!!,
+                userPhone = ZaloApplication.curUser!!.phone!!,
                 fieldToOrder = RoomItem.FIELD_LAST_MSG_TIME,
                 orderDirection = Query.Direction.DESCENDING
         ) { roomItems ->
@@ -91,7 +91,7 @@ class NotificationService : Service() {
                 Constants.CHAT_NOTIFY_CHANNEL_ID,
                 Constants.CHAT_NOTIFY_CHANNEL_NAME, NotificationManager.IMPORTANCE_HIGH
         )
-        chan.lightColor = getColor(R.color.colorPrimary)
+        chan.lightColor = getColor(R.color.lightPrimary)
         chan.lockscreenVisibility = NotificationCompat.VISIBILITY_PUBLIC
         val service = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         service.createNotificationChannel(chan)
@@ -156,7 +156,7 @@ class NotificationService : Service() {
         val replyIntent = notificationIntent.apply { putExtra(Constants.SHOW_KEYBOARD, true) }
 
         val notification = NotificationCompat.Builder(this, Constants.CHAT_NOTIFY_CHANNEL_ID)
-                .setColor(ContextCompat.getColor(this, R.color.colorPrimary))
+                .setColor(ContextCompat.getColor(this, R.color.lightPrimary))
                 .setContentIntent(notificationPendingIntent)
                 .setSmallIcon(R.drawable.app_icon_transparent)
                 .setLargeIcon(roomAvatarBitmap)

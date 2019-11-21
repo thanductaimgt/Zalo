@@ -9,7 +9,7 @@ import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.item_select_contact.view.*
 import vng.zalo.tdtai.zalo.R
 import vng.zalo.tdtai.zalo.models.RoomItem
-import vng.zalo.tdtai.zalo.utils.BindableViewHolder
+import vng.zalo.tdtai.zalo.abstracts.BindableViewHolder
 
 class AllContactsSubFragmentAdapter(private val fragment: Fragment) : RecyclerView.Adapter<AllContactsSubFragmentAdapter.AllContactsViewHolder>() {
     var roomItems: List<RoomItem> = ArrayList()
@@ -39,6 +39,7 @@ class AllContactsSubFragmentAdapter(private val fragment: Fragment) : RecyclerVi
                 Picasso.get()
                         .load(roomItem.avatarUrl)
                         .fit()
+                        .centerInside()
                         .into(avatarImgView)
             }
         }

@@ -3,14 +3,18 @@
     package="vng.zalo.tdtai.zalo">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.USE_SIP" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
+    <uses-permission android:name="android.permission.RECORD_AUDIO"/>
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS"/>
 
+    <uses-feature android:name="android.hardware.sip.voip" />
     <uses-feature
         android:name="android.hardware.camera"
         android:required="true" />
-
-    <uses-permission
-        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
-        android:maxSdkVersion="18" />
 
     <application
         android:name=".ZaloApplication"
@@ -21,11 +25,14 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme.Light"
         android:windowSoftInputMode="adjustResize">
+        <activity android:name=".views.activities.CallActivity"
+            android:theme="@style/AppTheme.Light.NoActionBar"/>
+
         <service
-            android:stopWithTask="false"
             android:name=".services.NotificationService"
             android:enabled="true"
-            android:exported="true" />
+            android:exported="true"
+            android:stopWithTask="false" />
 
         <activity android:name=".views.activities.RegisterActivity" />
 
@@ -42,7 +49,7 @@
         <activity
             android:name=".views.activities.CreateGroupActivity"
             android:label="@string/description_create_group"
-            android:theme="@style/AppTheme.Light" />
+            android:theme="@style/AppTheme.Light.NoActionBar" />
         <activity
             android:name=".views.activities.SplashActivity"
             android:theme="@style/AppTheme.SplashTheme">
@@ -55,18 +62,19 @@
         </activity>
         <activity
             android:name=".views.activities.RoomActivity"
-            android:theme="@style/AppTheme.NoActionBarLight" />
+            android:theme="@style/AppTheme.Light.NoActionBar" />
         <activity
             android:name=".views.activities.HomeActivity"
             android:label="@string/label_home_screen"
-            android:theme="@style/AppTheme.NoActionBarLight" />
+            android:theme="@style/AppTheme.Light.NoActionBar" />
         <activity
             android:name=".views.activities.LoginActivity"
             android:parentActivityName=".views.activities.IntroActivity"
-            android:theme="@style/AppTheme.Light" />
+            android:theme="@style/AppTheme.Light.NoActionBar" />
         <activity
+            android:launchMode="singleTop"
             android:name=".views.activities.IntroActivity"
-            android:theme="@style/AppTheme.NoActionBarLight" />
+            android:theme="@style/AppTheme.Light.NoActionBar" />
     </application>
 
 </manifest>

@@ -1,56 +1,122 @@
 <resources>
-
-    <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
-        <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
-    </style>
-
-    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
-
-    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
-
-    <style name="AppTheme.SplashTheme" parent="AppTheme.NoActionBarLight">
-        <item name="android:windowBackground">@drawable/splash_screen</item>
-    </style>
-
-    <style name="AppTheme.NoActionBarLight" parent="AppTheme.Light">
+    <style name="AppTheme.Light.NoActionBar" parent="AppTheme.Light">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
+<!--        <item name="actionOverflowButtonStyle">@style/OverFlow</item>-->
+    </style>
+
+    <style name="MyActionBarTheme" parent="AppTheme.Light.NoActionBar">
+        <item name="android:textColorSecondary">@color/whiteText</item>
     </style>
 
     <style name="AppTheme.Light" parent="Theme.MaterialComponents.Light">
-        <!--<item name="android:windowBackground">@color/colorBackground</item>-->
+        <!--<item fileName="android:windowBackground">@color/colorBackground</item>-->
         <!-- Buttons -->
-        <item name="materialButtonStyle">@style/RoundedCornersButton</item>
-        <item name="materialButtonOutlinedStyle">
-            @style/Widget.MaterialComponents.Button.OutlinedButton
-        </item>
-        <item name="materialButtonToggleGroupStyle">
-            @style/Widget.MaterialComponents.MaterialButtonToggleGroup
-        </item>
+        <item name="materialButtonStyle">@style/ButtonTheme.RoundCorners</item>
+        <!--<item fileName="materialButtonOutlinedStyle">-->
+        <!--@style/Widget.MaterialComponents.Button.OutlinedButton-->
+        <!--</item>-->
+        <!--<item fileName="materialButtonToggleGroupStyle">-->
+        <!--@style/Widget.MaterialComponents.MaterialButtonToggleGroup-->
+        <!--</item>-->
         <!-- Colors -->
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimary</item>
-        <!--<item name="colorAccent">?attr/colorSecondary</item>-->
+        <item name="colorPrimary">@color/lightPrimary</item>
+        <item name="colorPrimaryDark">@color/lightPrimaryDark</item>
+        <item name="colorAccent">@color/lightAccent</item>
 
-        <item name="android:colorBackground">@color/colorBackground</item>
+        <item name="android:colorBackground">@color/lightBackground</item>
 
-        <!--<item name="colorError">@color/design_default_color_error</item>-->
+        <item name="colorError">@color/design_default_color_error</item>
+        <item name="android:textViewStyle">@style/AppTheme.Light.Text</item>
 
-        <!--<item name="actionBarSize">@dimen/mtrl_toolbar_default_height</item>-->
-        <!--<item name="minTouchTargetSize">@dimen/mtrl_min_touch_target_size</item>-->
+        <!--<item fileName="actionBarSize">@dimen/mtrl_toolbar_default_height</item>-->
+        <!--<item fileName="minTouchTargetSize">@dimen/mtrl_min_touch_target_size</item>-->
     </style>
 
-    <style name="RoundedCornersButton" parent="Widget.MaterialComponents.Button">
-        <item name="cornerRadius">20dp</item>
-        <item name="android:paddingTop">12dp</item>
-        <item name="android:paddingBottom">12dp</item>
+    <style name="AppTheme.Dark" parent="Theme.MaterialComponents.Light">
+        <!--<item fileName="android:windowBackground">@color/colorBackground</item>-->
+        <!-- Buttons -->
+        <item name="materialButtonStyle">@style/ButtonTheme.RoundCorners</item>
+        <!--<item fileName="materialButtonOutlinedStyle">-->
+        <!--@style/Widget.MaterialComponents.Button.OutlinedButton-->
+        <!--</item>-->
+        <!--<item fileName="materialButtonToggleGroupStyle">-->
+        <!--@style/Widget.MaterialComponents.MaterialButtonToggleGroup-->
+        <!--</item>-->
+        <!-- Colors -->
+        <item name="colorPrimary">@color/lightPrimary</item>
+        <item name="colorPrimaryDark">@color/lightPrimaryDark</item>
+        <item name="colorAccent">@color/lightAccent</item>
+
+        <item name="android:colorBackground">@color/lightBackground</item>
+
+        <item name="colorError">@color/design_default_color_error</item>
+        <item name="android:textViewStyle">@style/AppTheme.Light.Text</item>
+
+        <!--<item fileName="actionBarSize">@dimen/mtrl_toolbar_default_height</item>-->
+        <!--<item fileName="minTouchTargetSize">@dimen/mtrl_min_touch_target_size</item>-->
     </style>
 
-    <style name="AppTheme.White" parent="Theme.MaterialComponents.Light">
-        <item name="android:windowBackground">@android:color/white</item>
+    <style name="AppTheme.Light.Text">
+        <item name="android:textColor">@color/blackText</item>
+        <item name="android:textSize">@dimen/sizeTextNormal</item>
+        <!--<item fileName="android:typeface">sans</item>-->
     </style>
+
+    <style name="AppTheme.Dark.Text">
+        <item name="android:textColor">@color/whiteText</item>
+        <item name="android:textSize">@dimen/sizeTextNormal</item>
+        <!--<item fileName="android:typeface">sans</item>-->
+    </style>
+
+    <style name="ButtonTheme.RoundCorners" parent="Widget.MaterialComponents.Button">
+        <item name="cornerRadius">@dimen/sizeRoundCornerRadiusLayout</item>
+        <item name="android:paddingTop">@dimen/sizeButtonPaddingVertical</item>
+        <item name="android:paddingBottom">@dimen/sizeButtonPaddingVertical</item>
+        <item name="android:textAllCaps">false</item>
+    </style>
+
+<!--    <style name="BottomSheetDialogTheme.Transparent" parent="Theme.Design.Light.BottomSheetDialog">-->
+<!--        <item name="bottomSheetStyle">@style/BottomSheetTheme.Transparent</item>-->
+<!--    </style>-->
+
+<!--    <style name="BottomSheetTheme.Transparent" parent="Widget.Design.BottomSheet.Modal">-->
+<!--        <item name="android:background">@drawable/shape_round_top_corners</item>-->
+<!--    </style>-->
+
+    <style name="TabLayoutTheme" parent="Widget.MaterialComponents.TabLayout">
+        <!--<item fileName="tabMaxWidth">@dimen/tab_max_width</item>-->
+        <!--<item fileName="tabIndicatorColor">?attr/colorAccent</item>-->
+        <!--<item fileName="tabIndicatorHeight">2dp</item>-->
+        <!--<item fileName="tabPaddingStart">12dp</item>-->
+        <!--<item fileName="tabPaddingEnd">12dp</item>-->
+        <!--<item fileName="tabBackground">?attr/selectableItemBackground</item>-->
+        <!--<item fileName="tabTextAppearance">@style/TextAppearance.Design.Tab</item>-->
+        <item name="tabSelectedTextColor">@color/lightPrimary</item>
+        <item name="tabIndicatorColor">@color/lightPrimary</item>
+    </style>
+
+    <style name="AppTheme.SplashTheme" parent="AppTheme.Light.NoActionBar">
+        <item name="android:windowBackground">@drawable/splash_screen</item>
+    </style>
+
+<!--    <style name="ButtonTheme.Cancel" parent="Theme.MaterialComponents.Light">-->
+<!--        <item name="materialButtonStyle">@style/ButtonTheme.RoundCorners</item>-->
+<!--        <item name="colorPrimary">@color/lightCancelButtonBackground</item>-->
+<!--        <item name="colorPrimaryDark">@color/lightPrimaryDark</item>-->
+<!--        <item name="colorAccent">@color/lightAccent</item>-->
+<!--        <item name="android:colorBackground">@color/lightBackground</item>-->
+<!--    </style>-->
+
+<!--    <style name="TextTheme.Error" parent="@android:style/TextAppearance">-->
+<!--        <item name="android:textColor">@color/lightErrorText</item>-->
+<!--    </style>-->
+    <style name="AppTheme.Light.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar"/>
+    <style name="AppTheme.Light.PopupOverlay" parent="ThemeOverlay.AppCompat.Light"/>
+
+<!--    <style name="OverFlow" parent="Widget.AppCompat.ActionButton.Overflow">-->
+<!--        <item name="android:src">@drawable/add2</item>-->
+<!--        <item name="android:width">40dp</item>-->
+<!--        <item name="android:height">40dp</item>-->
+<!--    </style>-->
 </resources>

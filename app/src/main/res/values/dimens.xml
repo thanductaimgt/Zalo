@@ -1,12 +1,4 @@
 <resources>
-    <dimen name="activity_horizontal_margin">64dp</dimen>
-
-    <dimen name="size_tiny_4dp">4dp</dimen>
-    <dimen name="size_small_8dp">8dp</dimen>
-    <dimen name="size_medium_16dp">16dp</dimen>
-    <dimen name="size_large_24dp">24dp</dimen>
-    <dimen name="size_large_32dp">32dp</dimen>
-    <dimen name="size_huge_48dp">48dp</dimen>
     <dimen name="size_margin_recv_msg_item">56dp</dimen>
     <dimen name="size_margin_send_msg_item">8dp</dimen>
     <dimen name="size_icon_space_5dp">5dp</dimen>
@@ -14,5 +6,16 @@
     <dimen name="size_chat_avatar">35dp</dimen>
     <dimen name="size_room_item_avatar_48dp">48dp</dimen>
     <dimen name="size_large_avatar_64dp">64dp</dimen>
-    <dimen name="size_sticker_150dp">128dp</dimen>
+    <dimen name="size_sticker_chat">128dp</dimen>
+    <dimen name="size_action_bar_height">48dp</dimen>
+    <dimen name="sizeRoundCornerRadiusLayout">20dp</dimen>
+    <dimen name="sizeRoundCornerMessageBg">10dp</dimen>
+    <dimen name="sizeTextBig">16sp</dimen>
+    <dimen name="sizeTextHuge">24sp</dimen>
+    <dimen name="sizeTextNormal">14sp</dimen>
+    <dimen name="sizeTextSmall">11sp</dimen>
+    <dimen name="sizeButtonPaddingVertical">12dp</dimen>
+    <dimen name="sizeLoadingChatImage">50dp</dimen>
+    <dimen name="sizePaddingButtonCallActivity">16dp</dimen>
+    <dimen name="sizePaddingButtonRoomActivity">10dp</dimen>
 </resources>

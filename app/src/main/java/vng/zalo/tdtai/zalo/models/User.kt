@@ -2,7 +2,7 @@ package vng.zalo.tdtai.zalo.models
 
 import com.google.firebase.Timestamp
 
-data class UserInfo(
+data class User(
         var phone: String? = null,// also id
         var avatarUrl: String? = null,
         var birthDate: Timestamp? = null,

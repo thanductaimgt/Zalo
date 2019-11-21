@@ -13,18 +13,14 @@ import vng.zalo.tdtai.zalo.R
 import vng.zalo.tdtai.zalo.models.RoomItem
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import android.content.Intent
-import android.content.pm.PackageManager
-import android.net.Uri
-import android.provider.MediaStore
 import android.widget.FrameLayout
-import androidx.core.content.FileProvider
 import androidx.lifecycle.*
 import androidx.lifecycle.Observer
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.firebase.Timestamp
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_create_group.recyclerView
-import kotlinx.android.synthetic.main.navi_bot_activity_create_group.view.*
+import kotlinx.android.synthetic.main.bottom_sheet_upload_picture.view.*
 import vng.zalo.tdtai.zalo.ZaloApplication
 import vng.zalo.tdtai.zalo.adapters.CreateGroupActivityRecyclerViewAdapter
 import vng.zalo.tdtai.zalo.adapters.CreateGroupActivityViewPagerAdapter
@@ -34,7 +30,6 @@ import vng.zalo.tdtai.zalo.models.RoomMember
 import vng.zalo.tdtai.zalo.utils.Constants
 import vng.zalo.tdtai.zalo.utils.Utils
 import vng.zalo.tdtai.zalo.viewmodels.CreateGroupActivityViewModel
-import java.io.File
 import java.util.*
 import vng.zalo.tdtai.zalo.utils.TAG
 
@@ -42,8 +37,8 @@ class CreateGroupActivity : AppCompatActivity(), View.OnClickListener {
     private lateinit var viewPagerAdapter: CreateGroupActivityViewPagerAdapter
     private lateinit var recyclerViewAdapter: CreateGroupActivityRecyclerViewAdapter
     private lateinit var bottomSheetDialog: BottomSheetDialog
-    private var curImageUriString: String? = null
-    private var prevImageUriString: String? = null
+    private var curAvatarLocalUriString: String? = null
+    private var prevAvatarLocalUriString: String? = null
     lateinit var viewModel: CreateGroupActivityViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -53,16 +48,25 @@ class CreateGroupActivity : AppCompatActivity(), View.OnClickListener {
         initView()
 
         viewModel = ViewModelProvider(this, ViewModelFactory.getInstance()).get(CreateGroupActivityViewModel::class.java)
-        viewModel.liveRoomItems.observe(this, Observer {
+        viewModel.liveSelectedRoomItems.observe(this, Observer {
             recyclerViewAdapter.roomItems = it
             recyclerViewAdapter.notifyDataSetChanged()
 
-            selectedListLayout.visibility = if (it.isEmpty()) View.GONE else View.VISIBLE
+            countTextView.text = String.format(getString(R.string.description_selected_count), it.size)
+            if (it.isEmpty()) {
+                selectedListLayout.visibility = View.GONE
+            } else {
+                selectedListLayout.visibility = View.VISIBLE
+            }
         })
     }
 
     private fun initView() {
+        setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setDisplayShowTitleEnabled(false)
+        countTextView.text = String.format(getString(R.string.description_selected_count), 0)
 
         viewPagerAdapter = CreateGroupActivityViewPagerAdapter(this, supportFragmentManager)
         viewPager.adapter = viewPagerAdapter
@@ -84,6 +88,14 @@ class CreateGroupActivity : AppCompatActivity(), View.OnClickListener {
             }
         }
 
+        initBottomSheet()
+
+        uploadAvatarImgView.setOnClickListener(this)
+        searchView.setOnClickListener(this)
+        createGroupImgView.setOnClickListener(this)
+    }
+
+    private fun initBottomSheet(){
         bottomSheetDialog = BottomSheetDialog(this)
 
         // Fix BottomSheetDialog not showing after getting hidden when the user drags it down
@@ -94,14 +106,15 @@ class CreateGroupActivity : AppCompatActivity(), View.OnClickListener {
                 skipCollapsed = true
             }
         }
-
-        uploadAvatarImgView.setOnClickListener(this)
-        searchView.setOnClickListener(this)
-        createGroupButton.setOnClickListener(this)
+        val sheetView = layoutInflater.inflate(R.layout.bottom_sheet_upload_picture, null)
+        bottomSheetDialog.setContentView(sheetView)
+        sheetView.titleTextView.text = getString(R.string.label_update_avatar)
+        sheetView.choosePicTextView.setOnClickListener(this)
+        sheetView.takePicTextView.setOnClickListener(this)
     }
 
     fun proceedNewClickOnItem(item: RoomItem) {
-        viewModel.liveRoomItems.value = viewModel.liveRoomItems.value!!.apply {
+        viewModel.liveSelectedRoomItems.value = viewModel.liveSelectedRoomItems.value!!.apply {
             if (contains(item)) {
                 remove(item)
             } else {
@@ -128,29 +141,25 @@ class CreateGroupActivity : AppCompatActivity(), View.OnClickListener {
                 val item = recyclerViewAdapter.roomItems[itemPosition]
                 proceedNewClickOnItem(item)
             }
-            R.id.uploadAvatarImgView -> {
-                val sheetView = layoutInflater.inflate(R.layout.navi_bot_activity_create_group, null)
-                bottomSheetDialog.setContentView(sheetView)
-                sheetView.choosePicTextView.setOnClickListener(this)
-                sheetView.takePicTextView.setOnClickListener(this)
-
-                bottomSheetDialog.show()
-            }
+            R.id.uploadAvatarImgView -> bottomSheetDialog.show()
             R.id.choosePicTextView -> {
-                dispatchChoosePictureIntent()
+                Utils.dispatchChooserIntent(this, Constants.CHOOSE_IMAGES_REQUEST)
             }
             R.id.takePicTextView -> {
-                dispatchTakePictureIntent()
+                Utils.dispatchTakePictureIntent(this){
+                    prevAvatarLocalUriString = curAvatarLocalUriString
+                    curAvatarLocalUriString = it
+                }
             }
-            R.id.createGroupButton -> {
+            R.id.createGroupImgView -> {
                 createGroupIfNeeded()
             }
         }
     }
 
     private fun createGroupIfNeeded() {
-        if (viewModel.liveRoomItems.value!!.size == 1) {
-            val curRoomItem = viewModel.liveRoomItems.value!![0]
+        if (viewModel.liveSelectedRoomItems.value!!.size == 1) {
+            val curRoomItem = viewModel.liveSelectedRoomItems.value!![0]
 
             startActivity(
                     Intent(this, RoomActivity::class.java).apply {
@@ -163,29 +172,29 @@ class CreateGroupActivity : AppCompatActivity(), View.OnClickListener {
             val groupName = if (nameTextView.text.toString() != "") {
                 nameTextView.text.toString()
             } else {
-                viewModel.liveRoomItems.value!!.joinToString(transform = { roomItem -> roomItem.name!! })
+                viewModel.liveSelectedRoomItems.value!!.joinToString(transform = { roomItem -> roomItem.name!! })
             }
 
             val curTimestamp = Timestamp.now()
 
             val newRoom = Room(
                     name = groupName,
-                    avatarUrl = curImageUriString,
+                    avatarUrl = curAvatarLocalUriString.toString(),
                     createdTime = Timestamp.now(),
                     memberMap = HashMap<String, RoomMember>().apply {
-                        viewModel.liveRoomItems.value!!.forEach {
+                        viewModel.liveSelectedRoomItems.value!!.forEach {
                             put(it.name!!, RoomMember(
                                     avatarUrl = it.avatarUrl,
                                     joinDate = curTimestamp,
                                     phone = it.name)
                             )
                         }
-                        put(ZaloApplication.currentUser!!.phone!!, RoomMember(avatarUrl = ZaloApplication.currentUser!!.avatarUrl, joinDate = curTimestamp, phone = ZaloApplication.currentUser!!.phone))
+                        put(ZaloApplication.curUser!!.phone!!, RoomMember(avatarUrl = ZaloApplication.curUser!!.avatarUrl, joinDate = curTimestamp, phone = ZaloApplication.curUser!!.phone))
                     }
             )
 
 
-            viewModel.createRoomInFireStore(newRoom) {
+            viewModel.createRoomInFireStore(this, newRoom) {
                 startActivity(Intent(this, RoomActivity::class.java).apply {
                     putExtra(Constants.ROOM_ID, it.roomId)
                     putExtra(Constants.ROOM_NAME, it.name)
@@ -195,68 +204,21 @@ class CreateGroupActivity : AppCompatActivity(), View.OnClickListener {
         }
     }
 
-    private fun dispatchChoosePictureIntent() {
-        val getIntent = Intent(Intent.ACTION_GET_CONTENT).apply { type = "image/*" }
-
-        val pickIntent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI).apply { type = "image/*" }
-
-        val chooserIntent = Intent.createChooser(getIntent, getString(R.string.label_choose_image_from)).apply {
-            putExtra(Intent.EXTRA_INITIAL_INTENTS, arrayOf(pickIntent))
-        }
-
-        startActivityForResult(chooserIntent, Constants.PICK_IMAGE)
-    }
-
-    private fun dispatchTakePictureIntent() {
-        Intent(MediaStore.ACTION_IMAGE_CAPTURE).also { takePictureIntent ->
-            // Ensure that there's a camera activity to handle the intent
-            takePictureIntent.resolveActivity(packageManager)?.let {
-                // Create the File where the photo should go
-                viewModel.createImageFile(this) { file ->
-                    Utils.assertNotNull(file, TAG, "createImageFile") { fileNotnull ->
-                        prevImageUriString = curImageUriString
-                        curImageUriString = fileNotnull.absolutePath
-
-                        val photoUri: Uri = FileProvider.getUriForFile(
-                                this,
-                                Utils.getProviderAuthority(this),
-                                fileNotnull
-                        )
-                        takePictureIntent.apply {
-                            putExtra(MediaStore.EXTRA_OUTPUT, photoUri)
-                            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-                        }
-
-                        packageManager.queryIntentActivities(takePictureIntent, PackageManager.MATCH_DEFAULT_ONLY).apply {
-                            forEach { resolveInfo ->
-                                val packageName = resolveInfo.activityInfo.packageName
-                                grantUriPermission(packageName, photoUri, Intent.FLAG_GRANT_WRITE_URI_PERMISSION or Intent.FLAG_GRANT_READ_URI_PERMISSION)
-                            }
-                        }
-
-                        startActivityForResult(takePictureIntent, Constants.TAKE_PICTURE)
-                    }
-                }
-            }
-        }
-    }
-
     override fun onActivityResult(requestCode: Int, resultCode: Int, intent: Intent?) {
         super.onActivityResult(requestCode, resultCode, intent)
         if (resultCode == Activity.RESULT_OK) {
             Utils.assertNotNull(intent, TAG, "onActivityResult.intent") { intentNotNull ->
                 when (requestCode) {
-                    Constants.PICK_IMAGE -> {
-                        viewModel.processPickedImage(this, curImageUriString, intentNotNull.data!!) {
-                            prevImageUriString = curImageUriString
-                            curImageUriString = it
-                            Picasso.get().load(File(curImageUriString!!)).fit().into(uploadAvatarImgView)
-                        }
+                    Constants.CHOOSE_IMAGES_REQUEST -> {
+                        curAvatarLocalUriString = intentNotNull.data!!.toString()
+                        Picasso.get().load(intentNotNull.data).fit()
+                                .centerInside().into(uploadAvatarImgView)
                     }
-                    Constants.TAKE_PICTURE -> {
+                    Constants.TAKE_PICTURE_REQUEST -> {
                         // delete previous image when taking new one
-                        viewModel.deleteZaloFileAtUri(prevImageUriString)
-                        Picasso.get().load(File(curImageUriString!!)).fit().into(uploadAvatarImgView)
+                        Utils.deleteZaloFileAtUri(this, prevAvatarLocalUriString)
+                        Picasso.get().load("file://$curAvatarLocalUriString").fit()
+                                .centerInside().into(uploadAvatarImgView)
                     }
                 }
                 bottomSheetDialog.dismiss()

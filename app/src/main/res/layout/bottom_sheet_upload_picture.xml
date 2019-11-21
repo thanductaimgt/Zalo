@@ -3,40 +3,42 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
-    android:paddingBottom="@dimen/size_medium_16dp"
+    android:paddingBottom="16dp"
     app:layout_behavior="android.support.design.widget.BottomSheetBehavior">
 
     <TextView
+        android:id="@+id/titleTextView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/size_medium_16dp"
-        android:layout_marginTop="@dimen/size_small_8dp"
-        android:layout_marginRight="@dimen/size_medium_16dp"
-        android:text="@string/label_update_avatar"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginRight="16dp"
+        tools:text="@string/label_update_avatar"
         android:textStyle="bold" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/size_small_8dp" />
+        android:layout_marginTop="8dp" />
 
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:layout_marginStart="@dimen/size_medium_16dp"
-        android:layout_marginEnd="@dimen/size_medium_16dp"
-        android:background="@color/colorDividerBg" />
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:background="@color/lightDividerBg" />
 
     <TextView
         android:id="@+id/takePicTextView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="?android:attr/selectableItemBackground"
-        android:paddingLeft="@dimen/size_medium_16dp"
-        android:paddingTop="@dimen/size_medium_16dp"
-        android:paddingRight="@dimen/size_medium_16dp"
-        android:paddingBottom="@dimen/size_medium_16dp"
+        android:paddingLeft="16dp"
+        android:paddingTop="16dp"
+        android:paddingRight="16dp"
+        android:paddingBottom="16dp"
         android:text="@string/label_take_new_pic"
         android:textStyle="bold" />
 
@@ -45,10 +47,10 @@
         android:id="@+id/choosePicTextView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingLeft="@dimen/size_medium_16dp"
-        android:paddingTop="@dimen/size_medium_16dp"
-        android:paddingRight="@dimen/size_medium_16dp"
-        android:paddingBottom="@dimen/size_medium_16dp"
+        android:paddingLeft="16dp"
+        android:paddingTop="16dp"
+        android:paddingRight="16dp"
+        android:paddingBottom="16dp"
         android:text="@string/label_choose_available_image"
         android:textStyle="bold" />
 

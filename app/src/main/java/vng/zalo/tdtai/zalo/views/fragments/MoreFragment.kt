@@ -1,7 +1,6 @@
 package vng.zalo.tdtai.zalo.views.fragments
 
 import android.os.Bundle
-import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -22,16 +21,11 @@ class MoreFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         Picasso.get()
-                .load(ZaloApplication.currentUser!!.avatarUrl)
+                .load(ZaloApplication.curUser!!.avatarUrl)
                 .fit()
+                .centerInside()
                 .into(avatarImgView)
 
-        nameTextView.text = ZaloApplication.currentUser!!.phone
-
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-            val outValue = TypedValue()
-            context!!.theme.resolveAttribute(android.R.attr.selectableItemBackgroundBorderless, outValue, true)
-            postStatusImgView.setBackgroundResource(outValue.resourceId)
-        }
+        nameTextView.text = ZaloApplication.curUser!!.phone
     }
 }

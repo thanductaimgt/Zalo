@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/shape_round_top_corners">
+
+    <ImageView
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        android:id="@+id/decor"
+        app:layout_constraintStart_toStartOf="parent"
+        android:src="@color/lightAccent"
+        app:layout_constraintBottom_toTopOf="@id/line"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_width="4dp"
+        android:layout_height="0dp"/>
+
+    <com.airbnb.lottie.LottieAnimationView
+        app:lottie_autoPlay="false"
+        android:layout_marginStart="12dp"
+        android:id="@+id/imageView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        tools:src="@drawable/zalo"
+        app:layout_constrainedHeight="true"
+        app:layout_constrainedWidth="true"
+        app:layout_constraintBottom_toBottomOf="@id/decor"
+        app:layout_constraintDimensionRatio="1:1"
+        app:layout_constraintStart_toEndOf="@id/decor"
+        app:layout_constraintTop_toTopOf="@id/decor" />
+
+    <TextView
+        android:id="@+id/nameTextView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="8dp"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:scrollHorizontally="true"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toStartOf="@id/cancelImgView"
+        app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintStart_toEndOf="@id/imageView"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Tai Than" />
+
+    <TextView
+        android:textColor="@color/colorButtonStroke"
+        android:id="@+id/descTextView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:scrollHorizontally="true"
+        android:textSize="@dimen/sizeTextSmall"
+        app:layout_constraintEnd_toEndOf="@id/nameTextView"
+        app:layout_constraintEnd_toStartOf="@id/cancelImgView"
+        app:layout_constraintHorizontal_bias="0"
+
+        app:layout_constraintStart_toEndOf="@id/imageView"
+        app:layout_constraintStart_toStartOf="@id/nameTextView"
+        app:layout_constraintTop_toBottomOf="@id/nameTextView"
+        tools:text="[Hinh anh]" />
+
+    <ImageView
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:id="@+id/cancelImgView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:padding="12dp"
+        android:src="@drawable/clear"
+        app:layout_constraintBottom_toTopOf="@id/line"
+        app:layout_constraintDimensionRatio="1:1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <View
+        android:id="@+id/line"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="8dp"
+        android:background="@color/lightLine"
+        app:layout_constraintTop_toBottomOf="@id/descTextView" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/line" />
+</androidx.constraintlayout.widget.ConstraintLayout>

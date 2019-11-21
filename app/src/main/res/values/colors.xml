@@ -1,14 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#3489eb</color>
-    <color name="colorPrimaryDark">#00574B</color>
-    <color name="colorAccent">#D81B60</color>
-    <color name="colorSendMessageBg">#526aff</color>
-    <color name="colorRecvMessageBg">#ffffff</color>
-    <color name="colorBackground">#ffffff</color>
-    <color name="colorTextGray">#848991</color>
-    <color name="colorDividerBg">#f0f1f7</color>
-    <color name="colorViewPressed">#e8e8e8</color>
-    <color name="colorLine">#f0f1f7</color>
-    <color name="colorOnline">#5afc03</color>
+    <color name="lightPrimary">#3489eb</color>
+    <color name="lightPrimaryDark">#3a6ca6</color>
+    <color name="lightAccent">#41c4f0</color>
+    <color name="lightBackground">#ffffff</color>
+    <color name="lightTextGray">#848991</color>
+    <color name="lightDividerBg">#f0f1f7</color>
+    <color name="lightViewPressed">#e8e8e8</color>
+    <color name="lightLine">#f0f1f7</color>
+    <color name="online">#62e81a</color>
+    <color name="blackText">#212121</color>
+    <color name="whiteText">#d4f4ff</color>
+    <color name="weakWhiteText">#abe9ff</color>
+    <color name="strongGray">#c4c4c4</color>
+    <color name="blackTransparent">#30000000</color>
+    <color name="whiteTransparent">#99ffffff</color>
+    <color name="sendMessageBackground">#aeddeb</color> <!--b9e1ed-->
+    <color name="recvMessageBackground">#ffffff</color>
+    <color name="colorChatBg">#ebf1f2</color>
+    <color name="colorMessageStroke">#cfcfcf</color>
+    <color name="colorButtonStroke">#949494</color>
+    <color name="lightWeakGray">#f2f2f2</color>
+    <color name="missedCall">#e72c2c</color>
 </resources>

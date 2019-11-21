@@ -5,7 +5,6 @@ import androidx.lifecycle.ViewModel
 import vng.zalo.tdtai.zalo.ZaloApplication
 import vng.zalo.tdtai.zalo.models.RoomItem
 import vng.zalo.tdtai.zalo.networks.Database
-import vng.zalo.tdtai.zalo.utils.Constants
 import java.util.*
 
 class AllContactsSubFragmentViewModel : ViewModel() {
@@ -14,7 +13,7 @@ class AllContactsSubFragmentViewModel : ViewModel() {
 
     init {
         Database.getUserRooms(
-                userPhone = ZaloApplication.currentUser!!.phone!!,
+                userPhone = ZaloApplication.curUser!!.phone!!,
                 roomType = RoomItem.TYPE_PEER,
                 fieldToOrder = RoomItem.FIELD_NAME
         ) { liveRoomItems.value = it }

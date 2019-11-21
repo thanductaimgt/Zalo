@@ -9,7 +9,7 @@ import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.item_official_account.view.*
 import vng.zalo.tdtai.zalo.R
 import vng.zalo.tdtai.zalo.models.RoomItem
-import vng.zalo.tdtai.zalo.utils.BindableViewHolder
+import vng.zalo.tdtai.zalo.abstracts.BindableViewHolder
 import vng.zalo.tdtai.zalo.views.fragments.OfficialAccountSubFragment
 
 class OfficialAccountSubFragmentAdapter(private val officialAccountSubFragment: OfficialAccountSubFragment, diffCallback: DiffUtil.ItemCallback<RoomItem>) : ListAdapter<RoomItem, OfficialAccountSubFragmentAdapter.OfficialAccountViewHolder>(diffCallback) {
@@ -35,6 +35,7 @@ class OfficialAccountSubFragmentAdapter(private val officialAccountSubFragment: 
                 Picasso.Builder(avatarImgView.context)
                         .build().load(room.avatarUrl)
                         .fit()
+                        .centerInside()
                         .into(avatarImgView)
             }
         }

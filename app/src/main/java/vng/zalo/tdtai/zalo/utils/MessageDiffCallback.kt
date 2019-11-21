@@ -1,7 +1,7 @@
 package vng.zalo.tdtai.zalo.utils
 
 import androidx.recyclerview.widget.DiffUtil
-import vng.zalo.tdtai.zalo.models.Message
+import vng.zalo.tdtai.zalo.models.message.Message
 
 class MessageDiffCallback: DiffUtil.ItemCallback<Message>() {
 

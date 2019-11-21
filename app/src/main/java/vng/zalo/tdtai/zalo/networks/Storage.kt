@@ -1,5 +1,6 @@
 package vng.zalo.tdtai.zalo.networks
 
+import android.content.Context
 import android.net.Uri
 import android.util.Log
 import com.google.android.gms.tasks.Task
@@ -16,22 +17,48 @@ class Storage {
         private val firebaseStorage: FirebaseStorage
             get() = FirebaseStorage.getInstance()
 
-        fun getReference(path:String):StorageReference{
+        private fun getReference(path: String): StorageReference {
             return firebaseStorage.reference.child(path)
         }
 
-        fun addFile(localPath: String, storagePath: String, callback: (() -> Unit)? = null) {
+//        fun addFile(localPath: String, storagePath: String, callback: (() -> Unit)? = null) {
+//            val localFileUri = Uri.fromFile(File(localPath))
+//
+//            val fileStorageRef = firebaseStorage.reference.child(storagePath)
+//
+//            fileStorageRef.putFile(localFileUri)
+//                    .addOnCompleteListener { task ->
+//                        Utils.assertTaskSuccess(task, TAG, "addFile") {
+//                            Log.d(TAG, localFileUri.toString())
+//                            callback?.invoke()
+//                        }
+//                    }
+//        }
+
+        fun addFileAndGetDownloadUrl(context: Context, localPath: String, storagePath: String, callback: ((url: String) -> Unit)? = null) {
             val localFileUri = Uri.fromFile(File(localPath))
 
             val fileStorageRef = firebaseStorage.reference.child(storagePath)
 
-            fileStorageRef.putFile(localFileUri)
-                    .addOnCompleteListener { task ->
-                        Utils.assertTaskSuccess(task, TAG, "addFile") {
-                            Log.d(TAG, localFileUri.toString())
-                            callback?.invoke()
-                        }
-                    }
+//            fileStorageRef.putFile(localFileUri)
+            val inputStream = Utils.getInputStream(context, localPath)
+            fileStorageRef.putStream(inputStream)
+                    .continueWithTask {
+                var isSuccess = false
+                Utils.assertTaskSuccess(it, TAG, "addFileAndGetDownloadUrl") {
+                    isSuccess = true
+                }
+                if (isSuccess) {
+                    Storage.getReference(storagePath).downloadUrl
+                } else {
+                    null
+                }
+            }.addOnCompleteListener { task ->
+                Utils.assertTaskSuccessAndResultNotNull(task, TAG, "addFile") { uri ->
+                    Log.d(TAG, localFileUri.toString())
+                    callback?.invoke(uri.toString())
+                }
+            }
         }
 
         fun getStickerSetUrls(bucketName: String, callback: ((List<String>) -> Unit)?) {

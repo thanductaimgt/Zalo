@@ -5,27 +5,29 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.constraintlayout.widget.ConstraintSet
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.ListAdapter
 import com.airbnb.lottie.LottieAnimationView
-import com.airbnb.lottie.LottieCompositionFactory
 import com.airbnb.lottie.LottieDrawable
 import com.squareup.picasso.Picasso
 import vng.zalo.tdtai.zalo.R
 import vng.zalo.tdtai.zalo.ZaloApplication
-import vng.zalo.tdtai.zalo.models.Message
-import vng.zalo.tdtai.zalo.utils.BindableViewHolder
+import vng.zalo.tdtai.zalo.abstracts.BindableViewHolder
+import vng.zalo.tdtai.zalo.models.message.CallMessage
+import vng.zalo.tdtai.zalo.models.message.Message
 import vng.zalo.tdtai.zalo.utils.Constants
 import vng.zalo.tdtai.zalo.utils.MessageDiffCallback
 import vng.zalo.tdtai.zalo.utils.Utils
 import vng.zalo.tdtai.zalo.views.activities.RoomActivity
+import java.text.DateFormat
+
 
 class RoomActivityAdapter(private val roomActivity: RoomActivity, diffCallback: MessageDiffCallback) : ListAdapter<Message, RoomActivityAdapter.MessageViewHolder>(diffCallback) {
-    private val dateFormat = java.text.SimpleDateFormat.getDateInstance()
-    private val timeFormat = java.text.SimpleDateFormat.getTimeInstance()
-
     override fun getItemViewType(position: Int): Int {
         return when (currentList[position].senderPhone) {
-            ZaloApplication.currentUser!!.phone -> VIEW_TYPE_SEND
+            ZaloApplication.curUser!!.phone -> VIEW_TYPE_SEND
             else -> VIEW_TYPE_RECEIVE
         }
     }
@@ -82,15 +84,20 @@ class RoomActivityAdapter(private val roomActivity: RoomActivity, diffCallback: 
     override fun onViewRecycled(holder: MessageViewHolder) {
         holder.apply {
             contentTextView.visibility = View.GONE
-            stickerAnimView.visibility = View.GONE
             timeTextView.visibility = View.GONE
             dateTextView.visibility = View.GONE
+            fileViewLayout.visibility = View.GONE
+            callLayout.visibility = View.GONE
+
+            stickerAnimView.visibility = View.GONE
+            (stickerAnimView.drawable as LottieDrawable?)?.clearComposition()
+
+            imageView.visibility = View.GONE
+            imageView.setImageDrawable(null)
 
             avatarImgView?.setImageDrawable(null)
             avatarImgView?.visibility = View.GONE
             typingAnimView?.visibility = View.GONE
-
-            (stickerAnimView.drawable as LottieDrawable?)?.clearComposition()
         }
     }
 
@@ -123,9 +130,28 @@ class RoomActivityAdapter(private val roomActivity: RoomActivity, diffCallback: 
         val timeTextView: TextView = itemView.findViewById(R.id.timeTextView)
         val contentTextView: TextView = itemView.findViewById(R.id.contentTextView)
         val stickerAnimView: LottieAnimationView = itemView.findViewById(R.id.stickerAnimView)
+        val imageView: ImageView = itemView.findViewById(R.id.imageView)
+
+        //file layout
+        val fileViewLayout: View = itemView.findViewById(R.id.fileViewLayout)
+        val fileNameTextView: TextView = itemView.findViewById(R.id.fileNameTextView)
+        val fileExtensionImgView: ImageView = itemView.findViewById(R.id.fileExtensionImgView)
+        val fileDescTextView: TextView = itemView.findViewById(R.id.fileDescTextView)
+        val downloadFileImgView: View = itemView.findViewById(R.id.downloadImgView)
+        val openFileImgView: View = itemView.findViewById(R.id.openImgView)
+
+        //call layout
+        val callLayout: View = itemView.findViewById(R.id.callLayout)
+        val callTitleTV: TextView = itemView.findViewById(R.id.callTitleTV)
+        val callTimeTV: TextView = itemView.findViewById(R.id.callTimeTV)
+        val callIconImgView: ImageView = itemView.findViewById(R.id.callIconImgView)
+        val callbackTV: TextView = itemView.findViewById(R.id.callbackTV)
 
         val avatarImgView: ImageView? = itemView.findViewById(R.id.avatarImgView)
         val typingAnimView: LottieAnimationView? = itemView.findViewById(R.id.typingAnimView)
+
+        private val dateFormat = java.text.SimpleDateFormat.getDateInstance()
+        private val timeFormat = java.text.SimpleDateFormat.getTimeInstance(DateFormat.SHORT)
 
         fun bindTime(curMessage: Message, nextMessage: Message?): Boolean {
             /* if one of these is true:
@@ -155,14 +181,9 @@ class RoomActivityAdapter(private val roomActivity: RoomActivity, diffCallback: 
         }
 
         fun bindSticker(message: Message) {
+            stickerAnimView.setAnimationFromUrl(message.content)
+//            stickerAnimView.scaleType = ImageView.ScaleType.CENTER_CROP
             stickerAnimView.visibility = View.VISIBLE
-            LottieCompositionFactory.fromUrl(roomActivity, message.content).addListener { lottieComposition ->
-                stickerAnimView.apply {
-                    post {
-                        setComposition(lottieComposition)
-                    }
-                }
-            }
         }
 
         fun bindText(message: Message) {
@@ -175,6 +196,106 @@ class RoomActivityAdapter(private val roomActivity: RoomActivity, diffCallback: 
                     Utils.getTimeDiffInMillis(curMessage.createdTime!!.toDate(), nextMessage.createdTime!!.toDate()) > Constants.ONE_MIN_IN_MILLISECOND ||
                     Utils.areInDifferentDay(curMessage.createdTime!!.toDate(), nextMessage.createdTime!!.toDate())
         }
+
+        fun bindImage(message: Message) {
+            val dimension = Utils.getDimension(message.ratio!!)
+
+            //set aspect ratio
+            val set = ConstraintSet()
+            set.clone(itemView as ConstraintLayout)
+            set.constrainMaxWidth(imageView.id, dimension.first)
+            set.constrainMaxHeight(imageView.id, dimension.second)
+            set.setDimensionRatio(imageView.id, message.ratio)
+            set.applyTo(itemView)
+
+            imageView.visibility = View.VISIBLE
+
+            Picasso.get().load(message.content)
+                    .fit()
+                    .error(R.drawable.load_image_fail)
+                    .into(imageView)
+            imageView.setOnClickListener(roomActivity)
+        }
+
+        fun bindFile(message: Message) {
+            fileViewLayout.visibility = View.VISIBLE
+
+            fileNameTextView.text = message.fileName
+
+            val extension = Utils.getFileExtensionFromFileName(message.fileName!!)
+            fileExtensionImgView.setImageResource(Utils.getResIdFromFileExtension(roomActivity, extension))
+
+            val fileSizeFormat = if (message.fileSize != -1L) Utils.getFormatFileSize(message.fileSize!!) else ""
+
+            fileDescTextView.text =
+                    if (extension != "" && fileSizeFormat != "") {
+                        String.format("%s - %s", extension, fileSizeFormat)
+                    } else if (extension != "") {
+                        extension
+                    } else {
+                        fileSizeFormat
+                    }
+
+            downloadFileImgView.setOnClickListener(roomActivity)
+        }
+
+        fun bindCall(callMessage: CallMessage) {
+            val context = itemView.context
+
+            callLayout.visibility = View.VISIBLE
+
+            if (callMessage.isMissed) {
+                callTitleTV.setTextColor(ContextCompat.getColor(context, R.color.missedCall))
+                callTitleTV.text = context.getString(R.string.description_missed_call)
+
+                callTimeTV.text = context.getString(
+                        if (callMessage.callType == CallMessage.CALL_TYPE_VOICE)
+                            R.string.description_voice_call
+                        else
+                            R.string.description_video_call
+                )
+
+                callIconImgView.setImageResource(R.drawable.missed_call)
+            } else {
+                callTimeTV.text = Utils.getCallTimeFormat(context, callMessage.callTime)
+
+                if (callMessage.senderPhone == ZaloApplication.curUser!!.phone) {
+                    callTitleTV.text = context.getString(
+                            if (callMessage.callType == CallMessage.CALL_TYPE_VOICE) {
+                                R.string.description_outgoing_voice_call
+                            } else {
+                                R.string.description_outgoing_video_call
+                            }
+                    )
+
+                    callIconImgView.setImageResource(
+                            if (callMessage.isCanceled) {
+                                R.drawable.canceled_outgoing_call
+                            } else {
+                                R.drawable.success_outgoing_call
+                            }
+                    )
+                } else {
+                    callTitleTV.text = context.getString(
+                            if (callMessage.callType == CallMessage.CALL_TYPE_VOICE) {
+                                R.string.description_incoming_voice_call
+                            } else {
+                                R.string.description_incoming_video_call
+                            }
+                    )
+
+                    callIconImgView.setImageResource(
+                            if (callMessage.isCanceled) {
+                                R.drawable.canceled_incoming_call
+                            } else {
+                                R.drawable.success_incoming_call
+                            }
+                    )
+                }
+            }
+
+            callbackTV.setOnClickListener(roomActivity)
+        }
     }
 
     inner class SendViewHolder(itemView: View) : MessageViewHolder(itemView) {
@@ -185,11 +306,16 @@ class RoomActivityAdapter(private val roomActivity: RoomActivity, diffCallback: 
 
             when (curMessage.type) {
                 Message.TYPE_STICKER -> bindSticker(curMessage)
+                Message.TYPE_IMAGE -> bindImage(curMessage)
+                Message.TYPE_FILE -> bindFile(curMessage)
+                Message.TYPE_CALL -> bindCall(curMessage as CallMessage)
                 else -> bindText(curMessage)
             }
 
             bindDate(curMessage, prevMessage)
             bindTime(curMessage, nextMessage)
+
+            itemView.setOnLongClickListener(roomActivity)
         }
     }
 
@@ -205,6 +331,9 @@ class RoomActivityAdapter(private val roomActivity: RoomActivity, diffCallback: 
             } else {
                 when (curMessage.type) {
                     Message.TYPE_STICKER -> bindSticker(curMessage)
+                    Message.TYPE_IMAGE -> bindImage(curMessage)
+                    Message.TYPE_FILE -> bindFile(curMessage)
+                    Message.TYPE_CALL -> bindCall(curMessage as CallMessage)
                     else -> bindText(curMessage)
                 }
 
@@ -213,6 +342,8 @@ class RoomActivityAdapter(private val roomActivity: RoomActivity, diffCallback: 
                 val isTimeBind = bindTime(curMessage, nextMessage)
                 bindAvatar(curMessage, nextMessage, isTimeBind)
             }
+
+            itemView.setOnLongClickListener(roomActivity)
         }
 
         private fun bindTyping() {
@@ -235,6 +366,7 @@ class RoomActivityAdapter(private val roomActivity: RoomActivity, diffCallback: 
             Picasso.get()
                     .load(message.senderAvatarUrl)
                     .fit()
+                    .centerInside()
                     .error(R.drawable.default_peer_avatar)
                     .into(avatarImgView)
         }

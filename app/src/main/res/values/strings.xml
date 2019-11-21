@@ -37,6 +37,7 @@
     <string name="label_choose_image_from">Chọn ảnh từ</string>
     <string name="label_me">Tôi</string>
     <string name="label_just_now">Vừa xong</string>
+    <string name="label_second">giây</string>
     <string name="label_minute">phút</string>
     <string name="label_hour">giờ</string>
     <string name="label_day">ngày</string>
@@ -44,6 +45,28 @@
     <string name="label_name">Tên</string>
     <string name="label_like">Thích</string>
     <string name="label_reply">Trả lời</string>
+    <string name="label_add_friend">Thêm bạn</string>
+    <string name="label_new_group">Nhóm mới</string>
+    <string name="label_scan_qr">Quét mã QR</string>
+    <string name="label_zalo_desktop">Zalo cho Máy Tính</string>
+    <string name="label_zalo_calendar">Lịch Zalo</string>
+    <string name="label_send_file">Truyền File</string>
+    <string name="label_send_image">Gửi hình ảnh</string>
+    <string name="label_open">Mở</string>
+    <string name="label_copy">Copy</string>
+    <string name="label_share">Chia sẻ</string>
+    <string name="label_revoke">Thu hồi</string>
+    <string name="label_remind">Nhắc hẹn</string>
+    <string name="label_detail">Chi tiết</string>
+    <string name="label_delete">Xóa</string>
+    <string name="label_download">Lưu về máy</string>
+    <string name="label_ok">OK</string>
+    <string name="label_cancel">Hủy</string>
+    <string name="label_error_occurred">Đã có lỗi xảy ra</string>
+    <string name="label_error_code">Mã lỗi</string>
+    <string name="label_error">Lỗi</string>
+    <string name="label_end_call">Kết thúc cuộc gọi</string>
+    <string name="label_callback">Gọi lại</string>
 
     <string-array name="sort_group_options">
         <item>Tên nhóm</item>
@@ -58,8 +81,6 @@
     <string name="description_avatar">Avatar</string>
     <string name="description_preview_image">Preview image</string>
     <string name="description_unseen">Unseen icon</string>
-    <string name="description_call">Call</string>
-    <string name="description_video">video</string>
     <string name="description_interested_official_accounts">Official Account đã quan tâm</string>
     <string name="description_find_more_official_accounts">Tìm thêm Official Account</string>
     <string name="description_clear_text_icon">Xóa tất cả</string>
@@ -71,10 +92,30 @@
     <string name="description_your_profile">Trang cá nhân của bạn</string>
     <string name="description_post_status_image">Đăng tin</string>
     <string name="description_shop">Diện chất mùa hạ</string>
-    <string name="description_remind_date">Nhắc hẹn</string>
     <string name="description_vote">Bình chọn</string>
     <string name="description_name_group">Đặt tên nhóm</string>
     <string name="description_create_group">Tạo nhóm mới</string>
+    <string name="description_online_at">Truy cập %d %s trước</string>
+    <string name="description_selected_count">Đã chọn: %d</string>
+    <string name="description_image">Hình ảnh</string>
+    <string name="description_back">Trở lại</string>
+    <string name="description_calling">Đang gọi &#8230;</string>
+    <string name="description_not_answer">Không trả lời</string>
+    <string name="description_ringing">Đang đổ chuông &#8230;</string>
+    <string name="description_incoming_call">Cuộc gọi đến</string>
+    <string name="description_muted_speaker">Đã tắt mic</string>
+    <string name="description_un_muted_speaker">Đã bật mic</string>
+    <string name="description_using_external_speaker">Đang dùng loa ngoài</string>
+    <string name="description_disabled_external_speaker">Đã tắt loa ngoài</string>
+    <string name="description_call_ended">Kết thúc cuộc gọi</string>
+    <string name="description_end_call">Bạn muốn dừng cuộc trò chuyện ngay bây giờ ?</string>
+    <string name="description_voice_call">Cuộc gọi thoại</string>
+    <string name="description_video_call">Cuộc gọi video</string>
+    <string name="description_incoming_voice_call">Cuộc gọi thoại đến</string>
+    <string name="description_incoming_video_call">Cuộc gọi video đến</string>
+    <string name="description_outgoing_voice_call">Cuộc gọi thoại đi</string>
+    <string name="description_outgoing_video_call">Cuộc gọi video đi</string>
+    <string name="description_missed_call">Cuộc gọi nhỡ</string>
 
     <string name="hint_phone_number">Số điện thoại</string>
     <string name="hint_password">Mật khẩu</string>
@@ -82,4 +123,5 @@
     <string name="hint_search_not_clicked">Tìm thành viên</string>
     <string name="hint_search_clicked">Tìm tên hoặc số điện thoại</string>
     <string name="hint_full_name">Tên đầy đủ</string>
+    <string name="hint_search_friends_messages">Tìm bạn bè, tin nhắn &#8230;</string>
 </resources>

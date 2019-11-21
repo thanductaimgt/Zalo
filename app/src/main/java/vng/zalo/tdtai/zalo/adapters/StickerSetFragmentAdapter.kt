@@ -3,13 +3,13 @@ package vng.zalo.tdtai.zalo.adapters
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
-import com.airbnb.lottie.LottieCompositionFactory
 import kotlinx.android.synthetic.main.item_sticker.view.*
 import vng.zalo.tdtai.zalo.R
 import vng.zalo.tdtai.zalo.models.Sticker
-import vng.zalo.tdtai.zalo.utils.BindableViewHolder
+import vng.zalo.tdtai.zalo.abstracts.BindableViewHolder
 
 class StickerSetFragmentAdapter(private val fragment: Fragment) : RecyclerView.Adapter<StickerSetFragmentAdapter.StickerSetViewHolder>() {
     var stickers: List<Sticker> = ArrayList()
@@ -36,11 +36,8 @@ class StickerSetFragmentAdapter(private val fragment: Fragment) : RecyclerView.A
                 stickers[position].lottieComposition?.let{
                     animView.setComposition(stickers[position].lottieComposition!!)
                 }
-                LottieCompositionFactory.fromUrl(context, stickers[position].url).addListener {
-                    animView.post {
-                        animView.setComposition(it)
-                    }
-                }
+                animView.scaleType = ImageView.ScaleType.CENTER_CROP
+                animView.setAnimationFromUrl(stickers[position].url)
             }
         }
     }

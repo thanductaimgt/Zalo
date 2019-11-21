@@ -9,32 +9,63 @@
     android:focusableInTouchMode="true"
     tools:context=".views.activities.CreateGroupActivity">
 
-    <de.hdodenhof.circleimageview.CircleImageView
+    <androidx.cardview.widget.CardView
+        app:cardBackgroundColor="@color/lightLine"
+        app:layout_constraintTop_toTopOf="parent"
+        android:id="@+id/cardView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/size_action_bar_height">
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:textStyle="bold"
+                    android:text="@string/label_new_group"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+                <TextView
+                    android:id="@+id/countTextView"
+                    android:textColor="@color/lightTextGray"
+                    android:textSize="@dimen/sizeTextSmall"
+                    tools:text="Đã chọn: 0"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+            </LinearLayout>
+        </androidx.appcompat.widget.Toolbar>
+    </androidx.cardview.widget.CardView>
+
+
+    <ImageView
         android:id="@+id/uploadAvatarImgView"
         android:layout_width="@dimen/size_margin_recv_msg_item"
         android:layout_height="0dp"
-        android:layout_marginStart="@dimen/size_medium_16dp"
-        android:layout_marginTop="@dimen/size_small_8dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
         android:contentDescription="@string/description_avatar"
         android:src="@drawable/upload_picture"
         app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@id/cardView" />
 
     <EditText
         android:id="@+id/nameTextView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/size_medium_16dp"
-        android:layout_marginRight="@dimen/size_medium_16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
         android:background="@drawable/round_gray_bg"
         android:hint="@string/description_name_group"
         android:imeOptions="actionDone"
         android:inputType="text"
-        android:paddingStart="@dimen/size_large_24dp"
-        android:paddingTop="@dimen/size_small_8dp"
-        android:paddingEnd="@dimen/size_large_24dp"
-        android:paddingBottom="@dimen/size_small_8dp"
+        android:paddingStart="24dp"
+        android:paddingTop="8dp"
+        android:paddingEnd="24dp"
+        android:paddingBottom="8dp"
         app:layout_constraintBottom_toBottomOf="@id/uploadAvatarImgView"
         app:layout_constraintCircleRadius="25dp"
         app:layout_constraintLeft_toRightOf="@id/uploadAvatarImgView"
@@ -45,9 +76,9 @@
         android:id="@+id/searchView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/size_medium_16dp"
-        android:layout_marginTop="@dimen/size_medium_16dp"
-        android:layout_marginRight="@dimen/size_medium_16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginRight="16dp"
         android:background="@drawable/round_gray_bg"
         android:queryHint="@string/hint_search_clicked"
         app:layout_constraintCircleRadius="25dp"
@@ -59,7 +90,7 @@
         android:id="@+id/searchViewDescTV"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/size_huge_48dp"
+        android:layout_marginStart="48dp"
         android:text="@string/hint_search_not_clicked"
         android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="@id/searchView"
@@ -73,8 +104,8 @@
         android:id="@+id/divider"
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:layout_marginTop="@dimen/size_small_8dp"
-        android:background="@color/colorLine"
+        android:layout_marginTop="8dp"
+        android:background="@color/lightLine"
         app:layout_constraintTop_toBottomOf="@id/searchView" />
 
     <com.google.android.material.tabs.TabLayout
@@ -104,33 +135,42 @@
         app:layout_constraintTop_toBottomOf="@id/tabLayout" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        tools:layout_height="56dp"
+        tools:visibility="visible"
         android:id="@+id/selectedListLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@android:drawable/editbox_background"
+        android:background="@color/lightLine"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent">
+        <View
+            android:background="@color/lightLine"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"/>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerView"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:paddingLeft="@dimen/size_small_8dp"
-            android:paddingRight="@dimen/size_small_8dp"
-            app:layout_constraintBottom_toBottomOf="@id/createGroupButton"
+            android:paddingLeft="8dp"
+            android:paddingRight="8dp"
+            app:layout_constraintBottom_toBottomOf="@id/createGroupImgView"
             app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toLeftOf="@id/createGroupButton"
-            app:layout_constraintTop_toTopOf="@id/createGroupButton" />
+            app:layout_constraintRight_toLeftOf="@id/createGroupImgView"
+            app:layout_constraintTop_toTopOf="@id/createGroupImgView" />
 
-        <ImageButton
-            android:id="@+id/createGroupButton"
-            android:layout_width="@dimen/size_huge_48dp"
+        <ImageView
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:padding="12dp"
+            android:id="@+id/createGroupImgView"
+            android:layout_width="48dp"
             android:layout_height="0dp"
-            android:background="@drawable/go"
+            android:src="@drawable/go"
             android:contentDescription="@string/description_create_group"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintDimensionRatio="1:1"
-            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

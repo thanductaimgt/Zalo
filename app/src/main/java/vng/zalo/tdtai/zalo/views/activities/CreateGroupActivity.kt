@@ -95,7 +95,7 @@ class CreateGroupActivity : AppCompatActivity(), View.OnClickListener {
         createGroupImgView.setOnClickListener(this)
     }
 
-    private fun initBottomSheet(){
+    private fun initBottomSheet() {
         bottomSheetDialog = BottomSheetDialog(this)
 
         // Fix BottomSheetDialog not showing after getting hidden when the user drags it down
@@ -134,7 +134,6 @@ class CreateGroupActivity : AppCompatActivity(), View.OnClickListener {
         when (view.id) {
             R.id.searchView -> {
                 searchView.isIconified = false
-                searchViewDescTV.visibility = View.GONE
             }
             R.id.itemUserIconRootLayout -> {
                 val itemPosition = recyclerView.getChildLayoutPosition(view)
@@ -146,7 +145,7 @@ class CreateGroupActivity : AppCompatActivity(), View.OnClickListener {
                 Utils.dispatchChooserIntent(this, Constants.CHOOSE_IMAGES_REQUEST)
             }
             R.id.takePicTextView -> {
-                Utils.dispatchTakePictureIntent(this){
+                Utils.dispatchTakePictureIntent(this) {
                     prevAvatarLocalUriString = curAvatarLocalUriString
                     curAvatarLocalUriString = it
                 }
@@ -207,22 +206,22 @@ class CreateGroupActivity : AppCompatActivity(), View.OnClickListener {
     override fun onActivityResult(requestCode: Int, resultCode: Int, intent: Intent?) {
         super.onActivityResult(requestCode, resultCode, intent)
         if (resultCode == Activity.RESULT_OK) {
-            Utils.assertNotNull(intent, TAG, "onActivityResult.intent") { intentNotNull ->
-                when (requestCode) {
-                    Constants.CHOOSE_IMAGES_REQUEST -> {
+            when (requestCode) {
+                Constants.CHOOSE_IMAGES_REQUEST -> {
+                    Utils.assertNotNull(intent, TAG, "CHOOSE_IMAGES_REQUEST.intent") { intentNotNull ->
                         curAvatarLocalUriString = intentNotNull.data!!.toString()
                         Picasso.get().load(intentNotNull.data).fit()
                                 .centerInside().into(uploadAvatarImgView)
                     }
-                    Constants.TAKE_PICTURE_REQUEST -> {
-                        // delete previous image when taking new one
-                        Utils.deleteZaloFileAtUri(this, prevAvatarLocalUriString)
-                        Picasso.get().load("file://$curAvatarLocalUriString").fit()
-                                .centerInside().into(uploadAvatarImgView)
-                    }
                 }
-                bottomSheetDialog.dismiss()
+                Constants.TAKE_PICTURE_REQUEST -> {
+                    // delete previous image when taking new one
+                    Utils.deleteZaloFileAtUri(this, prevAvatarLocalUriString)
+                    Picasso.get().load("file://$curAvatarLocalUriString").fit()
+                            .centerInside().into(uploadAvatarImgView)
+                }
             }
+            bottomSheetDialog.dismiss()
         } else {
             Log.d(TAG, "resultCode != Activity.RESULT_OK")
         }

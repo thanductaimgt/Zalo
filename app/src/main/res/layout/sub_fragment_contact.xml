@@ -112,7 +112,8 @@
             android:layout_marginTop="8dp"
             android:background="@android:color/white"
             android:paddingTop="8dp"
-            android:paddingBottom="8dp">
+            android:paddingBottom="8dp"
+            android:descendantFocusability="blocksDescendants">
 
             <TextView
                 android:id="@+id/allContactTextView"

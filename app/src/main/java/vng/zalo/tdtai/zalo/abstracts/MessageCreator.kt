@@ -62,7 +62,6 @@ class MessageCreator {
                 val isCanceled = data[3].toBoolean()
 
                 val message = CallMessage(
-                        content = content,
                         createdTime = Timestamp(Date(curTimeStamp)),
                         senderPhone = ZaloApplication.curUser!!.phone,
                         senderAvatarUrl = ZaloApplication.curUser!!.avatarUrl,

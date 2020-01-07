@@ -248,13 +248,7 @@ class RoomActivity : AppCompatActivity(), View.OnClickListener, View.OnLongClick
     override fun onClick(v: View) {
         when (v.id) {
             R.id.voiceCallImgView -> {
-                startActivity(Intent(this, CallActivity::class.java).apply {
-                    putExtra(Constants.IS_CALLER, true)
-
-                    putExtra(Constants.ROOM_ID, viewModel.room.id)
-                    putExtra(Constants.ROOM_NAME, viewModel.room.name)
-                    putExtra(Constants.ROOM_AVATAR, viewModel.room.avatarUrl)
-                })
+                callRoom()
             }
             R.id.sendMsgImgView -> {
                 if (msgEditText.text != null && msgEditText.text.toString() != "") {
@@ -307,7 +301,20 @@ class RoomActivity : AppCompatActivity(), View.OnClickListener, View.OnLongClick
             R.id.cancelImgView -> {
                 bottomSheetDialog.dismiss()
             }
+            R.id.callbackTV -> {
+                callRoom()
+            }
         }
+    }
+
+    private fun callRoom() {
+        startActivity(Intent(this, CallActivity::class.java).apply {
+            putExtra(Constants.IS_CALLER, true)
+
+            putExtra(Constants.ROOM_ID, viewModel.room.id)
+            putExtra(Constants.ROOM_NAME, viewModel.room.name)
+            putExtra(Constants.ROOM_AVATAR, viewModel.room.avatarUrl)
+        })
     }
 
     override fun onLongClick(v: View?): Boolean {
@@ -355,26 +362,28 @@ class RoomActivity : AppCompatActivity(), View.OnClickListener, View.OnLongClick
     override fun onActivityResult(requestCode: Int, resultCode: Int, intent: Intent?) {
         super.onActivityResult(requestCode, resultCode, intent)
         if (resultCode == Activity.RESULT_OK) {
-            Utils.assertNotNull(intent, TAG, "onActivityResult.intent") { intentNotNull ->
-                when (requestCode) {
-                    Constants.CHOOSE_IMAGES_REQUEST -> {
+            when (requestCode) {
+                Constants.CHOOSE_IMAGES_REQUEST -> {
+                    Utils.assertNotNull(intent, TAG, "CHOOSE_IMAGES_REQUEST.intent") { intentNotNull ->
                         val localUris = getLocalUris(intentNotNull)
 
                         sendMessages(localUris, Message.TYPE_IMAGE)
                     }
-                    Constants.CHOOSE_FILES_REQUEST -> {
+                }
+                Constants.CHOOSE_FILES_REQUEST -> {
+                    Utils.assertNotNull(intent, TAG, "CHOOSE_FILES_REQUEST.intent") { intentNotNull ->
                         val localUris = getLocalUris(intentNotNull)
 
                         sendMessages(localUris, Message.TYPE_FILE)
                     }
-                    Constants.TAKE_PICTURE_REQUEST -> {
-                        imageLocalUriString?.let { localUri ->
-                            sendMessages(ArrayList<String>().apply { add(localUri) }, Message.TYPE_IMAGE)
-                        }
+                }
+                Constants.TAKE_PICTURE_REQUEST -> {
+                    imageLocalUriString?.let { localUri ->
+                        sendMessages(ArrayList<String>().apply { add(localUri) }, Message.TYPE_IMAGE)
                     }
                 }
-                bottomSheetDialog.dismiss()
             }
+            bottomSheetDialog.dismiss()
         } else {
             Log.d(TAG, "resultCode != Activity.RESULT_OK")
         }

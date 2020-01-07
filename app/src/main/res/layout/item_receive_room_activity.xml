@@ -8,6 +8,14 @@
     tools:background="@color/colorChatBg"
     android:id="@+id/rootItemView">
 
+    <View
+        tools:visibility="visible"
+        android:visibility="gone"
+        app:layout_constraintTop_toTopOf="parent"
+        android:id="@+id/paddingView"
+        android:layout_width="match_parent"
+        android:layout_height="16dp"/>
+
     <TextView
         android:id="@+id/dateTextView"
         android:layout_width="wrap_content"
@@ -20,7 +28,7 @@
         app:layout_constraintBottom_toTopOf="@id/contentTextView"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/paddingView"
         tools:text="01/01/2019"
         tools:visibility="visible" />
 
@@ -99,7 +107,9 @@
             android:id="@+id/line"
             android:background="@color/lightWeakGray"
             app:layout_constraintTop_toBottomOf="@id/callTimeTV"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             android:layout_height="1dp"/>
         <TextView
             app:layout_constraintEnd_toEndOf="parent"
@@ -122,7 +132,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/size_margin_recv_msg_item"
         android:layout_marginBottom="2dp"
-        android:background="@drawable/recv_message_bg"
+        android:background="@drawable/recv_message_bg_stroke"
         android:visibility="gone"
         app:layout_constrainedWidth="true"
         app:layout_constraintBottom_toTopOf="@id/typingAnimView"
@@ -178,11 +188,13 @@
             app:layout_constraintTop_toTopOf="@id/fileNameTextView"
             tools:visibility="visible" />
 
-        <ImageView
+        <com.makeramen.roundedimageview.RoundedImageView
+            app:riv_oval="true"
+            app:riv_mutate_background="true"
             android:id="@+id/openImgView"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:background="@drawable/download_button_bg"
+            android:background="@color/lightAccent"
             android:padding="4dp"
             android:src="@drawable/download2"
             app:layout_constraintBottom_toBottomOf="@id/fileExtensionImgView"
@@ -219,6 +231,7 @@
         tools:visibility="visible" />
 
     <com.makeramen.roundedimageview.RoundedImageView
+        android:scaleType="fitXY"
         android:id="@+id/imageView"
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -235,8 +248,6 @@
         app:layout_constraintEnd_toStartOf="@id/guideline"
         app:layout_constraintHorizontal_bias="0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1"
         tools:layout_constraintDimensionRatio="1:1"
         tools:visibility="visible" />
 

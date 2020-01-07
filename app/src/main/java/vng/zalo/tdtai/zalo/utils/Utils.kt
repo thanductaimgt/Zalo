@@ -152,6 +152,7 @@ object Utils {
                         takePictureIntent.apply {
                             putExtra(MediaStore.EXTRA_OUTPUT, photoUri)
                             addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                            addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
                         }
 
                         activity.packageManager.queryIntentActivities(takePictureIntent, PackageManager.MATCH_DEFAULT_ONLY).apply {

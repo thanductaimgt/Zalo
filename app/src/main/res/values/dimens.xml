@@ -3,7 +3,7 @@
     <dimen name="size_margin_send_msg_item">8dp</dimen>
     <dimen name="size_icon_space_5dp">5dp</dimen>
     <dimen name="size_small_text_10sp">10sp</dimen>
-    <dimen name="size_chat_avatar">35dp</dimen>
+    <dimen name="size_chat_avatar">32dp</dimen>
     <dimen name="size_room_item_avatar_48dp">48dp</dimen>
     <dimen name="size_large_avatar_64dp">64dp</dimen>
     <dimen name="size_sticker_chat">128dp</dimen>

@@ -131,21 +131,22 @@ class RoomActivityAdapter(private val roomActivity: RoomActivity, diffCallback: 
         val contentTextView: TextView = itemView.findViewById(R.id.contentTextView)
         val stickerAnimView: LottieAnimationView = itemView.findViewById(R.id.stickerAnimView)
         val imageView: ImageView = itemView.findViewById(R.id.imageView)
+        private val paddingView: View = itemView.findViewById(R.id.paddingView)
 
         //file layout
         val fileViewLayout: View = itemView.findViewById(R.id.fileViewLayout)
-        val fileNameTextView: TextView = itemView.findViewById(R.id.fileNameTextView)
-        val fileExtensionImgView: ImageView = itemView.findViewById(R.id.fileExtensionImgView)
-        val fileDescTextView: TextView = itemView.findViewById(R.id.fileDescTextView)
-        val downloadFileImgView: View = itemView.findViewById(R.id.downloadImgView)
-        val openFileImgView: View = itemView.findViewById(R.id.openImgView)
+        private val fileNameTextView: TextView = itemView.findViewById(R.id.fileNameTextView)
+        private val fileExtensionImgView: ImageView = itemView.findViewById(R.id.fileExtensionImgView)
+        private val fileDescTextView: TextView = itemView.findViewById(R.id.fileDescTextView)
+        private val downloadFileImgView: View = itemView.findViewById(R.id.downloadImgView)
+        private val openFileImgView: View = itemView.findViewById(R.id.openImgView)
 
         //call layout
         val callLayout: View = itemView.findViewById(R.id.callLayout)
-        val callTitleTV: TextView = itemView.findViewById(R.id.callTitleTV)
-        val callTimeTV: TextView = itemView.findViewById(R.id.callTimeTV)
-        val callIconImgView: ImageView = itemView.findViewById(R.id.callIconImgView)
-        val callbackTV: TextView = itemView.findViewById(R.id.callbackTV)
+        private val callTitleTV: TextView = itemView.findViewById(R.id.callTitleTV)
+        private val callTimeTV: TextView = itemView.findViewById(R.id.callTimeTV)
+        private val callIconImgView: ImageView = itemView.findViewById(R.id.callIconImgView)
+        private val callbackTV: TextView = itemView.findViewById(R.id.callbackTV)
 
         val avatarImgView: ImageView? = itemView.findViewById(R.id.avatarImgView)
         val typingAnimView: LottieAnimationView? = itemView.findViewById(R.id.typingAnimView)
@@ -214,6 +215,7 @@ class RoomActivityAdapter(private val roomActivity: RoomActivity, diffCallback: 
                     .fit()
                     .error(R.drawable.load_image_fail)
                     .into(imageView)
+
             imageView.setOnClickListener(roomActivity)
         }
 
@@ -296,6 +298,14 @@ class RoomActivityAdapter(private val roomActivity: RoomActivity, diffCallback: 
 
             callbackTV.setOnClickListener(roomActivity)
         }
+
+        fun bindPadding(curMessage: Message, prevMessage: Message?) {
+            if (prevMessage != null && prevMessage.senderPhone != curMessage.senderPhone) {
+                paddingView.visibility = View.VISIBLE
+            } else {
+                paddingView.visibility = View.GONE
+            }
+        }
     }
 
     inner class SendViewHolder(itemView: View) : MessageViewHolder(itemView) {
@@ -314,6 +324,7 @@ class RoomActivityAdapter(private val roomActivity: RoomActivity, diffCallback: 
 
             bindDate(curMessage, prevMessage)
             bindTime(curMessage, nextMessage)
+            bindPadding(curMessage, prevMessage)
 
             itemView.setOnLongClickListener(roomActivity)
         }
@@ -338,6 +349,7 @@ class RoomActivityAdapter(private val roomActivity: RoomActivity, diffCallback: 
                 }
 
                 bindDate(curMessage, prevMessage)
+                bindPadding(curMessage, prevMessage)
 
                 val isTimeBind = bindTime(curMessage, nextMessage)
                 bindAvatar(curMessage, nextMessage, isTimeBind)

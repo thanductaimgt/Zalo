@@ -171,12 +171,11 @@ class CallActivity : AppCompatActivity(), View.OnClickListener {
                 viewModel.sipAudioCall.answerCall(10)
             }
             R.id.cancelCallImgView -> {
-//                if(sipAudioCall.isInCall || !isCaller){
-                viewModel.sipAudioCall.endCall()
-//                }else{
-//                    sipAudioCall.close()
-//                    finish()
-//                }
+                if (viewModel.sipAudioCall.isInCall || !isCaller) {
+                    viewModel.sipAudioCall.endCall()
+                } else {
+                    finish()
+                }
             }
             R.id.backImgView -> {
                 if (viewModel.sipAudioCall.isInCall) {
@@ -187,10 +186,16 @@ class CallActivity : AppCompatActivity(), View.OnClickListener {
                             button2Text = getString(R.string.label_ok),
                             button2Action = { viewModel.sipAudioCall.endCall() })
                 } else {
-                    viewModel.sipAudioCall.endCall()
+                    finish()
+//                    viewModel.sipAudioCall.endCall()
                 }
             }
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        viewModel.sipAudioCall.close()
     }
 
     inner class SipAudioCallListener : SipAudioCall.Listener() {
@@ -319,10 +324,5 @@ class CallActivity : AppCompatActivity(), View.OnClickListener {
                 statusTextView.text = getString(R.string.description_ringing)
             }
         }
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        viewModel.sipAudioCall.close()
     }
 }

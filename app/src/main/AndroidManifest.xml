@@ -65,7 +65,6 @@
             android:theme="@style/AppTheme.Light.NoActionBar" />
         <activity
             android:name=".views.activities.HomeActivity"
-            android:label="@string/label_home_screen"
             android:theme="@style/AppTheme.Light.NoActionBar" />
         <activity
             android:name=".views.activities.LoginActivity"

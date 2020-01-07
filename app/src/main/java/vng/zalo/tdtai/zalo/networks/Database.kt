@@ -124,11 +124,12 @@ class Database {
                         Utils.assertNotNull(querySnapshot, TAG, "addRoomMessagesListener") { querySnapshotNotNull ->
                             val messages = ArrayList<Message>()
                             for (doc in querySnapshotNotNull) {
-                                val messageClass = when (doc.getLong(Message.FIELD_TYPE)) {
-                                    Message.TYPE_CALL.toLong() -> CallMessage::class.java
-                                    else -> Message::class.java
+                                val message = when (doc.getLong(Message.FIELD_TYPE)) {
+                                    Message.TYPE_CALL.toLong() -> CallMessage()
+                                    else -> Message()
                                 }
-                                messages.add(doc.toObject(messageClass))
+                                message.applyDoc(doc)
+                                messages.add(message)
                             }
                             callback?.invoke(messages)
                         }

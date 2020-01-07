@@ -80,25 +80,11 @@
         android:layout_marginTop="16dp"
         android:layout_marginRight="16dp"
         android:background="@drawable/round_gray_bg"
-        android:queryHint="@string/hint_search_clicked"
+        android:queryHint="@string/hint_search_members"
         app:layout_constraintCircleRadius="25dp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/uploadAvatarImgView" />
-
-    <TextView
-        android:id="@+id/searchViewDescTV"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="48dp"
-        android:text="@string/hint_search_not_clicked"
-        android:textSize="18sp"
-        app:layout_constraintBottom_toBottomOf="@id/searchView"
-        app:layout_constraintLeft_toLeftOf="@id/searchView"
-        app:layout_constraintRight_toRightOf="@id/searchView"
-        app:layout_constraintTop_toTopOf="@id/searchView">
-
-    </TextView>
 
     <View
         android:id="@+id/divider"

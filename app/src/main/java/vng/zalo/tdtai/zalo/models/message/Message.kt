@@ -2,10 +2,12 @@ package vng.zalo.tdtai.zalo.models.message
 
 import android.content.Context
 import com.google.firebase.Timestamp
+import com.google.firebase.firestore.DocumentSnapshot
 import vng.zalo.tdtai.zalo.R
 import java.util.*
 
 open class Message(
+        var id:String?=null,
         var content: String? = null,// url if message is a sticker or image
         var createdTime: Timestamp? = null,
         var senderPhone: String? = null,
@@ -35,6 +37,17 @@ open class Message(
             TYPE_FILE -> "[File] $fileName"
             else -> ""
         }
+    }
+
+    open fun applyDoc(doc:DocumentSnapshot){
+        id = doc.id
+        doc.getString(FIELD_CONTENT)?.let{content = it}
+        doc.getTimestamp(FIELD_CREATED_TIME)?.let{createdTime = it}
+        doc.getString(FIELD_SENDER_PHONE)?.let{senderPhone = it}
+        doc.getLong(FIELD_TYPE)?.let{type = it.toInt()}
+        doc.getString(FIELD_RATIO)?.let{ratio = it}
+        doc.getLong(FIELD_FILE_SIZE)?.let{fileSize = it}
+        doc.getString(FIELD_FILE_NAME)?.let{fileName = it}
     }
 
     companion object {

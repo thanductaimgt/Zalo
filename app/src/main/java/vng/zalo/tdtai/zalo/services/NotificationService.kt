@@ -77,7 +77,12 @@ class NotificationService : Service() {
                 fieldToOrder = RoomItem.FIELD_LAST_MSG_TIME,
                 orderDirection = Query.Direction.DESCENDING
         ) { roomItems ->
-            roomItems.filter { lastRoomItems != null && it.unseenMsgNum > 0 && it.roomId != ZaloApplication.currentRoomId && !lastRoomItems!!.contains(it) }.forEach {
+            roomItems.filter {
+                lastRoomItems != null &&
+                    it.unseenMsgNum > 0 &&
+                        it.roomId != ZaloApplication.currentRoomId &&
+                    !lastRoomItems!!.contains(it)
+            }.forEach {
                 pushChatNotification(it)
             }
             lastRoomItems = roomItems

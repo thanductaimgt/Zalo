@@ -104,23 +104,25 @@
 
     <ImageView
         android:id="@+id/backImgView"
-        android:layout_width="28dp"
+        android:layout_width="40dp"
         android:layout_height="0dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:layout_marginBottom="12dp"
         android:background="?attr/selectableItemBackgroundBorderless"
-        android:padding="4dp"
+        android:padding="10dp"
         android:src="@drawable/left_arrow"
         app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <ImageView
+    <com.makeramen.roundedimageview.RoundedImageView
+        app:riv_oval="true"
+        app:riv_mutate_background="true"
         android:id="@+id/speakerImgView"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:background="@drawable/round_black_transparent"
+        android:background="@color/blackTransparent"
         android:padding="@dimen/sizePaddingButtonCallActivity"
         android:src="@drawable/internal_speaker"
         android:visibility="gone"
@@ -131,12 +133,14 @@
         app:layout_constraintTop_toTopOf="@id/cancelCallImgView"
         tools:visibility="visible" />
 
-    <ImageView
+    <com.makeramen.roundedimageview.RoundedImageView
+        app:riv_oval="true"
+        app:riv_mutate_background="true"
         android:id="@+id/cancelCallImgView"
         android:layout_width="56dp"
         android:layout_height="0dp"
         android:layout_marginBottom="32dp"
-        android:background="@drawable/round_white_transparent"
+        android:background="@color/whiteTransparent"
         android:padding="@dimen/sizePaddingButtonCallActivity"
         android:src="@drawable/cancel_call"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -144,11 +148,13 @@
         app:layout_constraintEnd_toStartOf="@id/answerImgView"
         app:layout_constraintStart_toEndOf="@id/speakerImgView" />
 
-    <ImageView
+    <com.makeramen.roundedimageview.RoundedImageView
+        app:riv_oval="true"
+        app:riv_mutate_background="true"
         android:id="@+id/answerImgView"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:background="@drawable/round_white_transparent"
+        android:background="@color/whiteTransparent"
         android:padding="@dimen/sizePaddingButtonCallActivity"
         android:src="@drawable/answer"
         app:layout_constraintBottom_toBottomOf="@id/cancelCallImgView"
@@ -157,11 +163,13 @@
         app:layout_constraintStart_toEndOf="@id/cancelCallImgView"
         app:layout_constraintTop_toTopOf="@id/cancelCallImgView" />
 
-    <ImageView
+    <com.makeramen.roundedimageview.RoundedImageView
+        app:riv_oval="true"
+        app:riv_mutate_background="true"
         android:id="@+id/recorderImgView"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:background="@drawable/round_black_transparent"
+        android:background="@color/blackTransparent"
         android:padding="@dimen/sizePaddingButtonCallActivity"
         android:src="@drawable/muted_recorder_white"
         android:visibility="gone"

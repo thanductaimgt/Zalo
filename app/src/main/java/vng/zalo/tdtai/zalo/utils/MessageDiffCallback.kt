@@ -2,11 +2,13 @@ package vng.zalo.tdtai.zalo.utils
 
 import androidx.recyclerview.widget.DiffUtil
 import vng.zalo.tdtai.zalo.models.message.Message
+import java.util.*
+import kotlin.collections.ArrayList
 
 class MessageDiffCallback: DiffUtil.ItemCallback<Message>() {
 
     override fun areItemsTheSame(oldItem: Message, newItem: Message): Boolean {
-        return oldItem.createdTime == newItem.createdTime
+        return oldItem.id == newItem.id
     }
 
     override fun areContentsTheSame(oldItem: Message, newItem: Message): Boolean {

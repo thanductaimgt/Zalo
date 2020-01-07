@@ -107,6 +107,7 @@ class RoomActivityViewModel(intent: Intent) : ViewModel() {
         val typingMessages = ArrayList<Message>()
         phones.filter { it != ZaloApplication.curUser!!.phone }.reversed().forEach {
             typingMessages.add(Message(
+                    id = it,
                     content = "",
                     createdTime = Timestamp.now(),
                     senderPhone = it,

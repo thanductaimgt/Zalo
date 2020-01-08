@@ -1,6 +1,7 @@
 package vng.zalo.tdtai.zalo.models
 
 import com.google.firebase.Timestamp
+import vng.zalo.tdtai.zalo.models.message.Message
 import vng.zalo.tdtai.zalo.utils.Constants
 
 import java.util.HashMap

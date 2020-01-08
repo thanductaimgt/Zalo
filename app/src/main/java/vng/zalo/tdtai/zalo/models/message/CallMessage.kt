@@ -6,21 +6,17 @@ import com.google.firebase.firestore.DocumentSnapshot
 import vng.zalo.tdtai.zalo.R
 import java.util.*
 
-class CallMessage(
-        id: String? = null,
-        content: String? = null,// url if message is a sticker or image
-        createdTime: Timestamp? = null,
-        senderPhone: String? = null,
-        senderAvatarUrl: String? = null,
-        type: Int? = null,
-        ratio: String? = null,
-        fileSize: Long? = null,// for file only
-        fileName: String? = null,// for file only
+data class CallMessage(
+        override var id: String? = null,
+        override var createdTime: Timestamp? = null,
+        override var senderPhone: String? = null,
+        override var senderAvatarUrl: String? = null,
+        override var type: Int? = null,
         var callTime: Int = 0,//call time in second
         var callType: Int = CALL_TYPE_VOICE,
         var isMissed: Boolean = false,
         var isCanceled: Boolean = false
-) : Message(id, content, createdTime, senderPhone, senderAvatarUrl, type, ratio, fileSize, fileName) {
+) : Message(id, createdTime, senderPhone, senderAvatarUrl, type) {
     override fun toMap(): HashMap<String, Any?> {
         return super.toMap().apply {
             put(FIELD_CALL_TIME, callTime)

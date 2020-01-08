@@ -33,7 +33,10 @@ import vng.zalo.tdtai.zalo.ZaloApplication
 import vng.zalo.tdtai.zalo.adapters.MessageActionAdapter
 import vng.zalo.tdtai.zalo.adapters.RoomActivityAdapter
 import vng.zalo.tdtai.zalo.factories.ViewModelFactory
+import vng.zalo.tdtai.zalo.models.message.FileMessage
+import vng.zalo.tdtai.zalo.models.message.ImageMessage
 import vng.zalo.tdtai.zalo.models.message.Message
+import vng.zalo.tdtai.zalo.models.message.StickerMessage
 import vng.zalo.tdtai.zalo.utils.*
 import vng.zalo.tdtai.zalo.viewmodels.RoomActivityViewModel
 import vng.zalo.tdtai.zalo.views.fragments.EmojiFragment
@@ -61,23 +64,23 @@ class RoomActivity : AppCompatActivity(), View.OnClickListener, View.OnLongClick
 
         viewModel = ViewModelProvider(this, ViewModelFactory.getInstance(intent = intent)).get(RoomActivityViewModel::class.java)
         viewModel.liveMessages.observe(this, Observer { messages ->
-            val typings = viewModel.getTypingMessages(viewModel.liveTypingMembersPhone.value!!)
-            val messagesWithTypings = ArrayList<Message>().apply {
-                addAll(typings)
+            val typingMessages = viewModel.getTypingMessages(viewModel.liveTypingPhones.value!!)
+            val allMessages = ArrayList<Message>().apply {
+                addAll(typingMessages)
                 addAll(messages)
             }
 
-            submitMessages(messagesWithTypings)
+            submitMessages(allMessages)
         })
-        viewModel.liveTypingMembersPhone.observe(this, Observer { phones ->
-            val typings = viewModel.getTypingMessages(phones)
+        viewModel.liveTypingPhones.observe(this, Observer { phones ->
+            val typingMessages = viewModel.getTypingMessages(phones)
             val messages = viewModel.liveMessages.value!!
-            val messagesWithTypings = ArrayList<Message>().apply {
-                addAll(typings)
+            val allMessages = ArrayList<Message>().apply {
+                addAll(typingMessages)
                 addAll(messages)
             }
 
-            submitMessages(messagesWithTypings)
+            submitMessages(allMessages)
         })
     }
 
@@ -278,8 +281,8 @@ class RoomActivity : AppCompatActivity(), View.OnClickListener, View.OnLongClick
             }
             R.id.imageView -> {
                 val position = recyclerView.getChildLayoutPosition(v.parent as View)
-                val message = adapter.currentList[position]
-                zoomImageDialog.show(message)
+                val imageMessage = adapter.currentList[position] as ImageMessage
+                zoomImageDialog.show(imageMessage)
             }
             R.id.uploadFileImgView -> {
                 Utils.dispatchChooserIntent(this, Constants.CHOOSE_FILES_REQUEST)
@@ -332,18 +335,18 @@ class RoomActivity : AppCompatActivity(), View.OnClickListener, View.OnLongClick
                             imageView.visibility = View.VISIBLE
                             Picasso.get().load(
                                     Utils.getResIdFromFileExtension(this@RoomActivity,
-                                            Utils.getFileExtensionFromFileName(message.fileName!!)))
+                                            Utils.getFileExtensionFromFileName((message as FileMessage).fileName!!)))
                                     .into(imageView)
                         }
                         Message.TYPE_IMAGE -> {
                             imageView.visibility = View.VISIBLE
                             Picasso.get().load(
-                                    message.content
+                                    (message as ImageMessage).url
                             ).fit().centerCrop().into(imageView)
                         }
                         Message.TYPE_STICKER -> {
                             imageView.visibility = View.VISIBLE
-                            imageView.setAnimationFromUrl(message.content)
+                            imageView.setAnimationFromUrl((message as StickerMessage).url)
                         }
                     }
 

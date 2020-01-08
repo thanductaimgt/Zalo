@@ -15,8 +15,7 @@ import com.squareup.picasso.Picasso
 import vng.zalo.tdtai.zalo.R
 import vng.zalo.tdtai.zalo.ZaloApplication
 import vng.zalo.tdtai.zalo.abstracts.BindableViewHolder
-import vng.zalo.tdtai.zalo.models.message.CallMessage
-import vng.zalo.tdtai.zalo.models.message.Message
+import vng.zalo.tdtai.zalo.models.message.*
 import vng.zalo.tdtai.zalo.utils.Constants
 import vng.zalo.tdtai.zalo.utils.MessageDiffCallback
 import vng.zalo.tdtai.zalo.utils.Utils
@@ -64,7 +63,7 @@ class RoomActivityAdapter(private val roomActivity: RoomActivity, diffCallback: 
                     Message.PAYLOAD_AVATAR -> {
                         when (holder.itemViewType) {
                             VIEW_TYPE_RECEIVE -> (holder as RecvViewHolder).apply {
-                                bindAvatar(curMessage, nextMessage, isBindTime(curMessage, nextMessage))
+                                bindAvatar(curMessage, nextMessage, shouldBindTime(curMessage, nextMessage))
                             }
                         }
                     }
@@ -161,7 +160,7 @@ class RoomActivityAdapter(private val roomActivity: RoomActivity, diffCallback: 
             - next curMessage date != current curMessage date
             => display curMessage time
             */
-            if (isBindTime(curMessage, nextMessage)) {
+            if (shouldBindTime(curMessage, nextMessage)) {
                 timeTextView.text = timeFormat.format(curMessage.createdTime!!.toDate())
                 timeTextView.visibility = View.VISIBLE
                 return true
@@ -181,37 +180,37 @@ class RoomActivityAdapter(private val roomActivity: RoomActivity, diffCallback: 
             }
         }
 
-        fun bindSticker(message: Message) {
-            stickerAnimView.setAnimationFromUrl(message.content)
+        fun bindSticker(stickerMessage: StickerMessage) {
+            stickerAnimView.setAnimationFromUrl(stickerMessage.url)
 //            stickerAnimView.scaleType = ImageView.ScaleType.CENTER_CROP
             stickerAnimView.visibility = View.VISIBLE
         }
 
-        fun bindText(message: Message) {
-            contentTextView.text = message.content
+        fun bindText(textMessage: TextMessage) {
+            contentTextView.text = textMessage.content
             contentTextView.visibility = View.VISIBLE
         }
 
-        fun isBindTime(curMessage: Message, nextMessage: Message?): Boolean {
+        fun shouldBindTime(curMessage: Message, nextMessage: Message?): Boolean {
             return nextMessage == null ||
                     Utils.getTimeDiffInMillis(curMessage.createdTime!!.toDate(), nextMessage.createdTime!!.toDate()) > Constants.ONE_MIN_IN_MILLISECOND ||
                     Utils.areInDifferentDay(curMessage.createdTime!!.toDate(), nextMessage.createdTime!!.toDate())
         }
 
-        fun bindImage(message: Message) {
-            val dimension = Utils.getDimension(message.ratio!!)
+        fun bindImage(imageMessage: ImageMessage) {
+            val dimension = Utils.getDimension(imageMessage.ratio!!)
 
             //set aspect ratio
             val set = ConstraintSet()
             set.clone(itemView as ConstraintLayout)
             set.constrainMaxWidth(imageView.id, dimension.first)
             set.constrainMaxHeight(imageView.id, dimension.second)
-            set.setDimensionRatio(imageView.id, message.ratio)
+            set.setDimensionRatio(imageView.id, imageMessage.ratio)
             set.applyTo(itemView)
 
             imageView.visibility = View.VISIBLE
 
-            Picasso.get().load(message.content)
+            Picasso.get().load(imageMessage.url)
                     .fit()
                     .error(R.drawable.load_image_fail)
                     .into(imageView)
@@ -219,15 +218,15 @@ class RoomActivityAdapter(private val roomActivity: RoomActivity, diffCallback: 
             imageView.setOnClickListener(roomActivity)
         }
 
-        fun bindFile(message: Message) {
+        fun bindFile(fileMessage: FileMessage) {
             fileViewLayout.visibility = View.VISIBLE
 
-            fileNameTextView.text = message.fileName
+            fileNameTextView.text = fileMessage.fileName
 
-            val extension = Utils.getFileExtensionFromFileName(message.fileName!!)
+            val extension = Utils.getFileExtensionFromFileName(fileMessage.fileName!!)
             fileExtensionImgView.setImageResource(Utils.getResIdFromFileExtension(roomActivity, extension))
 
-            val fileSizeFormat = if (message.fileSize != -1L) Utils.getFormatFileSize(message.fileSize!!) else ""
+            val fileSizeFormat = if (fileMessage.fileSize != -1L) Utils.getFormatFileSize(fileMessage.fileSize!!) else ""
 
             fileDescTextView.text =
                     if (extension != "" && fileSizeFormat != "") {
@@ -315,11 +314,11 @@ class RoomActivityAdapter(private val roomActivity: RoomActivity, diffCallback: 
             val prevMessage = getPreviousNotTypingMessage(position)
 
             when (curMessage.type) {
-                Message.TYPE_STICKER -> bindSticker(curMessage)
-                Message.TYPE_IMAGE -> bindImage(curMessage)
-                Message.TYPE_FILE -> bindFile(curMessage)
+                Message.TYPE_STICKER -> bindSticker(curMessage as StickerMessage)
+                Message.TYPE_IMAGE -> bindImage(curMessage as ImageMessage)
+                Message.TYPE_FILE -> bindFile(curMessage as FileMessage)
                 Message.TYPE_CALL -> bindCall(curMessage as CallMessage)
-                else -> bindText(curMessage)
+                else -> bindText(curMessage as TextMessage)
             }
 
             bindDate(curMessage, prevMessage)
@@ -341,11 +340,11 @@ class RoomActivityAdapter(private val roomActivity: RoomActivity, diffCallback: 
                 showAvatar(curMessage)
             } else {
                 when (curMessage.type) {
-                    Message.TYPE_STICKER -> bindSticker(curMessage)
-                    Message.TYPE_IMAGE -> bindImage(curMessage)
-                    Message.TYPE_FILE -> bindFile(curMessage)
+                    Message.TYPE_STICKER -> bindSticker(curMessage as StickerMessage)
+                    Message.TYPE_IMAGE -> bindImage(curMessage as ImageMessage)
+                    Message.TYPE_FILE -> bindFile(curMessage as FileMessage)
                     Message.TYPE_CALL -> bindCall(curMessage as CallMessage)
-                    else -> bindText(curMessage)
+                    else -> bindText(curMessage as TextMessage)
                 }
 
                 bindDate(curMessage, prevMessage)

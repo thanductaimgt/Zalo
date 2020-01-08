@@ -7,8 +7,7 @@ import android.webkit.MimeTypeMap
 import com.google.firebase.Timestamp
 import vng.zalo.tdtai.zalo.ZaloApplication
 import vng.zalo.tdtai.zalo.models.Room
-import vng.zalo.tdtai.zalo.models.message.CallMessage
-import vng.zalo.tdtai.zalo.models.message.Message
+import vng.zalo.tdtai.zalo.models.message.*
 import vng.zalo.tdtai.zalo.networks.Database
 import vng.zalo.tdtai.zalo.networks.Storage
 import vng.zalo.tdtai.zalo.utils.Constants
@@ -16,37 +15,47 @@ import vng.zalo.tdtai.zalo.utils.Utils
 import java.util.*
 
 class MessageCreator {
-    fun addNewMessagesToFirestore(context: Context, room: Room, contents: List<String>, type: Int) {
+    fun addNewMessagesToFirestore(context: Context, room: Room, contents: List<String>, messageType: Int) {
         var curTimeStamp = System.currentTimeMillis()
 
         contents.forEach { content ->
-            val message = Message(
-                    content = content,
-                    createdTime = Timestamp(Date(curTimeStamp)),
-                    senderPhone = ZaloApplication.curUser!!.phone,
-                    senderAvatarUrl = ZaloApplication.curUser!!.avatarUrl,
-                    type = type
-            )
-
-            if (message.type == Message.TYPE_FILE || message.type == Message.TYPE_IMAGE) {
+            if (messageType == Message.TYPE_FILE || messageType == Message.TYPE_IMAGE) {
                 val contentUri = Uri.parse(content)
                 val extension = MimeTypeMap.getSingleton().getExtensionFromMimeType(context.contentResolver.getType(contentUri))
 
                 val fileStoragePath = "${Constants.FOLDER_ROOM_DATA}/${room.id}/file_${curTimeStamp}.$extension"
                 Storage.addFileAndGetDownloadUrl(context, content, fileStoragePath) { downloadUrl ->
-                    if (message.type == Message.TYPE_FILE) {
+                    val message:Message
+
+                    if (messageType == Message.TYPE_FILE) {
+                        message = FileMessage(
+                                createdTime = Timestamp(Date(curTimeStamp)),
+                                senderPhone = ZaloApplication.curUser!!.phone,
+                                senderAvatarUrl = ZaloApplication.curUser!!.avatarUrl,
+                                type = messageType,
+                                url = downloadUrl
+                        )
+
                         // resolve file info
                         with(context.contentResolver.query(contentUri, null, null, null, null)) {
                             this?.let {
                                 moveToFirst()
+
                                 message.fileName = getString(getColumnIndex(OpenableColumns.DISPLAY_NAME))
                                 message.fileSize = getLong(getColumnIndex(OpenableColumns.SIZE))
                             }
                         }
                     } else {
-                        message.ratio = Utils.getImageDimension(context, message.content!!)
+                        val ratio = Utils.getImageDimension(context, content)
+                        message = ImageMessage(
+                                createdTime = Timestamp(Date(curTimeStamp)),
+                                senderPhone = ZaloApplication.curUser!!.phone,
+                                senderAvatarUrl = ZaloApplication.curUser!!.avatarUrl,
+                                type = messageType,
+                                url = downloadUrl,
+                                ratio = ratio
+                        )
                     }
-                    message.content = downloadUrl
 
                     Database.addNewMessageAndUpdateUsersRoom(
                             context,
@@ -54,7 +63,7 @@ class MessageCreator {
                             newMessage = message
                     )
                 }
-            } else if (message.type == Message.TYPE_CALL) {
+            } else if (messageType == Message.TYPE_CALL) {
                 val data = content.split('.')
                 val callType = data[0].toInt()
                 val callTime = data[1].toInt()
@@ -65,7 +74,7 @@ class MessageCreator {
                         createdTime = Timestamp(Date(curTimeStamp)),
                         senderPhone = ZaloApplication.curUser!!.phone,
                         senderAvatarUrl = ZaloApplication.curUser!!.avatarUrl,
-                        type = type,
+                        type = messageType,
                         callType = callType,
                         callTime = callTime,
                         isMissed = isMissed,
@@ -78,6 +87,14 @@ class MessageCreator {
                         newMessage = message
                 )
             } else {
+                val message = TextMessage(
+                        createdTime = Timestamp(Date(curTimeStamp)),
+                        senderPhone = ZaloApplication.curUser!!.phone,
+                        senderAvatarUrl = ZaloApplication.curUser!!.avatarUrl,
+                        type = messageType,
+                        content = content
+                )
+
                 Database.addNewMessageAndUpdateUsersRoom(
                         context,
                         curRoom = room,

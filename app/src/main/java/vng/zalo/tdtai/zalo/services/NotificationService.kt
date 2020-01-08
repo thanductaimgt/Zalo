@@ -27,6 +27,7 @@ import com.squareup.picasso.Target
 import vng.zalo.tdtai.zalo.R
 import vng.zalo.tdtai.zalo.ZaloApplication
 import vng.zalo.tdtai.zalo.models.RoomItem
+import vng.zalo.tdtai.zalo.models.message.Message
 import vng.zalo.tdtai.zalo.networks.Database
 import vng.zalo.tdtai.zalo.utils.Constants
 import vng.zalo.tdtai.zalo.utils.TAG

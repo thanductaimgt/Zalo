@@ -13,13 +13,13 @@ import androidx.fragment.app.FragmentManager
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.dialog_zoom_image.*
 import vng.zalo.tdtai.zalo.R
-import vng.zalo.tdtai.zalo.models.message.Message
+import vng.zalo.tdtai.zalo.models.message.ImageMessage
 import vng.zalo.tdtai.zalo.utils.TAG
 
 
 class ZoomImageDialog(private val fm: FragmentManager) : DialogFragment(),
         View.OnClickListener {
-    private lateinit var message: Message
+    private lateinit var imageMessage: ImageMessage
 
     override fun onStart() {
         super.onStart()
@@ -49,8 +49,8 @@ class ZoomImageDialog(private val fm: FragmentManager) : DialogFragment(),
         // dialog full screen
         dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
-        Picasso.get().load(message.content).fit().centerInside().into(expandedImgView)
-        imageSenderNameTextView.text = message.senderPhone
+        Picasso.get().load(imageMessage.url).fit().centerInside().into(expandedImgView)
+        imageSenderNameTextView.text = imageMessage.senderPhone
 
         backImgView.setOnClickListener(this)
         expandedImgView.setOnClickListener(this)
@@ -58,8 +58,8 @@ class ZoomImageDialog(private val fm: FragmentManager) : DialogFragment(),
         moreImgView.setOnClickListener(this)
     }
 
-    fun show(message: Message) {
-        this.message = message
+    fun show(imageMessage: ImageMessage) {
+        this.imageMessage = imageMessage
         show(fm, TAG)
     }
 

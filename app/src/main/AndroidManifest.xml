@@ -25,7 +25,9 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme.Light"
         android:windowSoftInputMode="adjustResize">
-        <activity android:name=".views.activities.CallActivity"
+        <activity
+            android:screenOrientation="portrait"
+            android:name=".views.activities.CallActivity"
             android:theme="@style/AppTheme.Light.NoActionBar"/>
 
         <service

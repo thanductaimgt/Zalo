@@ -52,18 +52,6 @@ object Constants {
     const val IS_CALLER = "IS_CALLER"
     const val CALL_TYPE = "CALL_TYPE"
 
-    const val PERMISSIONS_REQUEST = 1234
-    val permissionsId = arrayOf(
-            Manifest.permission.USE_SIP,
-            Manifest.permission.INTERNET,
-            Manifest.permission.READ_EXTERNAL_STORAGE,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE,
-            Manifest.permission.ACCESS_WIFI_STATE,
-            Manifest.permission.RECORD_AUDIO,
-            Manifest.permission.WAKE_LOCK,
-            Manifest.permission.MODIFY_AUDIO_SETTINGS
-    )
-
     const val ONE_KB_IN_B:Long = 1000
     const val ONE_MB_IN_B:Long = 1000*1000
     const val ONE_GB_IN_B:Long = 1000*1000*1000

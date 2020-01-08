@@ -17,7 +17,7 @@ import vng.zalo.tdtai.zalo.models.message.Message
 import vng.zalo.tdtai.zalo.viewmodels.StickerSetViewModel
 import vng.zalo.tdtai.zalo.views.activities.RoomActivity
 
-class StickerSetFragment(private val bucket_name: String) : Fragment(), View.OnClickListener {
+class StickerSetFragment(private val bucketName: String) : Fragment(), View.OnClickListener {
     private lateinit var viewModel: StickerSetViewModel
     private lateinit var adapter: StickerSetFragmentAdapter
 
@@ -29,7 +29,7 @@ class StickerSetFragment(private val bucket_name: String) : Fragment(), View.OnC
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         initView()
 
-        viewModel = ViewModelProvider(this, ViewModelFactory.getInstance(bucket_name = bucket_name)).get(StickerSetViewModel::class.java)
+        viewModel = ViewModelProvider(this, ViewModelFactory.getInstance(bucketName = bucketName)).get(StickerSetViewModel::class.java)
         viewModel.liveStickerSet.observe(viewLifecycleOwner, Observer {
             adapter.stickers = it.stickers!!
             adapter.notifyDataSetChanged()

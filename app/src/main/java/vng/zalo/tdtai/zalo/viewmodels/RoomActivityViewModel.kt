@@ -12,6 +12,7 @@ import vng.zalo.tdtai.zalo.abstracts.MessageCreator
 import vng.zalo.tdtai.zalo.models.Room
 import vng.zalo.tdtai.zalo.models.RoomItem
 import vng.zalo.tdtai.zalo.models.message.Message
+import vng.zalo.tdtai.zalo.models.message.TypingMessage
 import vng.zalo.tdtai.zalo.networks.Database
 import vng.zalo.tdtai.zalo.utils.Constants
 
@@ -28,7 +29,7 @@ class RoomActivityViewModel(intent: Intent) : ViewModel() {
     )
 
     val liveMessages: MutableLiveData<List<Message>> = MutableLiveData(ArrayList())
-    val liveTypingMembersPhone: MutableLiveData<List<String>> = MutableLiveData(ArrayList())
+    val liveTypingPhones: MutableLiveData<List<String>> = MutableLiveData(ArrayList())
 
     init {
         //observe messages change
@@ -72,7 +73,7 @@ class RoomActivityViewModel(intent: Intent) : ViewModel() {
         // observe typing events
         Database.addRoomInfoChangeListener(room.id!!) { documentSnapshot ->
             @Suppress("UNCHECKED_CAST")
-            liveTypingMembersPhone.value = (documentSnapshot.get(Room.FIELD_TYPING_MEMBERS_PHONE)
+            liveTypingPhones.value = (documentSnapshot.get(Room.FIELD_TYPING_MEMBERS_PHONE)
                     ?: ArrayList<String>()) as List<String>
         }
     }
@@ -92,13 +93,13 @@ class RoomActivityViewModel(intent: Intent) : ViewModel() {
     }
 
     fun addCurUserToCurRoomTypingMembers() {
-        if (!liveTypingMembersPhone.value!!.contains(ZaloApplication.curUser!!.phone)) {
+        if (!liveTypingPhones.value!!.contains(ZaloApplication.curUser!!.phone)) {
             Database.addCurrentUserToRoomTypingMembers(room.id!!)
         }
     }
 
     fun removeCurUserFromCurRoomTypingMembers() {
-        if (liveTypingMembersPhone.value!!.contains(ZaloApplication.curUser!!.phone)) {
+        if (liveTypingPhones.value!!.contains(ZaloApplication.curUser!!.phone)) {
             Database.removeCurrentUserToRoomTypingMembers(room.id!!)
         }
     }
@@ -106,9 +107,8 @@ class RoomActivityViewModel(intent: Intent) : ViewModel() {
     fun getTypingMessages(phones: List<String>): ArrayList<Message> {
         val typingMessages = ArrayList<Message>()
         phones.filter { it != ZaloApplication.curUser!!.phone }.reversed().forEach {
-            typingMessages.add(Message(
+            typingMessages.add(TypingMessage(
                     id = it,
-                    content = "",
                     createdTime = Timestamp.now(),
                     senderPhone = it,
                     senderAvatarUrl = room.memberMap?.get(it)?.avatarUrl,

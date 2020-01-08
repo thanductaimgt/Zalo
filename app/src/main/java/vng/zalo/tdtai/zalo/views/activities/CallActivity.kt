@@ -6,21 +6,20 @@ import android.net.sip.SipAudioCall
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
-import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_call.*
 import vng.zalo.tdtai.zalo.R
 import vng.zalo.tdtai.zalo.ZaloApplication
 import vng.zalo.tdtai.zalo.factories.ViewModelFactory
-import vng.zalo.tdtai.zalo.models.message.Message
 import vng.zalo.tdtai.zalo.models.message.CallMessage
+import vng.zalo.tdtai.zalo.models.message.Message
 import vng.zalo.tdtai.zalo.networks.Database
 import vng.zalo.tdtai.zalo.utils.Constants
-import vng.zalo.tdtai.zalo.utils.TAG
 import vng.zalo.tdtai.zalo.viewmodels.CallActivityViewModel
 import kotlin.math.ceil
 import kotlin.math.max
@@ -33,21 +32,14 @@ class CallActivity : AppCompatActivity(), View.OnClickListener {
 
     private var listener = SipAudioCallListener()
 
-    private var isExternalSpeakerEnabled = false
-    private var isRecorderEnabled = true
-
-    private var isCaller = false
-
     private var speakerMaxVolume = 0
     private var speakerMinVolume = 0
     private var externalSpeakerIncreaseVolume = 0
 
-    var startTime: Long = 0
-
     private val handler = Handler()
     private var timerRunnable = object : Runnable {
         override fun run() {
-            val millis = System.currentTimeMillis() - startTime
+            val millis = System.currentTimeMillis() - viewModel.startTime
             var seconds = (millis / 1000).toInt()
             val minutes = seconds / 60
             seconds %= 60
@@ -61,16 +53,53 @@ class CallActivity : AppCompatActivity(), View.OnClickListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        isCaller = intent.getBooleanExtra(Constants.IS_CALLER, false)
-
-        viewModel = ViewModelProvider(this, ViewModelFactory.getInstance(intent = intent)).get(CallActivityViewModel::class.java)
-
         try {
-            if (isCaller) {
-                viewModel.makeAudioCall(listener)
-            } else {
-                viewModel.takeAudioCall(listener)
-            }
+            viewModel = ViewModelProvider(this, ViewModelFactory.getInstance(intent = intent, sipAudioCallListener = listener)).get(CallActivityViewModel::class.java)
+
+            initView()
+
+            viewModel.liveCallState.observe(this, Observer {
+                when (it) {
+                    STATE_ESTABLISHED -> {
+                        timeIcon.visibility = View.VISIBLE
+                        timeTextView.visibility = View.VISIBLE
+                        signalIcon.visibility = View.VISIBLE
+                        signalTextView.visibility = View.VISIBLE
+
+                        statusTextView.visibility = View.GONE
+
+                        speakerImgView.visibility = View.VISIBLE
+                        recorderImgView.visibility = View.VISIBLE
+                        answerImgView.visibility = View.GONE
+
+                        handler.postDelayed(timerRunnable, 0)
+                    }
+                    STATE_CALLING -> statusTextView.text = getString(R.string.description_calling)
+                    STATE_RINGING_BACK -> statusTextView.text = getString(R.string.description_ringing)
+                    STATE_BUSY -> {
+                        statusTextView.text = getString(R.string.description_not_answer)
+                        cancelCallImgView.visibility = View.INVISIBLE
+                    }
+                    STATE_ENDED -> {
+                        handler.post {
+                            signalIcon.visibility = View.GONE
+                            signalTextView.visibility = View.GONE
+
+                            speakerImgView.visibility = View.GONE
+                            recorderImgView.visibility = View.GONE
+                            cancelCallImgView.visibility = View.GONE
+                            answerImgView.visibility = View.GONE
+
+                            statusTextView.text = getString(R.string.description_call_ended)
+                            statusTextView.visibility = View.VISIBLE
+
+                            timeIcon.setImageResource(R.drawable.answer)
+                        }
+                    }
+                }
+            })
+
+            initAudioManager()
         } catch (e: Exception) {
             ZaloApplication.notificationDialog.show(supportFragmentManager,
                     getString(R.string.label_error_occurred),
@@ -79,10 +108,6 @@ class CallActivity : AppCompatActivity(), View.OnClickListener {
 
             e.printStackTrace()
         }
-
-        initAudioManager()
-
-        initView()
     }
 
     private fun initAudioManager() {
@@ -105,22 +130,20 @@ class CallActivity : AppCompatActivity(), View.OnClickListener {
     private fun initView() {
         setContentView(R.layout.activity_call)
 
-        if (isCaller) {
-            answerImgView.visibility = View.GONE
-
-            nameTextView.text = intent.getStringExtra(Constants.ROOM_NAME)
-            Picasso.get().load(intent.getStringExtra(Constants.ROOM_AVATAR)).fit().centerInside().into(avatarImgView)
+        if (viewModel.isCaller) {
+            nameTextView.text = viewModel.intent.getStringExtra(Constants.ROOM_NAME)
+            Picasso.get().load(viewModel.intent.getStringExtra(Constants.ROOM_AVATAR)).fit().centerInside().into(avatarImgView)
         } else {
+            answerImgView.visibility = View.VISIBLE
             statusTextView.text = getString(R.string.description_incoming_call)
-
-            answerImgView.setOnClickListener(this)
 
             val peerPhone = viewModel.getPeerPhone()
             nameTextView.text = peerPhone
             Database.getUserRoom(peerPhone) { roomItem ->
                 Picasso.get().load(roomItem.avatarUrl).fit().centerInside().into(avatarImgView)
-                Log.d(TAG, "avatarUrl: ${roomItem.avatarUrl}")
             }
+
+            answerImgView.setOnClickListener(this)
         }
 
         speakerImgView.setOnClickListener(this)
@@ -134,7 +157,7 @@ class CallActivity : AppCompatActivity(), View.OnClickListener {
             R.id.speakerImgView -> {
                 val curVolume = audioManager.getStreamVolume(AudioManager.STREAM_VOICE_CALL)
 
-                val volumeToSet = if (isExternalSpeakerEnabled) {
+                val volumeToSet = if (viewModel.isExternalSpeakerEnabled) {
                     speakerImgView.setImageResource(R.drawable.internal_speaker)
 
                     Toast.makeText(this, getString(R.string.description_disabled_external_speaker), Toast.LENGTH_SHORT).show()
@@ -150,10 +173,10 @@ class CallActivity : AppCompatActivity(), View.OnClickListener {
 
                 audioManager.setStreamVolume(AudioManager.STREAM_VOICE_CALL, volumeToSet, AudioManager.FLAG_PLAY_SOUND)
 
-                isExternalSpeakerEnabled = !isExternalSpeakerEnabled
+                viewModel.isExternalSpeakerEnabled = !viewModel.isExternalSpeakerEnabled
             }
             R.id.recorderImgView -> {
-                if (isRecorderEnabled) {
+                if (viewModel.isRecorderEnabled) {
                     recorderImgView.setImageResource(R.drawable.muted_recorder_red)
 
                     Toast.makeText(this, getString(R.string.description_muted_speaker), Toast.LENGTH_SHORT).show()
@@ -165,13 +188,13 @@ class CallActivity : AppCompatActivity(), View.OnClickListener {
 
                 viewModel.sipAudioCall.toggleMute()
 
-                isRecorderEnabled = !isRecorderEnabled
+                viewModel.isRecorderEnabled = !viewModel.isRecorderEnabled
             }
             R.id.answerImgView -> {
                 viewModel.sipAudioCall.answerCall(10)
             }
             R.id.cancelCallImgView -> {
-                if (viewModel.sipAudioCall.isInCall || !isCaller) {
+                if (viewModel.sipAudioCall.isInCall || !viewModel.isCaller) {
                     viewModel.sipAudioCall.endCall()
                 } else {
                     finish()
@@ -195,23 +218,16 @@ class CallActivity : AppCompatActivity(), View.OnClickListener {
 
     override fun onDestroy() {
         super.onDestroy()
-        viewModel.sipAudioCall.close()
+        try {
+            viewModel.sipAudioCall.close()
+        } catch (e: Throwable) {
+            e.printStackTrace()
+        }
     }
 
     inner class SipAudioCallListener : SipAudioCall.Listener() {
         override fun onCallEstablished(call: SipAudioCall) {
-            handler.post {
-                timeIcon.visibility = View.VISIBLE
-                timeTextView.visibility = View.VISIBLE
-                signalIcon.visibility = View.VISIBLE
-                signalTextView.visibility = View.VISIBLE
-
-                statusTextView.visibility = View.GONE
-
-                speakerImgView.visibility = View.VISIBLE
-                recorderImgView.visibility = View.VISIBLE
-                answerImgView.visibility = View.GONE
-            }
+            viewModel.liveCallState.postValue(STATE_ESTABLISHED)
 
             call.apply {
                 startAudio()
@@ -222,37 +238,24 @@ class CallActivity : AppCompatActivity(), View.OnClickListener {
                 volumeControlStream = AudioManager.STREAM_VOICE_CALL
             }
 
-            startTime = System.currentTimeMillis()
-            handler.postDelayed(timerRunnable, 0)
+            viewModel.startTime = System.currentTimeMillis()
         }
 
         //me/other cancel/finish call
         override fun onCallEnded(call: SipAudioCall) {
-            val callTime = ((System.currentTimeMillis() - startTime) / Constants.ONE_SECOND_IN_MILLISECOND).toInt()
+            viewModel.liveCallState.postValue(STATE_ENDED)
+
+            val callTime = ((System.currentTimeMillis() - viewModel.startTime) / Constants.ONE_SECOND_IN_MILLISECOND).toInt()
 
             handler.removeCallbacks(timerRunnable)
 
             handler.apply {
-                post {
-                    signalIcon.visibility = View.GONE
-                    signalTextView.visibility = View.GONE
-
-                    speakerImgView.visibility = View.GONE
-                    recorderImgView.visibility = View.GONE
-                    cancelCallImgView.visibility = View.GONE
-                    answerImgView.visibility = View.GONE
-
-                    statusTextView.text = getString(R.string.description_call_ended)
-                    statusTextView.visibility = View.VISIBLE
-
-                    timeIcon.setImageResource(R.drawable.answer)
-                }
                 postDelayed({
                     finish()
                 }, 2000)
             }
 
-            if (isCaller) {
+            if (viewModel.isCaller) {
                 viewModel.addNewCallMessage(
                         this@CallActivity,
                         Message.TYPE_CALL,
@@ -269,17 +272,15 @@ class CallActivity : AppCompatActivity(), View.OnClickListener {
 
         //other cancel/not answer
         override fun onCallBusy(call: SipAudioCall?) {
+            viewModel.liveCallState.postValue(STATE_BUSY)
+
             handler.apply {
-                post {
-                    statusTextView.text = getString(R.string.description_not_answer)
-                    cancelCallImgView.visibility = View.INVISIBLE
-                }
                 postDelayed({
                     finish()
                 }, 2000)
             }
 
-            if (isCaller) {
+            if (viewModel.isCaller) {
                 viewModel.addNewCallMessage(
                         this@CallActivity,
                         Message.TYPE_CALL,
@@ -296,9 +297,7 @@ class CallActivity : AppCompatActivity(), View.OnClickListener {
 
         //sent call signal
         override fun onCalling(call: SipAudioCall?) {
-            handler.post {
-                statusTextView.text = getString(R.string.description_calling)
-            }
+            viewModel.liveCallState.postValue(STATE_CALLING)
         }
 
         override fun onError(call: SipAudioCall?, errorCode: Int, errorMessage: String?) {
@@ -320,9 +319,16 @@ class CallActivity : AppCompatActivity(), View.OnClickListener {
 
         //when other is ringing
         override fun onRingingBack(call: SipAudioCall?) {
-            handler.post {
-                statusTextView.text = getString(R.string.description_ringing)
-            }
+            viewModel.liveCallState.postValue(STATE_RINGING_BACK)
         }
+    }
+
+    companion object {
+        const val STATE_CALLING = 0
+        const val STATE_RINGING_BACK = 1
+        const val STATE_BUSY = 2
+        const val STATE_ENDED = 3
+        const val STATE_ESTABLISHED = 4
+        const val STATE_INIT = 5
     }
 }

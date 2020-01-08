@@ -7,8 +7,7 @@ import com.google.android.gms.tasks.Tasks
 import com.google.firebase.firestore.*
 import vng.zalo.tdtai.zalo.ZaloApplication
 import vng.zalo.tdtai.zalo.models.*
-import vng.zalo.tdtai.zalo.models.message.CallMessage
-import vng.zalo.tdtai.zalo.models.message.Message
+import vng.zalo.tdtai.zalo.models.message.*
 import vng.zalo.tdtai.zalo.utils.Constants
 import vng.zalo.tdtai.zalo.utils.TAG
 import vng.zalo.tdtai.zalo.utils.Utils
@@ -46,7 +45,9 @@ class Database {
                             put(RoomItem.FIELD_LAST_SENDER_PHONE, newMessage.senderPhone)
                             put(RoomItem.FIELD_LAST_MSG, lastMsgPreviewContent)
                             put(RoomItem.FIELD_LAST_MSG_TIME, newMessage.createdTime)
-                            if (curUserPhone != ZaloApplication.curUser!!.phone)
+                            if (curUserPhone != ZaloApplication.curUser!!.phone &&
+                                    (newMessage.type != Message.TYPE_CALL ||
+                                            newMessage.type == Message.TYPE_CALL && (newMessage as CallMessage).isMissed))
                                 put(RoomItem.FIELD_UNSEEN_MSG_NUM, FieldValue.increment(1))
                         }
                 )
@@ -124,9 +125,12 @@ class Database {
                         Utils.assertNotNull(querySnapshot, TAG, "addRoomMessagesListener") { querySnapshotNotNull ->
                             val messages = ArrayList<Message>()
                             for (doc in querySnapshotNotNull) {
-                                val message = when (doc.getLong(Message.FIELD_TYPE)) {
-                                    Message.TYPE_CALL.toLong() -> CallMessage()
-                                    else -> Message()
+                                val message: Message = when (doc.getLong(Message.FIELD_TYPE)?.toInt()) {
+                                    Message.TYPE_STICKER -> StickerMessage()
+                                    Message.TYPE_IMAGE -> ImageMessage()
+                                    Message.TYPE_FILE -> FileMessage()
+                                    Message.TYPE_CALL -> CallMessage()
+                                    else -> TextMessage()
                                 }
                                 message.applyDoc(doc)
                                 messages.add(message)

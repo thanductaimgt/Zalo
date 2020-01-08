@@ -4,9 +4,7 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import android.net.sip.SipManager
-import android.net.sip.SipProfile
-import android.net.sip.SipRegistrationListener
+import android.net.sip.*
 import android.util.Log
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
@@ -26,7 +24,7 @@ class ZaloApplication : MultiDexApplication() {
     override fun onCreate() {
         super.onCreate()
 
-        if (SharedPrefsManager.isLogin(this)) {
+        if (SharedPrefsManager.isLogin(this) && PermissionManager.hasRequiredPermissions(this)) {
             val user = SharedPrefsManager.getUser(this)
             initUser(this, user)
         }
@@ -73,19 +71,23 @@ class ZaloApplication : MultiDexApplication() {
 
         var notificationDialog = AlertDialog()
 
-        fun initUser(context: Context, user: User){
+        fun initUser(context: Context, user: User) {
             this.curUser = user
             initSip(context.applicationContext)
             registerCallReceiver(context.applicationContext)
             Database.setCurrentUserOnlineState(true)
         }
 
-        fun removeCurrentUser(context: Context){
+        fun removeCurrentUser(context: Context) {
             this.curUser = null
             removeSip()
             unregisterCallReceiver(context.applicationContext)
             context.stopService(Intent(context.applicationContext, NotificationService::class.java))
             Database.setCurrentUserOnlineState(false)
+        }
+
+        fun isUserInit(): Boolean {
+            return curUser != null
         }
 
         private fun registerCallReceiver(context: Context) {
@@ -94,25 +96,28 @@ class ZaloApplication : MultiDexApplication() {
 
         private fun initSip(context: Context) {
             sipProfile = SipProfile.Builder("${Constants.SIP_ACCOUNT_PREFIX}${curUser!!.phone}", Constants.SIP_DOMAIN)
-                    .setPassword(curUser!!.phone).build()
+                    .setPassword(curUser!!.phone)
+                    .build()
 
             sipManager = SipManager.newInstance(context)
 
             val intent = Intent(Constants.ACTION_CALL)
             val pendingIntent: PendingIntent = PendingIntent.getBroadcast(context, 0, intent, Intent.FILL_IN_DATA)
+
             sipManager?.open(sipProfile, pendingIntent, object : SipRegistrationListener {
                 override fun onRegistering(localProfileUri: String?) {
-                    Log.d(TAG, "sip: onRegistering")
+                    Log.d(TAG, "open: onRegistering")
                 }
 
                 override fun onRegistrationDone(localProfileUri: String?, expiryTime: Long) {
-                    Log.d(TAG, "sip: onRegistrationDone")
+                    Log.d(TAG, "open: onRegistrationDone")
                 }
 
                 override fun onRegistrationFailed(localProfileUri: String?, errorCode: Int, errorMessage: String?) {
-                    throw Throwable("sip: onRegistrationFailed")
+                    Log.d(TAG, "open: onRegistrationFailed")
                 }
             })
+            sipManager?.isRegistered(sipProfile!!.uriString)
         }
 
         private fun removeSip() {
@@ -125,7 +130,7 @@ class ZaloApplication : MultiDexApplication() {
         }
 
         private fun unregisterCallReceiver(context: Context) {
-            sipManager?.let{context.unregisterReceiver(callReceiver)}
+            sipManager?.let { context.unregisterReceiver(callReceiver) }
         }
     }
 }

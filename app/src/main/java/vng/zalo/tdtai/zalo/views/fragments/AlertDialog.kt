@@ -9,7 +9,7 @@ import android.view.ViewGroup
 import android.view.Window
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentManager
-import kotlinx.android.synthetic.main.dialog_confirm.*
+import kotlinx.android.synthetic.main.dialog_alert.*
 import vng.zalo.tdtai.zalo.R
 import vng.zalo.tdtai.zalo.utils.TAG
 
@@ -45,7 +45,7 @@ class AlertDialog : DialogFragment(),
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.dialog_confirm, container, false)
+        return inflater.inflate(R.layout.dialog_alert, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

@@ -23,10 +23,14 @@ class ZoomImageDialog(private val fm: FragmentManager) : DialogFragment(),
 
     override fun onStart() {
         super.onStart()
-        dialog?.window?.setLayout(
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.MATCH_PARENT
-        )
+        dialog?.window?.apply {
+            setLayout(
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.MATCH_PARENT
+            )
+
+            decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_FULLSCREEN
+        }
     }
 
     override fun setupDialog(dialog: Dialog, style: Int) {

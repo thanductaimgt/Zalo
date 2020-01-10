@@ -1,5 +1,6 @@
 package vng.zalo.tdtai.zalo.views.activities
 
+import android.app.KeyguardManager
 import android.content.Context
 import android.media.AudioManager
 import android.net.sip.SipAudioCall
@@ -7,6 +8,7 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.view.View
+import android.view.WindowManager
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
@@ -29,6 +31,7 @@ import kotlin.math.min
 class CallActivity : AppCompatActivity(), View.OnClickListener {
     private lateinit var viewModel: CallActivityViewModel
     private lateinit var audioManager: AudioManager
+    private var keyguardManager: KeyguardManager?=null
 
     private var listener = SipAudioCallListener()
 
@@ -81,25 +84,21 @@ class CallActivity : AppCompatActivity(), View.OnClickListener {
                         cancelCallImgView.visibility = View.INVISIBLE
                     }
                     STATE_ENDED -> {
-                        handler.post {
-                            signalIcon.visibility = View.GONE
-                            signalTextView.visibility = View.GONE
+                        signalIcon.visibility = View.GONE
+                        signalTextView.visibility = View.GONE
 
-                            speakerImgView.visibility = View.GONE
-                            recorderImgView.visibility = View.GONE
-                            cancelCallImgView.visibility = View.GONE
-                            answerImgView.visibility = View.GONE
+                        speakerImgView.visibility = View.GONE
+                        recorderImgView.visibility = View.GONE
+                        cancelCallImgView.visibility = View.GONE
+                        answerImgView.visibility = View.GONE
 
-                            statusTextView.text = getString(R.string.description_call_ended)
-                            statusTextView.visibility = View.VISIBLE
+                        statusTextView.text = getString(R.string.description_call_ended)
+                        statusTextView.visibility = View.VISIBLE
 
-                            timeIcon.setImageResource(R.drawable.answer)
-                        }
+                        timeIcon.setImageResource(R.drawable.answer)
                     }
                 }
             })
-
-            initAudioManager()
         } catch (e: Exception) {
             ZaloApplication.notificationDialog.show(supportFragmentManager,
                     getString(R.string.label_error_occurred),
@@ -108,10 +107,52 @@ class CallActivity : AppCompatActivity(), View.OnClickListener {
 
             e.printStackTrace()
         }
+
+        initAudioManager()
+
+        keyguardManager = getSystemService(Context.KEYGUARD_SERVICE) as KeyguardManager
+    }
+
+    override fun onStart() {
+        super.onStart()
+
+        // show activity if screen is locked or turn off
+        window.apply {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
+                    setShowWhenLocked(true)
+                    setTurnScreenOn(true)
+                } else {
+                    addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED or
+                            WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON)
+                }
+
+                keyguardManager?.requestDismissKeyguard(this@CallActivity, null)
+            } else {
+                addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED or
+                        WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON or
+                        WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD)
+            }
+        }
+    }
+
+    public override fun onPause() {
+        super.onPause()
+        handler.removeCallbacks(timerRunnable)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        try {
+            viewModel.sipAudioCall.close()
+        } catch (e: Throwable) {
+            e.printStackTrace()
+        }
     }
 
     private fun initAudioManager() {
         audioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
+
         speakerMaxVolume = audioManager.getStreamMaxVolume(AudioManager.STREAM_VOICE_CALL)
         speakerMinVolume = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
             audioManager.getStreamMinVolume(AudioManager.STREAM_VOICE_CALL)
@@ -120,11 +161,6 @@ class CallActivity : AppCompatActivity(), View.OnClickListener {
         }
 
         externalSpeakerIncreaseVolume = ceil((speakerMaxVolume - speakerMinVolume) / 2f).toInt()
-    }
-
-    public override fun onPause() {
-        super.onPause()
-        handler.removeCallbacks(timerRunnable)
     }
 
     private fun initView() {
@@ -194,9 +230,8 @@ class CallActivity : AppCompatActivity(), View.OnClickListener {
                 viewModel.sipAudioCall.answerCall(10)
             }
             R.id.cancelCallImgView -> {
-                if (viewModel.sipAudioCall.isInCall || !viewModel.isCaller) {
-                    viewModel.sipAudioCall.endCall()
-                } else {
+                viewModel.sipAudioCall.endCall()
+                if (!viewModel.sipAudioCall.isInCall) {
                     finish()
                 }
             }
@@ -213,15 +248,6 @@ class CallActivity : AppCompatActivity(), View.OnClickListener {
 //                    viewModel.sipAudioCall.endCall()
                 }
             }
-        }
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        try {
-            viewModel.sipAudioCall.close()
-        } catch (e: Throwable) {
-            e.printStackTrace()
         }
     }
 
@@ -274,12 +300,6 @@ class CallActivity : AppCompatActivity(), View.OnClickListener {
         override fun onCallBusy(call: SipAudioCall?) {
             viewModel.liveCallState.postValue(STATE_BUSY)
 
-            handler.apply {
-                postDelayed({
-                    finish()
-                }, 2000)
-            }
-
             if (viewModel.isCaller) {
                 viewModel.addNewCallMessage(
                         this@CallActivity,
@@ -288,6 +308,12 @@ class CallActivity : AppCompatActivity(), View.OnClickListener {
                         0,
                         true
                 )
+            }
+
+            handler.apply {
+                postDelayed({
+                    finish()
+                }, 2000)
             }
         }
 

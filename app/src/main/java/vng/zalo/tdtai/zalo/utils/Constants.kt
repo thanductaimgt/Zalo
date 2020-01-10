@@ -1,6 +1,8 @@
 package vng.zalo.tdtai.zalo.utils
 
 import android.Manifest
+import com.google.firebase.Timestamp
+import java.util.*
 
 object Constants {
     const val MAX_UNSEEN_MSG_NUM = 50
@@ -14,6 +16,7 @@ object Constants {
     const val ROOM_ID = "ROOM_ID"
     const val ROOM_NAME = "ROOM_NAME"
     const val ROOM_AVATAR = "ROOM_AVATAR"
+    const val ROOM_TYPE = "ROOM_TYPE"
 
     const val COLLECTION_USERS = "users"
     const val COLLECTION_ROOMS = "rooms"
@@ -55,4 +58,6 @@ object Constants {
     const val ONE_KB_IN_B:Long = 1000
     const val ONE_MB_IN_B:Long = 1000*1000
     const val ONE_GB_IN_B:Long = 1000*1000*1000
+
+    val TIMESTAMP_EPOCH = Timestamp(Date(0))
 }

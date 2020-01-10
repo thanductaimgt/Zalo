@@ -9,7 +9,6 @@ import android.graphics.BitmapFactory
 import android.graphics.Rect
 import android.icu.lang.UCharacter.GraphemeClusterBreak.T
 import android.net.Uri
-import android.net.sip.SipSession
 import android.os.Environment
 import android.provider.MediaStore
 import android.util.Log
@@ -18,6 +17,7 @@ import android.view.View
 import android.view.inputmethod.InputMethodManager
 import androidx.core.content.FileProvider
 import com.google.android.gms.tasks.Task
+import com.google.firebase.Timestamp
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
@@ -50,8 +50,9 @@ object Utils {
     }
 
     fun areInDifferentDay(date1: Date, date2: Date): Boolean {
-        val formatDate1 = SimpleDateFormat.getDateInstance().format(date1)
-        val formatDate2 = SimpleDateFormat.getDateInstance().format(date2)
+        val dateFormat = SimpleDateFormat.getDateInstance()
+        val formatDate1 = dateFormat.format(date1)
+        val formatDate2 = dateFormat.format(date2)
         return formatDate1 != formatDate2
     }
 
@@ -277,23 +278,64 @@ object Utils {
     }
 
     //callTime: seconds
-    fun getCallTimeFormat(context: Context, callTime:Int):String{
+    fun getCallTimeFormat(context: Context, callTime: Int): String {
         var time = callTime.toLong()
         val res = StringBuilder()
 
-        if(time > 3600) {
-            val hours = time/3600
+        if (time > 3600) {
+            val hours = time / 3600
             res.append("${formatTime(hours, context.getString(R.string.label_hour))} ")
             time -= hours * 3600
         }
 
-        val mins = time/60
+        val mins = time / 60
         res.append("${formatTime(mins, context.getString(R.string.label_minute))} ")
         time -= mins * 60
 
         val secs = time
         res.append(formatTime(secs, context.getString(R.string.label_second)))
         return res.toString()
+    }
+
+    fun getLastOnlineTimeFormat(context: Context, lastOnlineTime: Timestamp?): String {
+        val curDate = Date()
+        val date: Date
+
+        val diffByMillisecond: Long
+
+        if (lastOnlineTime == null) {
+            date = Date()
+            diffByMillisecond = 0
+        } else {
+            date = lastOnlineTime.toDate()
+            diffByMillisecond = getTimeDiffInMillis(date, curDate)
+        }
+
+        return when (diffByMillisecond) {
+            0L -> {
+                context.getString(R.string.description_just_online)
+            }
+            else -> {
+                "${context.getString(R.string.description_last_seen)}: ${
+                if (diffByMillisecond >= Constants.SEVEN_DAYS_IN_MILLISECOND) {
+                    SimpleDateFormat.getDateInstance().format(date)
+                } else {
+                    "${
+                    when {
+                        diffByMillisecond < Constants.ONE_MIN_IN_MILLISECOND -> context.getString(R.string.description_less_than_one_min)
+                        diffByMillisecond < Constants.ONE_HOUR_IN_MILLISECOND -> formatTime(diffByMillisecond / Constants.ONE_MIN_IN_MILLISECOND.toLong(), context.getString(R.string.label_minute))
+                        diffByMillisecond < Constants.ONE_DAY_IN_MILLISECOND -> formatTime(diffByMillisecond / Constants.ONE_HOUR_IN_MILLISECOND.toLong(), context.getString(R.string.label_hour))
+                        else -> formatTime(diffByMillisecond / Constants.ONE_DAY_IN_MILLISECOND.toLong(), context.getString(R.string.label_day))
+                    }
+                    } ${context.getString(R.string.description_ago)}"
+                }
+                }"
+            }
+        }
+    }
+
+    fun getNotificationIdFromRoomId(roomId: String): Int {
+        return roomId.hashCode().shl(Constants.NOTIFICATION_PENDING_INTENT)
     }
 }
 

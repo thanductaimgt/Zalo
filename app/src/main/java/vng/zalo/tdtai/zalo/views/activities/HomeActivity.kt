@@ -2,10 +2,9 @@ package vng.zalo.tdtai.zalo.views.activities
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
-import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.PopupMenu
 import androidx.viewpager.widget.ViewPager
@@ -15,12 +14,10 @@ import vng.zalo.tdtai.zalo.adapters.HomeAdapter
 import vng.zalo.tdtai.zalo.services.NotificationService
 import vng.zalo.tdtai.zalo.utils.Utils
 
-
 class HomeActivity : AppCompatActivity(), View.OnClickListener {
     override fun onClick(v: View) {
         when (v.id) {
             R.id.searchImgView -> {
-                searchEditText.requestFocus()
                 Utils.showKeyboard(this, searchEditText)
             }
             R.id.createGroupImgView -> {
@@ -33,14 +30,21 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener {
     private lateinit var prevMenuItem: MenuItem
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_home)
 
-        startService(Intent(this, NotificationService::class.java))
+        try {
+            startService(Intent(this, NotificationService::class.java))
+        }catch (e:Throwable){
+            e.printStackTrace()
+        }
 
         initView()
     }
 
     private fun initView() {
+        setContentView(R.layout.activity_home)
+
+        window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN)
+
         prevMenuItem = bottomNavigationView.menu.getItem(0)
 
         viewPager.apply {
@@ -71,14 +75,6 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener {
                 R.id.navigation_more -> viewPager.currentItem = 4
             }
             false
-        }
-
-        searchEditText.setOnFocusChangeListener { _, hasFocused ->
-            if (hasFocused) {
-                Utils.showKeyboard(this, searchEditText)
-            } else {
-                Utils.hideKeyboard(this, rootView)
-            }
         }
 
         searchImgView.setOnClickListener(this)

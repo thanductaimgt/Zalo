@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:background="?android:attr/selectableItemBackground">
+    android:background="?attr/selectableItemBackground">
 
     <de.hdodenhof.circleimageview.CircleImageView
         app:civ_circle_background_color="@android:color/white"
@@ -38,6 +38,7 @@
         android:src="@color/online"/>
 
     <TextView
+        app:layout_constraintVertical_chainStyle="packed"
         android:layout_marginStart="16dp"
         tools:text="a very long nameeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
         android:maxLines="1"
@@ -64,7 +65,7 @@
         android:id="@+id/descTextView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="4dp"
         app:layout_constraintEnd_toStartOf="@id/iconTextView"
         app:layout_constraintStart_toStartOf="@id/nameTextView"
         app:layout_constraintTop_toBottomOf="@id/nameTextView" />

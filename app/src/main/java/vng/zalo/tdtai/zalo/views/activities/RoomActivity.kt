@@ -6,8 +6,6 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
-import android.view.Menu
-import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
@@ -30,9 +28,11 @@ import kotlinx.android.synthetic.main.bottom_sheet_message_actions.view.*
 import kotlinx.android.synthetic.main.bottom_sheet_upload_picture.view.*
 import vng.zalo.tdtai.zalo.R
 import vng.zalo.tdtai.zalo.ZaloApplication
+import vng.zalo.tdtai.zalo.abstracts.CallStarter
 import vng.zalo.tdtai.zalo.adapters.MessageActionAdapter
 import vng.zalo.tdtai.zalo.adapters.RoomActivityAdapter
 import vng.zalo.tdtai.zalo.factories.ViewModelFactory
+import vng.zalo.tdtai.zalo.models.Room
 import vng.zalo.tdtai.zalo.models.message.FileMessage
 import vng.zalo.tdtai.zalo.models.message.ImageMessage
 import vng.zalo.tdtai.zalo.models.message.Message
@@ -60,7 +60,11 @@ class RoomActivity : AppCompatActivity(), View.OnClickListener, View.OnLongClick
         initView()
 
         // remove all room's chat notifications when enter
-        NotificationManagerCompat.from(this).cancel(intent.getStringExtra(Constants.ROOM_ID).hashCode())
+        NotificationManagerCompat.from(this).cancel(
+                Utils.getNotificationIdFromRoomId(
+                        intent.getStringExtra(Constants.ROOM_ID)
+                )
+        )
 
         viewModel = ViewModelProvider(this, ViewModelFactory.getInstance(intent = intent)).get(RoomActivityViewModel::class.java)
         viewModel.liveMessages.observe(this, Observer { messages ->
@@ -82,6 +86,15 @@ class RoomActivity : AppCompatActivity(), View.OnClickListener, View.OnLongClick
 
             submitMessages(allMessages)
         })
+        viewModel.livePeerLastOnlineTime.observe(this, Observer { lastOnlineTime ->
+            onlineStatusTextView.text = Utils.getLastOnlineTimeFormat(this, lastOnlineTime)
+
+            if (lastOnlineTime == null && viewModel.room.type == Room.TYPE_PEER) {
+                onlineStatusImgView.visibility = View.VISIBLE
+            } else {
+                onlineStatusImgView.visibility = View.GONE
+            }
+        })
     }
 
     override fun onResume() {
@@ -102,7 +115,6 @@ class RoomActivity : AppCompatActivity(), View.OnClickListener, View.OnLongClick
         setContentView(R.layout.activity_room)
 
         roomNameTextView.text = intent.getStringExtra(Constants.ROOM_NAME)
-        onlineStateTextView.text = String.format(getString(R.string.description_online_at), 7, getString(R.string.label_hour))
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setDisplayShowTitleEnabled(false)
@@ -177,8 +189,8 @@ class RoomActivity : AppCompatActivity(), View.OnClickListener, View.OnLongClick
         // Fix BottomSheetDialog not showing after getting hidden when the user drags it down
         bottomSheetDialog.setOnShowListener { dialogInterface ->
             val bottomSheetDialog = dialogInterface as BottomSheetDialog
-            val bottomSheet = bottomSheetDialog.findViewById<FrameLayout>(R.id.design_bottom_sheet)
-            BottomSheetBehavior.from(bottomSheet).apply {
+            val frameLayout = bottomSheetDialog.findViewById<FrameLayout>(R.id.design_bottom_sheet)!!
+            BottomSheetBehavior.from(frameLayout).apply {
                 skipCollapsed = true
             }
         }
@@ -210,8 +222,8 @@ class RoomActivity : AppCompatActivity(), View.OnClickListener, View.OnLongClick
         messageActionsView.recyclerView.apply {
             layoutManager = GridLayoutManager(this@RoomActivity, 4)
             val spanCount = 4
-            val spacing = 50; // 50px
-            val includeEdge = true;
+            val spacing = 50 // 50px
+            val includeEdge = true
             recyclerView.addItemDecoration(GridSpacingItemDecoration(spanCount, spacing, includeEdge))
             adapter = MessageActionAdapter().apply {
                 this.actions = actions
@@ -232,26 +244,10 @@ class RoomActivity : AppCompatActivity(), View.OnClickListener, View.OnLongClick
         }
     }
 
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        menuInflater.inflate(R.menu.menu_room_activity, menu)
-        return true
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            R.id.action_call -> true
-            android.R.id.home -> {
-                finish()
-                true
-            }
-            else -> super.onOptionsItemSelected(item)
-        }
-    }
-
     override fun onClick(v: View) {
         when (v.id) {
             R.id.voiceCallImgView -> {
-                callRoom()
+                startCall()
             }
             R.id.sendMsgImgView -> {
                 if (msgEditText.text != null && msgEditText.text.toString() != "") {
@@ -265,9 +261,7 @@ class RoomActivity : AppCompatActivity(), View.OnClickListener, View.OnLongClick
                 showOrHideEmojiFragment()
             }
             R.id.uploadPictureImgView -> {
-                if (chooseImagesView.parent != null) {
-                    (chooseImagesView.parent as ViewGroup).removeView(chooseImagesView)
-                }
+                removeBottomSheetViews()
                 bottomSheetDialog.setContentView(chooseImagesView)
                 bottomSheetDialog.show()
             }
@@ -288,6 +282,7 @@ class RoomActivity : AppCompatActivity(), View.OnClickListener, View.OnLongClick
                 Utils.dispatchChooserIntent(this, Constants.CHOOSE_FILES_REQUEST)
             }
             R.id.backImgView -> {
+                msgEditText.clearFocus()
                 finish()
             }
             R.id.rootActionView -> {
@@ -305,19 +300,20 @@ class RoomActivity : AppCompatActivity(), View.OnClickListener, View.OnLongClick
                 bottomSheetDialog.dismiss()
             }
             R.id.callbackTV -> {
-                callRoom()
+                startCall()
             }
         }
     }
 
-    private fun callRoom() {
-        startActivity(Intent(this, CallActivity::class.java).apply {
-            putExtra(Constants.IS_CALLER, true)
+    private fun removeBottomSheetViews(){
+        bottomSheetDialog.findViewById<FrameLayout>(R.id.design_bottom_sheet)?.let{frameLayout ->
+            frameLayout.removeView(messageActionsView)
+            frameLayout.removeView(chooseImagesView)
+        }
+    }
 
-            putExtra(Constants.ROOM_ID, viewModel.room.id)
-            putExtra(Constants.ROOM_NAME, viewModel.room.name)
-            putExtra(Constants.ROOM_AVATAR, viewModel.room.avatarUrl)
-        })
+    private fun startCall() {
+        CallStarter.startAudioCall(this, viewModel.room.id!!, viewModel.room.name!!, viewModel.room.avatarUrl!!)
     }
 
     override fun onLongClick(v: View?): Boolean {
@@ -350,11 +346,8 @@ class RoomActivity : AppCompatActivity(), View.OnClickListener, View.OnLongClick
                         }
                     }
 
-                    if (parent != null) {
-                        (parent as ViewGroup).removeView(this)
-                    }
+                    removeBottomSheetViews()
                 }
-
                 bottomSheetDialog.setContentView(messageActionsView)
                 bottomSheetDialog.show()
             }

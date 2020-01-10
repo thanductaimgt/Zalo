@@ -13,13 +13,13 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.sub_fragment_contact.*
 import vng.zalo.tdtai.zalo.R
 import vng.zalo.tdtai.zalo.ZaloApplication
+import vng.zalo.tdtai.zalo.abstracts.CallStarter
 import vng.zalo.tdtai.zalo.adapters.ContactSubFragmentAdapter
 import vng.zalo.tdtai.zalo.factories.ViewModelFactory
-import vng.zalo.tdtai.zalo.models.RoomItem
+import vng.zalo.tdtai.zalo.models.Room
 import vng.zalo.tdtai.zalo.utils.Constants
 import vng.zalo.tdtai.zalo.utils.RoomItemDiffCallback
 import vng.zalo.tdtai.zalo.viewmodels.UserRoomItemsViewModel
-import vng.zalo.tdtai.zalo.views.activities.CallActivity
 import vng.zalo.tdtai.zalo.views.activities.RoomActivity
 
 
@@ -36,7 +36,7 @@ class ContactSubFragment : Fragment(), View.OnClickListener {
 
         viewModel = ViewModelProvider(activity!!, ViewModelFactory.getInstance()).get(UserRoomItemsViewModel::class.java)
         viewModel.liveRoomItems.observe(viewLifecycleOwner, Observer { roomItems ->
-            adapter.submitList(roomItems.filter { it.roomType == RoomItem.TYPE_PEER }.sortedBy { it.name })
+            adapter.submitList(roomItems.filter { it.roomType == Room.TYPE_PEER }.sortedBy { it.name })
         })
     }
 
@@ -45,6 +45,9 @@ class ContactSubFragment : Fragment(), View.OnClickListener {
         with(allContactRecyclerView) {
             layoutManager = LinearLayoutManager(activity)
             adapter = this@ContactSubFragment.adapter
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP){
+                isNestedScrollingEnabled = false
+            }
         }
     }
 
@@ -59,6 +62,7 @@ class ContactSubFragment : Fragment(), View.OnClickListener {
                             putExtra(Constants.ROOM_ID, roomItem.roomId)
                             putExtra(Constants.ROOM_NAME, roomItem.name)
                             putExtra(Constants.ROOM_AVATAR, roomItem.avatarUrl)
+                            putExtra(Constants.ROOM_TYPE, roomItem.roomType)
                         }
                 )
             }
@@ -67,13 +71,7 @@ class ContactSubFragment : Fragment(), View.OnClickListener {
                     val position = allContactRecyclerView.getChildLayoutPosition(v.parent as View)
                     val roomItem = adapter.currentList[position]
 
-                    startActivity(Intent(context, CallActivity::class.java).apply {
-                        putExtra(Constants.IS_CALLER, true)
-
-                        putExtra(Constants.ROOM_ID, roomItem.roomId)
-                        putExtra(Constants.ROOM_NAME, roomItem.name)
-                        putExtra(Constants.ROOM_AVATAR, roomItem.avatarUrl)
-                    })
+                    CallStarter.startAudioCall(context!!, roomItem.roomId!!, roomItem.name!!, roomItem.avatarUrl!!)
                 }else{
                     Toast.makeText(context, "Only available for real device", Toast.LENGTH_LONG).show()
                 }

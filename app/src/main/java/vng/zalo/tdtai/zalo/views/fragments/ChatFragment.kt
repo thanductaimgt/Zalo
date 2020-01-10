@@ -34,11 +34,11 @@ class ChatFragment : Fragment(), View.OnClickListener {
         initView()
 
         viewModel = ViewModelProvider(this, ViewModelFactory.getInstance()).get(UserRoomItemsViewModel::class.java)
-        viewModel.liveRoomItems.observe(viewLifecycleOwner, Observer { rooms ->
-            adapter.submitList(rooms){
+        viewModel.liveRoomItems.observe(viewLifecycleOwner, Observer { roomItems ->
+            adapter.submitList(roomItems){
                 if(recyclerView.isNotEmpty()){
                     // save index and top position
-                    val layoutManager = (recyclerView.layoutManager as LinearLayoutManager)
+                    val layoutManager = recyclerView.layoutManager as LinearLayoutManager
                     val index = layoutManager.findFirstVisibleItemPosition()
                     val firstView = recyclerView[0]
                     val top = firstView.top - recyclerView.paddingTop
@@ -67,6 +67,7 @@ class ChatFragment : Fragment(), View.OnClickListener {
                             putExtra(Constants.ROOM_NAME, adapter.currentList[position].name)
                             putExtra(Constants.ROOM_AVATAR, adapter.currentList[position].avatarUrl)
                             putExtra(Constants.ROOM_ID, adapter.currentList[position].roomId)
+                            putExtra(Constants.ROOM_TYPE, adapter.currentList[position].roomType)
                         }
                 )
             }

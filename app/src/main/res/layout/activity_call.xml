@@ -111,7 +111,7 @@
         android:layout_marginBottom="12dp"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:padding="10dp"
-        android:src="@drawable/left_arrow"
+        android:src="@drawable/left_arrow_white"
         app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

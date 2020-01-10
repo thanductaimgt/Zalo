@@ -14,29 +14,42 @@
         app:layout_constraintTop_toTopOf="parent"
         android:id="@+id/cardView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/size_action_bar_height">
-            <LinearLayout
-                android:orientation="vertical"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
+        android:layout_height="@dimen/size_action_bar_height">
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:background="?attr/selectableItemBackground"
+                    android:padding="16dp"
+                    android:id="@+id/backImgView"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:src="@drawable/left_arrow_black"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintDimensionRatio="1:1"/>
                 <TextView
+                    app:layout_constraintVertical_chainStyle="packed"
+                    android:id="@+id/titleTextView"
+                    app:layout_constraintBottom_toTopOf="@id/countTextView"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/backImgView"
                     android:textStyle="bold"
                     android:text="@string/label_new_group"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"/>
                 <TextView
+                    app:layout_constraintTop_toBottomOf="@id/titleTextView"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="@id/titleTextView"
                     android:id="@+id/countTextView"
                     android:textColor="@color/lightTextGray"
                     android:textSize="@dimen/sizeTextSmall"
                     tools:text="Đã chọn: 0"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"/>
-            </LinearLayout>
-        </androidx.appcompat.widget.Toolbar>
+            </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>
 
 
@@ -53,6 +66,7 @@
         app:layout_constraintTop_toBottomOf="@id/cardView" />
 
     <EditText
+        android:textSize="@dimen/sizeTextNormal"
         android:id="@+id/nameTextView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -75,13 +89,13 @@
     <SearchView
         android:id="@+id/searchView"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="40dp"
         android:layout_marginLeft="16dp"
         android:layout_marginTop="16dp"
         android:layout_marginRight="16dp"
         android:background="@drawable/round_gray_bg"
         android:queryHint="@string/hint_search_members"
-        app:layout_constraintCircleRadius="25dp"
+        app:layout_constraintCircleRadius="@dimen/sizeRoundCornerRadiusLayout"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/uploadAvatarImgView" />
@@ -136,6 +150,9 @@
             android:layout_height="1dp"/>
 
         <androidx.recyclerview.widget.RecyclerView
+            android:orientation="horizontal"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            tools:listitem="@layout/item_user_icon"
             android:id="@+id/recyclerView"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -146,13 +163,16 @@
             app:layout_constraintRight_toLeftOf="@id/createGroupImgView"
             app:layout_constraintTop_toTopOf="@id/createGroupImgView" />
 
-        <ImageView
-            android:background="?attr/selectableItemBackgroundBorderless"
+        <com.makeramen.roundedimageview.RoundedImageView
+            android:layout_margin="8dp"
+            android:background="@color/lightPrimary"
+            app:riv_oval="true"
             android:padding="12dp"
+            app:riv_mutate_background="true"
             android:id="@+id/createGroupImgView"
-            android:layout_width="48dp"
+            android:layout_width="0dp"
             android:layout_height="0dp"
-            android:src="@drawable/go"
+            android:src="@drawable/right_arrow"
             android:contentDescription="@string/description_create_group"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintDimensionRatio="1:1"

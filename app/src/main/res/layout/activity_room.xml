@@ -24,7 +24,7 @@
             android:layout_height="match_parent"
             android:contentDescription="@string/description_back"
             android:padding="16dp"
-            android:src="@drawable/left_arrow"
+            android:src="@drawable/left_arrow_white"
             app:layout_constraintDimensionRatio="1:1"
             app:layout_constraintStart_toStartOf="parent" />
 
@@ -39,14 +39,14 @@
             android:scrollHorizontally="true"
             android:textColor="@color/whiteText"
             android:textStyle="bold"
-            app:layout_constraintBottom_toTopOf="@id/onlineStateTextView"
+            app:layout_constraintBottom_toTopOf="@id/onlineStatusTextView"
             app:layout_constraintStart_toEndOf="@id/backImgView"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="Nguyen Thi Ngannnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn" />
 
         <TextView
             app:layout_constraintEnd_toEndOf="@id/roomNameTextView"
-            android:id="@+id/onlineStateTextView"
+            android:id="@+id/onlineStatusTextView"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:ellipsize="end"
@@ -67,6 +67,19 @@
             android:id="@+id/voiceCallImgView"
             android:layout_width="0dp"
             android:layout_height="match_parent"/>
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:visibility="gone"
+            tools:visibility="visible"
+            android:layout_margin="12dp"
+            android:src="@color/online"
+            app:layout_constraintTop_toTopOf="@id/voiceCallImgView"
+            app:layout_constraintEnd_toEndOf="@id/voiceCallImgView"
+            app:layout_constraintDimensionRatio="1:1"
+            android:id="@+id/onlineStatusImgView"
+            android:layout_width="0dp"
+            android:layout_height="8dp"/>
+
         <ImageView
             android:background="?attr/selectableItemBackground"
             android:padding="@dimen/sizePaddingButtonRoomActivity"
@@ -88,7 +101,7 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.recyclerview.widget.RecyclerView
-        tools:listitem="@layout/item_receive_room_activity"
+        tools:listitem="@layout/item_send_room_activity"
         android:id="@+id/recyclerView"
         android:layout_width="match_parent"
         android:layout_height="0dp"

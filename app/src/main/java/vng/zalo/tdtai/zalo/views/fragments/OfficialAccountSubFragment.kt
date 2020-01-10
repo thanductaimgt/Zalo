@@ -57,6 +57,7 @@ class OfficialAccountSubFragment : Fragment(), View.OnClickListener {
                             putExtra(Constants.ROOM_ID, subFragmentAdapter.currentList[position].roomId)
                             putExtra(Constants.ROOM_NAME, subFragmentAdapter.currentList[position].name)
                             putExtra(Constants.ROOM_AVATAR, subFragmentAdapter.currentList[position].avatarUrl)
+                            putExtra(Constants.ROOM_TYPE, subFragmentAdapter.currentList[position].roomType)
                         }
                 )
             }

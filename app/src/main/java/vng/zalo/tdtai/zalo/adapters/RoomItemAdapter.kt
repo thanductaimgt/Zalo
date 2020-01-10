@@ -11,8 +11,9 @@ import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.item_room.view.*
 import vng.zalo.tdtai.zalo.R
 import vng.zalo.tdtai.zalo.ZaloApplication
-import vng.zalo.tdtai.zalo.models.RoomItem
 import vng.zalo.tdtai.zalo.abstracts.BindableViewHolder
+import vng.zalo.tdtai.zalo.models.Room
+import vng.zalo.tdtai.zalo.models.RoomItem
 import vng.zalo.tdtai.zalo.utils.Constants
 import vng.zalo.tdtai.zalo.utils.Utils
 
@@ -57,7 +58,7 @@ class RoomItemAdapter(private val fragment: Fragment, diffCallback: DiffUtil.Ite
 
                 Picasso.get()
                         .load(roomItem.avatarUrl)
-                        .error(if (roomItem.roomType == RoomItem.TYPE_PEER) R.drawable.default_peer_avatar else R.drawable.default_group_avatar)
+                        .error(if (roomItem.roomType == Room.TYPE_PEER) R.drawable.default_peer_avatar else R.drawable.default_group_avatar)
                         .fit()
                         .centerInside()
                         .into(avatarImgView)
@@ -68,13 +69,13 @@ class RoomItemAdapter(private val fragment: Fragment, diffCallback: DiffUtil.Ite
             }
         }
 
-        fun bindOnlineStatus(roomItem: RoomItem){
+        fun bindOnlineStatus(roomItem: RoomItem) {
             itemView.apply {
-//                if(roomItem.isOnline){
+                if (roomItem.lastOnlineTime == null) {
                     onlineStatusImgView.visibility = View.VISIBLE
-//                }else{
-//                    onlineStatusImgView.visibility = View.GONE
-//                }
+                } else {
+                    onlineStatusImgView.visibility = View.GONE
+                }
             }
         }
 
@@ -94,7 +95,7 @@ class RoomItemAdapter(private val fragment: Fragment, diffCallback: DiffUtil.Ite
             }
         }
 
-        fun bindSeenStatus(roomItem: RoomItem){
+        fun bindSeenStatus(roomItem: RoomItem) {
             itemView.apply {
                 if (roomItem.unseenMsgNum > 0) {
                     // if unseenMsgNum > N -> display: [N+]

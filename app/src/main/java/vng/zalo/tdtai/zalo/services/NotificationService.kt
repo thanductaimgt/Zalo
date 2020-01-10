@@ -26,25 +26,29 @@ import com.squareup.picasso.Picasso
 import com.squareup.picasso.Target
 import vng.zalo.tdtai.zalo.R
 import vng.zalo.tdtai.zalo.ZaloApplication
+import vng.zalo.tdtai.zalo.models.Room
 import vng.zalo.tdtai.zalo.models.RoomItem
-import vng.zalo.tdtai.zalo.models.message.Message
 import vng.zalo.tdtai.zalo.networks.Database
 import vng.zalo.tdtai.zalo.utils.Constants
 import vng.zalo.tdtai.zalo.utils.TAG
+import vng.zalo.tdtai.zalo.utils.Utils
 import vng.zalo.tdtai.zalo.views.activities.RoomActivity
 
 
 class NotificationService : Service() {
     private lateinit var binder: ServiceBinder
     private lateinit var target: Target
-    private var lastRoomItems: List<RoomItem>? = null
+    private var lastRoomItems: HashMap<String, RoomItem>? = null
     private val listenerRegistrations = ArrayList<ListenerRegistration>()
     val liveRoomItems: MutableLiveData<List<RoomItem>> = MutableLiveData(ArrayList())
+    private lateinit var notificationManager: NotificationManager
 
     override fun onCreate() {
         binder = ServiceBinder()
 
         initNotificationChannels()
+
+        notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -78,15 +82,30 @@ class NotificationService : Service() {
                 fieldToOrder = RoomItem.FIELD_LAST_MSG_TIME,
                 orderDirection = Query.Direction.DESCENDING
         ) { roomItems ->
-            roomItems.filter {
-                lastRoomItems != null &&
-                    it.unseenMsgNum > 0 &&
-                        it.roomId != ZaloApplication.currentRoomId &&
-                    !lastRoomItems!!.contains(it)
-            }.forEach {
-                pushChatNotification(it)
+            //            val pushedNotifications = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+//                notificationManager.activeNotifications.toList()
+//            } else {
+//                ArrayList()
+//            }
+
+            lastRoomItems?.let { lastRoomItems ->
+                roomItems.filter {
+                    val lastRoomItem = lastRoomItems[it.roomId]
+
+                    lastRoomItem != null &&
+                            lastRoomItem.unseenMsgNum != it.unseenMsgNum &&
+                            it.unseenMsgNum > 0 &&
+                            it.roomId != ZaloApplication.currentRoomId
+                }.forEach {
+                    pushChatNotification(it)
+                }
             }
-            lastRoomItems = roomItems
+
+            val map = HashMap<String, RoomItem>()
+            roomItems.forEach {
+                map[it.roomId!!] = it
+            }
+            lastRoomItems = map
         }
         listenerRegistrations.add(userRoomsListener)
     }
@@ -118,7 +137,7 @@ class NotificationService : Service() {
         }
 
         Picasso.get().load(roomItem.avatarUrl).placeholder(
-                if (roomItem.roomType == RoomItem.TYPE_PEER)
+                if (roomItem.roomType == Room.TYPE_PEER)
                     R.drawable.default_peer_avatar
                 else
                     R.drawable.default_group_avatar
@@ -128,13 +147,16 @@ class NotificationService : Service() {
     private fun pushChatNotification(roomAvatarBitmap: Bitmap, roomItem: RoomItem) {
         // create the pending intent and add to the notification
         val notificationIntent = Intent(this, RoomActivity::class.java).apply {
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+
             putExtra(Constants.ROOM_NAME, roomItem.name)
             putExtra(Constants.ROOM_AVATAR, roomItem.avatarUrl)
             putExtra(Constants.ROOM_ID, roomItem.roomId)
+            putExtra(Constants.ROOM_TYPE, roomItem.roomType)
         }
         val notificationPendingIntent = PendingIntent.getActivity(
                 this,
-                roomItem.roomId.hashCode().shl(Constants.NOTIFICATION_PENDING_INTENT),
+                Utils.getNotificationIdFromRoomId(roomItem.roomId!!),
                 notificationIntent,
                 PendingIntent.FLAG_UPDATE_CURRENT
         )
@@ -152,10 +174,10 @@ class NotificationService : Service() {
 
         val notificationStyle = NotificationCompat.MessagingStyle(roomPerson)
                 .let {
-                    if (roomItem.roomType == RoomItem.TYPE_PEER)
+                    if (roomItem.roomType == Room.TYPE_PEER)
                         it.setGroupConversation(false)
                     else
-                        it.setGroupConversation(true).setConversationTitle("${getString(R.string.label_groups_tab)}: ${roomItem.name}")
+                        it.setGroupConversation(true).setConversationTitle("${roomItem.name}")
                 }
                 .addMessage(roomItem.lastMsg, roomItem.lastMsgTime!!.toDate().time, lastSenderPerson)
 

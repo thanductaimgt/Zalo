@@ -14,7 +14,7 @@ import vng.zalo.tdtai.zalo.utils.Constants
 import vng.zalo.tdtai.zalo.utils.Utils
 import java.util.*
 
-class MessageCreator {
+object MessageCreator {
     fun addNewMessagesToFirestore(context: Context, room: Room, contents: List<String>, messageType: Int) {
         var curTimeStamp = System.currentTimeMillis()
 
@@ -25,7 +25,7 @@ class MessageCreator {
 
                 val fileStoragePath = "${Constants.FOLDER_ROOM_DATA}/${room.id}/file_${curTimeStamp}.$extension"
                 Storage.addFileAndGetDownloadUrl(context, content, fileStoragePath) { downloadUrl ->
-                    val message:Message
+                    val message: Message
 
                     if (messageType == Message.TYPE_FILE) {
                         message = FileMessage(
@@ -79,6 +79,20 @@ class MessageCreator {
                         callTime = callTime,
                         isMissed = isMissed,
                         isCanceled = isCanceled
+                )
+
+                Database.addNewMessageAndUpdateUsersRoom(
+                        context,
+                        curRoom = room,
+                        newMessage = message
+                )
+            } else if (messageType == Message.TYPE_STICKER) {
+                val message = StickerMessage(
+                        createdTime = Timestamp(Date(curTimeStamp)),
+                        senderPhone = ZaloApplication.curUser!!.phone,
+                        senderAvatarUrl = ZaloApplication.curUser!!.avatarUrl,
+                        type = messageType,
+                        url = content
                 )
 
                 Database.addNewMessageAndUpdateUsersRoom(

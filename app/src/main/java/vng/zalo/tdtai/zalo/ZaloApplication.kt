@@ -4,7 +4,9 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import android.net.sip.*
+import android.net.sip.SipManager
+import android.net.sip.SipProfile
+import android.net.sip.SipRegistrationListener
 import android.util.Log
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
@@ -59,6 +61,7 @@ class ZaloApplication : MultiDexApplication() {
     }
 
     companion object {
+        var isOnline = false
         var curUser: User? = null
         var currentRoomId: String? = null
         private val callReceiver: CallReceiver = CallReceiver()
@@ -79,11 +82,11 @@ class ZaloApplication : MultiDexApplication() {
         }
 
         fun removeCurrentUser(context: Context) {
-            this.curUser = null
-            removeSip()
-            unregisterCallReceiver(context.applicationContext)
             context.stopService(Intent(context.applicationContext, NotificationService::class.java))
             Database.setCurrentUserOnlineState(false)
+            unregisterCallReceiver(context.applicationContext)
+            removeSip()
+            this.curUser = null
         }
 
         fun isUserInit(): Boolean {
@@ -97,6 +100,7 @@ class ZaloApplication : MultiDexApplication() {
         private fun initSip(context: Context) {
             sipProfile = SipProfile.Builder("${Constants.SIP_ACCOUNT_PREFIX}${curUser!!.phone}", Constants.SIP_DOMAIN)
                     .setPassword(curUser!!.phone)
+                    .setAutoRegistration(true)
                     .build()
 
             sipManager = SipManager.newInstance(context)
@@ -117,7 +121,6 @@ class ZaloApplication : MultiDexApplication() {
                     Log.d(TAG, "open: onRegistrationFailed")
                 }
             })
-            sipManager?.isRegistered(sipProfile!!.uriString)
         }
 
         private fun removeSip() {

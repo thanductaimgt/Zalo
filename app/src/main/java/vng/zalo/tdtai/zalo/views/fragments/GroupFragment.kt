@@ -6,29 +6,30 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
-import android.widget.ArrayAdapter
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.fragment_group.*
 import vng.zalo.tdtai.zalo.R
+import vng.zalo.tdtai.zalo.SharedPrefsManager
+import vng.zalo.tdtai.zalo.adapters.BoldSelectedSpinnerAdapter
 import vng.zalo.tdtai.zalo.adapters.RoomItemAdapter
 import vng.zalo.tdtai.zalo.factories.ViewModelFactory
+import vng.zalo.tdtai.zalo.models.Room
 import vng.zalo.tdtai.zalo.models.RoomItem
 import vng.zalo.tdtai.zalo.utils.Constants
-import vng.zalo.tdtai.zalo.utils.Constants.ROOM_AVATAR
-import vng.zalo.tdtai.zalo.utils.Constants.ROOM_ID
-import vng.zalo.tdtai.zalo.utils.Constants.ROOM_NAME
 import vng.zalo.tdtai.zalo.utils.RoomItemDiffCallback
 import vng.zalo.tdtai.zalo.viewmodels.UserRoomItemsViewModel
 import vng.zalo.tdtai.zalo.views.activities.CreateGroupActivity
 import vng.zalo.tdtai.zalo.views.activities.RoomActivity
 
-class GroupFragment : Fragment(), AdapterView.OnItemSelectedListener, View.OnClickListener {
+class GroupFragment : Fragment(), View.OnClickListener {
 
     private lateinit var viewModel: UserRoomItemsViewModel
     private lateinit var adapter: RoomItemAdapter
+    private var groupSortType = 0
+    private val roomItemsObserver = RoomItemsObserver()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -42,9 +43,7 @@ class GroupFragment : Fragment(), AdapterView.OnItemSelectedListener, View.OnCli
         initView()
 
         viewModel = ViewModelProvider(activity!!, ViewModelFactory.getInstance()).get(UserRoomItemsViewModel::class.java)
-        viewModel.liveRoomItems.observe(viewLifecycleOwner, Observer { roomItems ->
-            adapter.submitList(roomItems.filter { it.roomType == RoomItem.TYPE_GROUP })
-        })
+        viewModel.liveRoomItems.observe(viewLifecycleOwner, roomItemsObserver)
     }
 
     private fun initView() {
@@ -53,28 +52,51 @@ class GroupFragment : Fragment(), AdapterView.OnItemSelectedListener, View.OnCli
         with(recyclerView) {
             adapter = this@GroupFragment.adapter
             layoutManager = LinearLayoutManager(activity)
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP){
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
                 isNestedScrollingEnabled = false
             }
         }
 
         createNewGroupLayout.setOnClickListener(this)
 
-        // Create an ArrayAdapter using the string array and a default spinner layout
-        val spinnerAdapter = ArrayAdapter.createFromResource(context!!,
-                R.array.sort_group_options, android.R.layout.simple_spinner_item)
-        // Specify the layout to use when the list of choices appears
+        initGroupSortTypeSpinner()
+    }
+
+    private fun initGroupSortTypeSpinner() {
+        val spinnerAdapter = BoldSelectedSpinnerAdapter<String>(context!!, sortGroupSpinner)
         spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        // Apply the viewPagerAdapter to the spinner
+        val groupSortTypes = resources.getStringArray(R.array.sort_group_options)
+        spinnerAdapter.addAll(groupSortTypes.toList())
+
         sortGroupSpinner.adapter = spinnerAdapter
+
+        groupSortType = SharedPrefsManager.getGroupSortType(context!!)
+        sortGroupSpinner.setSelection(groupSortType)
+
+        sortGroupSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+            }
+
+            override fun onItemSelected(
+                    parent: AdapterView<*>?,
+                    view: View?,
+                    position: Int,
+                    id: Long
+            ) {
+                groupSortType = position
+                SharedPrefsManager.setGroupSortType(context!!, position)
+
+                roomItemsObserver.onChanged(viewModel.liveRoomItems.value!!)
+            }
+        }
     }
 
-    override fun onItemSelected(adapterView: AdapterView<*>, view: View, i: Int, l: Long) {
-
-    }
-
-    override fun onNothingSelected(adapterView: AdapterView<*>) {
-
+    private fun sortByGroupSortType(roomItems: List<RoomItem>): List<RoomItem> {
+        return when (groupSortType) {
+            0 -> roomItems.sortedByDescending { it.lastMsgTime }
+            1 -> roomItems.sortedBy { it.name }
+            else -> roomItems
+        }
     }
 
     override fun onClick(v: View) {
@@ -83,15 +105,24 @@ class GroupFragment : Fragment(), AdapterView.OnItemSelectedListener, View.OnCli
                 val itemPosition = recyclerView.getChildLayoutPosition(v)
                 startActivity(
                         Intent(activity, RoomActivity::class.java).apply {
-                            putExtra(ROOM_NAME, adapter.currentList[itemPosition].name)
-                            putExtra(ROOM_AVATAR, adapter.currentList[itemPosition].avatarUrl)
-                            //room not created in database
-                            if (adapter.currentList[itemPosition].roomId != null)
-                                putExtra(ROOM_ID, adapter.currentList[itemPosition].roomId)
+                            putExtra(Constants.ROOM_NAME, adapter.currentList[itemPosition].name)
+                            putExtra(Constants.ROOM_AVATAR, adapter.currentList[itemPosition].avatarUrl)
+                            putExtra(Constants.ROOM_TYPE, adapter.currentList[itemPosition].roomType)
+                            putExtra(Constants.ROOM_ID, adapter.currentList[itemPosition].roomId)
                         }
                 )
             }
             R.id.createNewGroupLayout -> startActivity(Intent(activity, CreateGroupActivity::class.java))
+        }
+    }
+
+    inner class RoomItemsObserver:Observer<List<RoomItem>> {
+        override fun onChanged(t: List<RoomItem>) {
+            adapter.submitList(
+                    sortByGroupSortType(
+                            t.filter { it.roomType == Room.TYPE_GROUP }
+                    )
+            )
         }
     }
 }

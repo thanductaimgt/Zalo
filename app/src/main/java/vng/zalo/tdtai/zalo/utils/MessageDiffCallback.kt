@@ -1,5 +1,6 @@
 package vng.zalo.tdtai.zalo.utils
 
+import android.annotation.SuppressLint
 import androidx.recyclerview.widget.DiffUtil
 import vng.zalo.tdtai.zalo.models.message.Message
 import java.util.*
@@ -11,6 +12,7 @@ class MessageDiffCallback: DiffUtil.ItemCallback<Message>() {
         return oldItem.id == newItem.id
     }
 
+    @SuppressLint("DiffUtilEquals")
     override fun areContentsTheSame(oldItem: Message, newItem: Message): Boolean {
         return oldItem == newItem
     }

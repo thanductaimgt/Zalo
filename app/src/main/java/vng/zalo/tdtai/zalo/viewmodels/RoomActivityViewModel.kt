@@ -20,12 +20,14 @@ import vng.zalo.tdtai.zalo.utils.Constants
 class RoomActivityViewModel(intent: Intent) : ViewModel() {
     private var listenerRegistrations = ArrayList<ListenerRegistration>()
     private var lastMessages: List<Message> = ArrayList()
-    private val messageCreator = MessageCreator()
+
+    val livePeerLastOnlineTime = MutableLiveData<Timestamp>(Constants.TIMESTAMP_EPOCH)
 
     val room: Room = Room(
             avatarUrl = intent.getStringExtra(Constants.ROOM_AVATAR),
             id = intent.getStringExtra(Constants.ROOM_ID),
-            name = intent.getStringExtra(Constants.ROOM_NAME)
+            name = intent.getStringExtra(Constants.ROOM_NAME),
+            type = intent.getIntExtra(Constants.ROOM_TYPE, Room.TYPE_PEER)
     )
 
     val liveMessages: MutableLiveData<List<Message>> = MutableLiveData(ArrayList())
@@ -71,10 +73,19 @@ class RoomActivityViewModel(intent: Intent) : ViewModel() {
         )
 
         // observe typing events
-        Database.addRoomInfoChangeListener(room.id!!) { documentSnapshot ->
+        listenerRegistrations.add(Database.addRoomInfoChangeListener(room.id!!) { documentSnapshot ->
             @Suppress("UNCHECKED_CAST")
             liveTypingPhones.value = (documentSnapshot.get(Room.FIELD_TYPING_MEMBERS_PHONE)
                     ?: ArrayList<String>()) as List<String>
+        })
+
+        //observe room online state
+        if (room.type == Room.TYPE_PEER) {
+            listenerRegistrations.add(Database.addUserLastOnlineTimeListener(room.name!!) { lastOnlineTime ->
+                if (lastOnlineTime != Constants.TIMESTAMP_EPOCH) {
+                    livePeerLastOnlineTime.value = lastOnlineTime
+                }
+            })
         }
     }
 
@@ -89,18 +100,18 @@ class RoomActivityViewModel(intent: Intent) : ViewModel() {
     }
 
     fun addNewMessagesToFirestore(context: Context, contents: List<String>, type: Int) {
-        messageCreator.addNewMessagesToFirestore(context, room, contents, type)
+        MessageCreator.addNewMessagesToFirestore(context, room, contents, type)
     }
 
     fun addCurUserToCurRoomTypingMembers() {
         if (!liveTypingPhones.value!!.contains(ZaloApplication.curUser!!.phone)) {
-            Database.addCurrentUserToRoomTypingMembers(room.id!!)
+            Database.addCurUserToRoomTypings(room.id!!)
         }
     }
 
     fun removeCurUserFromCurRoomTypingMembers() {
         if (liveTypingPhones.value!!.contains(ZaloApplication.curUser!!.phone)) {
-            Database.removeCurrentUserToRoomTypingMembers(room.id!!)
+            Database.removeCurUserFromRoomTypings(room.id!!)
         }
     }
 

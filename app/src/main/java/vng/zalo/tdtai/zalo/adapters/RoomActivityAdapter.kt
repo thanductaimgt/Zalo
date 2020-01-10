@@ -102,7 +102,7 @@ class RoomActivityAdapter(private val roomActivity: RoomActivity, diffCallback: 
 
     private fun getPreviousNotTypingMessage(position: Int): Message? {
         var i = position + 1
-        while (i < currentList.lastIndex) {
+        while (i <= currentList.lastIndex) {
             if (currentList[i].type != Message.TYPE_TYPING) {
                 return currentList[i]
             }

@@ -15,10 +15,11 @@
         android:background="@drawable/action_bar_bg"
         android:layout_height="@dimen/size_action_bar_height">
         <ImageView
+            android:background="?attr/selectableItemBackground"
             android:id="@+id/backImgView"
             app:layout_constraintDimensionRatio="1:1"
             android:padding="16dp"
-            android:src="@drawable/left_arrow"
+            android:src="@drawable/left_arrow_white"
             app:layout_constraintStart_toStartOf="parent"
             android:layout_width="0dp"
             android:layout_height="match_parent"/>
@@ -79,12 +80,13 @@
     <ImageView
         android:background="?attr/selectableItemBackgroundBorderless"
         android:id="@+id/clearTextImgView"
-        android:layout_width="48dp"
+        android:layout_width="32dp"
         android:layout_height="0dp"
         android:clickable="true"
         android:contentDescription="@string/description_clear_text_icon"
         android:focusable="true"
-        android:padding="9dp"
+        android:padding="4dp"
+        android:layout_margin="8dp"
         android:src="@drawable/clear"
         app:layout_constraintBottom_toBottomOf="@id/phoneTextInputLayout"
         app:layout_constraintDimensionRatio="h,1:1"
@@ -104,6 +106,7 @@
         app:passwordToggleEnabled="true">
 
         <com.google.android.material.textfield.TextInputEditText
+            tools:text="passw"
             android:id="@+id/passTextInputEditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

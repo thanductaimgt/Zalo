@@ -24,7 +24,7 @@ class RoomItemDiffCallback : DiffUtil.ItemCallback<RoomItem>() {
         if (oldItem.unseenMsgNum != newItem.unseenMsgNum) {
             res.add(RoomItem.PAYLOAD_SEEN_MESSAGE)
         }
-        if (oldItem.isOnline != newItem.isOnline) {
+        if (oldItem.lastOnlineTime != newItem.lastOnlineTime && (oldItem.lastOnlineTime == null || newItem.lastOnlineTime == null)) {
             res.add(RoomItem.PAYLOAD_ONLINE_STATUS)
         }
         return res

@@ -1,37 +1,36 @@
 package vng.zalo.tdtai.zalo.views.activities
 
 import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import android.view.MenuItem
 import android.view.View
+import android.view.WindowManager
 import android.view.inputmethod.EditorInfo
-import androidx.appcompat.app.AppCompatActivity
-import androidx.recyclerview.widget.LinearLayoutManager
-import kotlinx.android.synthetic.main.activity_create_group.*
-import vng.zalo.tdtai.zalo.R
-import vng.zalo.tdtai.zalo.models.RoomItem
-import com.google.android.material.bottomsheet.BottomSheetDialog
-import android.content.Intent
 import android.widget.FrameLayout
-import androidx.lifecycle.*
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.firebase.Timestamp
 import com.squareup.picasso.Picasso
-import kotlinx.android.synthetic.main.activity_create_group.recyclerView
+import kotlinx.android.synthetic.main.activity_create_group.*
 import kotlinx.android.synthetic.main.bottom_sheet_upload_picture.view.*
+import vng.zalo.tdtai.zalo.R
 import vng.zalo.tdtai.zalo.ZaloApplication
 import vng.zalo.tdtai.zalo.adapters.CreateGroupActivityRecyclerViewAdapter
 import vng.zalo.tdtai.zalo.adapters.CreateGroupActivityViewPagerAdapter
 import vng.zalo.tdtai.zalo.factories.ViewModelFactory
 import vng.zalo.tdtai.zalo.models.Room
+import vng.zalo.tdtai.zalo.models.RoomItem
 import vng.zalo.tdtai.zalo.models.RoomMember
 import vng.zalo.tdtai.zalo.utils.Constants
+import vng.zalo.tdtai.zalo.utils.RoomItemDiffCallback
+import vng.zalo.tdtai.zalo.utils.TAG
 import vng.zalo.tdtai.zalo.utils.Utils
 import vng.zalo.tdtai.zalo.viewmodels.CreateGroupActivityViewModel
 import java.util.*
-import vng.zalo.tdtai.zalo.utils.TAG
 
 class CreateGroupActivity : AppCompatActivity(), View.OnClickListener {
     private lateinit var viewPagerAdapter: CreateGroupActivityViewPagerAdapter
@@ -49,8 +48,7 @@ class CreateGroupActivity : AppCompatActivity(), View.OnClickListener {
 
         viewModel = ViewModelProvider(this, ViewModelFactory.getInstance()).get(CreateGroupActivityViewModel::class.java)
         viewModel.liveSelectedRoomItems.observe(this, Observer {
-            recyclerViewAdapter.roomItems = it
-            recyclerViewAdapter.notifyDataSetChanged()
+            recyclerViewAdapter.submitList(it)
 
             countTextView.text = String.format(getString(R.string.description_selected_count), it.size)
             if (it.isEmpty()) {
@@ -62,22 +60,15 @@ class CreateGroupActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun initView() {
-        setSupportActionBar(toolbar)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        supportActionBar?.setDisplayShowTitleEnabled(false)
-        countTextView.text = String.format(getString(R.string.description_selected_count), 0)
+        window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN)
 
         viewPagerAdapter = CreateGroupActivityViewPagerAdapter(this, supportFragmentManager)
         viewPager.adapter = viewPagerAdapter
 
         tabLayout.setupWithViewPager(viewPager)
 
-        recyclerViewAdapter = CreateGroupActivityRecyclerViewAdapter(this)
-        recyclerView.apply {
-            adapter = recyclerViewAdapter
-            layoutManager = LinearLayoutManager(this@CreateGroupActivity, LinearLayoutManager.HORIZONTAL, false)
-        }
+        recyclerViewAdapter = CreateGroupActivityRecyclerViewAdapter(RoomItemDiffCallback())
+        recyclerView.adapter = recyclerViewAdapter
 
         nameTextView.setOnEditorActionListener { _, actionId, _ ->
             when (actionId) {
@@ -93,6 +84,7 @@ class CreateGroupActivity : AppCompatActivity(), View.OnClickListener {
         uploadAvatarImgView.setOnClickListener(this)
         searchView.setOnClickListener(this)
         createGroupImgView.setOnClickListener(this)
+        backImgView.setOnClickListener(this)
     }
 
     private fun initBottomSheet() {
@@ -101,7 +93,7 @@ class CreateGroupActivity : AppCompatActivity(), View.OnClickListener {
         // Fix BottomSheetDialog not showing after getting hidden when the user drags it down
         bottomSheetDialog.setOnShowListener { dialogInterface ->
             val bottomSheetDialog = dialogInterface as BottomSheetDialog
-            val bottomSheet = bottomSheetDialog.findViewById<FrameLayout>(R.id.design_bottom_sheet)
+            val bottomSheet = bottomSheetDialog.findViewById<FrameLayout>(R.id.design_bottom_sheet)!!
             BottomSheetBehavior.from(bottomSheet).apply {
                 skipCollapsed = true
             }
@@ -113,7 +105,7 @@ class CreateGroupActivity : AppCompatActivity(), View.OnClickListener {
         sheetView.takePicTextView.setOnClickListener(this)
     }
 
-    fun proceedNewClickOnItem(item: RoomItem) {
+    private fun processNewClickOnItem(item: RoomItem) {
         viewModel.liveSelectedRoomItems.value = viewModel.liveSelectedRoomItems.value!!.apply {
             if (contains(item)) {
                 remove(item)
@@ -123,13 +115,6 @@ class CreateGroupActivity : AppCompatActivity(), View.OnClickListener {
         }
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            android.R.id.home -> finish()
-        }
-        return super.onOptionsItemSelected(item)
-    }
-
     override fun onClick(view: View) {
         when (view.id) {
             R.id.searchView -> {
@@ -137,8 +122,8 @@ class CreateGroupActivity : AppCompatActivity(), View.OnClickListener {
             }
             R.id.itemUserIconRootLayout -> {
                 val itemPosition = recyclerView.getChildLayoutPosition(view)
-                val item = recyclerViewAdapter.roomItems[itemPosition]
-                proceedNewClickOnItem(item)
+                val item = recyclerViewAdapter.currentList[itemPosition]
+                processNewClickOnItem(item)
             }
             R.id.uploadAvatarImgView -> bottomSheetDialog.show()
             R.id.choosePicTextView -> {
@@ -153,6 +138,10 @@ class CreateGroupActivity : AppCompatActivity(), View.OnClickListener {
             R.id.createGroupImgView -> {
                 createGroupIfNeeded()
             }
+            R.id.backImgView->{
+                Utils.hideKeyboard(this, rootView)
+                finish()
+            }
         }
     }
 
@@ -165,6 +154,7 @@ class CreateGroupActivity : AppCompatActivity(), View.OnClickListener {
                         putExtra(Constants.ROOM_NAME, curRoomItem.name)
                         putExtra(Constants.ROOM_AVATAR, curRoomItem.avatarUrl)
                         putExtra(Constants.ROOM_ID, curRoomItem.roomId)
+                        putExtra(Constants.ROOM_TYPE, curRoomItem.roomType)
                     }
             )
         } else {
@@ -189,7 +179,8 @@ class CreateGroupActivity : AppCompatActivity(), View.OnClickListener {
                             )
                         }
                         put(ZaloApplication.curUser!!.phone!!, RoomMember(avatarUrl = ZaloApplication.curUser!!.avatarUrl, joinDate = curTimestamp, phone = ZaloApplication.curUser!!.phone))
-                    }
+                    },
+                    type = Room.TYPE_GROUP
             )
 
 
@@ -198,6 +189,7 @@ class CreateGroupActivity : AppCompatActivity(), View.OnClickListener {
                     putExtra(Constants.ROOM_ID, it.roomId)
                     putExtra(Constants.ROOM_NAME, it.name)
                     putExtra(Constants.ROOM_AVATAR, it.avatarUrl)
+                    putExtra(Constants.ROOM_TYPE, it.roomType)
                 })
             }
         }

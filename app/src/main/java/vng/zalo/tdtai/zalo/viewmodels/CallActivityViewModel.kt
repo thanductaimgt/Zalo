@@ -6,10 +6,8 @@ import android.net.sip.SipAudioCall
 import android.net.sip.SipProfile
 import android.net.sip.SipSession
 import android.util.Log
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import vng.zalo.tdtai.zalo.R
 import vng.zalo.tdtai.zalo.ZaloApplication
 import vng.zalo.tdtai.zalo.abstracts.MessageCreator
 import vng.zalo.tdtai.zalo.models.Room
@@ -26,8 +24,6 @@ class CallActivityViewModel(val intent: Intent, listener:SipAudioCall.Listener) 
     var isRecorderEnabled = true
     var startTime: Long = 0
     var isCaller = false
-
-    private val messageCreator = MessageCreator()
 
     private val room: Room = Room(
             avatarUrl = intent.getStringExtra(Constants.ROOM_AVATAR),
@@ -72,7 +68,8 @@ class CallActivityViewModel(val intent: Intent, listener:SipAudioCall.Listener) 
     }
 
     private fun takeAudioCall(listener:SipAudioCall.Listener){
-        sipAudioCall = ZaloApplication.sipManager!!.takeAudioCall(intent, listener)
+        sipAudioCall = ZaloApplication.sipManager!!.takeAudioCall(intent, null)
+        sipAudioCall.setListener(listener, true)
     }
 
     fun getPeerPhone():String{
@@ -83,6 +80,6 @@ class CallActivityViewModel(val intent: Intent, listener:SipAudioCall.Listener) 
         val contents = ArrayList<String>().apply {
             add("$callType.$callTime.$isMissed.$isCancel")
         }
-        messageCreator.addNewMessagesToFirestore(context, room, contents, messageType)
+        MessageCreator.addNewMessagesToFirestore(context, room, contents, messageType)
     }
 }

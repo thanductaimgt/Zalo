@@ -15,7 +15,7 @@ class CallReceiver : BroadcastReceiver() {
             Constants.ACTION_CALL -> {
                 context.startActivity(
                         Intent(context, CallActivity::class.java).apply {
-                            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_NO_USER_ACTION)
                             putExtras(intent.extras!!)
                         }
                 )

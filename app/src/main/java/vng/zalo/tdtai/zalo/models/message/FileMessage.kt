@@ -11,12 +11,13 @@ data class FileMessage(
         override var senderPhone: String? = null,
         override var senderAvatarUrl: String? = null,
         override var type: Int? = null,
-        var url:String?=null,
+        var url: String? = null,
         var fileSize: Long? = null,
         var fileName: String? = null
 ) : Message(id, createdTime, senderPhone, senderAvatarUrl, type) {
     override fun toMap(): HashMap<String, Any?> {
         return super.toMap().apply {
+            put(FIELD_URL, url)
             put(FIELD_FILE_SIZE, fileSize)
             put(FIELD_FILE_NAME, fileName)
         }
@@ -24,8 +25,9 @@ data class FileMessage(
 
     override fun applyDoc(doc: DocumentSnapshot) {
         super.applyDoc(doc)
-        doc.getLong(FIELD_FILE_SIZE)?.let{fileSize = it}
-        doc.getString(FIELD_FILE_NAME)?.let{fileName = it}
+        doc.getString(FIELD_URL)?.let { url = it }
+        doc.getLong(FIELD_FILE_SIZE)?.let { fileSize = it }
+        doc.getString(FIELD_FILE_NAME)?.let { fileName = it }
     }
 
     override fun getPreviewContent(context: Context): String {
@@ -33,6 +35,7 @@ data class FileMessage(
     }
 
     companion object {
+        const val FIELD_URL = "url"
         const val FIELD_FILE_SIZE = "fileSize"
         const val FIELD_FILE_NAME = "fileName"
     }

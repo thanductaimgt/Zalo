@@ -56,7 +56,19 @@ object SharedPrefsManager{
         }
     }
 
+    fun getGroupSortType(context: Context):Int{
+        return getSharedPrefs(context).getInt(FIELD_GROUP_SORT_TYPE, 0)
+    }
+
+    fun setGroupSortType(context: Context, position:Int){
+        getSharedPrefsEditor(context).apply {
+            putInt(FIELD_GROUP_SORT_TYPE, position)
+            apply()
+        }
+    }
+
     private const val SHARE_PREFERENCES_NAME = "ZaloSharePreferences"
 
     private const val FIELD_IS_LOGIN = "isLogin"
+    private const val FIELD_GROUP_SORT_TYPE = "groupSortType"
 }

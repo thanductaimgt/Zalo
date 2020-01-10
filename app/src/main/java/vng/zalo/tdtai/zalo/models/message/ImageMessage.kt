@@ -17,13 +17,15 @@ data class ImageMessage(
 ) : Message(id, createdTime, senderPhone, senderAvatarUrl, type) {
     override fun toMap(): HashMap<String, Any?> {
         return super.toMap().apply {
+            put(FIELD_URL, url)
             put(FIELD_RATIO, ratio)
         }
     }
 
     override fun applyDoc(doc: DocumentSnapshot) {
         super.applyDoc(doc)
-        doc.getString(FIELD_RATIO)?.let{ratio = it}
+        doc.getString(FIELD_URL)?.let { url = it }
+        doc.getString(FIELD_RATIO)?.let { ratio = it }
     }
 
     override fun getPreviewContent(context: Context): String {
@@ -31,6 +33,7 @@ data class ImageMessage(
     }
 
     companion object {
+        const val FIELD_URL = "url"
         const val FIELD_RATIO = "ratio"
     }
 }

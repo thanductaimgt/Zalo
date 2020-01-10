@@ -21,7 +21,28 @@
         tools:src="@drawable/official_account" />
 
     <TextView
+        app:layout_constraintVertical_chainStyle="packed"
+        android:textSize="@dimen/sizeTextBig"
         android:id="@+id/nameTextView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:scrollHorizontally="true"
+        app:layout_constraintBottom_toTopOf="@id/descTextView"
+        app:layout_constraintLeft_toRightOf="@id/avatarImgView"
+        app:layout_constraintRight_toLeftOf="@id/radioButton"
+        app:layout_constraintTop_toTopOf="@id/avatarImgView"
+        tools:text="a very long name abcxyz0123456789abcdef" />
+
+    <TextView
+        android:textSize="@dimen/sizeTextSmall"
+        android:visibility="gone"
+        tools:visibility="visible"
+        android:textColor="@color/lightTextGray"
+        android:id="@+id/descTextView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginLeft="16dp"
@@ -32,7 +53,7 @@
         app:layout_constraintBottom_toBottomOf="@id/avatarImgView"
         app:layout_constraintLeft_toRightOf="@id/avatarImgView"
         app:layout_constraintRight_toLeftOf="@id/radioButton"
-        app:layout_constraintTop_toTopOf="@id/avatarImgView"
+        app:layout_constraintTop_toBottomOf="@id/nameTextView"
         tools:text="a very long name abcxyz0123456789abcdef" />
 
     <RadioButton

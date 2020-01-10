@@ -2,26 +2,28 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/rootItemView"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
     tools:background="@color/colorChatBg"
-    android:id="@+id/rootItemView">
+    android:paddingBottom="3dp">
 
     <View
-        tools:visibility="visible"
-        android:visibility="gone"
-        app:layout_constraintTop_toTopOf="parent"
         android:id="@+id/paddingView"
         android:layout_width="match_parent"
-        android:layout_height="16dp"/>
+        android:layout_height="16dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@id/dateTextView"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:visibility="visible" />
 
     <TextView
         android:id="@+id/dateTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp"
+        android:layout_marginBottom="16dp"
         android:background="@drawable/chat_date_bg"
         android:textColor="@android:color/white"
         android:visibility="gone"
@@ -29,6 +31,7 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/paddingView"
+        app:layout_goneMarginBottom="16dp"
         tools:text="01/01/2019"
         tools:visibility="visible" />
 
@@ -37,7 +40,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/size_margin_recv_msg_item"
-        android:layout_marginBottom="2dp"
         android:background="@drawable/recv_message_bg"
         android:visibility="gone"
         app:layout_constrainedWidth="true"
@@ -45,6 +47,7 @@
         app:layout_constraintEnd_toStartOf="@id/guideline"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/dateTextView"
         tools:text="This is a ver long messagesssssssssssssssssssssssssssssssssssss"
         tools:visibility="visible" />
 
@@ -53,77 +56,82 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/size_margin_recv_msg_item"
-        android:layout_marginBottom="2dp"
         android:background="@drawable/recv_message_bg"
+        android:padding="0dp"
         android:visibility="gone"
         app:layout_constrainedWidth="true"
         app:layout_constraintBottom_toTopOf="@id/fileViewLayout"
         app:layout_constraintEnd_toStartOf="@id/guideline"
         app:layout_constraintHorizontal_bias="0"
         app:layout_constraintStart_toStartOf="parent"
-        android:padding="0dp"
+        app:layout_constraintTop_toBottomOf="@id/contentTextView"
         tools:visibility="visible">
+
         <TextView
+            android:id="@+id/callTitleTV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginEnd="10dp"
+            android:textStyle="bold"
+            app:layout_constrainedWidth="true"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0"
-            android:layout_marginTop="4dp"
-            app:layout_constrainedWidth="true"
-            android:layout_marginEnd="10dp"
-            android:layout_marginStart="10dp"
-            android:textStyle="bold"
-            tools:text="@string/description_incoming_voice_call"
-            app:layout_constraintTop_toTopOf="parent"
-            android:id="@+id/callTitleTV"
             app:layout_constraintStart_toStartOf="parent"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="@string/description_incoming_voice_call" />
+
         <ImageView
-            app:layout_constraintHorizontal_chainStyle="packed"
-            app:layout_constraintHorizontal_bias="0"
-            app:layout_constraintEnd_toStartOf="@id/callTimeTV"
-            android:layout_marginTop="4dp"
             android:id="@+id/callIconImgView"
-            tools:src="@drawable/success_incoming_call"
             android:layout_width="15dp"
             android:layout_height="0dp"
+            android:layout_marginTop="4dp"
             app:layout_constraintDimensionRatio="1:1"
+            app:layout_constraintEnd_toStartOf="@id/callTimeTV"
+            app:layout_constraintHorizontal_bias="0"
+            app:layout_constraintHorizontal_chainStyle="packed"
+            app:layout_constraintStart_toStartOf="@id/callTitleTV"
             app:layout_constraintTop_toBottomOf="@id/callTitleTV"
-            app:layout_constraintStart_toStartOf="@id/callTitleTV"/>
+            tools:src="@drawable/success_incoming_call" />
+
         <TextView
+            android:id="@+id/callTimeTV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
             android:layout_marginEnd="10dp"
             android:textColor="@color/lightTextGray"
             android:textSize="@dimen/sizeTextSmall"
-            android:layout_marginStart="8dp"
-            tools:text="1 phút 22 giây"
-            app:layout_constraintTop_toTopOf="@id/callIconImgView"
+            app:layout_constrainedWidth="true"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/callIconImgView"
-            android:id="@+id/callTimeTV"
-            app:layout_constrainedWidth="true"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            app:layout_constraintTop_toTopOf="@id/callIconImgView"
+            tools:text="1 phút 22 giây" />
+
         <View
-            android:layout_marginTop="6dp"
             android:id="@+id/line"
-            android:background="@color/lightWeakGray"
-            app:layout_constraintTop_toBottomOf="@id/callTimeTV"
             android:layout_width="0dp"
-            app:layout_constraintStart_toStartOf="parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="6dp"
+            android:background="@color/lightWeakGray"
             app:layout_constraintEnd_toEndOf="parent"
-            android:layout_height="1dp"/>
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/callTimeTV" />
+
         <TextView
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
+            android:id="@+id/callbackTV"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:padding="4dp"
+            android:text="@string/label_callback"
             android:textAllCaps="true"
             android:textColor="@color/lightPrimary"
             android:textStyle="bold"
-            android:padding="4dp"
-            android:gravity="center"
-            android:text="@string/label_callback"
-            app:layout_constraintTop_toBottomOf="@id/line"
-            android:id="@+id/callbackTV"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"/>
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/line" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -131,7 +139,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/size_margin_recv_msg_item"
-        android:layout_marginBottom="2dp"
         android:background="@drawable/recv_message_bg_stroke"
         android:visibility="gone"
         app:layout_constrainedWidth="true"
@@ -139,6 +146,7 @@
         app:layout_constraintEnd_toStartOf="@id/guideline"
         app:layout_constraintHorizontal_bias="0"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/callLayout"
         tools:visibility="visible">
 
         <ImageView
@@ -171,7 +179,6 @@
             tools:text="app-debug.apkkkkkkkkkkkkkkkkkkkkkkkkk" />
 
         <TextView
-            android:textStyle="bold"
             android:id="@+id/downloadImgView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -182,6 +189,7 @@
             android:paddingBottom="4dp"
             android:text="@string/label_open"
             android:textColor="@android:color/white"
+            android:textStyle="bold"
             android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="@id/fileNameTextView"
             app:layout_constraintEnd_toStartOf="@id/openImgView"
@@ -189,8 +197,6 @@
             tools:visibility="visible" />
 
         <com.makeramen.roundedimageview.RoundedImageView
-            app:riv_oval="true"
-            app:riv_mutate_background="true"
             android:id="@+id/openImgView"
             android:layout_width="0dp"
             android:layout_height="0dp"
@@ -200,7 +206,9 @@
             app:layout_constraintBottom_toBottomOf="@id/fileExtensionImgView"
             app:layout_constraintDimensionRatio="1:1"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@id/fileExtensionImgView" />
+            app:layout_constraintTop_toTopOf="@id/fileExtensionImgView"
+            app:riv_mutate_background="true"
+            app:riv_oval="true" />
 
         <TextView
             android:id="@+id/fileDescTextView"
@@ -219,10 +227,10 @@
         android:layout_width="@dimen/size_sticker_chat"
         android:layout_height="@dimen/size_sticker_chat"
         android:layout_marginStart="@dimen/size_margin_recv_msg_item"
-        android:layout_marginBottom="4dp"
         android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@id/imageView"
         app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/typingAnimView"
         app:lottie_autoPlay="false"
         app:lottie_enableMergePathsForKitKatAndAbove="true"
         app:lottie_loop="true"
@@ -231,23 +239,22 @@
         tools:visibility="visible" />
 
     <com.makeramen.roundedimageview.RoundedImageView
-        android:scaleType="fitXY"
         android:id="@+id/imageView"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginStart="@dimen/size_margin_recv_msg_item"
-        android:layout_marginTop="16dp"
-        android:layout_marginBottom="4dp"
         android:background="@color/strongGray"
-        app:riv_corner_radius="@dimen/sizeRoundCornerMessageBg"
-        app:riv_mutate_background="true"
         android:contentDescription="@string/description_image"
+        android:scaleType="fitXY"
         android:visibility="gone"
         app:layout_constrainedWidth="true"
         app:layout_constraintBottom_toTopOf="@id/timeTextView"
         app:layout_constraintEnd_toStartOf="@id/guideline"
         app:layout_constraintHorizontal_bias="0"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/stickerAnimView"
+        app:riv_corner_radius="@dimen/sizeRoundCornerMessageBg"
+        app:riv_mutate_background="true"
         tools:layout_constraintDimensionRatio="1:1"
         tools:visibility="visible" />
 
@@ -256,11 +263,11 @@
         android:layout_width="wrap_content"
         android:layout_height="29dp"
         android:layout_marginStart="@dimen/size_margin_recv_msg_item"
-        android:layout_marginBottom="1dp"
         android:background="@drawable/recv_message_bg"
         android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@id/stickerAnimView"
         app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/fileViewLayout"
         app:lottie_autoPlay="true"
         app:lottie_enableMergePathsForKitKatAndAbove="true"
         app:lottie_loop="true"
@@ -269,15 +276,19 @@
         tools:visibility="visible" />
 
     <TextView
+        android:textColor="@color/lightTextGray"
         android:id="@+id/timeTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/size_margin_recv_msg_item"
-        android:layout_marginBottom="8dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="16dp"
         android:textSize="@dimen/size_small_text_10sp"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/imageView"
+        app:layout_goneMarginTop="4dp"
         tools:text="09:00 AM"
         tools:visibility="visible" />
 
@@ -303,5 +314,5 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.75" />
+        app:layout_constraintGuide_percent="0.85" />
 </androidx.constraintlayout.widget.ConstraintLayout>

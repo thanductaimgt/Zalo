@@ -4,6 +4,7 @@ import android.content.Context
 import android.util.Log
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.Tasks
+import com.google.firebase.Timestamp
 import com.google.firebase.firestore.*
 import vng.zalo.tdtai.zalo.ZaloApplication
 import vng.zalo.tdtai.zalo.models.*
@@ -30,7 +31,7 @@ class Database {
                     newMessage.toMap()
             )
 
-            //for user rooms except for current user, update fields
+            //for each user rooms, update fields
             curRoom.memberMap!!.forEach {
                 val curUserPhone = it.key
                 val lastMsgPreviewContent = newMessage.getPreviewContent(context)
@@ -45,9 +46,10 @@ class Database {
                             put(RoomItem.FIELD_LAST_SENDER_PHONE, newMessage.senderPhone)
                             put(RoomItem.FIELD_LAST_MSG, lastMsgPreviewContent)
                             put(RoomItem.FIELD_LAST_MSG_TIME, newMessage.createdTime)
+//                            put(RoomItem.FIELD_LAST_MSG_TYPE, newMessage.type)
                             if (curUserPhone != ZaloApplication.curUser!!.phone &&
                                     (newMessage.type != Message.TYPE_CALL ||
-                                            newMessage.type == Message.TYPE_CALL && (newMessage as CallMessage).isMissed))
+                                            newMessage.type == Message.TYPE_CALL && (newMessage as CallMessage).isMissed && curUserPhone != ZaloApplication.curUser!!.phone))
                                 put(RoomItem.FIELD_UNSEEN_MSG_NUM, FieldValue.increment(1))
                         }
                 )
@@ -83,7 +85,7 @@ class Database {
                     roomId = newRoom.id,
                     avatarUrl = newRoom.avatarUrl,
                     name = newRoom.name,
-                    roomType = RoomItem.TYPE_GROUP
+                    roomType = Room.TYPE_GROUP
             )
 
             // in room, create each room member and
@@ -92,7 +94,7 @@ class Database {
                 // create room member
                 batch.set(
                         newRoomDocRef.collection(Constants.COLLECTION_MEMBERS).document(),
-                        it.value
+                        it.value.toMap()
                 )
 
                 //create user room
@@ -104,7 +106,7 @@ class Database {
 
                 batch.set(
                         newRoomItemRef,
-                        newRoomItem
+                        newRoomItem.toMap()
                 )
             }
 
@@ -232,6 +234,7 @@ class Database {
                                 memberMap[doc.getString(RoomMember.FIELD_PHONE)!!] = roomMember
                             }
                             room.memberMap = memberMap
+                            room.type = if(memberMap.size <= 2) Room.TYPE_PEER else Room.TYPE_GROUP
 
                             //set livedata value
                             callback?.invoke(room)
@@ -408,38 +411,80 @@ class Database {
                     }
         }
 
-        fun addCurrentUserToRoomTypingMembers(roomId: String) {
-            Utils.assertTaskSuccess(
-                    firebaseFirestore
-                            .collection(Constants.COLLECTION_ROOMS)
-                            .document(roomId)
-                            .update(Room.FIELD_TYPING_MEMBERS_PHONE, FieldValue.arrayUnion(ZaloApplication.curUser!!.phone)),
-                    TAG,
-                    "addCurrentUserToRoomTypingMembers"
-            )
+        fun addCurUserToRoomTypings(roomId: String) {
+            firebaseFirestore
+                    .collection(Constants.COLLECTION_ROOMS)
+                    .document(roomId)
+                    .update(Room.FIELD_TYPING_MEMBERS_PHONE, FieldValue.arrayUnion(ZaloApplication.curUser!!.phone))
+                    .addOnCompleteListener {
+                        Utils.assertTaskSuccess(
+                                it,
+                                TAG,
+                                "addCurUserToRoomTypings"
+                        )
+                    }
         }
 
-        fun removeCurrentUserToRoomTypingMembers(roomId: String) {
-            Utils.assertTaskSuccess(
-                    firebaseFirestore
-                            .collection(Constants.COLLECTION_ROOMS)
-                            .document(roomId)
-                            .update(Room.FIELD_TYPING_MEMBERS_PHONE, FieldValue.arrayRemove(ZaloApplication.curUser!!.phone)),
-                    TAG,
-                    "removeCurrentUserToRoomTypingMembers"
-            )
+        fun removeCurUserFromRoomTypings(roomId: String) {
+            firebaseFirestore
+                    .collection(Constants.COLLECTION_ROOMS)
+                    .document(roomId)
+                    .update(Room.FIELD_TYPING_MEMBERS_PHONE, FieldValue.arrayRemove(ZaloApplication.curUser!!.phone))
+                    .addOnCompleteListener {
+                        Utils.assertTaskSuccess(
+                                it,
+                                TAG,
+                                "removeCurUserFromRoomTypings"
+                        )
+                    }
         }
 
+        //no effect if isOnline not change
         fun setCurrentUserOnlineState(isOnline: Boolean) {
-            Utils.assertTaskSuccess(
-                    firebaseFirestore
-                            .collection(Constants.COLLECTION_USERS)
-                            .document(ZaloApplication.curUser!!.phone!!)
-                            .update(User.FIELD_IS_ONLINE, isOnline),
-                    TAG,
-                    "setCurrentUserOnlineState"
-            )
-            Log.d(TAG, ZaloApplication.curUser!!.phone)
+            if (ZaloApplication.isOnline != isOnline) {
+                firebaseFirestore
+                        .collection(Constants.COLLECTION_USERS)
+                        .document(ZaloApplication.curUser!!.phone!!)
+                        .update(User.FIELD_LAST_ONLINE_TIME,
+                                if (isOnline) null
+                                else Timestamp.now()
+                        ).addOnCompleteListener {
+                            Utils.assertTaskSuccess(
+                                    it,
+                                    TAG,
+                                    "setCurrentUserOnlineState"
+                            )
+                        }
+
+                ZaloApplication.isOnline = isOnline
+            }
+        }
+
+        //null->isOnline
+        fun addUsersLastOnlineTimeListener(userPhones: List<String>, callback: (usersLastOnlineTime: HashMap<String, Timestamp?>) -> Unit):ListenerRegistration {
+            return firebaseFirestore
+                    .collection(Constants.COLLECTION_USERS)
+                    .whereIn(FieldPath.documentId(), userPhones)
+                    .addSnapshotListener {querySnapshot, _ ->
+                        Utils.assertNotNull(querySnapshot, TAG, "addUsersLastOnlineTimeListener") { querySnapshotNotNull ->
+                            val res = HashMap<String, Timestamp?>()
+                            for (doc in querySnapshotNotNull) {
+                                res[doc.id] = doc.getTimestamp(User.FIELD_LAST_ONLINE_TIME)
+                            }
+                            callback(res)
+                        }
+                    }
+        }
+
+        fun addUserLastOnlineTimeListener(userPhone: String, callback: (userLastOnlineTime: Timestamp?) -> Unit):ListenerRegistration {
+            return firebaseFirestore
+                    .collection(Constants.COLLECTION_USERS)
+                    .document(userPhone)
+                    .addSnapshotListener {documentSnapshot, _ ->
+                        Utils.assertNotNull(documentSnapshot, TAG, "addUserLastOnlineTimeListener") { documentSnapshotNotNull ->
+                            callback(documentSnapshotNotNull.getTimestamp(User.FIELD_LAST_ONLINE_TIME))
+                        }
+                    }
         }
     }
 }

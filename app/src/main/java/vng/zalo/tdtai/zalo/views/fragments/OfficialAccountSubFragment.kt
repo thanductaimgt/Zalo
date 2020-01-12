@@ -50,16 +50,16 @@ class OfficialAccountSubFragment : Fragment(), View.OnClickListener {
     override fun onClick(v: View) {
         when (v.id) {
             R.id.itemRoomRootLayout -> {
-                val position = recyclerView.getChildLayoutPosition(v)
-
-                startActivity(
-                        Intent(activity, RoomActivity::class.java).apply {
-                            putExtra(Constants.ROOM_ID, subFragmentAdapter.currentList[position].roomId)
-                            putExtra(Constants.ROOM_NAME, subFragmentAdapter.currentList[position].name)
-                            putExtra(Constants.ROOM_AVATAR, subFragmentAdapter.currentList[position].avatarUrl)
-                            putExtra(Constants.ROOM_TYPE, subFragmentAdapter.currentList[position].roomType)
-                        }
-                )
+//                val position = recyclerView.getChildLayoutPosition(v)
+//
+//                startActivity(
+//                        Intent(activity, RoomActivity::class.java).apply {
+//                            putExtra(Constants.ROOM_ID, subFragmentAdapter.currentList[position].roomId)
+//                            putExtra(Constants.ROOM_NAME, subFragmentAdapter.currentList[position].phone)
+//                            putExtra(Constants.ROOM_AVATAR, subFragmentAdapter.currentList[position].avatarUrl)
+//                            putExtra(Constants.ROOM_TYPE, subFragmentAdapter.currentList[position].roomType)
+//                        }
+//                )
             }
         }
     }

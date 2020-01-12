@@ -3,7 +3,6 @@ package vng.zalo.tdtai.zalo.models.message
 import android.content.Context
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.DocumentSnapshot
-import vng.zalo.tdtai.zalo.R
 import java.util.*
 
 data class StickerMessage(
@@ -12,11 +11,11 @@ data class StickerMessage(
         override var senderPhone: String? = null,
         override var senderAvatarUrl: String? = null,
         override var type: Int? = null,
-        var url: String?=null
+        var url: String? = null
 ) : Message(id, createdTime, senderPhone, senderAvatarUrl, type) {
-    override fun toMap(): HashMap<String, Any?> {
+    override fun toMap(): HashMap<String, Any> {
         return super.toMap().apply {
-            put(FIELD_URL, url)
+            url?.let { put(FIELD_URL, it) }
         }
     }
 

@@ -5,9 +5,11 @@
     android:layout_height="match_parent">
 
     <com.google.android.material.tabs.TabLayout
+        android:paddingBottom="2dp"
+        android:paddingTop="2dp"
         android:id="@+id/tabLayout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="48dp"
         app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.viewpager.widget.ViewPager

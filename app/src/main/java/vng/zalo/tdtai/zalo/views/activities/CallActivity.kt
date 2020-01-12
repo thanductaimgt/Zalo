@@ -175,7 +175,7 @@ class CallActivity : AppCompatActivity(), View.OnClickListener {
 
             val peerPhone = viewModel.getPeerPhone()
             nameTextView.text = peerPhone
-            Database.getUserRoom(peerPhone) { roomItem ->
+            Database.getUserRoomPeer(peerPhone) { roomItem ->
                 Picasso.get().load(roomItem.avatarUrl).fit().centerInside().into(avatarImgView)
             }
 

@@ -5,7 +5,6 @@
     android:id="@+id/rootItemView"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
     tools:background="@color/colorChatBg"
     android:paddingBottom="3dp">
 
@@ -173,13 +172,13 @@
             android:textStyle="bold"
             app:layout_constrainedWidth="true"
             app:layout_constraintBottom_toBottomOf="@id/fileExtensionImgView"
-            app:layout_constraintEnd_toStartOf="@id/downloadImgView"
+            app:layout_constraintEnd_toStartOf="@id/openFileTextView"
             app:layout_constraintStart_toEndOf="@id/fileExtensionImgView"
             app:layout_constraintTop_toTopOf="@id/fileExtensionImgView"
             tools:text="app-debug.apkkkkkkkkkkkkkkkkkkkkkkkkk" />
 
         <TextView
-            android:id="@+id/downloadImgView"
+            android:id="@+id/openFileTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/download_button_bg"
@@ -192,12 +191,12 @@
             android:textStyle="bold"
             android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="@id/fileNameTextView"
-            app:layout_constraintEnd_toStartOf="@id/openImgView"
+            app:layout_constraintEnd_toStartOf="@id/downloadFileImgView"
             app:layout_constraintTop_toTopOf="@id/fileNameTextView"
             tools:visibility="visible" />
 
         <com.makeramen.roundedimageview.RoundedImageView
-            android:id="@+id/openImgView"
+            android:id="@+id/downloadFileImgView"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:background="@color/lightAccent"
@@ -228,7 +227,7 @@
         android:layout_height="@dimen/size_sticker_chat"
         android:layout_marginStart="@dimen/size_margin_recv_msg_item"
         android:visibility="gone"
-        app:layout_constraintBottom_toTopOf="@id/imageView"
+        app:layout_constraintBottom_toTopOf="@id/cardView"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toBottomOf="@id/typingAnimView"
         app:lottie_autoPlay="false"
@@ -237,6 +236,45 @@
         app:lottie_renderMode="software"
         tools:src="@color/strongGray"
         tools:visibility="visible" />
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="@dimen/size_margin_recv_msg_item"
+        android:visibility="gone"
+        app:layout_constrainedWidth="true"
+        app:layout_constraintBottom_toTopOf="@id/imageView"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintEnd_toStartOf="@id/guideline"
+        app:layout_constraintTop_toBottomOf="@id/stickerAnimView"
+        tools:layout_constraintDimensionRatio="1:2"
+        tools:visibility="visible"
+        app:cardCornerRadius="10dp"
+        app:cardElevation="0dp">
+        <com.google.android.exoplayer2.ui.PlayerView
+            app:surface_type="texture_view"
+            android:id="@+id/playerView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+        <ImageView
+            android:id="@+id/videoThumbImgView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+        <TextView
+            android:paddingStart="4dp"
+            android:paddingEnd="4dp"
+            android:background="@color/blackTransparent"
+            android:textColor="@android:color/white"
+            android:textSize="@dimen/sizeTextSmall"
+            tools:text="00:39"
+            android:id="@+id/videoDurationTV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+    </androidx.cardview.widget.CardView>
 
     <com.makeramen.roundedimageview.RoundedImageView
         android:id="@+id/imageView"
@@ -252,7 +290,7 @@
         app:layout_constraintEnd_toStartOf="@id/guideline"
         app:layout_constraintHorizontal_bias="0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/stickerAnimView"
+        app:layout_constraintTop_toBottomOf="@id/cardView"
         app:riv_corner_radius="@dimen/sizeRoundCornerMessageBg"
         app:riv_mutate_background="true"
         tools:layout_constraintDimensionRatio="1:1"

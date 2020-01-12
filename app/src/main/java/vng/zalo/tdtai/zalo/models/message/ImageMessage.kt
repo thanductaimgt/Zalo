@@ -12,19 +12,19 @@ data class ImageMessage(
         override var senderPhone: String? = null,
         override var senderAvatarUrl: String? = null,
         override var type: Int? = null,
-        var url: String? = null,
+        override var url: String = "unknown",
+        override var uploadProgress:Int?=null,
+        override var size:Long=-1,
         var ratio: String? = null
-) : Message(id, createdTime, senderPhone, senderAvatarUrl, type) {
-    override fun toMap(): HashMap<String, Any?> {
+) : ResourceMessage(id, createdTime, senderPhone, senderAvatarUrl, type, url, uploadProgress, size) {
+    override fun toMap(): HashMap<String, Any> {
         return super.toMap().apply {
-            put(FIELD_URL, url)
-            put(FIELD_RATIO, ratio)
+            ratio?.let { put(FIELD_RATIO, it)}
         }
     }
 
     override fun applyDoc(doc: DocumentSnapshot) {
         super.applyDoc(doc)
-        doc.getString(FIELD_URL)?.let { url = it }
         doc.getString(FIELD_RATIO)?.let { ratio = it }
     }
 
@@ -33,7 +33,6 @@ data class ImageMessage(
     }
 
     companion object {
-        const val FIELD_URL = "url"
         const val FIELD_RATIO = "ratio"
     }
 }

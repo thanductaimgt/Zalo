@@ -16,8 +16,8 @@ import vng.zalo.tdtai.zalo.SharedPrefsManager
 import vng.zalo.tdtai.zalo.adapters.BoldSelectedSpinnerAdapter
 import vng.zalo.tdtai.zalo.adapters.RoomItemAdapter
 import vng.zalo.tdtai.zalo.factories.ViewModelFactory
-import vng.zalo.tdtai.zalo.models.Room
-import vng.zalo.tdtai.zalo.models.RoomItem
+import vng.zalo.tdtai.zalo.models.room.Room
+import vng.zalo.tdtai.zalo.models.room.RoomItem
 import vng.zalo.tdtai.zalo.utils.Constants
 import vng.zalo.tdtai.zalo.utils.RoomItemDiffCallback
 import vng.zalo.tdtai.zalo.viewmodels.UserRoomItemsViewModel
@@ -43,7 +43,7 @@ class GroupFragment : Fragment(), View.OnClickListener {
         initView()
 
         viewModel = ViewModelProvider(activity!!, ViewModelFactory.getInstance()).get(UserRoomItemsViewModel::class.java)
-        viewModel.liveRoomItems.observe(viewLifecycleOwner, roomItemsObserver)
+        viewModel.liveRoomIdRoomItemMap.observe(viewLifecycleOwner, roomItemsObserver)
     }
 
     private fun initView() {
@@ -86,7 +86,7 @@ class GroupFragment : Fragment(), View.OnClickListener {
                 groupSortType = position
                 SharedPrefsManager.setGroupSortType(context!!, position)
 
-                roomItemsObserver.onChanged(viewModel.liveRoomItems.value!!)
+                roomItemsObserver.onChanged(viewModel.liveRoomIdRoomItemMap.value!!)
             }
         }
     }
@@ -94,7 +94,7 @@ class GroupFragment : Fragment(), View.OnClickListener {
     private fun sortByGroupSortType(roomItems: List<RoomItem>): List<RoomItem> {
         return when (groupSortType) {
             0 -> roomItems.sortedByDescending { it.lastMsgTime }
-            1 -> roomItems.sortedBy { it.name }
+            1 -> roomItems.sortedBy { it.getDisplayName() }
             else -> roomItems
         }
     }
@@ -102,10 +102,10 @@ class GroupFragment : Fragment(), View.OnClickListener {
     override fun onClick(v: View) {
         when (v.id) {
             R.id.itemRoomRootLayout -> {
-                val itemPosition = recyclerView.getChildLayoutPosition(v)
+                val itemPosition = recyclerView.getChildAdapterPosition(v)
                 startActivity(
                         Intent(activity, RoomActivity::class.java).apply {
-                            putExtra(Constants.ROOM_NAME, adapter.currentList[itemPosition].name)
+                            putExtra(Constants.ROOM_NAME, adapter.currentList[itemPosition].getDisplayName())
                             putExtra(Constants.ROOM_AVATAR, adapter.currentList[itemPosition].avatarUrl)
                             putExtra(Constants.ROOM_TYPE, adapter.currentList[itemPosition].roomType)
                             putExtra(Constants.ROOM_ID, adapter.currentList[itemPosition].roomId)
@@ -116,11 +116,11 @@ class GroupFragment : Fragment(), View.OnClickListener {
         }
     }
 
-    inner class RoomItemsObserver:Observer<List<RoomItem>> {
-        override fun onChanged(t: List<RoomItem>) {
+    inner class RoomItemsObserver:Observer<HashMap<String, RoomItem>> {
+        override fun onChanged(t: HashMap<String, RoomItem>) {
             adapter.submitList(
                     sortByGroupSortType(
-                            t.filter { it.roomType == Room.TYPE_GROUP }
+                            t.values.filter { it.roomType == Room.TYPE_GROUP }
                     )
             )
         }

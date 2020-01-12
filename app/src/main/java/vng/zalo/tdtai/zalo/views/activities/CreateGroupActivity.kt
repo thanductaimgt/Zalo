@@ -9,6 +9,7 @@ import android.view.WindowManager
 import android.view.inputmethod.EditorInfo
 import android.widget.FrameLayout
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -16,15 +17,17 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.firebase.Timestamp
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_create_group.*
-import kotlinx.android.synthetic.main.bottom_sheet_upload_picture.view.*
+import kotlinx.android.synthetic.main.bottom_sheet_upload.view.*
 import vng.zalo.tdtai.zalo.R
 import vng.zalo.tdtai.zalo.ZaloApplication
+import vng.zalo.tdtai.zalo.abstracts.ExternalIntentDispatcher
 import vng.zalo.tdtai.zalo.adapters.CreateGroupActivityRecyclerViewAdapter
 import vng.zalo.tdtai.zalo.adapters.CreateGroupActivityViewPagerAdapter
 import vng.zalo.tdtai.zalo.factories.ViewModelFactory
-import vng.zalo.tdtai.zalo.models.Room
-import vng.zalo.tdtai.zalo.models.RoomItem
 import vng.zalo.tdtai.zalo.models.RoomMember
+import vng.zalo.tdtai.zalo.models.room.RoomGroup
+import vng.zalo.tdtai.zalo.models.room.RoomItem
+import vng.zalo.tdtai.zalo.models.room.RoomItemPeer
 import vng.zalo.tdtai.zalo.utils.Constants
 import vng.zalo.tdtai.zalo.utils.RoomItemDiffCallback
 import vng.zalo.tdtai.zalo.utils.TAG
@@ -36,9 +39,9 @@ class CreateGroupActivity : AppCompatActivity(), View.OnClickListener {
     private lateinit var viewPagerAdapter: CreateGroupActivityViewPagerAdapter
     private lateinit var recyclerViewAdapter: CreateGroupActivityRecyclerViewAdapter
     private lateinit var bottomSheetDialog: BottomSheetDialog
-    private var curAvatarLocalUriString: String? = null
-    private var prevAvatarLocalUriString: String? = null
+    private var avatarContentUri: String? = null
     lateinit var viewModel: CreateGroupActivityViewModel
+    private var isAvatarSet = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,8 +50,9 @@ class CreateGroupActivity : AppCompatActivity(), View.OnClickListener {
         initView()
 
         viewModel = ViewModelProvider(this, ViewModelFactory.getInstance()).get(CreateGroupActivityViewModel::class.java)
+        recyclerViewAdapter.submitList(viewModel.liveSelectedRoomItems.value)
         viewModel.liveSelectedRoomItems.observe(this, Observer {
-            recyclerViewAdapter.submitList(it)
+            recyclerViewAdapter.notifyDataSetChanged()
 
             countTextView.text = String.format(getString(R.string.description_selected_count), it.size)
             if (it.isEmpty()) {
@@ -98,11 +102,11 @@ class CreateGroupActivity : AppCompatActivity(), View.OnClickListener {
                 skipCollapsed = true
             }
         }
-        val sheetView = layoutInflater.inflate(R.layout.bottom_sheet_upload_picture, null)
+        val sheetView = layoutInflater.inflate(R.layout.bottom_sheet_upload, null)
         bottomSheetDialog.setContentView(sheetView)
-        sheetView.titleTextView.text = getString(R.string.label_update_avatar)
-        sheetView.choosePicTextView.setOnClickListener(this)
-        sheetView.takePicTextView.setOnClickListener(this)
+        sheetView.titleTextView.text = getString(R.string.label_upload_image)
+        sheetView.chooseFromGalleryTV.setOnClickListener(this)
+        sheetView.captureTV.setOnClickListener(this)
     }
 
     private fun processNewClickOnItem(item: RoomItem) {
@@ -121,24 +125,23 @@ class CreateGroupActivity : AppCompatActivity(), View.OnClickListener {
                 searchView.isIconified = false
             }
             R.id.itemUserIconRootLayout -> {
-                val itemPosition = recyclerView.getChildLayoutPosition(view)
+                val itemPosition = recyclerView.getChildAdapterPosition(view)
                 val item = recyclerViewAdapter.currentList[itemPosition]
                 processNewClickOnItem(item)
             }
             R.id.uploadAvatarImgView -> bottomSheetDialog.show()
-            R.id.choosePicTextView -> {
-                Utils.dispatchChooserIntent(this, Constants.CHOOSE_IMAGES_REQUEST)
+            R.id.chooseFromGalleryTV -> {
+                ExternalIntentDispatcher.dispatchChooserIntent(this, Constants.CHOOSE_IMAGE_REQUEST, ExternalIntentDispatcher.CHOOSER_TYPE_IMAGE, false)
             }
-            R.id.takePicTextView -> {
-                Utils.dispatchTakePictureIntent(this) {
-                    prevAvatarLocalUriString = curAvatarLocalUriString
-                    curAvatarLocalUriString = it
+            R.id.captureTV -> {
+                ExternalIntentDispatcher.dispatchCaptureIntent(this, Constants.CAPTURE_IMAGE_REQUEST, ExternalIntentDispatcher.CAPTURE_TYPE_IMAGE) {
+                    avatarContentUri = it
                 }
             }
             R.id.createGroupImgView -> {
                 createGroupIfNeeded()
             }
-            R.id.backImgView->{
+            R.id.backImgView -> {
                 Utils.hideKeyboard(this, rootView)
                 finish()
             }
@@ -147,50 +150,61 @@ class CreateGroupActivity : AppCompatActivity(), View.OnClickListener {
 
     private fun createGroupIfNeeded() {
         if (viewModel.liveSelectedRoomItems.value!!.size == 1) {
-            val curRoomItem = viewModel.liveSelectedRoomItems.value!![0]
+            val curRoomItem = viewModel.liveSelectedRoomItems.value!![0] as RoomItemPeer
 
             startActivity(
                     Intent(this, RoomActivity::class.java).apply {
-                        putExtra(Constants.ROOM_NAME, curRoomItem.name)
+                        putExtra(Constants.ROOM_NAME, curRoomItem.getDisplayName())
+                        putExtra(Constants.ROOM_PHONE, curRoomItem.phone)
                         putExtra(Constants.ROOM_AVATAR, curRoomItem.avatarUrl)
                         putExtra(Constants.ROOM_ID, curRoomItem.roomId)
                         putExtra(Constants.ROOM_TYPE, curRoomItem.roomType)
                     }
             )
         } else {
+            ZaloApplication.processingDialog.show(supportFragmentManager)
+
             val groupName = if (nameTextView.text.toString() != "") {
                 nameTextView.text.toString()
             } else {
-                viewModel.liveSelectedRoomItems.value!!.joinToString(transform = { roomItem -> roomItem.name!! })
+                viewModel.liveSelectedRoomItems.value!!.joinToString(transform = { roomItem -> (roomItem as RoomItemPeer).phone!! })
             }
 
             val curTimestamp = Timestamp.now()
 
-            val newRoom = Room(
+            val newRoom = RoomGroup(
                     name = groupName,
-                    avatarUrl = curAvatarLocalUriString.toString(),
-                    createdTime = Timestamp.now(),
+                    avatarUrl = avatarContentUri.toString(),
+                    createdTime = curTimestamp,
                     memberMap = HashMap<String, RoomMember>().apply {
                         viewModel.liveSelectedRoomItems.value!!.forEach {
-                            put(it.name!!, RoomMember(
+                            it as RoomItemPeer
+                            put(it.phone!!, RoomMember(
                                     avatarUrl = it.avatarUrl,
                                     joinDate = curTimestamp,
-                                    phone = it.name)
-                            )
+                                    phone = it.phone,
+                                    name = it.name
+                            ))
                         }
-                        put(ZaloApplication.curUser!!.phone!!, RoomMember(avatarUrl = ZaloApplication.curUser!!.avatarUrl, joinDate = curTimestamp, phone = ZaloApplication.curUser!!.phone))
-                    },
-                    type = Room.TYPE_GROUP
+
+                        put(ZaloApplication.curUser!!.phone!!, RoomMember(
+                                avatarUrl = ZaloApplication.curUser!!.avatarUrl,
+                                joinDate = curTimestamp,
+                                phone = ZaloApplication.curUser!!.phone,
+                                name = ZaloApplication.curUser!!.name))
+                    }
             )
 
-
             viewModel.createRoomInFireStore(this, newRoom) {
+                ZaloApplication.processingDialog.dismiss()
+
                 startActivity(Intent(this, RoomActivity::class.java).apply {
                     putExtra(Constants.ROOM_ID, it.roomId)
-                    putExtra(Constants.ROOM_NAME, it.name)
+                    putExtra(Constants.ROOM_NAME, it.getDisplayName())
                     putExtra(Constants.ROOM_AVATAR, it.avatarUrl)
                     putExtra(Constants.ROOM_TYPE, it.roomType)
                 })
+                finish()
             }
         }
     }
@@ -199,23 +213,29 @@ class CreateGroupActivity : AppCompatActivity(), View.OnClickListener {
         super.onActivityResult(requestCode, resultCode, intent)
         if (resultCode == Activity.RESULT_OK) {
             when (requestCode) {
-                Constants.CHOOSE_IMAGES_REQUEST -> {
+                Constants.CHOOSE_IMAGE_REQUEST -> {
                     Utils.assertNotNull(intent, TAG, "CHOOSE_IMAGES_REQUEST.intent") { intentNotNull ->
-                        curAvatarLocalUriString = intentNotNull.data!!.toString()
-                        Picasso.get().load(intentNotNull.data).fit()
-                                .centerInside().into(uploadAvatarImgView)
+                        avatarContentUri = intentNotNull.data!!.toString()
+                        updateRoomAvatar(avatarContentUri)
                     }
                 }
-                Constants.TAKE_PICTURE_REQUEST -> {
-                    // delete previous image when taking new one
-                    Utils.deleteZaloFileAtUri(this, prevAvatarLocalUriString)
-                    Picasso.get().load("file://$curAvatarLocalUriString").fit()
-                            .centerInside().into(uploadAvatarImgView)
+                Constants.CAPTURE_IMAGE_REQUEST -> {
+                    updateRoomAvatar("file://$avatarContentUri")
                 }
             }
             bottomSheetDialog.dismiss()
         } else {
             Log.d(TAG, "resultCode != Activity.RESULT_OK")
+        }
+    }
+
+    private fun updateRoomAvatar(localUri: String?) {
+        Picasso.get().load(localUri).fit()
+                .centerCrop().into(uploadAvatarImgView)
+
+        if (!isAvatarSet) {
+            uploadAvatarImgView.setBackgroundColor(ContextCompat.getColor(this, android.R.color.white))
+            isAvatarSet = true
         }
     }
 }

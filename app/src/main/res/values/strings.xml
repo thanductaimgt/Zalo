@@ -29,10 +29,11 @@
     <string name="label_add_group">Tạo nhóm với:</string>
     <string name="label_joined_groups">Nhóm đã tham gia</string>
     <string name="label_recent">Gần đây</string>
-    <string name="label_update_avatar">Cập nhật hình đại diện</string>
-    <string name="label_take_new_pic">Chụp ảnh mới</string>
-    <string name="label_choose_available_image">Chọn ảnh có sẵn</string>
-    <string name="label_choose_image_from">Chọn ảnh từ</string>
+    <string name="label_upload_image">Tải ảnh lên</string>
+    <string name="label_upload_video">Tải video lên</string>
+    <string name="label_create_new">Tạo mới</string>
+    <string name="label_choose_from_lib">Chọn từ thư viện</string>
+    <string name="label_choose_from">Chọn từ</string>
     <string name="label_me">Tôi</string>
     <string name="label_just_now">Vừa xong</string>
     <string name="label_second">giây</string>
@@ -49,7 +50,6 @@
     <string name="label_zalo_desktop">Zalo cho Máy Tính</string>
     <string name="label_zalo_calendar">Lịch Zalo</string>
     <string name="label_send_file">Truyền File</string>
-    <string name="label_send_image">Gửi hình ảnh</string>
     <string name="label_open">Mở</string>
     <string name="label_copy">Copy</string>
     <string name="label_share">Chia sẻ</string>
@@ -87,7 +87,7 @@
     <string name="description_attach_voice_icon">Chèn âm thanh</string>
     <string name="description_attach_picture_icon">Chèn ảnh</string>
     <string name="description_send_icon">Gửi</string>
-    <string name="description_your_profile">Trang cá nhân của bạn</string>
+    <string name="description_view_your_profile">Xem trang cá nhân của bạn</string>
     <string name="description_post_status_image">Đăng tin</string>
     <string name="description_shop">Diện chất mùa hạ</string>
     <string name="description_vote">Bình chọn</string>
@@ -95,6 +95,7 @@
     <string name="description_create_group">Tạo nhóm mới</string>
     <string name="description_selected_count">Đã chọn: %d</string>
     <string name="description_image">Hình ảnh</string>
+    <string name="description_video">Video</string>
     <string name="description_back">Trở lại</string>
     <string name="description_calling">Đang gọi &#8230;</string>
     <string name="description_not_answer">Không trả lời</string>
@@ -117,6 +118,8 @@
     <string name="description_ago">trước</string>
     <string name="description_just_online">Vừa mới truy cập</string>
     <string name="description_less_than_one_min">ít hơn 1 phút</string>
+    <string name="description_typing">đang soạn tin</string>
+    <string name="description_processing">Đang xử lý</string>
 
     <string name="hint_phone_number">Số điện thoại</string>
     <string name="hint_password">Mật khẩu</string>

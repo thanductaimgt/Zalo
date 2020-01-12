@@ -29,6 +29,7 @@ object SharedPrefsManager{
         prefs.apply {
             return User(
                     phone = getString(User.FIELD_PHONE, null),
+                    name = getString(User.FIELD_NAME, null),
                     avatarUrl = getString(User.FIELD_AVATAR_URL, null),
                     birthDate = Timestamp(getLong(User.FIELD_BIRTH_DATE_SECS, 0), getInt(User.FIELD_BIRTH_DATE_NANO_SECS, 0)),
                     isMale = getBoolean(User.FIELD_IS_MALE, true),
@@ -40,6 +41,7 @@ object SharedPrefsManager{
     fun setUser(context: Context, user: User) {
         getSharedPrefsEditor(context).apply {
             putString(User.FIELD_PHONE, user.phone)
+            putString(User.FIELD_NAME, user.name)
             putString(User.FIELD_AVATAR_URL, user.avatarUrl)
 
             putLong(User.FIELD_BIRTH_DATE_SECS, user.birthDate!!.seconds)

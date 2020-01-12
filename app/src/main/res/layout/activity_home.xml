@@ -74,4 +74,5 @@
         app:itemIconTint="@color/lightPrimary"
         app:itemTextColor="@color/lightPrimary"
         app:menu="@menu/menu_navigation_home_activity" />
+
 </LinearLayout>

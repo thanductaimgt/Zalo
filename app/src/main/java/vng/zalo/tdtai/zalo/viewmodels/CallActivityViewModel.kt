@@ -9,8 +9,9 @@ import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import vng.zalo.tdtai.zalo.ZaloApplication
-import vng.zalo.tdtai.zalo.abstracts.MessageCreator
-import vng.zalo.tdtai.zalo.models.Room
+import vng.zalo.tdtai.zalo.abstracts.MessageManager
+import vng.zalo.tdtai.zalo.models.room.Room
+import vng.zalo.tdtai.zalo.models.room.RoomPeer
 import vng.zalo.tdtai.zalo.networks.Database
 import vng.zalo.tdtai.zalo.utils.Constants
 import vng.zalo.tdtai.zalo.utils.TAG
@@ -25,13 +26,14 @@ class CallActivityViewModel(val intent: Intent, listener:SipAudioCall.Listener) 
     var startTime: Long = 0
     var isCaller = false
 
-    private val room: Room = Room(
+    private val room: RoomPeer = RoomPeer(
             avatarUrl = intent.getStringExtra(Constants.ROOM_AVATAR),
             id = intent.getStringExtra(Constants.ROOM_ID),
-            name = intent.getStringExtra(Constants.ROOM_NAME)
+            name = intent.getStringExtra(Constants.ROOM_NAME),
+            phone = intent.getStringExtra(Constants.ROOM_PHONE)
     )
 
-    private val peerPhone = room.name
+    private val peerPhone = room.phone
 
     val liveCallState = MutableLiveData<Int>(SipSession.State.READY_TO_CALL)
 
@@ -80,6 +82,6 @@ class CallActivityViewModel(val intent: Intent, listener:SipAudioCall.Listener) 
         val contents = ArrayList<String>().apply {
             add("$callType.$callTime.$isMissed.$isCancel")
         }
-        MessageCreator.addNewMessagesToFirestore(context, room, contents, messageType)
+        MessageManager.addNewMessagesToFirestore(context, room, contents, messageType)
     }
 }

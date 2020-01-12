@@ -5,8 +5,8 @@
     android:id="@+id/rootItemView"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    tools:background="@color/colorChatBg"
-    android:paddingBottom="3dp">
+    android:paddingBottom="3dp"
+    tools:background="@color/colorChatBg">
 
     <View
         android:id="@+id/paddingView"
@@ -17,6 +17,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0"
+        app:layout_constraintVertical_chainStyle="packed"
         tools:visibility="visible" />
 
     <TextView
@@ -24,7 +26,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp"
+        android:layout_marginBottom="16dp"
         android:background="@drawable/chat_date_bg"
         android:textColor="@android:color/white"
         android:visibility="gone"
@@ -32,7 +34,7 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/paddingView"
-        app:layout_goneMarginBottom="8dp"
+        app:layout_goneMarginBottom="16dp"
         tools:text="01/01/2019"
         tools:visibility="visible" />
 
@@ -174,13 +176,13 @@
             android:textColor="@color/blackText"
             app:layout_constrainedWidth="true"
             app:layout_constraintBottom_toBottomOf="@id/fileExtensionImgView"
-            app:layout_constraintEnd_toStartOf="@id/downloadImgView"
+            app:layout_constraintEnd_toStartOf="@id/openFileTextView"
             app:layout_constraintStart_toEndOf="@id/fileExtensionImgView"
             app:layout_constraintTop_toTopOf="@id/fileExtensionImgView"
             tools:text="app-debug.apkkkkkkkkkkkkkkkk" />
 
         <TextView
-            android:id="@+id/downloadImgView"
+            android:id="@+id/openFileTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/download_button_bg"
@@ -193,12 +195,12 @@
             android:textStyle="bold"
             android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="@id/fileNameTextView"
-            app:layout_constraintEnd_toStartOf="@id/openImgView"
+            app:layout_constraintEnd_toStartOf="@id/downloadFileImgView"
             app:layout_constraintTop_toTopOf="@id/fileNameTextView"
             tools:visibility="visible" />
 
         <com.makeramen.roundedimageview.RoundedImageView
-            android:id="@+id/openImgView"
+            android:id="@+id/downloadFileImgView"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:background="@color/lightAccent"
@@ -211,7 +213,23 @@
             app:riv_mutate_background="true"
             app:riv_oval="true" />
 
+        <ProgressBar
+            android:layout_marginStart="8dp"
+            tools:progress="50"
+            style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+            tools:visibility="visible"
+            android:visibility="gone"
+            app:layout_constraintTop_toTopOf="@id/fileDescTextView"
+            app:layout_constraintBottom_toBottomOf="@id/fileDescTextView"
+            app:layout_constraintStart_toEndOf="@id/fileDescTextView"
+            android:id="@+id/uploadFileProgressBar"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"/>
+
         <TextView
+            android:textAlignment="center"
+            android:minWidth="25dp"
             android:id="@+id/fileDescTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -229,7 +247,7 @@
         android:layout_height="@dimen/size_sticker_chat"
         android:layout_marginEnd="@dimen/size_margin_send_msg_item"
         android:visibility="gone"
-        app:layout_constraintBottom_toTopOf="@id/imageView"
+        app:layout_constraintBottom_toTopOf="@id/cardView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/fileViewLayout"
         app:lottie_autoPlay="false"
@@ -238,6 +256,60 @@
         app:lottie_renderMode="software"
         tools:src="@color/strongGray"
         tools:visibility="visible" />
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginEnd="@dimen/size_margin_send_msg_item"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:visibility="gone"
+        app:cardCornerRadius="10dp"
+        app:cardElevation="0dp"
+        app:layout_constrainedWidth="true"
+        app:layout_constraintBottom_toTopOf="@id/imageView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1"
+        app:layout_constraintStart_toEndOf="@id/guideline"
+        app:layout_constraintTop_toBottomOf="@id/stickerAnimView"
+        tools:layout_constraintDimensionRatio="1:2"
+        tools:visibility="visible">
+
+        <com.google.android.exoplayer2.ui.PlayerView
+            android:id="@+id/playerView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:surface_type="texture_view" />
+
+        <ImageView
+            android:id="@+id/videoThumbImgView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+        <TextView
+            android:id="@+id/videoDurationTV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/blackTransparent"
+            android:paddingStart="4dp"
+            android:paddingEnd="4dp"
+            android:textColor="@android:color/white"
+            android:textSize="@dimen/sizeTextSmall"
+            tools:text="00:39" />
+
+        <ProgressBar
+            android:layout_gravity="bottom"
+            tools:visibility="visible"
+            android:id="@+id/uploadVideoProgressBar"
+            style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:visibility="gone"
+            tools:progress="50" />
+    </androidx.cardview.widget.CardView>
 
     <com.makeramen.roundedimageview.RoundedImageView
         android:id="@+id/imageView"
@@ -253,19 +325,34 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1"
         app:layout_constraintStart_toEndOf="@id/guideline"
-        app:layout_constraintTop_toBottomOf="@id/stickerAnimView"
+        app:layout_constraintTop_toBottomOf="@id/cardView"
         app:riv_corner_radius="@dimen/sizeRoundCornerMessageBg"
         app:riv_mutate_background="true"
         tools:layout_constraintDimensionRatio="1:1"
         tools:visibility="visible" />
 
+    <ProgressBar
+        tools:visibility="visible"
+        android:id="@+id/uploadImageProgressBar"
+        style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@id/imageView"
+        app:layout_constraintEnd_toEndOf="@id/imageView"
+        app:layout_constraintStart_toStartOf="@id/imageView"
+        tools:progress="50" />
+
     <TextView
-        android:textColor="@color/lightTextGray"
         android:id="@+id/timeTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
         android:layout_marginEnd="@dimen/size_margin_send_msg_item"
+        android:layout_marginBottom="16dp"
+        android:textColor="@color/lightTextGray"
         android:textSize="@dimen/size_small_text_10sp"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -273,8 +360,7 @@
         app:layout_constraintTop_toBottomOf="@id/imageView"
         app:layout_goneMarginTop="4dp"
         tools:text="09:00 AM"
-        tools:visibility="visible"
-        android:layout_marginBottom="16dp"/>
+        tools:visibility="visible" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline"
@@ -283,280 +369,3 @@
         android:orientation="vertical"
         app:layout_constraintGuide_percent="0.25" />
 </androidx.constraintlayout.widget.ConstraintLayout>
-    <!--<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"-->
-    <!--    xmlns:app="http://schemas.android.com/apk/res-auto"-->
-    <!--    xmlns:tools="http://schemas.android.com/tools"-->
-    <!--    android:id="@+id/rootItemView"-->
-    <!--    android:layout_width="match_parent"-->
-    <!--    android:layout_height="wrap_content"-->
-    <!--    tools:background="@color/colorChatBg">-->
-
-    <!--    <View-->
-    <!--        android:id="@+id/paddingView"-->
-    <!--        android:layout_width="match_parent"-->
-    <!--        android:layout_height="16dp"-->
-    <!--        android:visibility="gone"-->
-    <!--        app:layout_constraintTop_toTopOf="parent"-->
-    <!--        tools:visibility="visible" />-->
-
-    <!--    <TextView-->
-    <!--        android:id="@+id/dateTextView"-->
-    <!--        android:layout_width="wrap_content"-->
-    <!--        android:layout_height="wrap_content"-->
-    <!--        android:layout_marginTop="8dp"-->
-    <!--        android:layout_marginBottom="8dp"-->
-    <!--        android:background="@drawable/chat_date_bg"-->
-    <!--        android:textColor="@android:color/white"-->
-    <!--        android:visibility="gone"-->
-    <!--        app:layout_constraintBottom_toTopOf="@id/contentTextView"-->
-    <!--        app:layout_constraintLeft_toLeftOf="parent"-->
-    <!--        app:layout_constraintRight_toRightOf="parent"-->
-    <!--        app:layout_constraintTop_toBottomOf="@id/paddingView"-->
-    <!--        tools:text="01/01/2019"-->
-    <!--        tools:visibility="visible" />-->
-
-    <!--    <TextView-->
-    <!--        android:id="@+id/contentTextView"-->
-    <!--        android:layout_width="wrap_content"-->
-    <!--        android:layout_height="wrap_content"-->
-    <!--        android:layout_marginEnd="@dimen/size_margin_send_msg_item"-->
-    <!--        android:layout_marginBottom="2dp"-->
-    <!--        android:background="@drawable/send_message_bg"-->
-    <!--        android:textColor="@color/blackText"-->
-    <!--        android:visibility="gone"-->
-    <!--        app:layout_constrainedWidth="true"-->
-    <!--        app:layout_constraintBottom_toTopOf="@id/callLayout"-->
-    <!--        app:layout_constraintEnd_toEndOf="parent"-->
-    <!--        app:layout_constraintHorizontal_bias="1"-->
-    <!--        app:layout_constraintStart_toEndOf="@id/guideline"-->
-    <!--        tools:text="this is a very long messagessssssssssssssssssssssssssssssssssssssssss"-->
-    <!--        tools:visibility="visible" />-->
-
-    <!--    <androidx.constraintlayout.widget.ConstraintLayout-->
-    <!--        android:id="@+id/callLayout"-->
-    <!--        android:layout_width="wrap_content"-->
-    <!--        android:layout_height="wrap_content"-->
-    <!--        android:layout_marginEnd="@dimen/size_margin_send_msg_item"-->
-    <!--        android:layout_marginBottom="2dp"-->
-    <!--        android:background="@drawable/recv_message_bg"-->
-    <!--        android:padding="0dp"-->
-    <!--        android:visibility="gone"-->
-    <!--        app:layout_constrainedWidth="true"-->
-    <!--        app:layout_constraintBottom_toTopOf="@id/fileViewLayout"-->
-    <!--        app:layout_constraintEnd_toEndOf="parent"-->
-    <!--        app:layout_constraintHorizontal_bias="1"-->
-    <!--        app:layout_constraintStart_toEndOf="@id/guideline"-->
-    <!--        tools:visibility="visible">-->
-
-    <!--        <TextView-->
-    <!--            android:id="@+id/callTitleTV"-->
-    <!--            android:layout_width="wrap_content"-->
-    <!--            android:layout_height="wrap_content"-->
-    <!--            android:layout_marginStart="10dp"-->
-    <!--            android:layout_marginTop="4dp"-->
-    <!--            android:layout_marginEnd="10dp"-->
-    <!--            android:textStyle="bold"-->
-    <!--            app:layout_constrainedWidth="true"-->
-    <!--            app:layout_constraintEnd_toEndOf="parent"-->
-    <!--            app:layout_constraintHorizontal_bias="0"-->
-    <!--            app:layout_constraintStart_toStartOf="parent"-->
-    <!--            app:layout_constraintTop_toTopOf="parent"-->
-    <!--            tools:text="@string/description_incoming_voice_call" />-->
-
-    <!--        <ImageView-->
-    <!--            android:id="@+id/callIconImgView"-->
-    <!--            android:layout_width="15dp"-->
-    <!--            android:layout_height="0dp"-->
-    <!--            android:layout_marginTop="4dp"-->
-    <!--            app:layout_constraintDimensionRatio="1:1"-->
-    <!--            app:layout_constraintEnd_toStartOf="@id/callTimeTV"-->
-    <!--            app:layout_constraintHorizontal_bias="0"-->
-    <!--            app:layout_constraintHorizontal_chainStyle="packed"-->
-    <!--            app:layout_constraintStart_toStartOf="@id/callTitleTV"-->
-    <!--            app:layout_constraintTop_toBottomOf="@id/callTitleTV"-->
-    <!--            tools:src="@drawable/success_incoming_call" />-->
-
-    <!--        <TextView-->
-    <!--            android:id="@+id/callTimeTV"-->
-    <!--            android:layout_width="wrap_content"-->
-    <!--            android:layout_height="wrap_content"-->
-    <!--            android:layout_marginStart="8dp"-->
-    <!--            android:layout_marginEnd="10dp"-->
-    <!--            android:textColor="@color/lightTextGray"-->
-    <!--            android:textSize="@dimen/sizeTextSmall"-->
-    <!--            app:layout_constrainedWidth="true"-->
-    <!--            app:layout_constraintEnd_toEndOf="parent"-->
-    <!--            app:layout_constraintStart_toEndOf="@id/callIconImgView"-->
-    <!--            app:layout_constraintTop_toTopOf="@id/callIconImgView"-->
-    <!--            tools:text="1 phút 22 giây" />-->
-
-    <!--        <View-->
-    <!--            android:id="@+id/line"-->
-    <!--            android:layout_width="0dp"-->
-    <!--            android:layout_height="1dp"-->
-    <!--            android:layout_marginTop="6dp"-->
-    <!--            android:background="@color/lightWeakGray"-->
-    <!--            app:layout_constraintEnd_toEndOf="parent"-->
-    <!--            app:layout_constraintStart_toStartOf="parent"-->
-    <!--            app:layout_constraintTop_toBottomOf="@id/callTimeTV" />-->
-
-    <!--        <TextView-->
-    <!--            android:id="@+id/callbackTV"-->
-    <!--            android:layout_width="0dp"-->
-    <!--            android:layout_height="wrap_content"-->
-    <!--            android:gravity="center"-->
-    <!--            android:padding="4dp"-->
-    <!--            android:text="@string/label_callback"-->
-    <!--            android:textAllCaps="true"-->
-    <!--            android:textColor="@color/lightPrimary"-->
-    <!--            android:textStyle="bold"-->
-    <!--            app:layout_constraintEnd_toEndOf="parent"-->
-    <!--            app:layout_constraintStart_toStartOf="parent"-->
-    <!--            app:layout_constraintTop_toBottomOf="@id/line" />-->
-    <!--    </androidx.constraintlayout.widget.ConstraintLayout>-->
-
-
-    <!--    <androidx.constraintlayout.widget.ConstraintLayout-->
-    <!--        android:id="@+id/fileViewLayout"-->
-    <!--        android:layout_width="wrap_content"-->
-    <!--        android:layout_height="wrap_content"-->
-    <!--        android:layout_marginEnd="@dimen/size_margin_send_msg_item"-->
-    <!--        android:layout_marginBottom="2dp"-->
-    <!--        android:background="@drawable/send_message_bg_stroke"-->
-    <!--        android:visibility="gone"-->
-    <!--        app:layout_constrainedWidth="true"-->
-    <!--        app:layout_constraintBottom_toTopOf="@id/stickerAnimView"-->
-    <!--        app:layout_constraintEnd_toEndOf="parent"-->
-    <!--        app:layout_constraintHorizontal_bias="1"-->
-    <!--        app:layout_constraintStart_toEndOf="@id/guideline"-->
-    <!--        tools:visibility="visible">-->
-
-    <!--        <ImageView-->
-    <!--            android:id="@+id/fileExtensionImgView"-->
-    <!--            android:layout_width="0dp"-->
-    <!--            android:layout_height="25dp"-->
-    <!--            android:layout_margin="4dp"-->
-    <!--            app:layout_constraintDimensionRatio="1:1"-->
-    <!--            app:layout_constraintStart_toStartOf="parent"-->
-    <!--            app:layout_constraintTop_toTopOf="parent"-->
-    <!--            tools:src="@drawable/doc" />-->
-
-    <!--        <TextView-->
-    <!--            android:id="@+id/fileNameTextView"-->
-    <!--            android:layout_width="wrap_content"-->
-    <!--            android:layout_height="wrap_content"-->
-    <!--            android:layout_marginStart="8dp"-->
-    <!--            android:layout_marginEnd="8dp"-->
-    <!--            android:ellipsize="end"-->
-    <!--            android:maxLines="2"-->
-    <!--            android:scrollHorizontally="true"-->
-    <!--            android:textColor="@color/blackText"-->
-    <!--            app:layout_constrainedWidth="true"-->
-    <!--            app:layout_constraintBottom_toBottomOf="@id/fileExtensionImgView"-->
-    <!--            app:layout_constraintEnd_toStartOf="@id/downloadImgView"-->
-    <!--            app:layout_constraintStart_toEndOf="@id/fileExtensionImgView"-->
-    <!--            app:layout_constraintTop_toTopOf="@id/fileExtensionImgView"-->
-    <!--            tools:text="app-debug.apkkkkkkkkkkkkkkkk" />-->
-
-    <!--        <TextView-->
-    <!--            android:id="@+id/downloadImgView"-->
-    <!--            android:layout_width="wrap_content"-->
-    <!--            android:layout_height="wrap_content"-->
-    <!--            android:background="@drawable/download_button_bg"-->
-    <!--            android:paddingStart="8dp"-->
-    <!--            android:paddingTop="4dp"-->
-    <!--            android:paddingEnd="8dp"-->
-    <!--            android:paddingBottom="4dp"-->
-    <!--            android:text="@string/label_open"-->
-    <!--            android:textColor="@android:color/white"-->
-    <!--            android:textStyle="bold"-->
-    <!--            android:visibility="gone"-->
-    <!--            app:layout_constraintBottom_toBottomOf="@id/fileNameTextView"-->
-    <!--            app:layout_constraintEnd_toStartOf="@id/openImgView"-->
-    <!--            app:layout_constraintTop_toTopOf="@id/fileNameTextView"-->
-    <!--            tools:visibility="visible" />-->
-
-    <!--        <com.makeramen.roundedimageview.RoundedImageView-->
-    <!--            android:id="@+id/openImgView"-->
-    <!--            android:layout_width="0dp"-->
-    <!--            android:layout_height="0dp"-->
-    <!--            android:background="@color/lightAccent"-->
-    <!--            android:padding="4dp"-->
-    <!--            android:src="@drawable/download2"-->
-    <!--            app:layout_constraintBottom_toBottomOf="@id/fileExtensionImgView"-->
-    <!--            app:layout_constraintDimensionRatio="1:1"-->
-    <!--            app:layout_constraintEnd_toEndOf="parent"-->
-    <!--            app:layout_constraintTop_toTopOf="@id/fileExtensionImgView"-->
-    <!--            app:riv_mutate_background="true"-->
-    <!--            app:riv_oval="true" />-->
-
-    <!--        <TextView-->
-    <!--            android:id="@+id/fileDescTextView"-->
-    <!--            android:layout_width="wrap_content"-->
-    <!--            android:layout_height="wrap_content"-->
-    <!--            android:layout_marginTop="4dp"-->
-    <!--            android:textColor="@color/lightTextGray"-->
-    <!--            android:textSize="@dimen/sizeTextSmall"-->
-    <!--            app:layout_constraintStart_toStartOf="@id/fileExtensionImgView"-->
-    <!--            app:layout_constraintTop_toBottomOf="@id/fileNameTextView"-->
-    <!--            tools:text="APK - 10,25 MB" />-->
-    <!--    </androidx.constraintlayout.widget.ConstraintLayout>-->
-
-    <!--    <com.airbnb.lottie.LottieAnimationView-->
-    <!--        android:id="@+id/stickerAnimView"-->
-    <!--        android:layout_width="@dimen/size_sticker_chat"-->
-    <!--        android:layout_height="@dimen/size_sticker_chat"-->
-    <!--        android:layout_marginEnd="@dimen/size_margin_send_msg_item"-->
-    <!--        android:layout_marginBottom="4dp"-->
-    <!--        android:visibility="gone"-->
-    <!--        app:layout_constraintBottom_toTopOf="@id/imageView"-->
-    <!--        app:layout_constraintEnd_toEndOf="parent"-->
-    <!--        app:lottie_autoPlay="false"-->
-    <!--        app:lottie_enableMergePathsForKitKatAndAbove="true"-->
-    <!--        app:lottie_loop="true"-->
-    <!--        app:lottie_renderMode="software"-->
-    <!--        tools:src="@color/strongGray"-->
-    <!--        tools:visibility="visible" />-->
-
-    <!--    <com.makeramen.roundedimageview.RoundedImageView-->
-    <!--        android:id="@+id/imageView"-->
-    <!--        android:layout_width="0dp"-->
-    <!--        android:layout_height="0dp"-->
-    <!--        android:layout_marginTop="16dp"-->
-    <!--        android:layout_marginEnd="@dimen/size_margin_send_msg_item"-->
-    <!--        android:layout_marginBottom="4dp"-->
-    <!--        android:background="@color/strongGray"-->
-    <!--        android:contentDescription="@string/description_image"-->
-    <!--        android:scaleType="fitXY"-->
-    <!--        android:visibility="gone"-->
-    <!--        app:layout_constrainedWidth="true"-->
-    <!--        app:layout_constraintBottom_toTopOf="@id/timeTextView"-->
-    <!--        app:layout_constraintEnd_toEndOf="parent"-->
-    <!--        app:layout_constraintHorizontal_bias="1"-->
-    <!--        app:layout_constraintStart_toEndOf="@id/guideline"-->
-    <!--        app:riv_corner_radius="@dimen/sizeRoundCornerMessageBg"-->
-    <!--        app:riv_mutate_background="true"-->
-    <!--        tools:layout_constraintDimensionRatio="1:1"-->
-    <!--        tools:visibility="visible" />-->
-
-    <!--    <TextView-->
-    <!--        android:id="@+id/timeTextView"-->
-    <!--        android:layout_width="wrap_content"-->
-    <!--        android:layout_height="wrap_content"-->
-    <!--        android:layout_marginEnd="@dimen/size_margin_send_msg_item"-->
-    <!--        android:layout_marginBottom="8dp"-->
-    <!--        android:textSize="@dimen/size_small_text_10sp"-->
-    <!--        android:visibility="gone"-->
-    <!--        app:layout_constraintBottom_toBottomOf="parent"-->
-    <!--        app:layout_constraintEnd_toEndOf="parent"-->
-    <!--        tools:text="09:00 AM"-->
-    <!--        tools:visibility="visible" />-->
-
-    <!--    <androidx.constraintlayout.widget.Guideline-->
-    <!--        android:id="@+id/guideline"-->
-    <!--        android:layout_width="wrap_content"-->
-    <!--        android:layout_height="wrap_content"-->
-    <!--        android:orientation="vertical"-->
-    <!--        app:layout_constraintGuide_percent="0.25" />-->
-
-    <!--</androidx.constraintlayout.widget.ConstraintLayout>-->

@@ -32,7 +32,7 @@ class RecentContactsSubFragment : Fragment(), View.OnClickListener {
             adapter.submitList(roomItems.sortedByDescending { it.lastMsgTime })
         })
 
-        (activity as CreateGroupActivity).viewModel.liveSelectedRoomItems.observe(viewLifecycleOwner, Observer {
+        viewModel.liveSelectedRoomItems.observe(viewLifecycleOwner, Observer {
             adapter.notifyDataSetChanged()
         })
     }
@@ -49,7 +49,7 @@ class RecentContactsSubFragment : Fragment(), View.OnClickListener {
     override fun onClick(v: View?) {
         when(v!!.id){
             R.id.itemRecentContactsLayout -> {
-                val position = recyclerView.getChildLayoutPosition(v)
+                val position = recyclerView.getChildAdapterPosition(v)
                 val roomItem = adapter.currentList[position]
 
                 if(viewModel.liveSelectedRoomItems.value!!.contains(roomItem))

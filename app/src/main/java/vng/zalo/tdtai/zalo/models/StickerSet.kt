@@ -5,8 +5,8 @@ data class StickerSet(var name: String? = null,
                       var stickers: List<Sticker>? = null) {
     fun toMap(): Map<String, Any> {
         return HashMap<String, Any>().apply {
-            put(FIELD_NAME, name!!)
-            put(FIELD_BUCKET_NAME, bucketName!!)
+            name?.let{put(FIELD_NAME, it)}
+            bucketName?.let{put(FIELD_BUCKET_NAME, it)}
         }
     }
 

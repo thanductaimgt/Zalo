@@ -59,7 +59,7 @@ class EmojiFragment : Fragment(), TabLayout.OnTabSelectedListener {
     private fun createTabItemView(url: String?): View {
         val animView = LottieAnimationView(context)
         val params = ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT)
+                ViewGroup.LayoutParams.MATCH_PARENT)
         params.width = params.height
         animView.layoutParams = params
 

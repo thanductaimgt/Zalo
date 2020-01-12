@@ -4,12 +4,12 @@ import android.content.Context
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import vng.zalo.tdtai.zalo.ZaloApplication
-import vng.zalo.tdtai.zalo.models.Room
-import vng.zalo.tdtai.zalo.models.RoomItem
+import vng.zalo.tdtai.zalo.models.room.Room
+import vng.zalo.tdtai.zalo.models.room.RoomItem
+import vng.zalo.tdtai.zalo.models.message.Message
 import vng.zalo.tdtai.zalo.networks.Database
 import vng.zalo.tdtai.zalo.networks.Storage
 import vng.zalo.tdtai.zalo.utils.Constants
-import vng.zalo.tdtai.zalo.utils.Utils
 
 
 class CreateGroupActivityViewModel : ViewModel() {
@@ -20,8 +20,7 @@ class CreateGroupActivityViewModel : ViewModel() {
     init {
         Database.getUserRooms(
                 userPhone = ZaloApplication.curUser!!.phone!!,
-                roomType = Room.TYPE_PEER,
-                fieldToOrder = RoomItem.FIELD_NAME
+                roomType = Room.TYPE_PEER
         ) { liveRoomItems.value = it }
     }
 
@@ -30,30 +29,27 @@ class CreateGroupActivityViewModel : ViewModel() {
         val avatarLocalPath = newRoom.avatarUrl
 
         // path to save room avatarUrl in storage
-        val avatarStoragePath = "${Constants.FOLDER_ROOM_AVATARS}/$newRoomId"
+        val avatarStoragePath = Storage.getRoomAvatarStoragePath(newRoomId)
 
         newRoom.id = newRoomId
         // save room avatarUrl in storage
         if (avatarLocalPath != null) {
-            Storage.addFileAndGetDownloadUrl(
+            Storage.addResourceAndGetDownloadUrl(
                     context,
                     avatarLocalPath,
-                    avatarStoragePath
+                    avatarStoragePath,
+                    Message.TYPE_IMAGE
             ) {downloadUrl->
                 // delete local file
-                Utils.deleteZaloFileAtUri(context, avatarLocalPath)
+//                MediaManager.deleteZaloFileAtUri(context, avatarLocalPath)
 
                 //change from localPath to storagePath
                 newRoom.avatarUrl = downloadUrl
 
-                Database.addRoomAndUserRoom(newRoom) {
-                    callback?.invoke(it)
-                }
+                Database.addRoomAndUserRoom(newRoom, callback)
             }
         } else {
-            Database.addRoomAndUserRoom(newRoom) {
-                callback?.invoke(it)
-            }
+            Database.addRoomAndUserRoom(newRoom, callback)
         }
     }
 }

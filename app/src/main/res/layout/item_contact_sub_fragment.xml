@@ -17,7 +17,7 @@
         android:ellipsize="end"
         android:scrollHorizontally="true"
         tools:text="a very long name abcxyz0123456789"
-        android:id="@+id/phoneTextView"
+        android:id="@+id/nameTextView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginLeft="16dp"
@@ -51,10 +51,10 @@
         android:focusable="true"
         android:padding="8dp"
         android:src="@drawable/call"
-        app:layout_constraintBottom_toBottomOf="@id/phoneTextView"
+        app:layout_constraintBottom_toBottomOf="@id/nameTextView"
         app:layout_constraintDimensionRatio="h,1:1"
         app:layout_constraintEnd_toStartOf="@id/videoCallImgView"
-        app:layout_constraintTop_toTopOf="@id/phoneTextView" />
+        app:layout_constraintTop_toTopOf="@id/nameTextView" />
 
     <ImageView
         android:background="?attr/selectableItemBackgroundBorderless"

@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
+import com.airbnb.lottie.LottieCompositionFactory
 import kotlinx.android.synthetic.main.item_sticker.view.*
 import vng.zalo.tdtai.zalo.R
 import vng.zalo.tdtai.zalo.models.Sticker
@@ -16,6 +17,7 @@ class StickerSetFragmentAdapter(private val fragment: Fragment) : RecyclerView.A
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): StickerSetViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_sticker, parent, false)
+        view.setOnClickListener(fragment as View.OnClickListener)
         return StickerSetViewHolder(view)
     }
 
@@ -28,16 +30,13 @@ class StickerSetFragmentAdapter(private val fragment: Fragment) : RecyclerView.A
     }
 
     inner class StickerSetViewHolder(itemView: View) : BindableViewHolder(itemView) {
-
         override fun bind(position: Int) {
             itemView.apply {
-                setOnClickListener(fragment as View.OnClickListener)
-
-                stickers[position].lottieComposition?.let{
-                    animView.setComposition(stickers[position].lottieComposition!!)
-                }
-                animView.scaleType = ImageView.ScaleType.CENTER_CROP
                 animView.setAnimationFromUrl(stickers[position].url)
+//                LottieCompositionFactory.fromUrl(context, stickers[position].url).addListener {
+//                    animView.setComposition(it)
+//                    animView.playAnimation()
+//                }
             }
         }
     }

@@ -15,7 +15,7 @@ import vng.zalo.tdtai.zalo.utils.TAG
 
 
 class AlertDialog : DialogFragment(),
-    View.OnClickListener {
+        View.OnClickListener {
     private var title:String?=null
     private var description: String?=null
     private var button1Text:String?=null
@@ -41,9 +41,9 @@ class AlertDialog : DialogFragment(),
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
+            inflater: LayoutInflater,
+            container: ViewGroup?,
+            savedInstanceState: Bundle?
     ): View? {
         return inflater.inflate(R.layout.dialog_alert, container, false)
     }
@@ -55,8 +55,8 @@ class AlertDialog : DialogFragment(),
     override fun onStart() {
         super.onStart()
         dialog?.window?.setLayout(
-            ViewGroup.LayoutParams.WRAP_CONTENT,
-            ViewGroup.LayoutParams.WRAP_CONTENT
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
         )
     }
 

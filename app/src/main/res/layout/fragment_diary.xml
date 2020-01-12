@@ -17,8 +17,18 @@
         android:text="add sticker set" />
 
     <EditText
-        android:id="@+id/editText"
+        android:id="@+id/stickerSetNameEditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="sticker set name" />
+    <Button
+        android:text="add friend"
+        android:id="@+id/addFriendButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+    <EditText
+        android:id="@+id/phoneEditText"
+        android:hint="phone"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
 </LinearLayout>

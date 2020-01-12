@@ -17,7 +17,7 @@ data class CallMessage(
         var isMissed: Boolean = false,
         var isCanceled: Boolean = false
 ) : Message(id, createdTime, senderPhone, senderAvatarUrl, type) {
-    override fun toMap(): HashMap<String, Any?> {
+    override fun toMap(): HashMap<String, Any> {
         return super.toMap().apply {
             put(FIELD_CALL_TIME, callTime)
             put(FIELD_CALL_TYPE, callType)

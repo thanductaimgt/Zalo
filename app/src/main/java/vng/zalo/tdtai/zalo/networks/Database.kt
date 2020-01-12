@@ -8,483 +8,621 @@ import com.google.firebase.Timestamp
 import com.google.firebase.firestore.*
 import vng.zalo.tdtai.zalo.ZaloApplication
 import vng.zalo.tdtai.zalo.models.*
-import vng.zalo.tdtai.zalo.models.message.*
-import vng.zalo.tdtai.zalo.utils.Constants
+import vng.zalo.tdtai.zalo.models.message.CallMessage
+import vng.zalo.tdtai.zalo.models.message.Message
+import vng.zalo.tdtai.zalo.models.room.*
 import vng.zalo.tdtai.zalo.utils.TAG
 import vng.zalo.tdtai.zalo.utils.Utils
 
-class Database {
-    companion object {
-        private val firebaseFirestore: FirebaseFirestore
-            get() = FirebaseFirestore.getInstance()
+object Database {
+    private val firebaseFirestore: FirebaseFirestore
+        get() = FirebaseFirestore.getInstance()
 
-        fun addNewMessageAndUpdateUsersRoom(context: Context, curRoom: Room, newMessage: Message, callback: (() -> Unit)? = null) {
-            val batch = firebaseFirestore.batch()
+    fun addNewMessageAndUpdateUsersRoom(context: Context, curRoom: Room, newMessage: Message, callback: (() -> Unit)? = null) {
+        val batch = firebaseFirestore.batch()
 
-            //create message
-            batch.set(
+        //create message
+        batch.set(
+                firebaseFirestore
+                        .collection(COLLECTION_ROOMS)
+                        .document(curRoom.id!!)
+                        .collection(COLLECTION_MESSAGES)
+                        .document(newMessage.id!!),
+                newMessage.toMap()
+        )
+
+        //for each user rooms, update fields
+        curRoom.memberMap!!.forEach {
+            val curUserPhone = it.key
+            val lastMsgPreviewContent = newMessage.getPreviewContent(context)
+
+            batch.update(
                     firebaseFirestore
-                            .collection(Constants.COLLECTION_ROOMS)
-                            .document(curRoom.id!!)
-                            .collection(Constants.COLLECTION_MESSAGES)
-                            .document(),
-                    newMessage.toMap()
-            )
-
-            //for each user rooms, update fields
-            curRoom.memberMap!!.forEach {
-                val curUserPhone = it.key
-                val lastMsgPreviewContent = newMessage.getPreviewContent(context)
-
-                batch.update(
-                        firebaseFirestore
-                                .collection(Constants.COLLECTION_USERS)
-                                .document(curUserPhone)
-                                .collection(Constants.COLLECTION_ROOMS)
-                                .document(curRoom.id!!),
-                        HashMap<String, Any?>().apply {
-                            put(RoomItem.FIELD_LAST_SENDER_PHONE, newMessage.senderPhone)
-                            put(RoomItem.FIELD_LAST_MSG, lastMsgPreviewContent)
-                            put(RoomItem.FIELD_LAST_MSG_TIME, newMessage.createdTime)
+                            .collection(COLLECTION_USERS)
+                            .document(curUserPhone)
+                            .collection(COLLECTION_ROOMS)
+                            .document(curRoom.id!!),
+                    HashMap<String, Any?>().apply {
+                        put(RoomItem.FIELD_LAST_SENDER_PHONE, newMessage.senderPhone)
+                        put(RoomItem.FIELD_LAST_SENDER_NAME, ZaloApplication.curUser!!.name)
+                        put(RoomItem.FIELD_LAST_MSG, lastMsgPreviewContent)
+                        put(RoomItem.FIELD_LAST_MSG_TIME, newMessage.createdTime)
 //                            put(RoomItem.FIELD_LAST_MSG_TYPE, newMessage.type)
-                            if (curUserPhone != ZaloApplication.curUser!!.phone &&
-                                    (newMessage.type != Message.TYPE_CALL ||
-                                            newMessage.type == Message.TYPE_CALL && (newMessage as CallMessage).isMissed && curUserPhone != ZaloApplication.curUser!!.phone))
-                                put(RoomItem.FIELD_UNSEEN_MSG_NUM, FieldValue.increment(1))
-                        }
-                )
-            }
-
-            batch.commit().addOnCompleteListener { task ->
-                Utils.assertTaskSuccess(task, TAG, "addNewMessageAndUpdateUsersRoom") {
-                    callback?.invoke()
-                }
-            }
+                        if (curUserPhone != ZaloApplication.curUser!!.phone &&
+                                (newMessage.type != Message.TYPE_CALL ||
+                                        newMessage.type == Message.TYPE_CALL && (newMessage as CallMessage).isMissed && curUserPhone != ZaloApplication.curUser!!.phone))
+                            put(RoomItem.FIELD_UNSEEN_MSG_NUM, FieldValue.increment(1))
+                    }
+            )
         }
 
-        fun addRoomAndUserRoom(newRoom: Room, callback: ((roomItem: RoomItem) -> Unit)? = null) {
-            // generate roomId if it's not generated
-            if (newRoom.id == null) {
-                newRoom.id = getNewRoomId()
+        batch.commit().addOnCompleteListener { task ->
+            Utils.assertTaskSuccess(task, TAG, "addNewMessageAndUpdateUsersRoom") {
+                callback?.invoke()
             }
+        }
+    }
 
-            val batch = firebaseFirestore.batch()
+    fun addRoomAndUserRoom(newRoom: Room, callback: ((roomItem: RoomItem) -> Unit)? = null) {
+        // generate roomId if it's not generated
+        if (newRoom.id == null) {
+            newRoom.id = getNewRoomId()
+        }
 
-            val newRoomDocRef = firebaseFirestore
-                    .collection(Constants.COLLECTION_ROOMS)
-                    .document(newRoom.id!!)
+        val batch = firebaseFirestore.batch()
 
-            // create room
-            batch.set(
-                    newRoomDocRef,
-                    newRoom.toMap()
-            )
+        val newRoomDocRef = firebaseFirestore
+                .collection(COLLECTION_ROOMS)
+                .document(newRoom.id!!)
 
-            // user room are the same for all members when room created
-            val newRoomItem = RoomItem(
+        // create room
+        batch.set(
+                newRoomDocRef,
+                newRoom.toMap()
+        )
+
+        // user room are the same for all members when room created
+        val newRoomItem: RoomItem = if (newRoom.type == Room.TYPE_PEER) {
+            RoomItemPeer(
                     roomId = newRoom.id,
                     avatarUrl = newRoom.avatarUrl,
                     name = newRoom.name,
-                    roomType = Room.TYPE_GROUP
+                    phone = (newRoom as RoomPeer).phone
+            )
+        } else {
+            RoomItemGroup(
+                    roomId = newRoom.id,
+                    avatarUrl = newRoom.avatarUrl,
+                    name = newRoom.name
+            )
+        }
+
+        // in room, create each room member and
+        // for each member of room, create user room
+        newRoom.memberMap!!.forEach {
+            // create room member
+            batch.set(
+                    newRoomDocRef.collection(COLLECTION_MEMBERS).document(),
+                    it.value.toMap()
             )
 
-            // in room, create each room member and
-            // for each member of room, create user room
-            newRoom.memberMap!!.forEach {
-                // create room member
-                batch.set(
-                        newRoomDocRef.collection(Constants.COLLECTION_MEMBERS).document(),
-                        it.value.toMap()
-                )
+            //create user room
+            val newRoomItemRef = firebaseFirestore
+                    .collection(COLLECTION_USERS)
+                    .document(it.key)
+                    .collection(COLLECTION_ROOMS)
+                    .document(newRoom.id!!)
 
-                //create user room
-                val newRoomItemRef = firebaseFirestore
-                        .collection(Constants.COLLECTION_USERS)
-                        .document(it.key)
-                        .collection(Constants.COLLECTION_ROOMS)
-                        .document(newRoom.id!!)
-
-                batch.set(
-                        newRoomItemRef,
+            batch.set(
+                    newRoomItemRef,
+                    if (newRoom.type == Room.TYPE_PEER && it.key != ZaloApplication.curUser!!.phone) {
+                        RoomItemPeer(
+                                roomId = newRoom.id,
+                                avatarUrl = ZaloApplication.curUser!!.avatarUrl,
+                                name = ZaloApplication.curUser!!.name,
+                                phone = ZaloApplication.curUser!!.phone
+                        ).toMap()
+                    } else {
                         newRoomItem.toMap()
-                )
-            }
+                    }
+            )
+        }
 
-            batch.commit().addOnCompleteListener { task ->
-                Utils.assertTaskSuccess(task, TAG, "addRoomAndUserRoom") {
-                    callback?.invoke(newRoomItem)
+        batch.commit().addOnCompleteListener { task ->
+            Utils.assertTaskSuccess(task, TAG, "addRoomAndUserRoom") {
+                callback?.invoke(newRoomItem)
+            }
+        }
+    }
+
+    fun addRoomMessagesListener(roomId: String, fieldToOrder: String? = null, orderDirection: Query.Direction = Query.Direction.ASCENDING, callback: ((messages: List<Message>) -> Unit)? = null): ListenerRegistration {
+        return firebaseFirestore
+                .collection(COLLECTION_ROOMS)
+                .document(roomId)
+                .collection(COLLECTION_MESSAGES)
+                .let { if (fieldToOrder != null) it.orderBy(Message.FIELD_CREATED_TIME, orderDirection) else it }
+                .addSnapshotListener { querySnapshot, _ ->
+                    Utils.assertNotNull(querySnapshot, TAG, "addRoomMessagesListener") { querySnapshotNotNull ->
+                        val messages = ArrayList<Message>()
+                        for (doc in querySnapshotNotNull) {
+                            val message = Message.fromDoc(doc)
+                            messages.add(message)
+                        }
+                        callback?.invoke(messages)
+                    }
                 }
+    }
+
+    fun addUserRoomChangeListener(userPhone: String, roomId: String, callback: ((documentSnapshot: DocumentSnapshot) -> Unit)? = null): ListenerRegistration {
+        val curRoomRef = firebaseFirestore
+                .collection(COLLECTION_USERS)
+                .document(userPhone)
+                .collection(COLLECTION_ROOMS)
+                .document(roomId)
+
+        return curRoomRef.addSnapshotListener { documentSnapshot, _ ->
+            Utils.assertNotNull(documentSnapshot, TAG, "addUserRoomChangeListener") { documentSnapshotNotNull ->
+                callback?.invoke(documentSnapshotNotNull)
             }
         }
+    }
 
-        fun addRoomMessagesListener(roomId: String, fieldToOrder: String? = null, orderDirection: Query.Direction = Query.Direction.ASCENDING, callback: ((messages: List<Message>) -> Unit)? = null): ListenerRegistration {
-            return firebaseFirestore
-                    .collection(Constants.COLLECTION_ROOMS)
-                    .document(roomId)
-                    .collection(Constants.COLLECTION_MESSAGES)
-                    .let { if (fieldToOrder != null) it.orderBy(Message.FIELD_CREATED_TIME, orderDirection) else it }
-                    .addSnapshotListener { querySnapshot, _ ->
-                        Utils.assertNotNull(querySnapshot, TAG, "addRoomMessagesListener") { querySnapshotNotNull ->
-                            val messages = ArrayList<Message>()
-                            for (doc in querySnapshotNotNull) {
-                                val message: Message = when (doc.getLong(Message.FIELD_TYPE)?.toInt()) {
-                                    Message.TYPE_STICKER -> StickerMessage()
-                                    Message.TYPE_IMAGE -> ImageMessage()
-                                    Message.TYPE_FILE -> FileMessage()
-                                    Message.TYPE_CALL -> CallMessage()
-                                    else -> TextMessage()
-                                }
-                                message.applyDoc(doc)
-                                messages.add(message)
-                            }
-                            callback?.invoke(messages)
+    fun addUserRoomsListener(userPhone: String, fieldToOrder: String? = null, orderDirection: Query.Direction = Query.Direction.ASCENDING, callback: ((roomItems: List<RoomItem>) -> Unit)? = null): ListenerRegistration {
+        return firebaseFirestore
+                .collection(COLLECTION_USERS)
+                .document(userPhone)
+                .collection(COLLECTION_ROOMS)
+                .let { if (fieldToOrder != null) it.orderBy(fieldToOrder, orderDirection) else it }
+                .addSnapshotListener { querySnapshot, _ ->
+                    Utils.assertNotNull(querySnapshot, TAG, "addUserRoomsListener") { querySnapshotNotNull ->
+                        val roomItems = ArrayList<RoomItem>()
+                        for (doc in querySnapshotNotNull) {
+                            val roomItem = RoomItem.fromDoc(doc)
+
+                            roomItems.add(roomItem)
                         }
+                        callback?.invoke(roomItems)
                     }
-        }
-
-        fun addUserRoomChangeListener(userPhone: String, roomId: String, callback: ((documentSnapshot: DocumentSnapshot) -> Unit)? = null): ListenerRegistration {
-            val curRoomRef = firebaseFirestore
-                    .collection(Constants.COLLECTION_USERS)
-                    .document(userPhone)
-                    .collection(Constants.COLLECTION_ROOMS)
-                    .document(roomId)
-
-            return curRoomRef.addSnapshotListener { documentSnapshot, _ ->
-                Utils.assertNotNull(documentSnapshot, TAG, "addUserRoomChangeListener") { documentSnapshotNotNull ->
-                    callback?.invoke(documentSnapshotNotNull)
                 }
-            }
-        }
+    }
 
-        fun addUserRoomsListener(userPhone: String, fieldToOrder: String? = null, orderDirection: Query.Direction = Query.Direction.ASCENDING, callback: ((roomItems: List<RoomItem>) -> Unit)? = null): ListenerRegistration {
-            return firebaseFirestore
-                    .collection(Constants.COLLECTION_USERS)
-                    .document(userPhone)
-                    .collection(Constants.COLLECTION_ROOMS)
-                    .let { if (fieldToOrder != null) it.orderBy(fieldToOrder, orderDirection) else it }
-                    .addSnapshotListener { querySnapshot, _ ->
-                        Utils.assertNotNull(querySnapshot, TAG, "addUserRoomsListener") { querySnapshotNotNull ->
-                            val roomItems = ArrayList<RoomItem>()
-                            for (doc in querySnapshotNotNull) {
-                                roomItems.add(
-                                        doc.toObject(RoomItem::class.java).apply {
-                                            roomId = doc.id
-                                        }
-                                )
-                            }
-                            callback?.invoke(roomItems)
+    fun validateLoginInfo(phone: String, password: String, callback: (user: User?) -> Unit) {
+        firebaseFirestore.collection(COLLECTION_USERS)
+                .document(phone)
+                .get()
+                .addOnCompleteListener { task ->
+                    Utils.assertTaskSuccess(task, TAG, "assertLoginSuccess") { result ->
+                        if (result != null) {
+                            val user = result.toObject(User::class.java)!!
+                            user.phone = phone
+                            callback(user)
+                        } else {
+                            callback(null)
                         }
                     }
-        }
+                }
+    }
 
-        fun validateLoginInfo(phone: String, password: String, callback: (user: User?) -> Unit) {
-            firebaseFirestore.collection(Constants.COLLECTION_USERS)
-                    .document(phone)
-                    .get()
-                    .addOnCompleteListener { task ->
-                        Utils.assertTaskSuccess(task, TAG, "assertLoginSuccess") { result ->
-                            if (result != null) {
-                                val user = result.toObject(User::class.java)!!
-                                user.phone = phone
-                                callback(user)
-                            } else {
-                                callback(null)
-                            }
-                        }
-                    }
-        }
+    fun getNewRoomId(): String {
+        return firebaseFirestore
+                .collection(COLLECTION_ROOMS)
+                .document().id
+    }
 
-        fun getNewRoomId(): String {
-            return firebaseFirestore
-                    .collection(Constants.COLLECTION_ROOMS)
-                    .document().id
-        }
+    fun getNewMessageId(roomId: String): String {
+        return firebaseFirestore
+                .collection(COLLECTION_ROOMS)
+                .document(roomId)
+                .collection(COLLECTION_MESSAGES)
+                .document().id
+    }
 
-        fun getRoomInfo(roomId: String, callback: ((room: Room) -> Unit)? = null) {
-            //current room reference
-            val curRoomDocRef = firebaseFirestore
-                    .collection(Constants.COLLECTION_ROOMS)
+    fun getRoomInfo(roomId: String, callback: ((room: Room) -> Unit)? = null) {
+        //current room reference
+        val curRoomDocRef = firebaseFirestore
+                .collection(COLLECTION_ROOMS)
 //                    .whereArrayContains(FieldPath.of("members","phone"), ZaloApplication.currentUser)
-                    .document(roomId)
+                .document(roomId)
 
-            val tasks: ArrayList<Task<*>> = ArrayList()
+        val tasks: ArrayList<Task<*>> = ArrayList()
 
-            //get room
-            val getRoomTask = curRoomDocRef.get()
-            tasks.add(getRoomTask)
+        //get room
+        val getRoomTask = curRoomDocRef.get()
+        tasks.add(getRoomTask)
 
-            //get room members
-            val getRoomMembersTask = curRoomDocRef.collection(Constants.COLLECTION_MEMBERS).get()
-            tasks.add(getRoomMembersTask)
+        //get room members
+        val getRoomMembersTask = curRoomDocRef.collection(COLLECTION_MEMBERS).get()
+        tasks.add(getRoomMembersTask)
 
-            // add callback when all tasks done
-            Tasks.whenAll(tasks)
-                    .addOnCompleteListener {
-                        val room = Room()
-
-                        Utils.assertTaskSuccess(getRoomTask, TAG, "getRoomInfo.getRoomTask") {
-                            room.createdTime = (getRoomTask.result as DocumentSnapshot).getTimestamp(Room.FIELD_CREATED_TIME)
+        // add callback when all tasks done
+        Tasks.whenAll(tasks)
+                .addOnCompleteListener {
+                    Utils.assertTaskSuccessAndResultNotNull(getRoomTask, TAG, "getRoomInfo.getRoomTask") { result1 ->
+                        val roomType = result1.getLong(Room.FIELD_TYPE)!!.toInt()
+                        val room = if (roomType == Room.TYPE_PEER) {
+                            RoomPeer()
+                        } else {
+                            RoomGroup()
                         }
 
-                        Utils.assertTaskSuccessAndResultNotNull(getRoomMembersTask, TAG, "getRoomInfo.getRoomMembersTask") { result ->
+                        room.createdTime = (getRoomTask.result as DocumentSnapshot).getTimestamp(Room.FIELD_CREATED_TIME)
+                        room.type = roomType
+
+                        Utils.assertTaskSuccessAndResultNotNull(getRoomMembersTask, TAG, "getRoomInfo.getRoomMembersTask") { result2 ->
                             val memberMap = HashMap<String, RoomMember>()
-                            for (doc in (result as QuerySnapshot)) {
+                            for (doc in (result2 as QuerySnapshot)) {
                                 val roomMember = doc.toObject(RoomMember::class.java)
 
                                 memberMap[doc.getString(RoomMember.FIELD_PHONE)!!] = roomMember
                             }
                             room.memberMap = memberMap
-                            room.type = if(memberMap.size <= 2) Room.TYPE_PEER else Room.TYPE_GROUP
 
                             //set livedata value
                             callback?.invoke(room)
                         }
                     }
-        }
+                }
+    }
 
-        fun getUserRoom(phone: String, callback: (roomItem: RoomItem) -> Unit) {
-            //current room reference
+    fun getUserRoomPeer(phone: String, callback: (roomItem: RoomItem) -> Unit) {
+        //current room reference
+        firebaseFirestore
+                .collection(COLLECTION_USERS)
+                .document(ZaloApplication.curUser!!.phone!!)
+                .collection(COLLECTION_ROOMS)
+                .whereEqualTo(RoomItemPeer.FIELD_PHONE, phone)
+                .get()
+                .addOnCompleteListener {
+                    Utils.assertTaskSuccessAndResultNotNull(it, TAG, "getUserRoomPeer") { querySnapshot ->
+                        querySnapshot.forEach { documentSnapshot ->
+                            val roomItem = RoomItem.fromDoc(documentSnapshot)
+
+                            //set livedata value
+                            callback(roomItem)
+                        }
+                    }
+                }
+    }
+
+    fun addRoomInfoChangeListener(roomId: String, callback: ((documentSnapshot: DocumentSnapshot) -> Unit)? = null): ListenerRegistration {
+        return firebaseFirestore
+                .collection(COLLECTION_ROOMS)
+                .document(roomId)
+                .addSnapshotListener { documentSnapshot, _ ->
+                    Utils.assertNotNull(documentSnapshot, TAG, "addRoomInfoChangeListener") { documentSnapshotNotNull ->
+                        callback?.invoke(documentSnapshotNotNull)
+                    }
+                }
+    }
+
+    fun addRoomsTypingChangeListener(roomsId: List<String>, callback: ((typingPhoneMap: HashMap<String, String?>) -> Unit)? = null): ListenerRegistration? {
+        return if (roomsId.isNotEmpty()) {
             firebaseFirestore
-                    .collection(Constants.COLLECTION_USERS)
-                    .document(ZaloApplication.curUser!!.phone!!)
-                    .collection(Constants.COLLECTION_ROOMS)
-                    .whereEqualTo(RoomItem.FIELD_NAME, phone)
-                    .get()
-                    .addOnCompleteListener {
-                        Utils.assertTaskSuccessAndResultNotNull(it, TAG, "getUserRoom") { querySnapshot ->
-                            querySnapshot.forEach { documentSnapshot ->
-                                val roomItem = documentSnapshot.toObject(RoomItem::class.java).apply {
-                                    this.roomId = documentSnapshot.id
-                                }
-
-                                //set livedata value
-                                callback(roomItem)
+                    .collection(COLLECTION_ROOMS)
+                    .whereIn(FieldPath.documentId(), roomsId)
+                    .addSnapshotListener { querySnapshot, _ ->
+                        Utils.assertNotNull(querySnapshot, TAG, "addRoomsTypingChangeListener") { querySnapshotNotNull ->
+                            val res = HashMap<String, String?>()
+                            querySnapshotNotNull.forEach { doc ->
+                                val roomId = doc.id
+                                val lastTypingPhone = (doc.get(Room.FIELD_TYPING_MEMBERS_PHONE) as ArrayList<String>?)?.lastOrNull()
+                                res[roomId] = lastTypingPhone
                             }
+                            callback?.invoke(res)
                         }
                     }
+        } else {
+            null
         }
+    }
 
-        fun addRoomInfoChangeListener(roomId: String, callback: ((documentSnapshot: DocumentSnapshot) -> Unit)? = null): ListenerRegistration {
-            return firebaseFirestore
-                    .collection(Constants.COLLECTION_ROOMS)
-                    .document(roomId)
-                    .addSnapshotListener { documentSnapshot, _ ->
-                        Utils.assertNotNull(documentSnapshot, TAG, "addRoomInfoChangeListener") { documentSnapshotNotNull ->
-                            callback?.invoke(documentSnapshotNotNull)
+    fun getUserRooms(userPhone: String, roomType: Int? = null, fieldToOrder: String? = null, orderDirection: Query.Direction = Query.Direction.ASCENDING, callback: ((roomItems: List<RoomItem>) -> Unit)? = null) {
+        firebaseFirestore
+                .collection(COLLECTION_USERS)
+                .document(userPhone)
+                .collection(COLLECTION_ROOMS)
+                .let { if (roomType != null) it.whereEqualTo(RoomItem.FIELD_ROOM_TYPE, roomType) else it }
+                .let { if (fieldToOrder != null) it.orderBy(fieldToOrder, orderDirection) else it }
+                .get()
+                .addOnCompleteListener { task ->
+                    Utils.assertTaskSuccessAndResultNotNull(task, TAG, "getUserRooms") { result ->
+                        val roomItems = ArrayList<RoomItem>()
+                        for (doc in result) {
+                            roomItems.add(RoomItem.fromDoc(doc))
                         }
+                        callback?.invoke(roomItems)
                     }
+                }
+    }
+
+    fun getUserStickerSetItems(userPhone: String, callback: ((stickerSets: List<StickerSetItem>) -> Unit)? = null) {
+        firebaseFirestore
+                .collection(COLLECTION_USERS)
+                .document(userPhone)
+                .collection(COLLECTION_STICKER_SETS)
+                .get().addOnCompleteListener { task ->
+                    Utils.assertTaskSuccessAndResultNotNull(task, TAG, "getUserStickerSetItems") { result ->
+                        val stickerSetItems = ArrayList<StickerSetItem>()
+                        for (doc in result) {
+                            stickerSetItems.add(
+                                    doc.toObject(StickerSetItem::class.java)
+                            )
+                        }
+                        callback?.invoke(stickerSetItems)
+                    }
+                }
+    }
+
+    fun updateUserRoom(userPhone: String, roomId: String, fieldsAndValues: HashMap<String, Any>, callback: (() -> Unit)? = null) {
+        firebaseFirestore
+                .collection(COLLECTION_USERS)
+                .document(userPhone)
+                .collection(COLLECTION_ROOMS)
+                .document(roomId)
+                .update(fieldsAndValues)
+                .addOnCompleteListener { task ->
+                    Utils.assertTaskSuccess(task, TAG, "updateUserRoom") {
+                        callback?.invoke()
+                    }
+                }
+    }
+
+    fun addStickerSet(name: String, bucketName: String, stickerUrls: List<String>, callback: ((stickerSet: StickerSet) -> Unit)? = null) {
+        val stickerSetRef = firebaseFirestore
+                .collection(COLLECTION_STICKER_SETS)
+                .document(bucketName)
+
+        val batch = firebaseFirestore.batch()
+
+        val stickers = ArrayList<Sticker>()
+        stickerUrls.forEach { stickerUrl ->
+            val newDocRef = stickerSetRef
+                    .collection(COLLECTION_STICKERS)
+                    .document()
+
+            val sticker = Sticker(
+                    id = newDocRef.id,
+                    url = stickerUrl
+            )
+
+            batch.set(newDocRef, sticker.toMap())
+
+            stickers.add(sticker)
         }
 
-        fun getUserRooms(userPhone: String, roomType: Int? = null, fieldToOrder: String? = null, orderDirection: Query.Direction = Query.Direction.ASCENDING, callback: ((roomItems: List<RoomItem>) -> Unit)? = null) {
-            firebaseFirestore
-                    .collection(Constants.COLLECTION_USERS)
-                    .document(userPhone)
-                    .collection(Constants.COLLECTION_ROOMS)
-                    .let { if (roomType != null) it.whereEqualTo(RoomItem.FIELD_ROOM_TYPE, roomType) else it }
-                    .let { if (fieldToOrder != null) it.orderBy(fieldToOrder, orderDirection) else it }
-                    .get()
-                    .addOnCompleteListener { task ->
-                        Utils.assertTaskSuccessAndResultNotNull(task, TAG, "getUserRooms") { result ->
-                            val roomItems = ArrayList<RoomItem>()
-                            for (doc in result) {
-                                roomItems.add(
-                                        doc.toObject(RoomItem::class.java).apply {
-                                            roomId = doc.id
+        val stickerSet = StickerSet(
+                bucketName = bucketName,
+                name = name,
+                stickers = stickers
+        )
+
+        batch.set(
+                stickerSetRef,
+                stickerSet.toMap()
+        )
+
+        batch.commit().addOnCompleteListener { task ->
+            Utils.assertTaskSuccess(task, TAG, "addStickerSet") {
+                callback?.invoke(stickerSet)
+            }
+        }
+    }
+
+    fun getStickerSet(bucketName: String, callback: (stickerSet: StickerSet) -> Unit) {
+        val stickerSetDocRef = firebaseFirestore
+                .collection(COLLECTION_STICKER_SETS)
+                .document(bucketName)
+        Log.d(TAG, "getStickerSet." + stickerSetDocRef.path)
+
+        val tasks = ArrayList<Task<*>>()
+
+        val getStickerSetTask = stickerSetDocRef.get()
+        tasks.add(getStickerSetTask)
+
+        val getStickersTask = stickerSetDocRef
+                .collection(COLLECTION_STICKERS)
+                .get()
+        tasks.add(getStickersTask)
+
+        Tasks.whenAll(tasks)
+                .addOnCompleteListener {
+                    var stickerSet: StickerSet
+
+                    Utils.assertTaskSuccessAndResultNotNull(getStickerSetTask, TAG, "getStickerSet.getStickerSetTask") { stickerSetResult ->
+                        stickerSet = stickerSetResult.toObject(StickerSet::class.java)!!
+
+                        Utils.assertTaskSuccessAndResultNotNull(getStickersTask, TAG, "getStickerSet.getStickersTask") { stickersResult ->
+                            val stickers = ArrayList<Sticker>()
+                            stickersResult.forEach {
+                                stickers.add(
+                                        it.toObject(Sticker::class.java).apply {
+                                            id = it.id
                                         }
                                 )
                             }
-                            callback?.invoke(roomItems)
+                            stickerSet.stickers = stickers
+
+                            callback(stickerSet)
                         }
                     }
-        }
-
-        fun getUserStickerSetItems(userPhone: String, callback: ((stickerSets: List<StickerSetItem>) -> Unit)? = null) {
-            firebaseFirestore
-                    .collection(Constants.COLLECTION_USERS)
-                    .document(userPhone)
-                    .collection(Constants.COLLECTION_STICKER_SETS)
-                    .get().addOnCompleteListener { task ->
-                        Utils.assertTaskSuccessAndResultNotNull(task, TAG, "getUserStickerSetItems") { result ->
-                            val stickerSetItems = ArrayList<StickerSetItem>()
-                            for (doc in result) {
-                                stickerSetItems.add(
-                                        doc.toObject(StickerSetItem::class.java)
-                                )
-                            }
-                            callback?.invoke(stickerSetItems)
-                        }
-                    }
-        }
-
-        fun updateUserRoom(userPhone: String, roomId: String, fieldsAndValues: HashMap<String, Any>, callback: (() -> Unit)? = null) {
-            firebaseFirestore
-                    .collection(Constants.COLLECTION_USERS)
-                    .document(userPhone)
-                    .collection(Constants.COLLECTION_ROOMS)
-                    .document(roomId)
-                    .update(fieldsAndValues)
-                    .addOnCompleteListener { task ->
-                        Utils.assertTaskSuccess(task, TAG, "updateUserRoom") {
-                            callback?.invoke()
-                        }
-                    }
-        }
-
-        fun addStickerSet(name: String, bucketName: String, stickerUrls: List<String>, callback: ((stickerSet: StickerSet) -> Unit)? = null) {
-            val stickerSetRef = firebaseFirestore
-                    .collection(Constants.COLLECTION_STICKER_SETS)
-                    .document(bucketName)
-
-            val batch = firebaseFirestore.batch()
-
-            val stickers = ArrayList<Sticker>()
-            stickerUrls.forEach { stickerUrl ->
-                val newDocRef = stickerSetRef
-                        .collection(Constants.COLLECTION_STICKERS)
-                        .document()
-
-                val sticker = Sticker(
-                        id = newDocRef.id,
-                        url = stickerUrl
-                )
-
-                batch.set(newDocRef, sticker.toMap())
-
-                stickers.add(sticker)
-            }
-
-            val stickerSet = StickerSet(
-                    bucketName = bucketName,
-                    name = name,
-                    stickers = stickers
-            )
-
-            batch.set(
-                    stickerSetRef,
-                    stickerSet.toMap()
-            )
-
-            batch.commit().addOnCompleteListener { task ->
-                Utils.assertTaskSuccess(task, TAG, "addStickerSet") {
-                    callback?.invoke(stickerSet)
                 }
-            }
-        }
+    }
 
-        fun getStickerSet(bucketName: String, callback: (stickerSet: StickerSet) -> Unit) {
-            val stickerSetDocRef = firebaseFirestore
-                    .collection(Constants.COLLECTION_STICKER_SETS)
-                    .document(bucketName)
-            Log.d(TAG, "getStickerSet." + stickerSetDocRef.path)
+    fun addCurUserToRoomTypings(roomId: String) {
+        firebaseFirestore
+                .collection(COLLECTION_ROOMS)
+                .document(roomId)
+                .update(Room.FIELD_TYPING_MEMBERS_PHONE, FieldValue.arrayUnion(ZaloApplication.curUser!!.phone))
+                .addOnCompleteListener {
+                    Utils.assertTaskSuccess(
+                            it,
+                            TAG,
+                            "addCurUserToRoomTypings"
+                    )
+                }
+    }
 
-            val tasks = ArrayList<Task<*>>()
+    fun removeCurUserFromRoomTypings(roomId: String) {
+        firebaseFirestore
+                .collection(COLLECTION_ROOMS)
+                .document(roomId)
+                .update(Room.FIELD_TYPING_MEMBERS_PHONE, FieldValue.arrayRemove(ZaloApplication.curUser!!.phone))
+                .addOnCompleteListener {
+                    Utils.assertTaskSuccess(
+                            it,
+                            TAG,
+                            "removeCurUserFromRoomTypings"
+                    )
+                }
+    }
 
-            val getStickerSetTask = stickerSetDocRef.get()
-            tasks.add(getStickerSetTask)
-
-            val getStickersTask = stickerSetDocRef
-                    .collection(Constants.COLLECTION_STICKERS)
-                    .get()
-            tasks.add(getStickersTask)
-
-            Tasks.whenAll(tasks)
-                    .addOnCompleteListener {
-                        var stickerSet: StickerSet
-
-                        Utils.assertTaskSuccessAndResultNotNull(getStickerSetTask, TAG, "getStickerSet.getStickerSetTask") { stickerSetResult ->
-                            stickerSet = stickerSetResult.toObject(StickerSet::class.java)!!
-
-                            Utils.assertTaskSuccessAndResultNotNull(getStickersTask, TAG, "getStickerSet.getStickersTask") { stickersResult ->
-                                val stickers = ArrayList<Sticker>()
-                                stickersResult.forEach {
-                                    stickers.add(
-                                            it.toObject(Sticker::class.java).apply {
-                                                id = it.id
-                                            }
-                                    )
-                                }
-                                stickerSet.stickers = stickers
-
-                                callback(stickerSet)
-                            }
-                        }
-                    }
-        }
-
-        fun addCurUserToRoomTypings(roomId: String) {
+    //no effect if isOnline not change
+    fun setCurrentUserOnlineState(isOnline: Boolean) {
+        if (ZaloApplication.isOnline != isOnline) {
             firebaseFirestore
-                    .collection(Constants.COLLECTION_ROOMS)
-                    .document(roomId)
-                    .update(Room.FIELD_TYPING_MEMBERS_PHONE, FieldValue.arrayUnion(ZaloApplication.curUser!!.phone))
-                    .addOnCompleteListener {
+                    .collection(COLLECTION_USERS)
+                    .document(ZaloApplication.curUser!!.phone!!)
+                    .update(User.FIELD_LAST_ONLINE_TIME,
+                            if (isOnline) null
+                            else Timestamp.now()
+                    ).addOnCompleteListener {
                         Utils.assertTaskSuccess(
                                 it,
                                 TAG,
-                                "addCurUserToRoomTypings"
+                                "setCurrentUserOnlineState"
                         )
                     }
-        }
 
-        fun removeCurUserFromRoomTypings(roomId: String) {
+            ZaloApplication.isOnline = isOnline
+        }
+    }
+
+    //null->isOnline
+    fun addUsersLastOnlineTimeListener(phoneRoomIdMap: HashMap<String, String>, callback: (usersLastOnlineTime: HashMap<String, Timestamp?>) -> Unit): ListenerRegistration? {
+        return if (phoneRoomIdMap.isNotEmpty()) {
             firebaseFirestore
-                    .collection(Constants.COLLECTION_ROOMS)
-                    .document(roomId)
-                    .update(Room.FIELD_TYPING_MEMBERS_PHONE, FieldValue.arrayRemove(ZaloApplication.curUser!!.phone))
-                    .addOnCompleteListener {
-                        Utils.assertTaskSuccess(
-                                it,
-                                TAG,
-                                "removeCurUserFromRoomTypings"
-                        )
-                    }
-        }
-
-        //no effect if isOnline not change
-        fun setCurrentUserOnlineState(isOnline: Boolean) {
-            if (ZaloApplication.isOnline != isOnline) {
-                firebaseFirestore
-                        .collection(Constants.COLLECTION_USERS)
-                        .document(ZaloApplication.curUser!!.phone!!)
-                        .update(User.FIELD_LAST_ONLINE_TIME,
-                                if (isOnline) null
-                                else Timestamp.now()
-                        ).addOnCompleteListener {
-                            Utils.assertTaskSuccess(
-                                    it,
-                                    TAG,
-                                    "setCurrentUserOnlineState"
-                            )
-                        }
-
-                ZaloApplication.isOnline = isOnline
-            }
-        }
-
-        //null->isOnline
-        fun addUsersLastOnlineTimeListener(userPhones: List<String>, callback: (usersLastOnlineTime: HashMap<String, Timestamp?>) -> Unit):ListenerRegistration {
-            return firebaseFirestore
-                    .collection(Constants.COLLECTION_USERS)
-                    .whereIn(FieldPath.documentId(), userPhones)
-                    .addSnapshotListener {querySnapshot, _ ->
+                    .collection(COLLECTION_USERS)
+                    .whereIn(FieldPath.documentId(), phoneRoomIdMap.keys.toList())
+                    .addSnapshotListener { querySnapshot, _ ->
                         Utils.assertNotNull(querySnapshot, TAG, "addUsersLastOnlineTimeListener") { querySnapshotNotNull ->
                             val res = HashMap<String, Timestamp?>()
                             for (doc in querySnapshotNotNull) {
-                                res[doc.id] = doc.getTimestamp(User.FIELD_LAST_ONLINE_TIME)
+                                val phone = doc.id
+                                val roomId = phoneRoomIdMap[phone]!!
+                                res[roomId] = doc.getTimestamp(User.FIELD_LAST_ONLINE_TIME)
                             }
                             callback(res)
                         }
                     }
-        }
-
-        fun addUserLastOnlineTimeListener(userPhone: String, callback: (userLastOnlineTime: Timestamp?) -> Unit):ListenerRegistration {
-            return firebaseFirestore
-                    .collection(Constants.COLLECTION_USERS)
-                    .document(userPhone)
-                    .addSnapshotListener {documentSnapshot, _ ->
-                        Utils.assertNotNull(documentSnapshot, TAG, "addUserLastOnlineTimeListener") { documentSnapshotNotNull ->
-                            callback(documentSnapshotNotNull.getTimestamp(User.FIELD_LAST_ONLINE_TIME))
-                        }
-                    }
+        } else {
+            null
         }
     }
+
+    fun addUserLastOnlineTimeListener(userPhone: String, callback: (userLastOnlineTime: Timestamp?) -> Unit): ListenerRegistration {
+        return firebaseFirestore
+                .collection(COLLECTION_USERS)
+                .document(userPhone)
+                .addSnapshotListener { documentSnapshot, _ ->
+                    Utils.assertNotNull(documentSnapshot, TAG, "addUserLastOnlineTimeListener") { documentSnapshotNotNull ->
+                        callback(documentSnapshotNotNull.getTimestamp(User.FIELD_LAST_ONLINE_TIME))
+                    }
+                }
+    }
+
+    fun deleteMessageFromFirestore(roomId: String, messageId: String, onSuccess: (() -> Unit)? = null) {
+        firebaseFirestore.collection(COLLECTION_ROOMS)
+                .document(roomId)
+                .collection(COLLECTION_MESSAGES)
+                .document(messageId)
+                .delete()
+                .addOnCompleteListener {
+                    Utils.assertTaskSuccess(it, TAG, "deleteMessageFromFirestore") {
+                        onSuccess?.invoke()
+                    }
+                }
+    }
+
+    fun addFriend(phone: String, callback: ((isSuccess: Boolean) -> Unit)? = null) {
+        firebaseFirestore.collection(COLLECTION_USERS)
+                .document(phone)
+                .get()
+                .addOnCompleteListener {
+                    Utils.assertTaskSuccessAndResultNotNull(it, TAG, "addFriend") { doc ->
+                        val avatarUrl = doc.getString(User.FIELD_AVATAR_URL)
+                        val name = doc.getString(User.FIELD_NAME)
+
+                        if(name!=null){
+                            val curTimestamp = Timestamp.now()
+
+                            val newRoom = RoomPeer(
+                                    name = name,
+                                    phone = phone,
+                                    avatarUrl = avatarUrl,
+                                    createdTime = curTimestamp,
+                                    memberMap = HashMap<String, RoomMember>().apply {
+                                        put(phone, RoomMember(
+                                                avatarUrl = avatarUrl,
+                                                joinDate = curTimestamp,
+                                                phone = phone,
+                                                name = name
+                                        ))
+
+                                        put(ZaloApplication.curUser!!.phone!!,
+                                                RoomMember(
+                                                        avatarUrl = ZaloApplication.curUser!!.avatarUrl,
+                                                        joinDate = curTimestamp,
+                                                        phone = ZaloApplication.curUser!!.phone,
+                                                        name = ZaloApplication.curUser!!.name
+                                                ))
+                                    }
+                            )
+
+                            addRoomAndUserRoom(newRoom){
+                                callback?.invoke(true)
+                            }
+                        }else{
+                            callback?.invoke(false)
+                        }
+                    }
+                }
+    }
+
+    fun deleteRoom(room: Room, membersPhone: List<String>, callback: (() -> Unit)? = null) {
+        val batch = firebaseFirestore.batch()
+
+        batch.delete(
+                firebaseFirestore.collection(COLLECTION_ROOMS)
+                        .document(room.id!!)
+        )
+
+        membersPhone.forEach {
+            batch.delete(
+                    firebaseFirestore.collection(COLLECTION_USERS)
+                            .document(it)
+                            .collection(COLLECTION_ROOMS)
+                            .document(room.id!!)
+            )
+        }
+
+        val tasks = ArrayList<Task<Void>>().apply {
+            add(batch.commit())
+            addAll(Storage.deleteRoomAvatarAndData(room))
+        }
+
+        Tasks.whenAll(tasks).addOnCompleteListener {
+            Utils.assertTaskSuccess(it, TAG, "deleteRoom") {
+                callback?.invoke()
+            }
+        }
+    }
+
+    private const val COLLECTION_USERS = "users"
+    private const val COLLECTION_ROOMS = "rooms"
+    private const val COLLECTION_MESSAGES = "messages"
+    private const val COLLECTION_MEMBERS = "members"
+    private const val COLLECTION_CONTACTS = "contacts"
+    private const val COLLECTION_OFFICIAL_ACCOUNTS = "official_accounts"
+    private const val COLLECTION_STICKER_SETS = "sticker_sets"
+    private const val COLLECTION_STICKERS = "stickers"
 }

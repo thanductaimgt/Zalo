@@ -2,13 +2,12 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/zoomLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/black">
 
-    <com.github.chrisbanes.photoview.PhotoView
-        android:id="@+id/expandedImgView"
+    <androidx.viewpager.widget.ViewPager
+        android:id="@+id/viewPager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_constraintBottom_toTopOf="parent"
@@ -22,17 +21,19 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent"
+        android:visibility="gone"
+        tools:visibility="visible"
         tools:src="@drawable/zalo">
 
         <ImageView
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:id="@+id/backImgView"
+            android:id="@+id/dismissImgView"
             android:layout_width="28dp"
             android:layout_height="0dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="12dp"
             android:layout_marginBottom="12dp"
-            android:padding="4dp"
+            android:padding="6dp"
             android:src="@drawable/left_arrow_white"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintDimensionRatio="1:1"
@@ -50,35 +51,35 @@
             android:maxLines="1"
             android:scrollHorizontally="true"
             android:textColor="@android:color/white"
-            app:layout_constraintBottom_toBottomOf="@id/backImgView"
-            app:layout_constraintEnd_toStartOf="@id/downloadImgView"
-            app:layout_constraintStart_toEndOf="@id/backImgView"
-            app:layout_constraintTop_toTopOf="@id/backImgView"
+            app:layout_constraintBottom_toBottomOf="@id/dismissImgView"
+            app:layout_constraintEnd_toStartOf="@id/downloadImageImgView"
+            app:layout_constraintStart_toEndOf="@id/dismissImgView"
+            app:layout_constraintTop_toTopOf="@id/dismissImgView"
             tools:text="Tài Thân and a very long nick nameeeeeeeeeeeeee" />
 
         <ImageView
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:id="@+id/downloadImgView"
+            android:id="@+id/downloadImageImgView"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_marginEnd="8dp"
             android:padding="3dp"
             android:src="@drawable/download"
-            app:layout_constraintBottom_toBottomOf="@id/backImgView"
+            app:layout_constraintBottom_toBottomOf="@id/dismissImgView"
             app:layout_constraintDimensionRatio="1:1"
-            app:layout_constraintEnd_toStartOf="@id/moreImgView"
-            app:layout_constraintTop_toTopOf="@id/backImgView" />
+            app:layout_constraintEnd_toStartOf="@id/moreImgViewVID"
+            app:layout_constraintTop_toTopOf="@id/dismissImgView" />
 
         <ImageView
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:id="@+id/moreImgView"
+            android:id="@+id/moreImgViewVID"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_marginEnd="8dp"
             android:src="@drawable/more3"
-            app:layout_constraintBottom_toBottomOf="@id/backImgView"
+            app:layout_constraintBottom_toBottomOf="@id/dismissImgView"
             app:layout_constraintDimensionRatio="1:1"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@id/backImgView" />
+            app:layout_constraintTop_toTopOf="@id/dismissImgView" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

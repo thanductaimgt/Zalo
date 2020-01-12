@@ -13,9 +13,9 @@ data class TextMessage(
         override var type: Int? = null,
         var content: String? = null
 ) :Message(id, createdTime, senderPhone, senderAvatarUrl, type){
-    override fun toMap(): HashMap<String, Any?> {
+    override fun toMap(): HashMap<String, Any> {
         return super.toMap().apply {
-            put(FIELD_CONTENT, content)
+            content?.let{put(FIELD_CONTENT, it)}
         }
     }
 

@@ -15,26 +15,15 @@ object Constants {
 
     const val ROOM_ID = "ROOM_ID"
     const val ROOM_NAME = "ROOM_NAME"
+    const val ROOM_PHONE = "ROOM_PHONE"
     const val ROOM_AVATAR = "ROOM_AVATAR"
     const val ROOM_TYPE = "ROOM_TYPE"
 
-    const val COLLECTION_USERS = "users"
-    const val COLLECTION_ROOMS = "rooms"
-    const val COLLECTION_MESSAGES = "messages"
-    const val COLLECTION_MEMBERS = "members"
-    const val COLLECTION_CONTACTS = "contacts"
-    const val COLLECTION_OFFICIAL_ACCOUNTS = "official_accounts"
-    const val COLLECTION_STICKER_SETS = "sticker_sets"
-    const val COLLECTION_STICKERS = "stickers"
-
-    const val CHOOSE_IMAGES_REQUEST = 0
-    const val CHOOSE_FILES_REQUEST = 1
-    const val TAKE_PICTURE_REQUEST = 2
-
-    const val FOLDER_USER_AVATARS = "user_avatars"
-    const val FOLDER_ROOM_AVATARS = "room_avatars"
-    const val FOLDER_ROOM_DATA = "room_data"
-    const val FOLDER_STICKER_SETS = "sticker_sets"
+    const val CHOOSE_IMAGE_REQUEST = 0
+    const val CHOOSE_VIDEO_REQUEST = 1
+    const val CHOOSE_FILE_REQUEST = 2
+    const val CAPTURE_IMAGE_REQUEST = 3
+    const val CAPTURE_VIDEO_REQUEST = 4
 
     const val PROVIDER_AUTHORITY = "fileprovider"
 

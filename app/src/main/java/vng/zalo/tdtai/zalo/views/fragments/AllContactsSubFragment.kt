@@ -14,7 +14,6 @@ import vng.zalo.tdtai.zalo.adapters.SelectRoomItemAdapter
 import vng.zalo.tdtai.zalo.factories.ViewModelFactory
 import vng.zalo.tdtai.zalo.utils.RoomItemDiffCallback
 import vng.zalo.tdtai.zalo.viewmodels.CreateGroupActivityViewModel
-import vng.zalo.tdtai.zalo.views.activities.CreateGroupActivity
 
 class AllContactsSubFragment : Fragment(), View.OnClickListener {
     private lateinit var viewModel: CreateGroupActivityViewModel
@@ -29,10 +28,10 @@ class AllContactsSubFragment : Fragment(), View.OnClickListener {
 
         viewModel = ViewModelProvider(activity!!, ViewModelFactory.getInstance()).get(CreateGroupActivityViewModel::class.java)
         viewModel.liveRoomItems.observe(viewLifecycleOwner, Observer {roomItems->
-            adapter.submitList(roomItems.sortedBy { it.name })
+            adapter.submitList(roomItems.sortedBy { it.getDisplayName() })
         })
 
-        (activity as CreateGroupActivity).viewModel.liveSelectedRoomItems.observe(viewLifecycleOwner, Observer {roomItems->
+        viewModel.liveSelectedRoomItems.observe(viewLifecycleOwner, Observer {
             adapter.notifyDataSetChanged()
         })
     }
@@ -49,7 +48,7 @@ class AllContactsSubFragment : Fragment(), View.OnClickListener {
     override fun onClick(v: View?) {
         when(v!!.id){
             R.id.itemRecentContactsLayout -> {
-                val position = recyclerView.getChildLayoutPosition(v)
+                val position = recyclerView.getChildAdapterPosition(v)
                 val roomItem = adapter.currentList[position]
 
                 if(viewModel.liveSelectedRoomItems.value!!.contains(roomItem))

@@ -16,7 +16,8 @@ import vng.zalo.tdtai.zalo.ZaloApplication
 import vng.zalo.tdtai.zalo.abstracts.CallStarter
 import vng.zalo.tdtai.zalo.adapters.ContactSubFragmentAdapter
 import vng.zalo.tdtai.zalo.factories.ViewModelFactory
-import vng.zalo.tdtai.zalo.models.Room
+import vng.zalo.tdtai.zalo.models.room.Room
+import vng.zalo.tdtai.zalo.models.room.RoomItemPeer
 import vng.zalo.tdtai.zalo.utils.Constants
 import vng.zalo.tdtai.zalo.utils.RoomItemDiffCallback
 import vng.zalo.tdtai.zalo.viewmodels.UserRoomItemsViewModel
@@ -35,8 +36,8 @@ class ContactSubFragment : Fragment(), View.OnClickListener {
         initView()
 
         viewModel = ViewModelProvider(activity!!, ViewModelFactory.getInstance()).get(UserRoomItemsViewModel::class.java)
-        viewModel.liveRoomItems.observe(viewLifecycleOwner, Observer { roomItems ->
-            adapter.submitList(roomItems.filter { it.roomType == Room.TYPE_PEER }.sortedBy { it.name })
+        viewModel.liveRoomIdRoomItemMap.observe(viewLifecycleOwner, Observer { roomItems ->
+            adapter.submitList(roomItems.values.filter { it.roomType == Room.TYPE_PEER }.sortedBy { it.name })
         })
     }
 
@@ -54,13 +55,13 @@ class ContactSubFragment : Fragment(), View.OnClickListener {
     override fun onClick(v: View) {
         when (v.id) {
             R.id.itemContactSubFragmentConstraintLayout -> {
-                val position = allContactRecyclerView.getChildLayoutPosition(v)
-                val roomItem = adapter.currentList[position]
+                val position = allContactRecyclerView.getChildAdapterPosition(v)
+                val roomItem = adapter.currentList[position] as RoomItemPeer
 
                 startActivity(
                         Intent(activity, RoomActivity::class.java).apply {
                             putExtra(Constants.ROOM_ID, roomItem.roomId)
-                            putExtra(Constants.ROOM_NAME, roomItem.name)
+                            putExtra(Constants.ROOM_NAME, roomItem.phone)
                             putExtra(Constants.ROOM_AVATAR, roomItem.avatarUrl)
                             putExtra(Constants.ROOM_TYPE, roomItem.roomType)
                         }
@@ -68,10 +69,10 @@ class ContactSubFragment : Fragment(), View.OnClickListener {
             }
             R.id.voiceCallImgView -> {
                 if(ZaloApplication.sipManager != null){
-                    val position = allContactRecyclerView.getChildLayoutPosition(v.parent as View)
-                    val roomItem = adapter.currentList[position]
+                    val position = allContactRecyclerView.getChildAdapterPosition(v.parent as View)
+                    val roomItem = adapter.currentList[position] as RoomItemPeer
 
-                    CallStarter.startAudioCall(context!!, roomItem.roomId!!, roomItem.name!!, roomItem.avatarUrl!!)
+                    CallStarter.startAudioCall(context!!, roomItem.roomId!!, roomItem.phone!!, roomItem.avatarUrl!!)
                 }else{
                     Toast.makeText(context, "Only available for real device", Toast.LENGTH_LONG).show()
                 }

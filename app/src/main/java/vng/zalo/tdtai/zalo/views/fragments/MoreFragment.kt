@@ -26,6 +26,6 @@ class MoreFragment : Fragment() {
                 .centerInside()
                 .into(avatarImgView)
 
-        nameTextView.text = ZaloApplication.curUser!!.phone
+        nameTextView.text = ZaloApplication.curUser!!.name
     }
 }

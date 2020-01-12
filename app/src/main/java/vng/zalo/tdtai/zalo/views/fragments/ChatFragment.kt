@@ -15,6 +15,8 @@ import kotlinx.android.synthetic.main.fragment_chat.*
 import vng.zalo.tdtai.zalo.R
 import vng.zalo.tdtai.zalo.adapters.RoomItemAdapter
 import vng.zalo.tdtai.zalo.factories.ViewModelFactory
+import vng.zalo.tdtai.zalo.models.room.Room
+import vng.zalo.tdtai.zalo.models.room.RoomItemPeer
 import vng.zalo.tdtai.zalo.utils.Constants
 import vng.zalo.tdtai.zalo.utils.RoomItemDiffCallback
 import vng.zalo.tdtai.zalo.viewmodels.UserRoomItemsViewModel
@@ -34,9 +36,9 @@ class ChatFragment : Fragment(), View.OnClickListener {
         initView()
 
         viewModel = ViewModelProvider(this, ViewModelFactory.getInstance()).get(UserRoomItemsViewModel::class.java)
-        viewModel.liveRoomItems.observe(viewLifecycleOwner, Observer { roomItems ->
-            adapter.submitList(roomItems){
-                if(recyclerView.isNotEmpty()){
+        viewModel.liveRoomIdRoomItemMap.observe(viewLifecycleOwner, Observer { roomItems ->
+            adapter.submitList(roomItems.values.toList()) {
+                if (recyclerView.isNotEmpty()) {
                     // save index and top position
                     val layoutManager = recyclerView.layoutManager as LinearLayoutManager
                     val index = layoutManager.findFirstVisibleItemPosition()
@@ -60,14 +62,20 @@ class ChatFragment : Fragment(), View.OnClickListener {
     override fun onClick(v: View) {
         when (v.id) {
             R.id.itemRoomRootLayout -> {
-                val position = recyclerView.getChildLayoutPosition(v)
+                val position = recyclerView.getChildAdapterPosition(v)
+                val roomItem = adapter.currentList[position]
 
                 startActivity(
                         Intent(activity, RoomActivity::class.java).apply {
-                            putExtra(Constants.ROOM_NAME, adapter.currentList[position].name)
-                            putExtra(Constants.ROOM_AVATAR, adapter.currentList[position].avatarUrl)
-                            putExtra(Constants.ROOM_ID, adapter.currentList[position].roomId)
-                            putExtra(Constants.ROOM_TYPE, adapter.currentList[position].roomType)
+                            putExtra(Constants.ROOM_NAME, roomItem.getDisplayName())
+                            putExtra(Constants.ROOM_AVATAR, roomItem.avatarUrl)
+                            putExtra(Constants.ROOM_ID, roomItem.roomId)
+
+                            val roomType = roomItem.roomType
+                            putExtra(Constants.ROOM_TYPE, roomItem.roomType)
+                            if (roomType == Room.TYPE_PEER) {
+                                putExtra(Constants.ROOM_PHONE, (roomItem as RoomItemPeer).phone)
+                            }
                         }
                 )
             }

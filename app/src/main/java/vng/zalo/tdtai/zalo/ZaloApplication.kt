@@ -7,11 +7,13 @@ import android.content.IntentFilter
 import android.net.sip.SipManager
 import android.net.sip.SipProfile
 import android.net.sip.SipRegistrationListener
+import android.os.Handler
 import android.util.Log
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ProcessLifecycleOwner
 import androidx.multidex.MultiDexApplication
+import vng.zalo.tdtai.zalo.abstracts.ExternalSourceManager
 import vng.zalo.tdtai.zalo.models.User
 import vng.zalo.tdtai.zalo.networks.Database
 import vng.zalo.tdtai.zalo.receivers.CallReceiver
@@ -19,6 +21,7 @@ import vng.zalo.tdtai.zalo.services.NotificationService
 import vng.zalo.tdtai.zalo.utils.Constants
 import vng.zalo.tdtai.zalo.utils.TAG
 import vng.zalo.tdtai.zalo.views.fragments.AlertDialog
+import vng.zalo.tdtai.zalo.views.fragments.ProcessingDialog
 
 
 class ZaloApplication : MultiDexApplication() {
@@ -73,12 +76,14 @@ class ZaloApplication : MultiDexApplication() {
         var sipProfile: SipProfile? = null
 
         var notificationDialog = AlertDialog()
+        var processingDialog = ProcessingDialog()
 
         fun initUser(context: Context, user: User) {
             this.curUser = user
             initSip(context.applicationContext)
             registerCallReceiver(context.applicationContext)
             Database.setCurrentUserOnlineState(true)
+            ExternalSourceManager.initPhoneNameMap()
         }
 
         fun removeCurrentUser(context: Context) {
@@ -108,6 +113,23 @@ class ZaloApplication : MultiDexApplication() {
             val intent = Intent(Constants.ACTION_CALL)
             val pendingIntent: PendingIntent = PendingIntent.getBroadcast(context, 0, intent, Intent.FILL_IN_DATA)
 
+            openSip(pendingIntent)
+        }
+
+        private fun openSip(pendingIntent: PendingIntent) {
+            try {
+                openSipInternal(pendingIntent)
+            } catch (t: Throwable) {
+                Handler().postDelayed({
+                    openSip(pendingIntent)
+                }, 10000)
+
+                t.printStackTrace()
+            }
+
+        }
+
+        private fun openSipInternal(pendingIntent: PendingIntent){
             sipManager?.open(sipProfile, pendingIntent, object : SipRegistrationListener {
                 override fun onRegistering(localProfileUri: String?) {
                     Log.d(TAG, "open: onRegistering")

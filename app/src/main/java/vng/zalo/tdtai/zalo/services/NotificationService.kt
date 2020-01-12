@@ -26,8 +26,8 @@ import com.squareup.picasso.Picasso
 import com.squareup.picasso.Target
 import vng.zalo.tdtai.zalo.R
 import vng.zalo.tdtai.zalo.ZaloApplication
-import vng.zalo.tdtai.zalo.models.Room
-import vng.zalo.tdtai.zalo.models.RoomItem
+import vng.zalo.tdtai.zalo.models.room.Room
+import vng.zalo.tdtai.zalo.models.room.RoomItem
 import vng.zalo.tdtai.zalo.networks.Database
 import vng.zalo.tdtai.zalo.utils.Constants
 import vng.zalo.tdtai.zalo.utils.TAG
@@ -149,27 +149,27 @@ class NotificationService : Service() {
         val notificationIntent = Intent(this, RoomActivity::class.java).apply {
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
 
-            putExtra(Constants.ROOM_NAME, roomItem.name)
+            putExtra(Constants.ROOM_NAME, roomItem.getDisplayName())
             putExtra(Constants.ROOM_AVATAR, roomItem.avatarUrl)
             putExtra(Constants.ROOM_ID, roomItem.roomId)
             putExtra(Constants.ROOM_TYPE, roomItem.roomType)
         }
         val notificationPendingIntent = PendingIntent.getActivity(
                 this,
-                Utils.getNotificationIdFromRoomId(roomItem.roomId!!),
+                Utils.getNotificationIdFromRoom(roomItem.roomId!!),
                 notificationIntent,
                 PendingIntent.FLAG_UPDATE_CURRENT
         )
 
         val roomPerson = Person.Builder()
                 .setKey(roomItem.lastSenderPhone)
-                .setName(roomItem.lastSenderPhone)
+                .setName(roomItem.lastSenderName)
                 .setIcon(IconCompat.createWithBitmap(roomAvatarBitmap))
                 .build()
 
         val lastSenderPerson = Person.Builder()
                 .setKey(roomItem.lastSenderPhone)
-                .setName(roomItem.lastSenderPhone)
+                .setName(roomItem.lastSenderName)
                 .build()
 
         val notificationStyle = NotificationCompat.MessagingStyle(roomPerson)
@@ -177,7 +177,7 @@ class NotificationService : Service() {
                     if (roomItem.roomType == Room.TYPE_PEER)
                         it.setGroupConversation(false)
                     else
-                        it.setGroupConversation(true).setConversationTitle("${roomItem.name}")
+                        it.setGroupConversation(true).setConversationTitle(roomItem.getDisplayName())
                 }
                 .addMessage(roomItem.lastMsg, roomItem.lastMsgTime!!.toDate().time, lastSenderPerson)
 

@@ -6,42 +6,55 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.ListenerRegistration
-import com.google.firebase.firestore.Query
+import io.reactivex.Observer
 import vng.zalo.tdtai.zalo.ZaloApplication
-import vng.zalo.tdtai.zalo.abstracts.MessageCreator
-import vng.zalo.tdtai.zalo.models.Room
-import vng.zalo.tdtai.zalo.models.RoomItem
+import vng.zalo.tdtai.zalo.abstracts.MessageManager
 import vng.zalo.tdtai.zalo.models.message.Message
+import vng.zalo.tdtai.zalo.models.message.ResourceMessage
 import vng.zalo.tdtai.zalo.models.message.TypingMessage
+import vng.zalo.tdtai.zalo.models.room.Room
+import vng.zalo.tdtai.zalo.models.room.RoomGroup
+import vng.zalo.tdtai.zalo.models.room.RoomItem
+import vng.zalo.tdtai.zalo.models.room.RoomPeer
 import vng.zalo.tdtai.zalo.networks.Database
 import vng.zalo.tdtai.zalo.utils.Constants
+import vng.zalo.tdtai.zalo.utils.Utils
 
 
 class RoomActivityViewModel(intent: Intent) : ViewModel() {
     private var listenerRegistrations = ArrayList<ListenerRegistration>()
-    private var lastMessages: List<Message> = ArrayList()
 
     val livePeerLastOnlineTime = MutableLiveData<Timestamp>(Constants.TIMESTAMP_EPOCH)
 
-    val room: Room = Room(
-            avatarUrl = intent.getStringExtra(Constants.ROOM_AVATAR),
-            id = intent.getStringExtra(Constants.ROOM_ID),
-            name = intent.getStringExtra(Constants.ROOM_NAME),
-            type = intent.getIntExtra(Constants.ROOM_TYPE, Room.TYPE_PEER)
-    )
+    val room: Room
 
-    val liveMessages: MutableLiveData<List<Message>> = MutableLiveData(ArrayList())
+    val liveMessageMap: MutableLiveData<HashMap<String, Message>> = MutableLiveData(HashMap())
     val liveTypingPhones: MutableLiveData<List<String>> = MutableLiveData(ArrayList())
 
     init {
+        val roomType = intent.getIntExtra(Constants.ROOM_TYPE, Room.TYPE_PEER)
+
+        room = if (roomType == Room.TYPE_PEER) {
+            RoomPeer(
+                    avatarUrl = intent.getStringExtra(Constants.ROOM_AVATAR),
+                    id = intent.getStringExtra(Constants.ROOM_ID),
+                    name = intent.getStringExtra(Constants.ROOM_NAME),
+                    phone = intent.getStringExtra(Constants.ROOM_PHONE)
+            )
+        } else {
+            RoomGroup(
+                    avatarUrl = intent.getStringExtra(Constants.ROOM_AVATAR),
+                    id = intent.getStringExtra(Constants.ROOM_ID),
+                    name = intent.getStringExtra(Constants.ROOM_NAME)
+            )
+        }
+
         //observe messages change
         listenerRegistrations.add(
                 Database.addRoomMessagesListener(
-                        roomId = room.id!!,
-                        fieldToOrder = Message.FIELD_CREATED_TIME,
-                        orderDirection = Query.Direction.DESCENDING
+                        roomId = room.id!!
                 ) {
-                    updateMessages(it)
+                    submitMessages(it)
                 }
         )
 
@@ -51,7 +64,7 @@ class RoomActivityViewModel(intent: Intent) : ViewModel() {
             room.memberMap = it.memberMap
 
             // update livedata so that messages' sender avatarUrl are displayed
-            updateMessages()
+            refreshMessages()
         }
 
         //observe to set unseenMsgNum = 0 when new message comes and user is in RoomActivity
@@ -89,18 +102,42 @@ class RoomActivityViewModel(intent: Intent) : ViewModel() {
         }
     }
 
-    private fun updateMessages(messages: List<Message> = lastMessages) {
-        if (messages.isNotEmpty() && room.memberMap != null) {
-            messages.forEach {
-                it.senderAvatarUrl = room.memberMap!![it.senderPhone]!!.avatarUrl
+    fun submitMessages(messages: List<Message>) {
+        val messageMap = HashMap<String, Message>()
+
+        messages.forEach {
+            val senderAvatarUrl = room.memberMap?.get(it.senderPhone)?.avatarUrl
+            val newMessage = if (it.senderAvatarUrl != senderAvatarUrl) {
+                it.clone().apply { this.senderAvatarUrl = senderAvatarUrl }
+            } else {
+                it
             }
-            liveMessages.value = messages
+
+            messageMap[it.id!!] = newMessage
         }
-        lastMessages = messages
+
+        liveMessageMap.value!!.values.filter {
+            it is ResourceMessage
+                    && !messageMap.containsKey(it.id!!)
+                    && !Utils.isNetworkUri(it.url)
+        }.forEach {
+            messageMap[it.id!!] = it
+        }
+
+        liveMessageMap.value = messageMap
     }
 
-    fun addNewMessagesToFirestore(context: Context, contents: List<String>, type: Int) {
-        MessageCreator.addNewMessagesToFirestore(context, room, contents, type)
+    fun addOrUpdateMessage(message: Message) {
+        liveMessageMap.value!![message.id!!] = message
+        refreshMessages()
+    }
+
+    fun refreshMessages() {
+        submitMessages(liveMessageMap.value!!.values.toList())
+    }
+
+    fun addNewMessagesToFirestore(context: Context, contents: List<String>, type: Int, observer: Observer<Message>) {
+        MessageManager.addNewMessagesToFirestore(context, room, contents, type, observer)
     }
 
     fun addCurUserToCurRoomTypingMembers() {
@@ -130,6 +167,14 @@ class RoomActivityViewModel(intent: Intent) : ViewModel() {
     }
 
     override fun onCleared() {
+        removeAllListeners()
+    }
+
+    fun removeAllListeners() {
         listenerRegistrations.forEach { it.remove() }
+    }
+
+    fun getNameFromPhone(phone:String):String{
+        return room.memberMap?.get(phone)?.name ?:phone
     }
 }

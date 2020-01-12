@@ -1,29 +1,26 @@
 package vng.zalo.tdtai.zalo.utils
 
-import android.annotation.SuppressLint
-import android.app.Activity
+import android.content.ContentResolver
+import android.content.ContentUris
 import android.content.Context
-import android.content.Intent
-import android.content.pm.PackageManager
-import android.graphics.BitmapFactory
-import android.graphics.Rect
 import android.icu.lang.UCharacter.GraphemeClusterBreak.T
 import android.net.Uri
+import android.os.Build
 import android.os.Environment
+import android.provider.DocumentsContract
 import android.provider.MediaStore
 import android.util.Log
-import android.util.TypedValue
 import android.view.View
+import android.view.Window
+import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import androidx.core.content.FileProvider
 import com.google.android.gms.tasks.Task
 import com.google.firebase.Timestamp
-import io.reactivex.Single
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
 import vng.zalo.tdtai.zalo.R
 import java.io.File
 import java.io.InputStream
+import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -37,7 +34,7 @@ object Utils {
             diffByMillisecond < Constants.ONE_HOUR_IN_MILLISECOND -> formatTime(diffByMillisecond / Constants.ONE_MIN_IN_MILLISECOND.toLong(), context.getString(R.string.label_minute))
             diffByMillisecond < Constants.ONE_DAY_IN_MILLISECOND -> formatTime(diffByMillisecond / Constants.ONE_HOUR_IN_MILLISECOND.toLong(), context.getString(R.string.label_hour))
             diffByMillisecond < Constants.SEVEN_DAYS_IN_MILLISECOND -> formatTime(diffByMillisecond / Constants.ONE_DAY_IN_MILLISECOND.toLong(), context.getString(R.string.label_day))
-            else -> SimpleDateFormat.getDateInstance().format(date)
+            else -> getDateFormat(date)
         }
     }
 
@@ -50,10 +47,15 @@ object Utils {
     }
 
     fun areInDifferentDay(date1: Date, date2: Date): Boolean {
-        val dateFormat = SimpleDateFormat.getDateInstance()
-        val formatDate1 = dateFormat.format(date1)
-        val formatDate2 = dateFormat.format(date2)
-        return formatDate1 != formatDate2
+        val format1 = getDateFormat(date1)
+        val format2 = getDateFormat(date2)
+        return format1 != format2
+    }
+
+    fun areInDifferentMin(date1: Date, date2: Date): Boolean {
+        val format1 = getTimeFormat(date1)
+        val format2 = getTimeFormat(date2)
+        return format1 != format2
     }
 
     fun <TResult> assertTaskSuccessAndResultNotNull(task: Task<TResult>, tag: String, logMsgPrefix: String, callback: (result: TResult) -> Unit) {
@@ -99,7 +101,7 @@ object Utils {
 //        return (valueInPx / context.resources.displayMetrics.density).toInt()
 //    }
 
-    private fun parseFileName(fileUri: String): String {
+    fun parseFileName(fileUri: String): String {
         return fileUri.substring(fileUri.lastIndexOf('/') + 1)
     }
 
@@ -118,106 +120,6 @@ object Utils {
         return "${context.applicationContext.packageName}.${Constants.PROVIDER_AUTHORITY}"
     }
 
-    fun dispatchChooserIntent(activity: Activity, requestCode: Int) {
-        val mimeType = when (requestCode) {
-            Constants.CHOOSE_IMAGES_REQUEST -> "image/*"
-            else -> "*/*"
-        }
-
-        val getIntent = Intent(Intent.ACTION_GET_CONTENT).apply {
-            type = mimeType
-            putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
-        }
-
-        val pickIntent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI).apply { type = mimeType }
-
-        val chooserIntent = Intent.createChooser(getIntent, activity.getString(R.string.label_choose_image_from)).apply {
-            putExtra(Intent.EXTRA_INITIAL_INTENTS, arrayOf(pickIntent))
-        }
-
-        activity.startActivityForResult(chooserIntent, requestCode)
-    }
-
-    //return picture uri
-    fun dispatchTakePictureIntent(activity: Activity, callback: ((localPath: String?) -> Unit)? = null) {
-        Intent(MediaStore.ACTION_IMAGE_CAPTURE).also { takePictureIntent ->
-            // Ensure that there's a camera activity to handle the intent
-            takePictureIntent.resolveActivity(activity.packageManager)?.let {
-                // Create the File where the photo should go
-                createImageFile(activity) { file ->
-                    if (assertNotNull(file, TAG, "createImageFile")) {
-                        val photoUri: Uri = FileProvider.getUriForFile(
-                                activity,
-                                getProviderAuthority(activity),
-                                file!!
-                        )
-                        takePictureIntent.apply {
-                            putExtra(MediaStore.EXTRA_OUTPUT, photoUri)
-                            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-                            addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
-                        }
-
-                        activity.packageManager.queryIntentActivities(takePictureIntent, PackageManager.MATCH_DEFAULT_ONLY).apply {
-                            forEach { resolveInfo ->
-                                val packageName = resolveInfo.activityInfo.packageName
-                                activity.grantUriPermission(packageName, photoUri, Intent.FLAG_GRANT_WRITE_URI_PERMISSION or Intent.FLAG_GRANT_READ_URI_PERMISSION)
-                            }
-                        }
-
-                        activity.startActivityForResult(takePictureIntent, Constants.TAKE_PICTURE_REQUEST)
-
-                        callback?.invoke(file.path)
-                    }
-                }
-            }
-        }
-    }
-
-    @SuppressLint("CheckResult")
-    private fun createImageFile(context: Context, callback: (file: File?) -> Unit) {
-        Single.fromCallable {
-            context.getExternalFilesDir(Environment.DIRECTORY_PICTURES)?.let {
-                File.createTempFile(
-                        "${Constants.FILE_PREFIX}${Date().time}", /* prefix */
-                        ".jpg", /* suffix */
-                        it /* directory */
-                )
-            }
-        }.subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                        { file -> callback(file) },
-                        { e ->
-                            Log.e(TAG, "onError: createImageFile")
-                            e.printStackTrace()
-                        }
-                )
-    }
-
-    fun deleteZaloFileAtUri(context: Context, uriString: String?): Boolean {
-        var res = true
-        uriString?.let {
-            if (parseFileName(uriString).startsWith(Constants.FILE_PREFIX)) {
-                val file = File(uriString)
-                res = file.delete() || file.canonicalFile.delete() || context.applicationContext.deleteFile(
-                        file.name
-                )
-            }
-        }
-        return res
-    }
-
-    fun getImageDimension(context: Context, localPath: String): String {
-        val inputStream = getInputStream(context, localPath)
-
-        val bitmapOptions = BitmapFactory.Options()
-        bitmapOptions.inJustDecodeBounds = true
-
-        BitmapFactory.decodeResourceStream(context.resources, TypedValue(), inputStream, Rect(), bitmapOptions)
-
-        return "${bitmapOptions.outWidth}:${bitmapOptions.outHeight}"
-    }
-
     fun getInputStream(context: Context, localPath: String): InputStream {
         return if (isContentUri(localPath)) {
             context.contentResolver.openInputStream(Uri.parse(localPath))!!
@@ -226,8 +128,9 @@ object Utils {
         }
     }
 
-    private fun isContentUri(localPath: String): Boolean {
-        return localPath.startsWith("content://")
+    fun isContentUri(localPath: String): Boolean {
+        return isContentUri(Uri.parse(localPath))
+//        return localPath.startsWith("content://")
     }
 
     fun getPhoneFromSipProfileName(sipProfileName: String): String {
@@ -250,9 +153,9 @@ object Utils {
                 .takeLastWhile { it != '/' }
     }
 
-    fun getFileExtensionFromFileName(fileName: String): String {
-        var extension = fileName.takeLastWhile { it != '.' }
-        if (extension.length == fileName.length)
+    fun getFileExtension(filePath: String): String {
+        var extension = filePath.takeLastWhile { it != '.' }
+        if (extension.length == filePath.length)
             extension = ""
         return extension
     }
@@ -318,7 +221,7 @@ object Utils {
             else -> {
                 "${context.getString(R.string.description_last_seen)}: ${
                 if (diffByMillisecond >= Constants.SEVEN_DAYS_IN_MILLISECOND) {
-                    SimpleDateFormat.getDateInstance().format(date)
+                    getDateFormat(date)
                 } else {
                     "${
                     when {
@@ -334,8 +237,227 @@ object Utils {
         }
     }
 
-    fun getNotificationIdFromRoomId(roomId: String): Int {
+    //callTime: seconds
+    fun getVideoDurationFormat(duration: Int): String {
+        var time = duration.toLong()
+        val res = StringBuilder()
+
+        if (time > 3600) {
+            val hours = time / 3600
+            res.append("${if (hours < 10) "0" else ""}$hours:")
+            time -= hours * 3600
+        }
+
+        val mins = time / 60
+        res.append("${if (mins < 10) "0" else ""}$mins:")
+        time -= mins * 60
+
+        val secs = time
+        res.append("${if (secs < 10) "0" else ""}$secs")
+        return res.toString()
+    }
+
+    fun getNotificationIdFromRoom(roomId: String): Int {
         return roomId.hashCode().shl(Constants.NOTIFICATION_PENDING_INTENT)
+    }
+
+    fun getContentUri(context: Context, realUriString: String): Uri {
+        return FileProvider.getUriForFile(
+                context,
+                getProviderAuthority(context),
+                File(realUriString)
+        )
+    }
+
+    fun getRealUriString(context: Context, contentUri: Uri): String? {
+        return if (isAboveKitKat()) { // Android OS above sdk version 19.
+            getUriRealPathAboveKitkat(context, contentUri)
+        } else { // Android OS below sdk version 19
+            getMediaRealPath(context.contentResolver, contentUri, null)
+        }
+    }
+
+    private fun getUriRealPathAboveKitkat(context: Context, uri: Uri): String? {
+        var res: String? = null
+        if (isFileUri(uri)) {
+            res = uri.path
+        } else if (isDocumentUri(context, uri)) { // Get uri related document id.
+            val documentId = DocumentsContract.getDocumentId(uri)
+            // Get uri authority.
+            val uriAuthority = uri.authority
+            if (isMediaDoc(uriAuthority)) {
+                val idArr = documentId.split(":").toTypedArray()
+                if (idArr.size == 2) { // First item is document type.
+                    val docType = idArr[0]
+                    // Second item is document real id.
+                    val realDocId = idArr[1]
+                    // Get content uri by document type.
+                    var mediaContentUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+                    when (docType) {
+                        "image" -> {
+                            mediaContentUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+                        }
+                        "video" -> {
+                            mediaContentUri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI
+                        }
+                        "audio" -> {
+                            mediaContentUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI
+                        }
+                        // Get where clause with real document id.
+                    }
+                    // Get where clause with real document id.
+                    val whereClause = MediaStore.Images.Media._ID + " = " + realDocId
+                    res = getMediaRealPath(context.contentResolver, mediaContentUri, whereClause)
+                }
+            } else if (isDownloadDoc(uriAuthority)) { // Build download uri.
+                val downloadUri = Uri.parse("content://downloads/public_downloads")
+                // Append download document id at uri end.
+                val downloadUriAppendId = ContentUris.withAppendedId(downloadUri, java.lang.Long.valueOf(documentId))
+                res = getMediaRealPath(context.contentResolver, downloadUriAppendId, null)
+            } else if (isExternalStoreDoc(uriAuthority)) {
+                val idArr = documentId.split(":").toTypedArray()
+                if (idArr.size == 2) {
+                    val type = idArr[0]
+                    val realDocId = idArr[1]
+                    if ("primary".equals(type, ignoreCase = true)) {
+                        res = Environment.getExternalStorageDirectory().toString() + "/" + realDocId
+                    }
+                }
+            }
+        } else if (isContentUri(uri)) {
+            res = if (isGooglePhotoDoc(uri.authority)) {
+                uri.lastPathSegment
+            } else {
+                getMediaRealPath(context.contentResolver, uri, null)
+            }
+        }
+        return res
+    }
+
+    /* Check whether current android os version is bigger than kitkat or not. */
+    private fun isAboveKitKat(): Boolean {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT
+    }
+
+    /* Check whether this uri represent a document or not. */
+    private fun isDocumentUri(ctx: Context?, uri: Uri?): Boolean {
+        var ret = false
+        if (ctx != null && uri != null) {
+            ret = DocumentsContract.isDocumentUri(ctx, uri)
+        }
+        return ret
+    }
+
+    /* Check whether this uri is a content uri or not.
+*  content uri like content://media/external/images/media/1302716
+*  */
+    private fun isContentUri(uri: Uri): Boolean {
+        var ret = false
+        val uriSchema = uri.scheme
+        if ("content".equals(uriSchema, ignoreCase = true)) {
+            ret = true
+        }
+        return ret
+    }
+
+    /* Check whether this uri is a file uri or not.
+*  file uri like file:///storage/41B7-12F1/DCIM/Camera/IMG_20180211_095139.jpg
+* */
+    private fun isFileUri(uri: Uri): Boolean {
+        var ret = false
+        val uriSchema = uri.scheme
+        if ("file".equals(uriSchema, ignoreCase = true)) {
+            ret = true
+        }
+        return ret
+    }
+
+
+    /* Check whether this document is provided by ExternalStorageProvider. */
+    private fun isExternalStoreDoc(uriAuthority: String?): Boolean {
+        var ret = false
+        if ("com.android.externalstorage.documents" == uriAuthority) {
+            ret = true
+        }
+        return ret
+    }
+
+    /* Check whether this document is provided by DownloadsProvider. */
+    private fun isDownloadDoc(uriAuthority: String?): Boolean {
+        var ret = false
+        if ("com.android.providers.downloads.documents" == uriAuthority) {
+            ret = true
+        }
+        return ret
+    }
+
+    /* Check whether this document is provided by MediaProvider. */
+    private fun isMediaDoc(uriAuthority: String?): Boolean {
+        var ret = false
+        if ("com.android.providers.media.documents" == uriAuthority) {
+            ret = true
+        }
+        return ret
+    }
+
+    /* Check whether this document is provided by google photos. */
+    private fun isGooglePhotoDoc(uriAuthority: String?): Boolean {
+        var ret = false
+        if ("com.google.android.apps.photos.content" == uriAuthority) {
+            ret = true
+        }
+        return ret
+    }
+
+    /* Return uri represented document file real local path.*/
+    private fun getMediaRealPath(contentResolver: ContentResolver, uri: Uri, whereClause: String?): String? {
+        var res: String? = null
+        // Query the uri with condition.
+        with(contentResolver.query(uri, null, whereClause, null, null)) {
+            if (this != null && moveToFirst()) { // Get columns name by uri type.
+                var columnName = MediaStore.Images.Media.DATA
+                when (uri) {
+                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI -> {
+                        columnName = MediaStore.Images.Media.DATA
+                    }
+                    MediaStore.Audio.Media.EXTERNAL_CONTENT_URI -> {
+                        columnName = MediaStore.Audio.Media.DATA
+                    }
+                    MediaStore.Video.Media.EXTERNAL_CONTENT_URI -> {
+                        columnName = MediaStore.Video.Media.DATA
+                    }
+                    // Get column index.
+                    // Get column value which is the uri related file local path.
+                }
+                // Get column index.
+                val imageColumnIndex: Int = getColumnIndex(columnName)
+                // Get column value which is the uri related file local path.
+                res = getString(imageColumnIndex)
+            }
+        }
+        return res
+    }
+
+    fun setFullscreen(window: Window, isFull:Boolean){
+        val attrs = window.attributes
+        attrs.flags = if(isFull){
+            attrs.flags or WindowManager.LayoutParams.FLAG_FULLSCREEN
+        }else{
+            attrs.flags and WindowManager.LayoutParams.FLAG_FULLSCREEN.inv()
+        }
+        window.attributes = attrs
+    }
+
+    fun getTimeFormat(date: Date):String{
+        return SimpleDateFormat.getTimeInstance(DateFormat.SHORT).format(date)
+    }
+
+    fun getDateFormat(date: Date):String{
+        return SimpleDateFormat.getDateInstance().format(date)
+    }
+
+    fun isNetworkUri(uri:String):Boolean{
+        return uri.startsWith("http")
     }
 }
 

@@ -50,7 +50,7 @@ class StickerSetFragment(private val bucketName: String) : Fragment(), View.OnCl
     override fun onClick(v: View) {
         when (v.id) {
             R.id.animView -> {
-                val position = recyclerView.getChildLayoutPosition(v)
+                val position = recyclerView.getChildAdapterPosition(v)
                 val sticker = adapter.stickers[position]
                 (activity as RoomActivity).sendMessages(ArrayList<String>().apply { add(sticker.url!!) }, Message.TYPE_STICKER)
             }

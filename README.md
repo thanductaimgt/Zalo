@@ -1,2 +1,2 @@
 # Zalo
-Practicing Android programming skills by cloning chatting app Zalo.
+Practice Android programming skills by cloning chatting app Zalo.

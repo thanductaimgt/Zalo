@@ -1,5 +1,5 @@
 <resources>
-    <dimen name="size_margin_recv_msg_item">56dp</dimen>
+    <dimen name="size_margin_recv_msg_item">48dp</dimen>
     <dimen name="size_margin_send_msg_item">8dp</dimen>
     <dimen name="size_icon_space_5dp">5dp</dimen>
     <dimen name="size_small_text_10sp">10sp</dimen>
@@ -18,4 +18,16 @@
     <dimen name="sizeLoadingChatImage">50dp</dimen>
     <dimen name="sizePaddingButtonCallActivity">16dp</dimen>
     <dimen name="sizePaddingButtonRoomActivity">10dp</dimen>
+    <dimen name="sizeChatPadding">16dp</dimen>
+    <dimen name="sizeChatDateMarginTop">8dp</dimen>
+    <dimen name="sizeChatDateMarginBottom">16dp</dimen>
+    <dimen name="sizeChatTimeMarginTop">4dp</dimen>
+    <dimen name="sizeChatTimeMarginBottom">16dp</dimen>
+    <dimen name="sizePaddingStartChatBg">10dp</dimen>
+    <dimen name="sizePaddingTopChatBg">4dp</dimen>
+    <dimen name="sizePaddingEndChatBg">10dp</dimen>
+    <dimen name="sizePaddingBottomChatBg">8dp</dimen>
+    <dimen name="sizeMessagesMinGap">3dp</dimen>
+    <dimen name="sizeSpecial1MessagesMinGap">8dp</dimen>
+    <dimen name="sizeSpecial2MessagesMinGap">2dp</dimen>
 </resources>

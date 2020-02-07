@@ -19,9 +19,9 @@ import vng.zalo.tdtai.zalo.R
 import vng.zalo.tdtai.zalo.ZaloApplication
 import vng.zalo.tdtai.zalo.factories.ViewModelFactory
 import vng.zalo.tdtai.zalo.models.message.CallMessage
-import vng.zalo.tdtai.zalo.models.message.Message
-import vng.zalo.tdtai.zalo.networks.Database
+import vng.zalo.tdtai.zalo.storage.FirebaseDatabase
 import vng.zalo.tdtai.zalo.utils.Constants
+import vng.zalo.tdtai.zalo.utils.loadCompat
 import vng.zalo.tdtai.zalo.viewmodels.CallActivityViewModel
 import kotlin.math.ceil
 import kotlin.math.max
@@ -31,7 +31,7 @@ import kotlin.math.min
 class CallActivity : AppCompatActivity(), View.OnClickListener {
     private lateinit var viewModel: CallActivityViewModel
     private lateinit var audioManager: AudioManager
-    private var keyguardManager: KeyguardManager?=null
+    private var keyguardManager: KeyguardManager? = null
 
     private var listener = SipAudioCallListener()
 
@@ -167,16 +167,17 @@ class CallActivity : AppCompatActivity(), View.OnClickListener {
         setContentView(R.layout.activity_call)
 
         if (viewModel.isCaller) {
-            nameTextView.text = viewModel.intent.getStringExtra(Constants.ROOM_NAME)
-            Picasso.get().load(viewModel.intent.getStringExtra(Constants.ROOM_AVATAR)).fit().centerInside().into(avatarImgView)
+            nameTextView.text = viewModel.intent.getStringExtra(Constants.ROOM_DISPLAY_NAME)
+            Picasso.get().loadCompat(viewModel.intent.getStringExtra(Constants.ROOM_AVATAR)).fit().centerCrop().into(avatarImgView)
         } else {
             answerImgView.visibility = View.VISIBLE
             statusTextView.text = getString(R.string.description_incoming_call)
 
             val peerPhone = viewModel.getPeerPhone()
-            nameTextView.text = peerPhone
-            Database.getUserRoomPeer(peerPhone) { roomItem ->
-                Picasso.get().load(roomItem.avatarUrl).fit().centerInside().into(avatarImgView)
+
+            FirebaseDatabase.getUserRoomPeer(peerPhone) { roomItem ->
+                nameTextView.text = roomItem.getDisplayName()
+                Picasso.get().loadCompat(roomItem.avatarUrl).fit().centerCrop().into(avatarImgView)
             }
 
             answerImgView.setOnClickListener(this)
@@ -269,10 +270,6 @@ class CallActivity : AppCompatActivity(), View.OnClickListener {
 
         //me/other cancel/finish call
         override fun onCallEnded(call: SipAudioCall) {
-            viewModel.liveCallState.postValue(STATE_ENDED)
-
-            val callTime = ((System.currentTimeMillis() - viewModel.startTime) / Constants.ONE_SECOND_IN_MILLISECOND).toInt()
-
             handler.removeCallbacks(timerRunnable)
 
             handler.apply {
@@ -282,14 +279,25 @@ class CallActivity : AppCompatActivity(), View.OnClickListener {
             }
 
             if (viewModel.isCaller) {
+                val isMissed: Boolean
+                val callTime: Int
+                if (viewModel.liveCallState.value != STATE_ESTABLISHED) {
+                    isMissed = true
+                    callTime = 0
+                } else {
+                    isMissed = false
+                    callTime = ((System.currentTimeMillis() - viewModel.startTime) / Constants.ONE_SECOND_IN_MILLISECOND).toInt()
+                }
+
                 viewModel.addNewCallMessage(
                         this@CallActivity,
-                        Message.TYPE_CALL,
                         CallMessage.CALL_TYPE_VOICE,
                         callTime,
-                        false
+                        isMissed
                 )
             }
+
+            viewModel.liveCallState.postValue(STATE_ENDED)
         }
 
 //        override fun onRinging(call: SipAudioCall, caller: SipProfile) {
@@ -303,7 +311,6 @@ class CallActivity : AppCompatActivity(), View.OnClickListener {
             if (viewModel.isCaller) {
                 viewModel.addNewCallMessage(
                         this@CallActivity,
-                        Message.TYPE_CALL,
                         CallMessage.CALL_TYPE_VOICE,
                         0,
                         true

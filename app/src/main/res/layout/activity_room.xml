@@ -16,10 +16,10 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
-            android:background="?attr/selectableItemBackground"
             android:id="@+id/backImgView"
             android:layout_width="0dp"
             android:layout_height="match_parent"
+            android:background="?attr/selectableItemBackground"
             android:contentDescription="@string/description_back"
             android:padding="16dp"
             android:src="@drawable/left_arrow_white"
@@ -27,8 +27,6 @@
             app:layout_constraintStart_toStartOf="parent" />
 
         <TextView
-            app:layout_constraintVertical_chainStyle="packed"
-            app:layout_constraintEnd_toStartOf="@id/voiceCallImgView"
             android:id="@+id/roomNameTextView"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -38,12 +36,13 @@
             android:textColor="@color/whiteText"
             android:textStyle="bold"
             app:layout_constraintBottom_toTopOf="@id/onlineStatusTextView"
+            app:layout_constraintEnd_toStartOf="@id/voiceCallImgView"
             app:layout_constraintStart_toEndOf="@id/backImgView"
             app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_chainStyle="packed"
             tools:text="Nguyen Thi Ngannnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn" />
 
         <TextView
-            app:layout_constraintEnd_toEndOf="@id/roomNameTextView"
             android:id="@+id/onlineStatusTextView"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -53,54 +52,59 @@
             android:textColor="@color/whiteText"
             android:textSize="@dimen/sizeTextSmall"
             app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@id/roomNameTextView"
             app:layout_constraintStart_toStartOf="@id/roomNameTextView"
             app:layout_constraintTop_toBottomOf="@id/roomNameTextView"
             tools:text="Truy cập 7 giờ trướcccccccccccccccccccccccccccccccc" />
+
         <ImageView
+            android:contentDescription="@string/description_voice_call"
+            android:id="@+id/voiceCallImgView"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
             android:background="?attr/selectableItemBackground"
             android:padding="@dimen/sizePaddingButtonRoomActivity"
             android:src="@drawable/call2"
-            app:layout_constraintEnd_toStartOf="@id/videoCallImgView"
             app:layout_constraintDimensionRatio="1:1"
-            android:id="@+id/voiceCallImgView"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"/>
+            app:layout_constraintEnd_toStartOf="@id/videoCallImgView" />
 
         <de.hdodenhof.circleimageview.CircleImageView
-            android:visibility="gone"
-            tools:visibility="visible"
-            android:layout_margin="12dp"
-            android:src="@color/online"
-            app:layout_constraintTop_toTopOf="@id/voiceCallImgView"
-            app:layout_constraintEnd_toEndOf="@id/voiceCallImgView"
-            app:layout_constraintDimensionRatio="1:1"
             android:id="@+id/onlineStatusImgView"
             android:layout_width="0dp"
-            android:layout_height="8dp"/>
+            android:layout_height="8dp"
+            android:layout_margin="12dp"
+            android:src="@color/online"
+            android:visibility="gone"
+            app:layout_constraintDimensionRatio="1:1"
+            app:layout_constraintEnd_toEndOf="@id/voiceCallImgView"
+            app:layout_constraintTop_toTopOf="@id/voiceCallImgView"
+            tools:visibility="visible" />
 
         <ImageView
+            android:contentDescription="@string/description_video_call"
+            android:id="@+id/videoCallImgView"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
             android:background="?attr/selectableItemBackground"
             android:padding="@dimen/sizePaddingButtonRoomActivity"
             android:src="@drawable/video2"
-            app:layout_constraintEnd_toStartOf="@id/moreImgView"
             app:layout_constraintDimensionRatio="1:1"
-            android:id="@+id/videoCallImgView"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"/>
+            app:layout_constraintEnd_toStartOf="@id/moreImgView" />
+
         <ImageView
+            android:contentDescription="@string/label_more_tab"
+            android:id="@+id/moreImgView"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
             android:background="?attr/selectableItemBackground"
             android:padding="@dimen/sizePaddingButtonRoomActivity"
             android:src="@drawable/more2"
-            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintDimensionRatio="1:1"
-            android:id="@+id/moreImgView"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"/>
+            app:layout_constraintEnd_toEndOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.recyclerview.widget.RecyclerView
-        tools:listitem="@layout/item_send_room_activity"
-        android:id="@+id/recyclerView"
+        android:id="@+id/chatRecyclerView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
@@ -109,21 +113,41 @@
         android:paddingTop="16dp"
         android:paddingBottom="16dp"
         app:layout_constraintBottom_toTopOf="@id/cardView"
-        app:layout_constraintTop_toBottomOf="@id/toolbar" />
+        app:layout_constraintTop_toBottomOf="@id/toolbar"
+        tools:listitem="@layout/item_send_room_activity" />
+
+    <com.airbnb.lottie.LottieAnimationView
+        android:visibility="gone"
+        tools:visibility="visible"
+        android:id="@+id/loadingAnimView"
+        android:layout_width="48dp"
+        android:layout_height="0dp"
+        app:layout_constraintDimensionRatio="1:1"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/toolbar"
+        app:lottie_enableMergePathsForKitKatAndAbove="true"
+        app:lottie_loop="true"
+        app:lottie_autoPlay="true"
+        app:lottie_rawRes="@raw/loading"
+        app:lottie_renderMode="software"
+        android:layout_marginBottom="8dp"/>
 
     <com.makeramen.roundedimageview.RoundedImageView
-        android:padding="4dp"
-        android:layout_margin="8dp"
-        app:riv_oval="true"
-        app:riv_mutate_background="true"
-        android:background="@color/blackText"
-        app:layout_constraintDimensionRatio="1:1"
-        android:src="@drawable/delete"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/cardView"
         android:id="@+id/deleteRoomButton"
         android:layout_width="40dp"
-        android:layout_height="0dp"/>
+        android:layout_height="0dp"
+        android:layout_margin="8dp"
+        android:background="@color/blackText"
+        android:padding="4dp"
+        android:src="@drawable/delete"
+        app:layout_constraintDimensionRatio="1:1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/toolbar"
+        app:riv_border_color="@android:color/white"
+        app:riv_border_width="1dp"
+        app:riv_mutate_background="true"
+        app:riv_oval="true" />
 
     <androidx.cardview.widget.CardView
         android:id="@+id/cardView"
@@ -197,7 +221,7 @@
                 android:layout_width="40dp"
                 android:layout_height="0dp"
                 android:background="?attr/selectableItemBackground"
-                android:contentDescription="@string/description_send_icon"
+                android:contentDescription="@string/description_send"
                 android:paddingLeft="6dp"
                 android:paddingTop="6dp"
                 android:paddingRight="6dp"
@@ -246,17 +270,18 @@
         android:layout_width="match_parent"
         android:layout_height="320dp"
         android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        tools:visibility="visible" />
 
     <androidx.cardview.widget.CardView
         android:id="@+id/viewImageLayout"
-        android:visibility="invisible"
-        tools:visibility="gone"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:visibility="invisible"
+        tools:visibility="gone">
+
         <include
-            app:layout_constraintBottom_toBottomOf="parent"
             layout="@layout/dialog_view_images"
-            />
+            app:layout_constraintBottom_toBottomOf="parent" />
     </androidx.cardview.widget.CardView>
 </androidx.constraintlayout.widget.ConstraintLayout>

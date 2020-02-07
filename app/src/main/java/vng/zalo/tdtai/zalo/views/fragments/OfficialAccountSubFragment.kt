@@ -1,6 +1,5 @@
 package vng.zalo.tdtai.zalo.views.fragments
 
-import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -14,11 +13,9 @@ import kotlinx.android.synthetic.main.sub_fragment_official_account.*
 import vng.zalo.tdtai.zalo.R
 import vng.zalo.tdtai.zalo.adapters.OfficialAccountSubFragmentAdapter
 import vng.zalo.tdtai.zalo.factories.ViewModelFactory
-import vng.zalo.tdtai.zalo.utils.Constants
 import vng.zalo.tdtai.zalo.utils.RoomItemDiffCallback
 import vng.zalo.tdtai.zalo.utils.TAG
 import vng.zalo.tdtai.zalo.viewmodels.OfficialAccountViewModel
-import vng.zalo.tdtai.zalo.views.activities.RoomActivity
 
 class OfficialAccountSubFragment : Fragment(), View.OnClickListener {
     private lateinit var viewModel: OfficialAccountViewModel
@@ -30,9 +27,10 @@ class OfficialAccountSubFragment : Fragment(), View.OnClickListener {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        viewModel = ViewModelProvider(this, ViewModelFactory.getInstance()).get(OfficialAccountViewModel::class.java)
+
         initView()
 
-        viewModel = ViewModelProvider(this, ViewModelFactory.getInstance()).get(OfficialAccountViewModel::class.java)
         viewModel.liveOfficialAccounts.observe(viewLifecycleOwner, Observer { rooms ->
             subFragmentAdapter.submitList(rooms)
             Log.d(TAG, "onViewCreated.$rooms")

@@ -10,9 +10,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import vng.zalo.tdtai.zalo.ZaloApplication
 import vng.zalo.tdtai.zalo.abstracts.MessageManager
-import vng.zalo.tdtai.zalo.models.room.Room
+import vng.zalo.tdtai.zalo.models.message.Message
 import vng.zalo.tdtai.zalo.models.room.RoomPeer
-import vng.zalo.tdtai.zalo.networks.Database
+import vng.zalo.tdtai.zalo.storage.FirebaseDatabase
 import vng.zalo.tdtai.zalo.utils.Constants
 import vng.zalo.tdtai.zalo.utils.TAG
 import vng.zalo.tdtai.zalo.utils.Utils
@@ -25,6 +25,10 @@ class CallActivityViewModel(val intent: Intent, listener:SipAudioCall.Listener) 
     var isRecorderEnabled = true
     var startTime: Long = 0
     var isCaller = false
+
+    var doNeedAddMessage = false
+    lateinit var contents:List<String>
+    lateinit var context: Context
 
     private val room: RoomPeer = RoomPeer(
             avatarUrl = intent.getStringExtra(Constants.ROOM_AVATAR),
@@ -42,9 +46,13 @@ class CallActivityViewModel(val intent: Intent, listener:SipAudioCall.Listener) 
 
         if(isCaller){
             //get current room info
-            Database.getRoomInfo(room.id!!) {
+            FirebaseDatabase.getRoomInfo(room.id!!) {
                 room.createdTime = it.createdTime
                 room.memberMap = it.memberMap
+
+                if(doNeedAddMessage){
+                    MessageManager.addNewMessagesToFirestore(context, room, contents, Message.TYPE_CALL)
+                }
             }
 
             makeAudioCall(listener)
@@ -78,10 +86,15 @@ class CallActivityViewModel(val intent: Intent, listener:SipAudioCall.Listener) 
         return Utils.getPhoneFromSipProfileName(sipAudioCall.peerProfile.userName)
     }
 
-    fun addNewCallMessage(context: Context, messageType:Int, callType:Int, callTime:Int, isMissed:Boolean, isCancel:Boolean=false) {
+    fun addNewCallMessage(context: Context, callType:Int, callTime:Int, isMissed:Boolean, isCancel:Boolean=false) {
         val contents = ArrayList<String>().apply {
             add("$callType.$callTime.$isMissed.$isCancel")
         }
-        MessageManager.addNewMessagesToFirestore(context, room, contents, messageType)
+        if(room.memberMap==null){
+            this.contents = contents
+            doNeedAddMessage = true
+        }else{
+            MessageManager.addNewMessagesToFirestore(context, room, contents, Message.TYPE_CALL)
+        }
     }
 }

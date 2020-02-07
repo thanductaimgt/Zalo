@@ -5,352 +5,176 @@
     android:id="@+id/rootItemView"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    tools:background="@color/colorChatBg"
-    android:paddingBottom="3dp">
+    android:clipToPadding="false"
+    android:paddingBottom="@dimen/sizeMessagesMinGap"
+    tools:background="@color/colorChatBg">
 
-    <View
-        android:id="@+id/paddingView"
+    <include
+        layout="@layout/part_chat_padding"
         android:layout_width="match_parent"
-        android:layout_height="16dp"
-        android:visibility="gone"
+        android:layout_height="@dimen/sizeChatPadding"
         app:layout_constraintBottom_toTopOf="@id/dateTextView"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:visibility="visible" />
+        app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/dateTextView"
+    <include
+        layout="@layout/part_chat_date"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="16dp"
-        android:background="@drawable/chat_date_bg"
-        android:textColor="@android:color/white"
-        android:visibility="gone"
-        app:layout_constraintBottom_toTopOf="@id/contentTextView"
+        android:layout_marginTop="@dimen/sizeChatDateMarginTop"
+        android:layout_marginBottom="@dimen/sizeChatDateMarginBottom"
+        app:layout_constraintBottom_toTopOf="@id/textMessageLayout"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/paddingView"
-        app:layout_goneMarginBottom="16dp"
-        tools:text="01/01/2019"
-        tools:visibility="visible" />
+        app:layout_goneMarginBottom="@dimen/sizeChatDateMarginBottom" />
 
-    <TextView
-        android:id="@+id/contentTextView"
+    <include
+        layout="@layout/part_text_message"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/size_margin_recv_msg_item"
-        android:background="@drawable/recv_message_bg"
-        android:visibility="gone"
         app:layout_constrainedWidth="true"
-        app:layout_constraintBottom_toTopOf="@id/callLayout"
+        app:layout_constraintBottom_toTopOf="@id/callMessageLayout"
         app:layout_constraintEnd_toStartOf="@id/guideline"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/dateTextView"
-        tools:text="This is a ver long messagesssssssssssssssssssssssssssssssssssss"
-        tools:visibility="visible" />
+        app:layout_constraintTop_toBottomOf="@id/dateTextView" />
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/callLayout"
+    <include
+        layout="@layout/part_call_message"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/size_margin_recv_msg_item"
-        android:background="@drawable/recv_message_bg"
-        android:padding="0dp"
-        android:visibility="gone"
         app:layout_constrainedWidth="true"
-        app:layout_constraintBottom_toTopOf="@id/fileViewLayout"
+        app:layout_constraintBottom_toTopOf="@id/fileMessageLayout"
         app:layout_constraintEnd_toStartOf="@id/guideline"
         app:layout_constraintHorizontal_bias="0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/contentTextView"
-        tools:visibility="visible">
+        app:layout_constraintTop_toBottomOf="@id/textMessageLayout"
+        app:layout_goneMarginTop="@dimen/sizeSpecial1MessagesMinGap"
+        tools:layout_marginTop="@dimen/sizeSpecial1MessagesMinGap"
+        tools:visibility="visible" />
 
-        <TextView
-            android:id="@+id/callTitleTV"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
-            android:layout_marginTop="4dp"
-            android:layout_marginEnd="10dp"
-            android:textStyle="bold"
-            app:layout_constrainedWidth="true"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:text="@string/description_incoming_voice_call" />
-
-        <ImageView
-            android:id="@+id/callIconImgView"
-            android:layout_width="15dp"
-            android:layout_height="0dp"
-            android:layout_marginTop="4dp"
-            app:layout_constraintDimensionRatio="1:1"
-            app:layout_constraintEnd_toStartOf="@id/callTimeTV"
-            app:layout_constraintHorizontal_bias="0"
-            app:layout_constraintHorizontal_chainStyle="packed"
-            app:layout_constraintStart_toStartOf="@id/callTitleTV"
-            app:layout_constraintTop_toBottomOf="@id/callTitleTV"
-            tools:src="@drawable/success_incoming_call" />
-
-        <TextView
-            android:id="@+id/callTimeTV"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginEnd="10dp"
-            android:textColor="@color/lightTextGray"
-            android:textSize="@dimen/sizeTextSmall"
-            app:layout_constrainedWidth="true"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/callIconImgView"
-            app:layout_constraintTop_toTopOf="@id/callIconImgView"
-            tools:text="1 phút 22 giây" />
-
-        <View
-            android:id="@+id/line"
-            android:layout_width="0dp"
-            android:layout_height="1dp"
-            android:layout_marginTop="6dp"
-            android:background="@color/lightWeakGray"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/callTimeTV" />
-
-        <TextView
-            android:id="@+id/callbackTV"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:padding="4dp"
-            android:text="@string/label_callback"
-            android:textAllCaps="true"
-            android:textColor="@color/lightPrimary"
-            android:textStyle="bold"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/line" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/fileViewLayout"
+    <include
+        layout="@layout/part_file_message"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/size_margin_recv_msg_item"
-        android:background="@drawable/recv_message_bg_stroke"
-        android:visibility="gone"
         app:layout_constrainedWidth="true"
-        app:layout_constraintBottom_toTopOf="@id/typingAnimView"
+        app:layout_constraintBottom_toTopOf="@id/typingMessageLayout"
         app:layout_constraintEnd_toStartOf="@id/guideline"
         app:layout_constraintHorizontal_bias="0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/callLayout"
-        tools:visibility="visible">
-
-        <ImageView
-            android:id="@+id/fileExtensionImgView"
-            android:layout_width="0dp"
-            android:layout_height="25dp"
-            android:layout_margin="4dp"
-            app:layout_constraintDimensionRatio="1:1"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:src="@drawable/zip" />
-
-        <TextView
-            android:id="@+id/fileNameTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginEnd="8dp"
-            android:ellipsize="end"
-            android:maxLines="2"
-            android:scrollHorizontally="true"
-            android:textColor="@color/blackText"
-            android:textSize="@dimen/sizeTextSmall"
-            android:textStyle="bold"
-            app:layout_constrainedWidth="true"
-            app:layout_constraintBottom_toBottomOf="@id/fileExtensionImgView"
-            app:layout_constraintEnd_toStartOf="@id/openFileTextView"
-            app:layout_constraintStart_toEndOf="@id/fileExtensionImgView"
-            app:layout_constraintTop_toTopOf="@id/fileExtensionImgView"
-            tools:text="app-debug.apkkkkkkkkkkkkkkkkkkkkkkkkk" />
-
-        <TextView
-            android:id="@+id/openFileTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/download_button_bg"
-            android:paddingStart="8dp"
-            android:paddingTop="4dp"
-            android:paddingEnd="8dp"
-            android:paddingBottom="4dp"
-            android:text="@string/label_open"
-            android:textColor="@android:color/white"
-            android:textStyle="bold"
-            android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="@id/fileNameTextView"
-            app:layout_constraintEnd_toStartOf="@id/downloadFileImgView"
-            app:layout_constraintTop_toTopOf="@id/fileNameTextView"
-            tools:visibility="visible" />
-
-        <com.makeramen.roundedimageview.RoundedImageView
-            android:id="@+id/downloadFileImgView"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:background="@color/lightAccent"
-            android:padding="4dp"
-            android:src="@drawable/download2"
-            app:layout_constraintBottom_toBottomOf="@id/fileExtensionImgView"
-            app:layout_constraintDimensionRatio="1:1"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@id/fileExtensionImgView"
-            app:riv_mutate_background="true"
-            app:riv_oval="true" />
-
-        <TextView
-            android:id="@+id/fileDescTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:textColor="@color/lightTextGray"
-            android:textSize="@dimen/sizeTextSmall"
-            app:layout_constraintStart_toStartOf="@id/fileExtensionImgView"
-            app:layout_constraintTop_toBottomOf="@id/fileNameTextView"
-            tools:text="APK - 10,25 MB" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <com.airbnb.lottie.LottieAnimationView
-        android:id="@+id/stickerAnimView"
-        android:layout_width="@dimen/size_sticker_chat"
-        android:layout_height="@dimen/size_sticker_chat"
-        android:layout_marginStart="@dimen/size_margin_recv_msg_item"
-        android:visibility="gone"
-        app:layout_constraintBottom_toTopOf="@id/cardView"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/typingAnimView"
-        app:lottie_autoPlay="false"
-        app:lottie_enableMergePathsForKitKatAndAbove="true"
-        app:lottie_loop="true"
-        app:lottie_renderMode="software"
-        tools:src="@color/strongGray"
-        tools:visibility="visible" />
+        app:layout_constraintTop_toBottomOf="@id/callMessageLayout"
+        app:layout_goneMarginTop="@dimen/sizeSpecial1MessagesMinGap"
+        tools:layout_marginTop="@dimen/sizeSpecial1MessagesMinGap" />
 
     <androidx.cardview.widget.CardView
-        android:id="@+id/cardView"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginStart="@dimen/size_margin_recv_msg_item"
-        android:visibility="gone"
-        app:layout_constrainedWidth="true"
-        app:layout_constraintBottom_toTopOf="@id/imageView"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintHorizontal_bias="0"
-        app:layout_constraintEnd_toStartOf="@id/guideline"
-        app:layout_constraintTop_toBottomOf="@id/stickerAnimView"
-        tools:layout_constraintDimensionRatio="1:2"
-        tools:visibility="visible"
-        app:cardCornerRadius="10dp"
-        app:cardElevation="0dp">
-        <com.google.android.exoplayer2.ui.PlayerView
-            app:surface_type="texture_view"
-            android:id="@+id/playerView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
-
-        <ImageView
-            android:id="@+id/videoThumbImgView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
-
-        <TextView
-            android:paddingStart="4dp"
-            android:paddingEnd="4dp"
-            android:background="@color/blackTransparent"
-            android:textColor="@android:color/white"
-            android:textSize="@dimen/sizeTextSmall"
-            tools:text="00:39"
-            android:id="@+id/videoDurationTV"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
-    </androidx.cardview.widget.CardView>
-
-    <com.makeramen.roundedimageview.RoundedImageView
-        android:id="@+id/imageView"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginStart="@dimen/size_margin_recv_msg_item"
-        android:background="@color/strongGray"
-        android:contentDescription="@string/description_image"
-        android:scaleType="fitXY"
-        android:visibility="gone"
-        app:layout_constrainedWidth="true"
-        app:layout_constraintBottom_toTopOf="@id/timeTextView"
-        app:layout_constraintEnd_toStartOf="@id/guideline"
-        app:layout_constraintHorizontal_bias="0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/cardView"
-        app:riv_corner_radius="@dimen/sizeRoundCornerMessageBg"
-        app:riv_mutate_background="true"
-        tools:layout_constraintDimensionRatio="1:1"
-        tools:visibility="visible" />
-
-    <com.airbnb.lottie.LottieAnimationView
-        android:id="@+id/typingAnimView"
+        android:id="@+id/typingMessageLayout"
         android:layout_width="wrap_content"
         android:layout_height="29dp"
         android:layout_marginStart="@dimen/size_margin_recv_msg_item"
-        android:background="@drawable/recv_message_bg"
         android:visibility="gone"
+        app:cardBackgroundColor="@color/recvMessageBackground"
+        app:cardCornerRadius="@dimen/sizeRoundCornerMessageBg"
         app:layout_constraintBottom_toTopOf="@id/stickerAnimView"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/fileViewLayout"
-        app:lottie_autoPlay="true"
-        app:lottie_enableMergePathsForKitKatAndAbove="true"
-        app:lottie_loop="true"
-        app:lottie_rawRes="@raw/typing"
-        app:lottie_renderMode="software"
-        tools:visibility="visible" />
+        app:layout_constraintTop_toBottomOf="@id/fileMessageLayout"
+        tools:visibility="visible">
 
-    <TextView
-        android:textColor="@color/lightTextGray"
-        android:id="@+id/timeTextView"
+        <com.airbnb.lottie.LottieAnimationView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginStart="@dimen/sizePaddingStartChatBg"
+            android:layout_marginTop="@dimen/sizePaddingTopChatBg"
+            android:layout_marginEnd="@dimen/sizePaddingEndChatBg"
+            android:layout_marginBottom="@dimen/sizePaddingBottomChatBg"
+            app:lottie_autoPlay="true"
+            app:lottie_enableMergePathsForKitKatAndAbove="true"
+            app:lottie_loop="true"
+            app:lottie_rawRes="@raw/typing"
+            app:lottie_renderMode="software" />
+    </androidx.cardview.widget.CardView>
+
+    <include
+        layout="@layout/part_sticker_message"
+        android:layout_width="@dimen/size_sticker_chat"
+        android:layout_height="@dimen/size_sticker_chat"
+        android:layout_marginStart="@dimen/size_margin_recv_msg_item"
+        app:layout_constraintBottom_toTopOf="@id/videoMessageLayout"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/typingMessageLayout" />
+
+    <include
+        layout="@layout/part_video_message"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="@dimen/size_margin_recv_msg_item"
+        app:layout_constrainedWidth="true"
+        app:layout_constraintBottom_toTopOf="@id/imageView"
+        app:layout_constraintEnd_toStartOf="@id/guideline"
+        app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/stickerAnimView"
+        app:layout_goneMarginTop="@dimen/sizeSpecial2MessagesMinGap"
+        tools:layout_constraintDimensionRatio="16:9"
+        tools:layout_marginTop="@dimen/sizeSpecial2MessagesMinGap"
+        tools:layout_width="200dp" />
+
+    <include
+        layout="@layout/part_image_message"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="@dimen/size_margin_recv_msg_item"
+        app:layout_constrainedWidth="true"
+        app:layout_constraintBottom_toTopOf="@id/timeLayout"
+        app:layout_constraintEnd_toStartOf="@id/guideline"
+        app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/videoMessageLayout"
+        app:layout_goneMarginTop="@dimen/sizeSpecial2MessagesMinGap"
+        tools:layout_constraintDimensionRatio="16:9"
+        tools:layout_marginTop="@dimen/sizeSpecial2MessagesMinGap"
+        tools:layout_width="200dp" />
+
+    <include
+        layout="@layout/part_chat_time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/size_margin_recv_msg_item"
-        android:layout_marginTop="4dp"
-        android:layout_marginBottom="16dp"
-        android:textSize="@dimen/size_small_text_10sp"
-        android:visibility="gone"
+        android:layout_marginTop="@dimen/sizeChatTimeMarginTop"
+        android:layout_marginBottom="@dimen/sizeChatTimeMarginBottom"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/imageView"
-        app:layout_goneMarginTop="4dp"
-        tools:text="09:00 AM"
-        tools:visibility="visible" />
+        app:layout_goneMarginTop="@dimen/sizeChatTimeMarginTop" />
 
-    <de.hdodenhof.circleimageview.CircleImageView
-        android:id="@+id/avatarImgView"
-        android:layout_width="@dimen/size_chat_avatar"
-        android:layout_height="0dp"
+    <androidx.cardview.widget.CardView
+        android:id="@+id/avatarLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="2dp"
-        android:contentDescription="@string/description_avatar"
         android:visibility="gone"
-        app:civ_circle_background_color="@android:color/white"
+        app:cardCornerRadius="15dp"
         app:layout_constraintBottom_toBottomOf="@id/imageView"
-        app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="1"
-        tools:src="@drawable/default_peer_avatar"
-        tools:visibility="visible" />
+        tools:visibility="visible">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/avatarImgView"
+            android:layout_width="@dimen/size_chat_avatar"
+            android:layout_height="@dimen/size_chat_avatar"
+            android:contentDescription="@string/description_avatar"
+            tools:src="@drawable/default_peer_avatar" />
+    </androidx.cardview.widget.CardView>
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.85" />
+        app:layout_constraintGuide_percent="0.75" />
 </androidx.constraintlayout.widget.ConstraintLayout>

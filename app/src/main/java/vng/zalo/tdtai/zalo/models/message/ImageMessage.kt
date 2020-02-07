@@ -11,12 +11,12 @@ data class ImageMessage(
         override var createdTime: Timestamp? = null,
         override var senderPhone: String? = null,
         override var senderAvatarUrl: String? = null,
-        override var type: Int? = null,
+        override var isSent: Boolean=false,
         override var url: String = "unknown",
         override var uploadProgress:Int?=null,
         override var size:Long=-1,
         var ratio: String? = null
-) : ResourceMessage(id, createdTime, senderPhone, senderAvatarUrl, type, url, uploadProgress, size) {
+) : ResourceMessage(id, createdTime, senderPhone, senderAvatarUrl, TYPE_IMAGE, isSent, url, uploadProgress, size) {
     override fun toMap(): HashMap<String, Any> {
         return super.toMap().apply {
             ratio?.let { put(FIELD_RATIO, it)}

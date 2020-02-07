@@ -10,12 +10,14 @@ import vng.zalo.tdtai.zalo.R
 import vng.zalo.tdtai.zalo.models.room.RoomItem
 import vng.zalo.tdtai.zalo.abstracts.BindableViewHolder
 import vng.zalo.tdtai.zalo.abstracts.ZaloListAdapter
+import vng.zalo.tdtai.zalo.utils.loadCompat
 import vng.zalo.tdtai.zalo.views.fragments.ContactSubFragment
 
 class ContactSubFragmentAdapter(private val contactSubFragment: ContactSubFragment, diffCallback: DiffUtil.ItemCallback<RoomItem>) : ZaloListAdapter<RoomItem, ContactSubFragmentAdapter.ContactViewHolder>(diffCallback) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ContactViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_contact_sub_fragment, parent, false)
+        view.setOnClickListener(contactSubFragment)
         return ContactViewHolder(view)
     }
 
@@ -31,13 +33,12 @@ class ContactSubFragmentAdapter(private val contactSubFragment: ContactSubFragme
                 nameTextView.text = roomItem.getDisplayName()
 
                 Picasso.get()
-                        .load(roomItem.avatarUrl)
+                        .loadCompat(roomItem.avatarUrl)
                         .fit()
-                        .centerInside()
+                        .centerCrop()
                         .into(avatarImgView)
 
                 voiceCallImgView.setOnClickListener(contactSubFragment)
-                setOnClickListener(contactSubFragment)
             }
         }
     }

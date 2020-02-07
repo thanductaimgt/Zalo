@@ -3,9 +3,7 @@ package vng.zalo.tdtai.zalo.abstracts
 import android.content.Context
 import android.media.MediaMetadataRetriever
 import android.net.Uri
-import android.os.Handler
-import android.os.Looper
-import android.provider.DocumentsContract
+import android.provider.MediaStore
 import android.provider.OpenableColumns
 import android.util.Log
 import com.google.firebase.Timestamp
@@ -14,13 +12,14 @@ import io.reactivex.Observable
 import io.reactivex.Observer
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
+import vng.zalo.tdtai.zalo.SharedPrefsManager
 import vng.zalo.tdtai.zalo.ZaloApplication
 import vng.zalo.tdtai.zalo.models.message.*
 import vng.zalo.tdtai.zalo.models.room.Room
-import vng.zalo.tdtai.zalo.networks.Database
-import vng.zalo.tdtai.zalo.networks.Storage
+import vng.zalo.tdtai.zalo.storage.FirebaseDatabase
+import vng.zalo.tdtai.zalo.storage.FirebaseStorage
 import vng.zalo.tdtai.zalo.utils.TAG
-import vng.zalo.tdtai.zalo.utils.Utils
+import wseemann.media.FFmpegMediaMetadataRetriever
 import java.io.File
 import java.util.*
 
@@ -61,16 +60,17 @@ object MessageManager {
 
             emitter.onNext(message)
 
-            if (messageType != Message.TYPE_IMAGE &&
-                    messageType != Message.TYPE_VIDEO &&
-                    messageType != Message.TYPE_FILE) {
-                Database.addNewMessageAndUpdateUsersRoom(
+            if (message is ResourceMessage) {
+                uploadResourceAndAddMessage(context, room, message, emitter)
+            } else {
+                FirebaseDatabase.addNewMessageAndUpdateUsersRoom(
                         context,
                         curRoom = room,
                         newMessage = message
-                )
-            } else {
-                uploadResourceAndAddMessage(context, room, message as ResourceMessage, emitter)
+                ){
+                    emitter.onNext(message.clone().apply { isSent = true })
+                    emitter.onComplete()
+                }
             }
 
             curTimeStamp++
@@ -79,11 +79,10 @@ object MessageManager {
 
     private fun createTextMessage(room: Room, content: String, createdTime: Long): TextMessage {
         return TextMessage(
-                id = Database.getNewMessageId(room.id!!),
+                id = FirebaseDatabase.getNewMessageId(room.id!!),
                 createdTime = Timestamp(Date(createdTime)),
                 senderPhone = ZaloApplication.curUser!!.phone,
                 senderAvatarUrl = ZaloApplication.curUser!!.avatarUrl,
-                type = Message.TYPE_TEXT,
                 content = content
         )
     }
@@ -102,7 +101,8 @@ object MessageManager {
         }
 
         val uri = Uri.parse(content)
-        if (DocumentsContract.isDocumentUri(context, uri)) {
+        if (ResourceManager.isContentUri(content)) {
+//            if (DocumentsContract.isDocumentUri(context, uri)) {
             with(context.contentResolver.query(uri, arrayOf(OpenableColumns.SIZE), null, null, null)) {
                 this?.let { cursor ->
                     if (cursor.moveToNext()) {
@@ -117,14 +117,13 @@ object MessageManager {
     }
 
     private fun createImageMessage(context: Context, room: Room, content: String, createdTime: Long): ImageMessage {
-        val ratio = ExternalSourceManager.getImageDimension(context, content)
+        val ratio = ResourceManager.getImageDimension(context, content)
 
         return ImageMessage(
-                id = Database.getNewMessageId(room.id!!),
+                id = FirebaseDatabase.getNewMessageId(room.id!!),
                 createdTime = Timestamp(Date(createdTime)),
                 senderPhone = ZaloApplication.curUser!!.phone,
                 senderAvatarUrl = ZaloApplication.curUser!!.avatarUrl,
-                type = Message.TYPE_IMAGE,
                 //todo(remove comment)
                 url = content,
 //                    url = "https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/nature-quotes-1557340276.jpg?crop=0.666xw:1.00xh;0.168xw,0&resize=640:*",
@@ -134,30 +133,32 @@ object MessageManager {
 
     private fun createFileMessage(context: Context, room: Room, content: String, createdTime: Long): FileMessage {
         // resolve file info
-        var fileName = "unknown"
+        var fileName:String? = null
 
-        if (Utils.isContentUri(content)) {
-            val localUri = Uri.parse(content)
+        when {
+            ResourceManager.isContentUri(content) -> {
+                val localUri = Uri.parse(content)
 
-            with(context.contentResolver.query(localUri, arrayOf(OpenableColumns.DISPLAY_NAME), null, null, null)) {
-                if (this != null && moveToFirst()) {
-                    fileName = getString(0)
-                } else {
-                    Log.e(TAG, "Fail to resolve info: $content")
+                with(context.contentResolver.query(localUri, arrayOf(OpenableColumns.DISPLAY_NAME), null, null, null)) {
+                    if (this != null && moveToFirst()) {
+                        fileName = getString(0)
+                    } else {
+                        Log.e(TAG, "Fail to resolve info: $content")
+                    }
                 }
             }
-        } else {
-            val file = File(content)
+            else -> {
+                val file = File(content)
 
-            fileName = file.name
+                fileName = file.name
+            }
         }
 
         return FileMessage(
-                id = Database.getNewMessageId(room.id!!),
+                id = FirebaseDatabase.getNewMessageId(room.id!!),
                 createdTime = Timestamp(Date(createdTime)),
                 senderPhone = ZaloApplication.curUser!!.phone,
                 senderAvatarUrl = ZaloApplication.curUser!!.avatarUrl,
-                type = Message.TYPE_FILE,
                 //todo(remove comment)
                 url = content,
 //                    url = "https://drive.google.com/uc?export=download&id=1FFPymC0CYG0TRhh8x19gjC-SztXsRY0v",
@@ -167,11 +168,12 @@ object MessageManager {
 
     private fun createVideoMessage(context: Context, room: Room, content: String, createdTime: Long): VideoMessage {
         val retriever = MediaMetadataRetriever()
-        if (Utils.isContentUri(content)) {
+        if (ResourceManager.isContentUri(content)) {
             retriever.setDataSource(context, Uri.parse(content))
         } else {
             retriever.setDataSource(content)
         }
+//        retriever.setDataSource(content)
 
         var width = Integer.valueOf(retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_WIDTH))
         var height = Integer.valueOf(retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_HEIGHT))
@@ -188,11 +190,10 @@ object MessageManager {
         val ratio = "$width:$height"
 
         return VideoMessage(
-                id = Database.getNewMessageId(room.id!!),
+                id = FirebaseDatabase.getNewMessageId(room.id!!),
                 createdTime = Timestamp(Date(createdTime)),
                 senderPhone = ZaloApplication.curUser!!.phone,
                 senderAvatarUrl = ZaloApplication.curUser!!.avatarUrl,
-                type = Message.TYPE_VIDEO,
                 duration = duration,
                 url = content,
                 ratio = ratio
@@ -207,59 +208,70 @@ object MessageManager {
             message: ResourceMessage,
             emitter: Emitter<Message>) {
 
-        val fileStoragePath = Storage.getMessageDataStoragePath(room.id!!, message)
+        val fileStoragePath = FirebaseStorage.getMessageDataStoragePath(room.id!!, message)
 
-        //todo
-        incProg(message, emitter)
+//        //todo
+//        incProg(message, emitter)
         //
-//        var newMessage = message
-//        Storage.addResourceAndGetDownloadUrl(context, message.url, fileStoragePath, message.type!!,
-//                fileSize = message.size,
-//                onProgressChange = {
-//                    newMessage = (newMessage.clone() as ResourceMessage).apply { uploadProgress = it }
-//                    emitter.onNext(newMessage)
-//                },
-//                onComplete = { downloadUrl ->
-//                    newMessage = (newMessage.clone() as ResourceMessage).apply {
-//                        uploadProgress = null
-////                        url = downloadUrl
-//                    }
-//                    emitter.onNext(newMessage)
+        var newMessage = message
+        FirebaseStorage.addResourceAndGetDownloadUrl(context, message.url, fileStoragePath, message.type!!,
+                fileSize = message.size,
+                onProgressChange = {
+                    newMessage = (newMessage.clone() as ResourceMessage).apply { uploadProgress = it }
+                    emitter.onNext(newMessage)
+                },
+                onComplete = { downloadUrl ->
+                    newMessage = (newMessage.clone() as ResourceMessage).apply {
+                        uploadProgress = null
+//                        url = downloadUrl
+                    }
+                    emitter.onNext(newMessage)
+
+                    val localResourceUri = newMessage.url
+
+                    newMessage = (newMessage.clone() as ResourceMessage).apply { url = downloadUrl }
+                    FirebaseDatabase.addNewMessageAndUpdateUsersRoom(
+                            context,
+                            curRoom = room,
+                            newMessage = newMessage
+                    ){
+                        emitter.onNext(newMessage.clone().apply { isSent = true })
+                        emitter.onComplete()
+                    }
+
+                    if (newMessage is VideoMessage) {
+                        val thumbUriString = SharedPrefsManager.getVideoThumbCacheUri(context, localResourceUri)
+                        thumbUriString?.let { SharedPrefsManager.setVideoThumbCacheUri(context, downloadUrl, it) }
+                    }
+                })
+    }
+
+//    private fun incProg(message: ResourceMessage, emitter: Emitter<Message>) {
+//        //todo
+//        val messageCopy = message.clone() as ResourceMessage
 //
-//                    Database.addNewMessageAndUpdateUsersRoom(
-//                            context,
-//                            curRoom = room,
-//                            newMessage = (newMessage.clone() as ResourceMessage).apply { url = downloadUrl }
-//                    )
-//                })
-    }
-
-    private fun incProg(message: ResourceMessage, emitter: Emitter<Message>) {
-        //todo
-        val messageCopy = message.clone() as ResourceMessage
-
-        when(messageCopy.uploadProgress) {
-            null -> {
-                messageCopy.uploadProgress = 1
-            }
-            100 -> {
-                messageCopy.uploadProgress = null
-            }
-            else -> {
-                messageCopy.uploadProgress = messageCopy.uploadProgress!! + 1
-            }
-        }
-        emitter.onNext(messageCopy)
-
-        if (messageCopy.uploadProgress != null && messageCopy.uploadProgress!! <= 100) {
-            Handler(Looper.getMainLooper()).postDelayed(
-                    {
-                        incProg(messageCopy, emitter)
-                    },
-                    100
-            )
-        }
-    }
+//        when(messageCopy.uploadProgress) {
+//            null -> {
+//                messageCopy.uploadProgress = 1
+//            }
+//            100 -> {
+//                messageCopy.uploadProgress = null
+//            }
+//            else -> {
+//                messageCopy.uploadProgress = messageCopy.uploadProgress!! + 1
+//            }
+//        }
+//        emitter.onNext(messageCopy)
+//
+//        if (messageCopy.uploadProgress != null && messageCopy.uploadProgress!! <= 100) {
+//            Handler(Looper.getMainLooper()).postDelayed(
+//                    {
+//                        incProg(messageCopy, emitter)
+//                    },
+//                    100
+//            )
+//        }
+//    }
 
     private fun createCallMessage(room: Room, content: String, createdTime: Long): CallMessage {
         val data = content.split('.')
@@ -270,11 +282,10 @@ object MessageManager {
         val isCanceled = data[3].toBoolean()
 
         return CallMessage(
-                id = Database.getNewMessageId(room.id!!),
+                id = FirebaseDatabase.getNewMessageId(room.id!!),
                 createdTime = Timestamp(Date(createdTime)),
                 senderPhone = ZaloApplication.curUser!!.phone,
                 senderAvatarUrl = ZaloApplication.curUser!!.avatarUrl,
-                type = Message.TYPE_CALL,
                 callType = callType,
                 callTime = callTime,
                 isMissed = isMissed,
@@ -284,25 +295,24 @@ object MessageManager {
 
     private fun createStickerMessage(room: Room, content: String, createdTime: Long): StickerMessage {
         return StickerMessage(
-                id = Database.getNewMessageId(room.id!!),
+                id = FirebaseDatabase.getNewMessageId(room.id!!),
                 createdTime = Timestamp(Date(createdTime)),
                 senderPhone = ZaloApplication.curUser!!.phone,
                 senderAvatarUrl = ZaloApplication.curUser!!.avatarUrl,
-                type = Message.TYPE_STICKER,
                 url = content
         )
     }
 
     fun deleteMessageAndAttachedData(roomId: String, message: Message, onSuccess: (() -> Unit)? = null) {
         var isPrevTaskSuccess = false
-        Database.deleteMessageFromFirestore(roomId, message.id!!) {
+        FirebaseDatabase.deleteMessageFromFirestore(roomId, message.id!!) {
             if (isPrevTaskSuccess) {
                 onSuccess?.invoke()
             } else {
                 isPrevTaskSuccess = true
             }
         }
-        Storage.deleteAttachedDataFromStorage(roomId) {
+        FirebaseStorage.deleteAttachedDataFromStorage(roomId) {
             if (isPrevTaskSuccess) {
                 onSuccess?.invoke()
             } else {

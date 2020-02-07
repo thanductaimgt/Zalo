@@ -40,7 +40,8 @@ class PermissionManager {
                 Manifest.permission.ACCESS_WIFI_STATE,
                 Manifest.permission.RECORD_AUDIO,
                 Manifest.permission.WAKE_LOCK,
-                Manifest.permission.MODIFY_AUDIO_SETTINGS
+                Manifest.permission.MODIFY_AUDIO_SETTINGS,
+                Manifest.permission.RECEIVE_BOOT_COMPLETED
         )
     }
 }

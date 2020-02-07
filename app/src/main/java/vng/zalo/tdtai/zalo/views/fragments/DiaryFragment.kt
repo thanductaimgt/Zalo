@@ -13,8 +13,8 @@ import kotlinx.android.synthetic.main.fragment_diary.*
 import vng.zalo.tdtai.zalo.R
 import vng.zalo.tdtai.zalo.SharedPrefsManager
 import vng.zalo.tdtai.zalo.ZaloApplication
-import vng.zalo.tdtai.zalo.networks.Database
-import vng.zalo.tdtai.zalo.networks.Storage
+import vng.zalo.tdtai.zalo.storage.FirebaseDatabase
+import vng.zalo.tdtai.zalo.storage.FirebaseStorage
 import vng.zalo.tdtai.zalo.views.activities.LoginActivity
 
 class DiaryFragment : Fragment(), View.OnClickListener {
@@ -28,6 +28,8 @@ class DiaryFragment : Fragment(), View.OnClickListener {
         logoutButton.setOnClickListener(this)
         addStickerSet.setOnClickListener(this)
         addFriendButton.setOnClickListener(this)
+        startNotiServiceButton.setOnClickListener(this)
+        stopNotiServiceButton.setOnClickListener(this)
     }
 
     override fun onClick(v: View) {
@@ -44,9 +46,9 @@ class DiaryFragment : Fragment(), View.OnClickListener {
             R.id.addStickerSet -> {
                 val name = stickerSetNameEditText.text.toString()
                 if (name != "") {
-                    Storage.addStickerSet(name = name, localPaths = ArrayList()) { bucketName ->
-                        Storage.getStickerSetUrls(bucketName = bucketName) { stickerUrls ->
-                            Database.addStickerSet(name = name, bucketName = bucketName, stickerUrls = stickerUrls) {
+                    FirebaseStorage.addStickerSet(name = name, localPaths = ArrayList()) { bucketName ->
+                        FirebaseStorage.getStickerSetUrls(bucketName = bucketName) { stickerUrls ->
+                            FirebaseDatabase.addStickerSet(name = name, bucketName = bucketName, stickerUrls = stickerUrls) {
                                 Toast.makeText(context, "sticker set added", Toast.LENGTH_SHORT).show()
                             }
                         }
@@ -65,7 +67,7 @@ class DiaryFragment : Fragment(), View.OnClickListener {
                         Toast.makeText(context, "cannot add yourself", Toast.LENGTH_SHORT).show()
                     }
                     else -> {
-                        Database.addFriend(phone) { isSuccess ->
+                        FirebaseDatabase.addFriend(phone) { isSuccess ->
                             if (isSuccess) {
                                 Toast.makeText(context, "add friend success", Toast.LENGTH_SHORT).show()
                             } else {
@@ -75,6 +77,8 @@ class DiaryFragment : Fragment(), View.OnClickListener {
                     }
                 }
             }
+            R.id.startNotiServiceButton->ZaloApplication.notificationDispatcher?.onLogin()
+            R.id.stopNotiServiceButton->ZaloApplication.notificationDispatcher?.onLogout()
         }
     }
 

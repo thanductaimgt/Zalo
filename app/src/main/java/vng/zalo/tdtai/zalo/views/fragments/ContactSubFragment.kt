@@ -20,12 +20,12 @@ import vng.zalo.tdtai.zalo.models.room.Room
 import vng.zalo.tdtai.zalo.models.room.RoomItemPeer
 import vng.zalo.tdtai.zalo.utils.Constants
 import vng.zalo.tdtai.zalo.utils.RoomItemDiffCallback
-import vng.zalo.tdtai.zalo.viewmodels.UserRoomItemsViewModel
+import vng.zalo.tdtai.zalo.viewmodels.RoomItemsViewModel
 import vng.zalo.tdtai.zalo.views.activities.RoomActivity
 
 
 class ContactSubFragment : Fragment(), View.OnClickListener {
-    private lateinit var viewModel: UserRoomItemsViewModel
+    private lateinit var viewModel: RoomItemsViewModel
     private lateinit var adapter: ContactSubFragmentAdapter
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -33,22 +33,22 @@ class ContactSubFragment : Fragment(), View.OnClickListener {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        viewModel = ViewModelProvider(activity!!, ViewModelFactory.getInstance()).get(RoomItemsViewModel::class.java)
+
         initView()
 
-        viewModel = ViewModelProvider(activity!!, ViewModelFactory.getInstance()).get(UserRoomItemsViewModel::class.java)
-        viewModel.liveRoomIdRoomItemMap.observe(viewLifecycleOwner, Observer { roomItems ->
-            adapter.submitList(roomItems.values.filter { it.roomType == Room.TYPE_PEER }.sortedBy { it.name })
+        viewModel.liveRoomItemMap.observe(viewLifecycleOwner, Observer { roomItemMap ->
+            adapter.submitList(roomItemMap.values.filter { it.roomType == Room.TYPE_PEER }.sortedBy { it.getDisplayName() })
         })
     }
 
     private fun initView() {
         adapter = ContactSubFragmentAdapter(this, RoomItemDiffCallback())
-        with(allContactRecyclerView) {
+        allContactRecyclerView.apply {
             layoutManager = LinearLayoutManager(activity)
             adapter = this@ContactSubFragment.adapter
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP){
-                isNestedScrollingEnabled = false
-            }
+            isNestedScrollingEnabled = false
+            setItemViewCacheSize(50)
         }
     }
 
@@ -61,9 +61,9 @@ class ContactSubFragment : Fragment(), View.OnClickListener {
                 startActivity(
                         Intent(activity, RoomActivity::class.java).apply {
                             putExtra(Constants.ROOM_ID, roomItem.roomId)
-                            putExtra(Constants.ROOM_NAME, roomItem.phone)
+                            putExtra(Constants.ROOM_NAME, roomItem.name)
                             putExtra(Constants.ROOM_AVATAR, roomItem.avatarUrl)
-                            putExtra(Constants.ROOM_TYPE, roomItem.roomType)
+                            putExtra(Constants.ROOM_PHONE, roomItem.phone)
                         }
                 )
             }
@@ -72,7 +72,7 @@ class ContactSubFragment : Fragment(), View.OnClickListener {
                     val position = allContactRecyclerView.getChildAdapterPosition(v.parent as View)
                     val roomItem = adapter.currentList[position] as RoomItemPeer
 
-                    CallStarter.startAudioCall(context!!, roomItem.roomId!!, roomItem.phone!!, roomItem.avatarUrl!!)
+                    CallStarter.startAudioCall(context!!, roomItem.roomId!!, roomItem.name!!, roomItem.phone!!, roomItem.avatarUrl!!)
                 }else{
                     Toast.makeText(context, "Only available for real device", Toast.LENGTH_LONG).show()
                 }

@@ -38,7 +38,7 @@ class RoomItemDiffCallback : DiffUtil.ItemCallback<RoomItem>() {
                 res.add(RoomItem.PAYLOAD_ONLINE_STATUS)
             }
         }
-        if (oldItem.lastTypingPhone != newItem.lastTypingPhone) {
+        if (oldItem.lastTypingMember != newItem.lastTypingMember) {
             res.add(RoomItem.PAYLOAD_TYPING)
         }
         return res

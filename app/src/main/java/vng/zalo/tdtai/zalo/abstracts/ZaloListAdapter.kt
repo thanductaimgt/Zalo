@@ -10,11 +10,6 @@ abstract class ZaloListAdapter<T, VH : RecyclerView.ViewHolder?>(diffCallback: D
     }
 
     override fun submitList(list: List<T>?, commitCallback: Runnable?) {
-        super.submitList(
-                if (list === currentList)
-                    list.toMutableList()
-                else
-                    list
-                , commitCallback)
+        super.submitList(list?.toMutableList(), commitCallback)
     }
 }

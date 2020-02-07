@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.recyclerview.widget.RecyclerView app:reverseLayout="true"
+    tools:itemCount="5"
+    android:paddingBottom="8dp"
+    android:paddingEnd="@dimen/size_margin_send_msg_item"
+    android:paddingStart="@dimen/size_margin_send_msg_item"
+    android:orientation="horizontal"
+    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+    app:layout_constraintEnd_toEndOf="parent"
+    android:id="@+id/seenRecyclerView"
+    android:layout_width="match_parent"
+    android:layout_height="26dp"
+    app:layout_constraintBottom_toTopOf="@id/cardView"
+    tools:listitem="@layout/item_small_user_icon"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" />

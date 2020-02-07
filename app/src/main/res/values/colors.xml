@@ -14,12 +14,14 @@
     <color name="weakWhiteText">#abe9ff</color>
     <color name="strongGray">#c4c4c4</color>
     <color name="blackTransparent">#30000000</color>
+    <color name="blackTransparentStrong">#70000000</color>
     <color name="whiteTransparent">#99ffffff</color>
-    <color name="sendMessageBackground">#aeddeb</color> <!--b9e1ed-->
+    <color name="sendMessageBackground">#badde8</color> <!--aeddeb-->
     <color name="recvMessageBackground">#ffffff</color>
     <color name="colorChatBg">#ebf1f2</color>
     <color name="colorMessageStroke">#cfcfcf</color>
     <color name="colorButtonStroke">#949494</color>
     <color name="lightWeakGray">#f2f2f2</color>
     <color name="missedCall">#e72c2c</color>
+    <color name="lightTextStrongGray">#666a70</color>
 </resources>

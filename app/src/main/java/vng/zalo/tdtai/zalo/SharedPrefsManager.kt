@@ -4,14 +4,16 @@ import android.content.Context
 import android.content.SharedPreferences
 import com.google.firebase.Timestamp
 import vng.zalo.tdtai.zalo.models.User
+import vng.zalo.tdtai.zalo.utils.Constants
+import vng.zalo.tdtai.zalo.utils.Utils
 
 object SharedPrefsManager{
-    private fun getSharedPrefs(context: Context):SharedPreferences{
-        return context.getSharedPreferences(SHARE_PREFERENCES_NAME, Context.MODE_PRIVATE)
+    private fun getSharedPrefs(context: Context, sharePrefsName:String = APP_SHARE_PREFERENCES_NAME):SharedPreferences{
+        return context.getSharedPreferences(sharePrefsName, Context.MODE_PRIVATE)
     }
 
-    private fun getSharedPrefsEditor(context: Context):SharedPreferences.Editor{
-        return getSharedPrefs(context).edit()
+    private fun getSharedPrefsEditor(context: Context, sharePrefsName:String = APP_SHARE_PREFERENCES_NAME):SharedPreferences.Editor{
+        return getSharedPrefs(context, sharePrefsName).edit()
     }
 
     fun isLogin(context: Context):Boolean{
@@ -69,8 +71,32 @@ object SharedPrefsManager{
         }
     }
 
-    private const val SHARE_PREFERENCES_NAME = "ZaloSharePreferences"
+    fun getVideoThumbCacheUri(context: Context, videoUri:String):String?{
+        val prefs = getSharedPrefs(context, VIDEO_THUMB_SHARE_PREFERENCES_NAME)
+        return prefs.getString(videoUri, null)
+    }
+
+    fun setVideoThumbCacheUri(context: Context, videoUri:String, thumbUri:String){
+        val editor = getSharedPrefsEditor(context, VIDEO_THUMB_SHARE_PREFERENCES_NAME)
+        editor.putString(videoUri, thumbUri)
+        editor.apply()
+    }
+
+    fun getKeyboardSize(context: Context):Int{
+        val prefs = getSharedPrefs(context)
+        return prefs.getInt(FIELD_KEYBOARD_SIZE, Utils.dpToPx(context, Constants.DEFAULT_KEYBOARD_SIZE_DP).toInt())
+    }
+
+    fun setKeyboardSize(context: Context, sizeInPx:Int){
+        val editor = getSharedPrefsEditor(context)
+        editor.putInt(FIELD_KEYBOARD_SIZE, sizeInPx)
+        editor.apply()
+    }
+
+    private const val APP_SHARE_PREFERENCES_NAME = "AppSharePreferences"
+    private const val VIDEO_THUMB_SHARE_PREFERENCES_NAME = "VideoThumbSharePreferences"
 
     private const val FIELD_IS_LOGIN = "isLogin"
     private const val FIELD_GROUP_SORT_TYPE = "groupSortType"
+    private const val FIELD_KEYBOARD_SIZE = "keyboardSize"
 }

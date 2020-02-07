@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.airbnb.lottie.LottieAnimationView android:id="@+id/stickerAnimView"
+    android:layout_width="@dimen/size_sticker_chat"
+    android:layout_height="@dimen/size_sticker_chat"
+    android:visibility="gone"
+    app:lottie_autoPlay="false"
+    app:lottie_enableMergePathsForKitKatAndAbove="true"
+    app:lottie_loop="true"
+    app:lottie_renderMode="software"
+    tools:src="@color/strongGray"
+    tools:visibility="visible"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools" />

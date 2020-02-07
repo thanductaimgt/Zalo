@@ -91,8 +91,17 @@ dependencies {
     //play video
     implementation 'com.google.android.exoplayer:exoplayer:2.11.1'
 
-    //copy fields
-    implementation 'commons-beanutils:commons-beanutils:1.9.4'
+//    //copy fields
+//    implementation 'commons-beanutils:commons-beanutils:1.9.4'
+
+    //room db
+    def room_version = "2.2.3"
+
+    implementation "androidx.room:room-runtime:$room_version"
+    kapt "androidx.room:room-compiler:$room_version"
+
+    //FFmpegMediaMetadataRetriever
+    implementation 'com.github.wseemann:FFmpegMediaMetadataRetriever:1.0.14'
 }
 repositories {
     mavenCentral()

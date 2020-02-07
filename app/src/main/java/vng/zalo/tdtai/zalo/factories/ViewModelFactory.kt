@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import vng.zalo.tdtai.zalo.viewmodels.CallActivityViewModel
 import vng.zalo.tdtai.zalo.viewmodels.RoomActivityViewModel
+import vng.zalo.tdtai.zalo.viewmodels.ShareActivityViewModel
 import vng.zalo.tdtai.zalo.viewmodels.StickerSetViewModel
 
 class ViewModelFactory private constructor() : ViewModelProvider.Factory {
@@ -17,6 +18,7 @@ class ViewModelFactory private constructor() : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         return when (modelClass) {
             RoomActivityViewModel::class.java -> RoomActivityViewModel(intent) as T
+            ShareActivityViewModel::class.java -> ShareActivityViewModel(intent) as T
             CallActivityViewModel::class.java -> CallActivityViewModel(intent, sipAudioCallListener) as T
             StickerSetViewModel::class.java -> StickerSetViewModel(bucketName) as T
             else -> modelClass.newInstance()

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView android:id="@+id/textMessageLayout"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    app:cardCornerRadius="@dimen/sizeRoundCornerMessageBg"
+    tools:cardBackgroundColor="@color/recvMessageBackground"
+    android:visibility="gone"
+    tools:visibility="visible"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <TextView
+        android:paddingStart="@dimen/sizePaddingStartChatBg"
+        android:paddingTop="@dimen/sizePaddingTopChatBg"
+        android:paddingEnd="@dimen/sizePaddingEndChatBg"
+        android:paddingBottom="@dimen/sizePaddingBottomChatBg"
+        android:id="@+id/textMessageTV"
+        android:autoLink="web"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="This is a ver long messagesssssssssssssssssssssssssssssssssssssssssssssssssssssss" />
+</androidx.cardview.widget.CardView>

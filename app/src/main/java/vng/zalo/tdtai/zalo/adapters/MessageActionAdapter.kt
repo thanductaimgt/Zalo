@@ -12,7 +12,9 @@ class MessageActionAdapter :RecyclerView.Adapter<MessageActionAdapter.MessageAct
     var actions = ArrayList<Pair<Int, Int>>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MessageActionViewHolder {
-        return MessageActionViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_message_action, parent, false))
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_message_action, parent, false)
+        view.setOnClickListener(parent.context as View.OnClickListener)
+        return MessageActionViewHolder(view)
     }
 
     override fun getItemCount(): Int {
@@ -32,8 +34,6 @@ class MessageActionAdapter :RecyclerView.Adapter<MessageActionAdapter.MessageAct
             itemView.apply {
                 Picasso.get().load(actionIconResId).into(iconImgView)
                 labelTextView.text = context.getString(actionTextResId)
-
-                setOnClickListener(context as View.OnClickListener)
             }
         }
     }

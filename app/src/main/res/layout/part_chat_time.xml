@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    android:id="@+id/timeLayout"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:visibility="gone"
+    tools:visibility="visible"
+    android:layout_height="wrap_content">
+
+    <TextView
+        android:id="@+id/timeTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/lightTextGray"
+        android:textSize="@dimen/size_small_text_10sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="09:00 AM" />
+
+    <ImageView
+        tools:visibility="visible"
+        android:visibility="gone"
+        android:id="@+id/sentImgView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="2dp"
+        android:contentDescription="@string/description_sent"
+        android:src="@drawable/sent"
+        app:layout_constraintBottom_toBottomOf="@id/timeTextView"
+        app:layout_constraintDimensionRatio="1:1"
+        app:layout_constraintStart_toEndOf="@id/timeTextView"
+        app:layout_constraintTop_toTopOf="@id/timeTextView" />
+</androidx.constraintlayout.widget.ConstraintLayout>

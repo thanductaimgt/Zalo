@@ -10,10 +10,12 @@ import vng.zalo.tdtai.zalo.abstracts.BindableViewHolder
 import vng.zalo.tdtai.zalo.abstracts.ZaloListAdapter
 import vng.zalo.tdtai.zalo.models.room.RoomItem
 import vng.zalo.tdtai.zalo.utils.RoomItemDiffCallback
+import vng.zalo.tdtai.zalo.utils.loadCompat
 
-class CreateGroupActivityRecyclerViewAdapter(diffCallback: RoomItemDiffCallback) : ZaloListAdapter<RoomItem, CreateGroupActivityRecyclerViewAdapter.UserIconViewHolder>(diffCallback) {
+class ChoosenListRecyclerViewAdapter(diffCallback: RoomItemDiffCallback) : ZaloListAdapter<RoomItem, ChoosenListRecyclerViewAdapter.UserIconViewHolder>(diffCallback) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): UserIconViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_user_icon, parent, false)
+        view.setOnClickListener(parent.context as View.OnClickListener)
         return UserIconViewHolder(view)
     }
 
@@ -25,12 +27,10 @@ class CreateGroupActivityRecyclerViewAdapter(diffCallback: RoomItemDiffCallback)
         override fun bind(position: Int) {
             itemView.apply {
                 Picasso.get()
-                        .load(currentList[position].avatarUrl)
+                        .loadCompat(currentList[position].avatarUrl)
                         .fit()
-                        .centerInside()
+                        .centerCrop()
                         .into(avatarImgView)
-
-                setOnClickListener(context as View.OnClickListener)
             }
         }
     }

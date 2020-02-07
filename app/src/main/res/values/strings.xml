@@ -65,6 +65,9 @@
     <string name="label_error">Lỗi</string>
     <string name="label_end_call">Kết thúc cuộc gọi</string>
     <string name="label_callback">Gọi lại</string>
+    <string name="label_no_name">Không tên</string>
+    <string name="label_more">Xem thêm</string>
+    <string name="label_friends">Bạn bè</string>
 
     <string-array name="sort_group_options">
         <item>Hoạt động cuối</item>
@@ -86,7 +89,7 @@
     <string name="description_attach_file_icon">Chèn tệp</string>
     <string name="description_attach_voice_icon">Chèn âm thanh</string>
     <string name="description_attach_picture_icon">Chèn ảnh</string>
-    <string name="description_send_icon">Gửi</string>
+    <string name="description_send">Gửi</string>
     <string name="description_view_your_profile">Xem trang cá nhân của bạn</string>
     <string name="description_post_status_image">Đăng tin</string>
     <string name="description_shop">Diện chất mùa hạ</string>
@@ -120,11 +123,12 @@
     <string name="description_less_than_one_min">ít hơn 1 phút</string>
     <string name="description_typing">đang soạn tin</string>
     <string name="description_processing">Đang xử lý</string>
+    <string name="description_sent">Đã gửi</string>
 
     <string name="hint_phone_number">Số điện thoại</string>
     <string name="hint_password">Mật khẩu</string>
     <string name="hint_message">Tin nhắn</string>
-    <string name="hint_search_members">Tìm thành viên</string>
+    <string name="hint_search">Tìm kiếm</string>
     <string name="hint_full_name">Tên đầy đủ</string>
     <string name="hint_search_friends_messages">Tìm bạn bè, tin nhắn &#8230;</string>
 </resources>

@@ -11,6 +11,7 @@ import kotlinx.android.synthetic.main.fragment_more.*
 
 import vng.zalo.tdtai.zalo.R
 import vng.zalo.tdtai.zalo.ZaloApplication
+import vng.zalo.tdtai.zalo.utils.loadCompat
 
 class MoreFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -21,9 +22,9 @@ class MoreFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         Picasso.get()
-                .load(ZaloApplication.curUser!!.avatarUrl)
+                .loadCompat(ZaloApplication.curUser!!.avatarUrl)
                 .fit()
-                .centerInside()
+                .centerCrop()
                 .into(avatarImgView)
 
         nameTextView.text = ZaloApplication.curUser!!.name

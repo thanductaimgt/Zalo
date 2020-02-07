@@ -1,4 +1,4 @@
-package vng.zalo.tdtai.zalo.networks
+package vng.zalo.tdtai.zalo.storage
 
 import android.content.Context
 import android.graphics.Bitmap
@@ -9,9 +9,10 @@ import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
-import vng.zalo.tdtai.zalo.abstracts.ExternalSourceManager
+import vng.zalo.tdtai.zalo.abstracts.ResourceManager
 import vng.zalo.tdtai.zalo.models.message.Message
 import vng.zalo.tdtai.zalo.models.room.Room
+import vng.zalo.tdtai.zalo.utils.Constants
 import vng.zalo.tdtai.zalo.utils.TAG
 import vng.zalo.tdtai.zalo.utils.Utils
 import java.io.ByteArrayInputStream
@@ -20,7 +21,7 @@ import kotlin.math.max
 import kotlin.math.min
 
 
-object Storage {
+object FirebaseStorage {
     private val firebaseStorage: FirebaseStorage
         get() = FirebaseStorage.getInstance()
 
@@ -34,17 +35,17 @@ object Storage {
         val inputStream = when (fileType) {
             Message.TYPE_IMAGE -> {
                 var bitmap = getScaledDownBitmap(
-                        ExternalSourceManager.getImageBitmap(context, localPath)
+                        ResourceManager.getImageBitmap(context, localPath)
                 )
 
-                val rotationDegree = ExternalSourceManager.getImageRotation(context, localPath)
+                val rotationDegree = ResourceManager.getImageRotation(context, localPath)
                 if (rotationDegree != 0) {
                     bitmap = rotateImage(bitmap, rotationDegree)
                 }
 
                 //transfer to input stream
                 val bos = ByteArrayOutputStream()
-                bitmap.compress(Bitmap.CompressFormat.JPEG, 75 /*ignored for PNG*/, bos)
+                bitmap.compress(Constants.IMAGE_COMPRESS_FORMAT, Constants.IMAGE_COMPRESS_QUALITY, bos)
                 val bitmapData: ByteArray = bos.toByteArray()
 
                 resourceSize = bitmapData.size.toLong()
@@ -58,7 +59,9 @@ object Storage {
 
         fileStorageRef.putStream(inputStream)
                 .addOnProgressListener {
-                    onProgressChange?.invoke((it.bytesTransferred * 100 / resourceSize).toInt())
+                    if (resourceSize != 0L) {
+                        onProgressChange?.invoke((it.bytesTransferred * 100 / resourceSize).toInt())
+                    }
                 }.continueWithTask {
                     var isSuccess = false
                     Utils.assertTaskSuccess(it, TAG, "addFileAndGetDownloadUrl") {

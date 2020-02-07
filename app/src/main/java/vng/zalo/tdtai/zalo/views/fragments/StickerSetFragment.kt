@@ -27,9 +27,10 @@ class StickerSetFragment(private val bucketName: String) : Fragment(), View.OnCl
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        viewModel = ViewModelProvider(this, ViewModelFactory.getInstance(bucketName = bucketName)).get(StickerSetViewModel::class.java)
+
         initView()
 
-        viewModel = ViewModelProvider(this, ViewModelFactory.getInstance(bucketName = bucketName)).get(StickerSetViewModel::class.java)
         viewModel.liveStickerSet.observe(viewLifecycleOwner, Observer {
             adapter.stickers = it.stickers!!
             adapter.notifyDataSetChanged()

@@ -11,13 +11,13 @@ data class VideoMessage(
         override var createdTime: Timestamp? = null,
         override var senderPhone: String? = null,
         override var senderAvatarUrl: String? = null,
-        override var type: Int? = null,
+        override var isSent: Boolean=false,
         override var url: String = "unknown",
         override var uploadProgress: Int? = null,
         override var size:Long=-1,
         var ratio: String? = null,
         var duration: Int = 0//secs
-) : ResourceMessage(id, createdTime, senderPhone, senderAvatarUrl, type, url, uploadProgress, size) {
+) : ResourceMessage(id, createdTime, senderPhone, senderAvatarUrl, TYPE_VIDEO, isSent, url, uploadProgress, size) {
     override fun toMap(): HashMap<String, Any> {
         return super.toMap().apply {
             ratio?.let { put(FIELD_RATIO, it) }

@@ -11,12 +11,12 @@ data class CallMessage(
         override var createdTime: Timestamp? = null,
         override var senderPhone: String? = null,
         override var senderAvatarUrl: String? = null,
-        override var type: Int? = null,
+        override var isSent: Boolean=false,
         var callTime: Int = 0,//call time in second
         var callType: Int = CALL_TYPE_VOICE,
         var isMissed: Boolean = false,
         var isCanceled: Boolean = false
-) : Message(id, createdTime, senderPhone, senderAvatarUrl, type) {
+) : Message(id, createdTime, senderPhone, senderAvatarUrl, TYPE_CALL, isSent) {
     override fun toMap(): HashMap<String, Any> {
         return super.toMap().apply {
             put(FIELD_CALL_TIME, callTime)

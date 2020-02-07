@@ -21,38 +21,41 @@ import kotlinx.android.synthetic.main.bottom_sheet_upload.view.*
 import vng.zalo.tdtai.zalo.R
 import vng.zalo.tdtai.zalo.ZaloApplication
 import vng.zalo.tdtai.zalo.abstracts.ExternalIntentDispatcher
-import vng.zalo.tdtai.zalo.adapters.CreateGroupActivityRecyclerViewAdapter
+import vng.zalo.tdtai.zalo.adapters.ChoosenListRecyclerViewAdapter
 import vng.zalo.tdtai.zalo.adapters.CreateGroupActivityViewPagerAdapter
 import vng.zalo.tdtai.zalo.factories.ViewModelFactory
 import vng.zalo.tdtai.zalo.models.RoomMember
 import vng.zalo.tdtai.zalo.models.room.RoomGroup
 import vng.zalo.tdtai.zalo.models.room.RoomItem
 import vng.zalo.tdtai.zalo.models.room.RoomItemPeer
-import vng.zalo.tdtai.zalo.utils.Constants
-import vng.zalo.tdtai.zalo.utils.RoomItemDiffCallback
-import vng.zalo.tdtai.zalo.utils.TAG
-import vng.zalo.tdtai.zalo.utils.Utils
+import vng.zalo.tdtai.zalo.utils.*
 import vng.zalo.tdtai.zalo.viewmodels.CreateGroupActivityViewModel
 import java.util.*
 
 class CreateGroupActivity : AppCompatActivity(), View.OnClickListener {
     private lateinit var viewPagerAdapter: CreateGroupActivityViewPagerAdapter
-    private lateinit var recyclerViewAdapter: CreateGroupActivityRecyclerViewAdapter
+    private lateinit var selectedRecyclerViewAdapter: ChoosenListRecyclerViewAdapter
     private lateinit var bottomSheetDialog: BottomSheetDialog
-    private var avatarContentUri: String? = null
     lateinit var viewModel: CreateGroupActivityViewModel
     private var isAvatarSet = false
+
+    private var takenImageUrl:String?=null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_create_group)
 
+        viewModel = ViewModelProvider(this, ViewModelFactory.getInstance()).get(CreateGroupActivityViewModel::class.java)
+
         initView()
 
-        viewModel = ViewModelProvider(this, ViewModelFactory.getInstance()).get(CreateGroupActivityViewModel::class.java)
-        recyclerViewAdapter.submitList(viewModel.liveSelectedRoomItems.value)
         viewModel.liveSelectedRoomItems.observe(this, Observer {
-            recyclerViewAdapter.notifyDataSetChanged()
+            val oldSize = selectedRecyclerViewAdapter.currentList.size
+            selectedRecyclerViewAdapter.submitList(it) {
+                if (it.size > oldSize) {
+                    selectedRecyclerView.scrollToPosition(selectedRecyclerViewAdapter.itemCount - 1)
+                }
+            }
 
             countTextView.text = String.format(getString(R.string.description_selected_count), it.size)
             if (it.isEmpty()) {
@@ -60,6 +63,10 @@ class CreateGroupActivity : AppCompatActivity(), View.OnClickListener {
             } else {
                 selectedListLayout.visibility = View.VISIBLE
             }
+        })
+
+        viewModel.liveAvatarLocalUri.observe(this, Observer {
+            updateRoomAvatar(it)
         })
     }
 
@@ -71,8 +78,8 @@ class CreateGroupActivity : AppCompatActivity(), View.OnClickListener {
 
         tabLayout.setupWithViewPager(viewPager)
 
-        recyclerViewAdapter = CreateGroupActivityRecyclerViewAdapter(RoomItemDiffCallback())
-        recyclerView.adapter = recyclerViewAdapter
+        selectedRecyclerViewAdapter = ChoosenListRecyclerViewAdapter(RoomItemDiffCallback())
+        selectedRecyclerView.adapter = selectedRecyclerViewAdapter
 
         nameTextView.setOnEditorActionListener { _, actionId, _ ->
             when (actionId) {
@@ -125,8 +132,8 @@ class CreateGroupActivity : AppCompatActivity(), View.OnClickListener {
                 searchView.isIconified = false
             }
             R.id.itemUserIconRootLayout -> {
-                val itemPosition = recyclerView.getChildAdapterPosition(view)
-                val item = recyclerViewAdapter.currentList[itemPosition]
+                val itemPosition = selectedRecyclerView.getChildAdapterPosition(view)
+                val item = selectedRecyclerViewAdapter.currentList[itemPosition]
                 processNewClickOnItem(item)
             }
             R.id.uploadAvatarImgView -> bottomSheetDialog.show()
@@ -135,7 +142,7 @@ class CreateGroupActivity : AppCompatActivity(), View.OnClickListener {
             }
             R.id.captureTV -> {
                 ExternalIntentDispatcher.dispatchCaptureIntent(this, Constants.CAPTURE_IMAGE_REQUEST, ExternalIntentDispatcher.CAPTURE_TYPE_IMAGE) {
-                    avatarContentUri = it
+                    takenImageUrl = it
                 }
             }
             R.id.createGroupImgView -> {
@@ -154,11 +161,10 @@ class CreateGroupActivity : AppCompatActivity(), View.OnClickListener {
 
             startActivity(
                     Intent(this, RoomActivity::class.java).apply {
-                        putExtra(Constants.ROOM_NAME, curRoomItem.getDisplayName())
+                        putExtra(Constants.ROOM_NAME, curRoomItem.name)
                         putExtra(Constants.ROOM_PHONE, curRoomItem.phone)
                         putExtra(Constants.ROOM_AVATAR, curRoomItem.avatarUrl)
                         putExtra(Constants.ROOM_ID, curRoomItem.roomId)
-                        putExtra(Constants.ROOM_TYPE, curRoomItem.roomType)
                     }
             )
         } else {
@@ -174,7 +180,7 @@ class CreateGroupActivity : AppCompatActivity(), View.OnClickListener {
 
             val newRoom = RoomGroup(
                     name = groupName,
-                    avatarUrl = avatarContentUri.toString(),
+                    avatarUrl = viewModel.liveAvatarLocalUri.value,
                     createdTime = curTimestamp,
                     memberMap = HashMap<String, RoomMember>().apply {
                         viewModel.liveSelectedRoomItems.value!!.forEach {
@@ -200,9 +206,8 @@ class CreateGroupActivity : AppCompatActivity(), View.OnClickListener {
 
                 startActivity(Intent(this, RoomActivity::class.java).apply {
                     putExtra(Constants.ROOM_ID, it.roomId)
-                    putExtra(Constants.ROOM_NAME, it.getDisplayName())
+                    putExtra(Constants.ROOM_NAME, it.name)
                     putExtra(Constants.ROOM_AVATAR, it.avatarUrl)
-                    putExtra(Constants.ROOM_TYPE, it.roomType)
                 })
                 finish()
             }
@@ -215,12 +220,11 @@ class CreateGroupActivity : AppCompatActivity(), View.OnClickListener {
             when (requestCode) {
                 Constants.CHOOSE_IMAGE_REQUEST -> {
                     Utils.assertNotNull(intent, TAG, "CHOOSE_IMAGES_REQUEST.intent") { intentNotNull ->
-                        avatarContentUri = intentNotNull.data!!.toString()
-                        updateRoomAvatar(avatarContentUri)
+                        viewModel.liveAvatarLocalUri.value = intentNotNull.data!!.toString()
                     }
                 }
                 Constants.CAPTURE_IMAGE_REQUEST -> {
-                    updateRoomAvatar("file://$avatarContentUri")
+                    viewModel.liveAvatarLocalUri.value = takenImageUrl
                 }
             }
             bottomSheetDialog.dismiss()
@@ -230,7 +234,7 @@ class CreateGroupActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun updateRoomAvatar(localUri: String?) {
-        Picasso.get().load(localUri).fit()
+        Picasso.get().loadCompat(localUri).fit()
                 .centerCrop().into(uploadAvatarImgView)
 
         if (!isAvatarSet) {

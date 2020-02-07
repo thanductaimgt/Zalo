@@ -1,6 +1,7 @@
 package vng.zalo.tdtai.zalo.models
 
 import com.google.firebase.Timestamp
+import com.google.firebase.firestore.DocumentSnapshot
 
 data class User(
         var phone: String? = null,// also id
@@ -22,6 +23,15 @@ data class User(
         }
     }
 
+    private fun applyDoc(doc: DocumentSnapshot) {
+        phone = doc.id
+        doc.getString(FIELD_NAME)?.let { name = it }
+        doc.getString(FIELD_AVATAR_URL)?.let { avatarUrl = it }
+        doc.getTimestamp(FIELD_BIRTH_DATE)?.let { birthDate = it }
+        doc.getBoolean(FIELD_IS_MALE)?.let { isMale = it }
+        doc.getTimestamp(FIELD_JOIN_DATE)?.let { joinDate = it }
+    }
+
     companion object {
         const val FIELD_PHONE = "phone"
         const val FIELD_NAME = "name"
@@ -35,5 +45,9 @@ data class User(
         const val FIELD_JOIN_DATE_NANO_SECS = "joinDateNanoSecs"
         const val FIELD_IS_LOGIN = "isLogin"
         const val FIELD_LAST_ONLINE_TIME = "lastOnlineTime"
+
+        fun fromDoc(doc:DocumentSnapshot):User{
+            return User().apply { applyDoc(doc) }
+        }
     }
 }

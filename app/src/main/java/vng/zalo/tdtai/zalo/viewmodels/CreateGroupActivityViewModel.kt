@@ -7,34 +7,35 @@ import vng.zalo.tdtai.zalo.ZaloApplication
 import vng.zalo.tdtai.zalo.models.room.Room
 import vng.zalo.tdtai.zalo.models.room.RoomItem
 import vng.zalo.tdtai.zalo.models.message.Message
-import vng.zalo.tdtai.zalo.networks.Database
-import vng.zalo.tdtai.zalo.networks.Storage
-import vng.zalo.tdtai.zalo.utils.Constants
+import vng.zalo.tdtai.zalo.storage.FirebaseDatabase
+import vng.zalo.tdtai.zalo.storage.FirebaseStorage
 
 
 class CreateGroupActivityViewModel : ViewModel() {
     val liveSelectedRoomItems: MutableLiveData<ArrayList<RoomItem>> = MutableLiveData(ArrayList())
 
-    val liveRoomItems: MutableLiveData<List<RoomItem>> = MutableLiveData(java.util.ArrayList())
+    val liveRoomItems: MutableLiveData<List<RoomItem>> = MutableLiveData(ArrayList())
+
+    var liveAvatarLocalUri: MutableLiveData<String> = MutableLiveData()
 
     init {
-        Database.getUserRooms(
+        FirebaseDatabase.getUserRooms(
                 userPhone = ZaloApplication.curUser!!.phone!!,
                 roomType = Room.TYPE_PEER
         ) { liveRoomItems.value = it }
     }
 
     fun createRoomInFireStore(context: Context, newRoom: Room, callback: ((roomItem: RoomItem) -> Unit)? = null) {
-        val newRoomId = Database.getNewRoomId()
+        val newRoomId = FirebaseDatabase.getNewRoomId()
         val avatarLocalPath = newRoom.avatarUrl
 
         // path to save room avatarUrl in storage
-        val avatarStoragePath = Storage.getRoomAvatarStoragePath(newRoomId)
+        val avatarStoragePath = FirebaseStorage.getRoomAvatarStoragePath(newRoomId)
 
         newRoom.id = newRoomId
         // save room avatarUrl in storage
         if (avatarLocalPath != null) {
-            Storage.addResourceAndGetDownloadUrl(
+            FirebaseStorage.addResourceAndGetDownloadUrl(
                     context,
                     avatarLocalPath,
                     avatarStoragePath,
@@ -46,10 +47,10 @@ class CreateGroupActivityViewModel : ViewModel() {
                 //change from localPath to storagePath
                 newRoom.avatarUrl = downloadUrl
 
-                Database.addRoomAndUserRoom(newRoom, callback)
+                FirebaseDatabase.addRoomAndUserRoom(newRoom, callback)
             }
         } else {
-            Database.addRoomAndUserRoom(newRoom, callback)
+            FirebaseDatabase.addRoomAndUserRoom(newRoom, callback)
         }
     }
 }

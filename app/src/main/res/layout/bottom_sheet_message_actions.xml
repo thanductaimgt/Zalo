@@ -6,13 +6,13 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <ImageView
+    <View
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp"
         android:id="@+id/decor"
         app:layout_constraintStart_toStartOf="parent"
-        android:src="@color/lightAccent"
+        android:background="@color/lightAccent"
         app:layout_constraintBottom_toTopOf="@id/line"
         app:layout_constraintTop_toTopOf="parent"
         android:layout_width="4dp"
@@ -57,11 +57,7 @@
         android:maxLines="1"
         android:scrollHorizontally="true"
         android:textSize="@dimen/sizeTextSmall"
-        app:layout_constraintEnd_toEndOf="@id/nameTextView"
         app:layout_constraintEnd_toStartOf="@id/cancelImgView"
-        app:layout_constraintHorizontal_bias="0"
-
-        app:layout_constraintStart_toEndOf="@id/imageView"
         app:layout_constraintStart_toStartOf="@id/nameTextView"
         app:layout_constraintTop_toBottomOf="@id/nameTextView"
         tools:text="[Hinh anh]" />

@@ -15,7 +15,7 @@ import vng.zalo.tdtai.zalo.factories.ViewModelFactory
 import vng.zalo.tdtai.zalo.utils.RoomItemDiffCallback
 import vng.zalo.tdtai.zalo.viewmodels.CreateGroupActivityViewModel
 
-class AllContactsSubFragment : Fragment(), View.OnClickListener {
+class AllContactsSubFragment : Fragment() {
     private lateinit var viewModel: CreateGroupActivityViewModel
     private lateinit var adapter: SelectRoomItemAdapter
 
@@ -24,38 +24,26 @@ class AllContactsSubFragment : Fragment(), View.OnClickListener {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        viewModel = ViewModelProvider(activity!!, ViewModelFactory.getInstance()).get(CreateGroupActivityViewModel::class.java)
+
         initView()
 
-        viewModel = ViewModelProvider(activity!!, ViewModelFactory.getInstance()).get(CreateGroupActivityViewModel::class.java)
         viewModel.liveRoomItems.observe(viewLifecycleOwner, Observer {roomItems->
             adapter.submitList(roomItems.sortedBy { it.getDisplayName() })
         })
 
         viewModel.liveSelectedRoomItems.observe(viewLifecycleOwner, Observer {
-            adapter.notifyDataSetChanged()
+            adapter.submitList(it)
         })
     }
 
     private fun initView() {
-        adapter = SelectRoomItemAdapter(RoomItemDiffCallback(), false, this)
+        adapter = SelectRoomItemAdapter(RoomItemDiffCallback(),false, viewModel.liveSelectedRoomItems)
 
         with(recyclerView) {
             layoutManager = LinearLayoutManager(activity)
             adapter = this@AllContactsSubFragment.adapter
-        }
-    }
-
-    override fun onClick(v: View?) {
-        when(v!!.id){
-            R.id.itemRecentContactsLayout -> {
-                val position = recyclerView.getChildAdapterPosition(v)
-                val roomItem = adapter.currentList[position]
-
-                if(viewModel.liveSelectedRoomItems.value!!.contains(roomItem))
-                    viewModel.liveSelectedRoomItems.value = viewModel.liveSelectedRoomItems.value!!.apply { remove(roomItem) }
-                else
-                    viewModel.liveSelectedRoomItems.value = viewModel.liveSelectedRoomItems.value!!.apply { add(roomItem) }
-            }
+            isNestedScrollingEnabled = false
         }
     }
 }

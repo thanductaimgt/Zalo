@@ -31,4 +31,14 @@
         android:hint="phone"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
+    <Button
+        android:text="start noti service"
+        android:id="@+id/startNotiServiceButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+    <Button
+        android:text="stop noti service"
+        android:id="@+id/stopNotiServiceButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
 </LinearLayout>

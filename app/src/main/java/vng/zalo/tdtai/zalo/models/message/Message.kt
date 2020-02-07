@@ -10,7 +10,8 @@ abstract class Message(
         open var createdTime: Timestamp? = null,
         open var senderPhone: String? = null,
         open var senderAvatarUrl: String? = null,
-        open var type: Int? = null
+        open var type: Int? = null,
+        open var isSent:Boolean=false
 ) {
     open fun toMap(): HashMap<String, Any> {
         return HashMap<String, Any>().apply {
@@ -39,12 +40,15 @@ abstract class Message(
         doc.getTimestamp(FIELD_CREATED_TIME)?.let { createdTime = it }
         doc.getString(FIELD_SENDER_PHONE)?.let { senderPhone = it }
         doc.getLong(FIELD_TYPE)?.let { type = it.toInt() }
+        isSent = !doc.metadata.hasPendingWrites()
     }
 
     companion object {
         const val PAYLOAD_TIME = 0
         const val PAYLOAD_AVATAR = 2
         const val PAYLOAD_UPLOAD_PROGRESS = 3
+        const val PAYLOAD_SEND_STATUS = 4
+        const val PAYLOAD_SEEN = 5
 
         const val TYPE_TEXT = 0
         const val TYPE_IMAGE = 1
@@ -53,6 +57,7 @@ abstract class Message(
         const val TYPE_VIDEO = 4
         const val TYPE_TYPING = 5
         const val TYPE_CALL = 6
+        const val TYPE_SEEN = 7
 
         const val FIELD_CREATED_TIME = "createdTime"
         const val FIELD_SENDER_PHONE = "senderPhone"

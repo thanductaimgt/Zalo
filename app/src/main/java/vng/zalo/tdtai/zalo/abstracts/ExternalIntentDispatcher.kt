@@ -53,12 +53,12 @@ object ExternalIntentDispatcher {
         val action: String
         when (captureType) {
             CAPTURE_TYPE_IMAGE -> {
-                fileType = ExternalSourceManager.FILE_TYPE_IMAGE
+                fileType = ResourceManager.FILE_TYPE_IMAGE
                 action = MediaStore.ACTION_IMAGE_CAPTURE
             }
             else -> {
                 action = MediaStore.ACTION_VIDEO_CAPTURE
-                fileType = ExternalSourceManager.FILE_TYPE_VIDEO
+                fileType = ResourceManager.FILE_TYPE_VIDEO
             }
         }
 
@@ -66,10 +66,10 @@ object ExternalIntentDispatcher {
             // Ensure that there's a camera activity to handle the intent
             captureIntent.resolveActivity(activity.packageManager)?.let {
                 // Create the File where the photo should go
-                ExternalSourceManager.createTempFile(activity, fileType) { file ->
+                ResourceManager.createTempFile(activity, fileType) { file ->
                     Utils.assertNotNull(file, TAG, "dispatchCaptureIntent") { fileNotNull ->
                         val fileRealUriString: String = fileNotNull.absolutePath
-                        val fileContentUri: Uri = Utils.getContentUri(activity, fileRealUriString)
+                        val fileContentUri: Uri = ResourceManager.getContentUri(activity, fileRealUriString)
 
                         captureIntent.apply {
                             putExtra(MediaStore.EXTRA_OUTPUT, fileContentUri)

@@ -1,6 +1,6 @@
 package vng.zalo.tdtai.zalo.utils
 
-import android.Manifest
+import android.graphics.Bitmap
 import com.google.firebase.Timestamp
 import java.util.*
 
@@ -14,10 +14,10 @@ object Constants {
     const val SEVEN_DAYS_IN_MILLISECOND = 7 * ONE_DAY_IN_MILLISECOND
 
     const val ROOM_ID = "ROOM_ID"
+    const val ROOM_DISPLAY_NAME = "ROOM_DISPLAY_NAME"
     const val ROOM_NAME = "ROOM_NAME"
     const val ROOM_PHONE = "ROOM_PHONE"
     const val ROOM_AVATAR = "ROOM_AVATAR"
-    const val ROOM_TYPE = "ROOM_TYPE"
 
     const val CHOOSE_IMAGE_REQUEST = 0
     const val CHOOSE_VIDEO_REQUEST = 1
@@ -34,8 +34,8 @@ object Constants {
 
     const val SHOW_KEYBOARD = "SHOW_KEYBOARD"
 
-    const val NOTIFICATION_PENDING_INTENT = 0
-    const val NOTIFICATION_REPLY_PENDING_INTENT = 1
+    const val NOTIFICATION_LIKE_PENDING_INTENT = 1
+    const val NOTIFICATION_REPLY_PENDING_INTENT = 2
 
     const val SIP_DOMAIN = "sip.linphone.org"
     const val SIP_ACCOUNT_PREFIX = "zalo.vng.tdtai.zalo.user."
@@ -47,6 +47,11 @@ object Constants {
     const val ONE_KB_IN_B:Long = 1000
     const val ONE_MB_IN_B:Long = 1000*1000
     const val ONE_GB_IN_B:Long = 1000*1000*1000
+
+    val IMAGE_COMPRESS_FORMAT = Bitmap.CompressFormat.JPEG
+    const val IMAGE_COMPRESS_QUALITY = 75
+
+    const val DEFAULT_KEYBOARD_SIZE_DP = 320
 
     val TIMESTAMP_EPOCH = Timestamp(Date(0))
 }

@@ -6,6 +6,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
+import androidx.core.view.get
+import androidx.core.view.isNotEmpty
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -18,15 +20,18 @@ import vng.zalo.tdtai.zalo.adapters.RoomItemAdapter
 import vng.zalo.tdtai.zalo.factories.ViewModelFactory
 import vng.zalo.tdtai.zalo.models.room.Room
 import vng.zalo.tdtai.zalo.models.room.RoomItem
+import vng.zalo.tdtai.zalo.models.room.RoomItemGroup
 import vng.zalo.tdtai.zalo.utils.Constants
 import vng.zalo.tdtai.zalo.utils.RoomItemDiffCallback
-import vng.zalo.tdtai.zalo.viewmodels.UserRoomItemsViewModel
+import vng.zalo.tdtai.zalo.viewmodels.RoomItemsViewModel
 import vng.zalo.tdtai.zalo.views.activities.CreateGroupActivity
 import vng.zalo.tdtai.zalo.views.activities.RoomActivity
+import java.util.*
+import kotlin.collections.HashMap
 
 class GroupFragment : Fragment(), View.OnClickListener {
 
-    private lateinit var viewModel: UserRoomItemsViewModel
+    private lateinit var viewModel: RoomItemsViewModel
     private lateinit var adapter: RoomItemAdapter
     private var groupSortType = 0
     private val roomItemsObserver = RoomItemsObserver()
@@ -40,21 +45,21 @@ class GroupFragment : Fragment(), View.OnClickListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        viewModel = ViewModelProvider(activity!!, ViewModelFactory.getInstance()).get(RoomItemsViewModel::class.java)
+
         initView()
 
-        viewModel = ViewModelProvider(activity!!, ViewModelFactory.getInstance()).get(UserRoomItemsViewModel::class.java)
-        viewModel.liveRoomIdRoomItemMap.observe(viewLifecycleOwner, roomItemsObserver)
+        viewModel.liveRoomItemMap.observe(viewLifecycleOwner, roomItemsObserver)
     }
 
     private fun initView() {
         adapter = RoomItemAdapter(this, RoomItemDiffCallback())
 
-        with(recyclerView) {
+        recyclerView.apply {
             adapter = this@GroupFragment.adapter
             layoutManager = LinearLayoutManager(activity)
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-                isNestedScrollingEnabled = false
-            }
+            isNestedScrollingEnabled = false
+            setItemViewCacheSize(50)
         }
 
         createNewGroupLayout.setOnClickListener(this)
@@ -86,7 +91,7 @@ class GroupFragment : Fragment(), View.OnClickListener {
                 groupSortType = position
                 SharedPrefsManager.setGroupSortType(context!!, position)
 
-                roomItemsObserver.onChanged(viewModel.liveRoomIdRoomItemMap.value!!)
+                roomItemsObserver.onChanged(viewModel.liveRoomItemMap.value!!)
             }
         }
     }
@@ -94,8 +99,7 @@ class GroupFragment : Fragment(), View.OnClickListener {
     private fun sortByGroupSortType(roomItems: List<RoomItem>): List<RoomItem> {
         return when (groupSortType) {
             0 -> roomItems.sortedByDescending { it.lastMsgTime }
-            1 -> roomItems.sortedBy { it.getDisplayName() }
-            else -> roomItems
+            else -> roomItems.sortedBy { it.getDisplayName().toLowerCase(Locale.getDefault()) }
         }
     }
 
@@ -103,12 +107,13 @@ class GroupFragment : Fragment(), View.OnClickListener {
         when (v.id) {
             R.id.itemRoomRootLayout -> {
                 val itemPosition = recyclerView.getChildAdapterPosition(v)
+                val roomItem = adapter.currentList[itemPosition] as RoomItemGroup
+
                 startActivity(
                         Intent(activity, RoomActivity::class.java).apply {
-                            putExtra(Constants.ROOM_NAME, adapter.currentList[itemPosition].getDisplayName())
-                            putExtra(Constants.ROOM_AVATAR, adapter.currentList[itemPosition].avatarUrl)
-                            putExtra(Constants.ROOM_TYPE, adapter.currentList[itemPosition].roomType)
-                            putExtra(Constants.ROOM_ID, adapter.currentList[itemPosition].roomId)
+                            putExtra(Constants.ROOM_NAME, roomItem.name)
+                            putExtra(Constants.ROOM_AVATAR, roomItem.avatarUrl)
+                            putExtra(Constants.ROOM_ID, roomItem.roomId)
                         }
                 )
             }
@@ -122,7 +127,16 @@ class GroupFragment : Fragment(), View.OnClickListener {
                     sortByGroupSortType(
                             t.values.filter { it.roomType == Room.TYPE_GROUP }
                     )
-            )
+            ){
+                if (recyclerView.isNotEmpty()) {
+                    // save index and top position
+                    val layoutManager = recyclerView.layoutManager as LinearLayoutManager
+                    val index = layoutManager.findFirstVisibleItemPosition()
+                    val firstView = recyclerView[0]
+                    val top = firstView.top - recyclerView.paddingTop
+                    layoutManager.scrollToPositionWithOffset(index, top)
+                }
+            }
         }
     }
 }

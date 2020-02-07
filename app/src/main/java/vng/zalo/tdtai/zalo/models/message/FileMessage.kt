@@ -3,6 +3,7 @@ package vng.zalo.tdtai.zalo.models.message
 import android.content.Context
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.DocumentSnapshot
+import vng.zalo.tdtai.zalo.R
 import java.util.*
 
 data class FileMessage(
@@ -10,15 +11,15 @@ data class FileMessage(
         override var createdTime: Timestamp? = null,
         override var senderPhone: String? = null,
         override var senderAvatarUrl: String? = null,
-        override var type: Int? = null,
+        override var isSent: Boolean=false,
         override var url: String = "unknown",
         override var uploadProgress:Int?=null,
         override var size:Long=-1,
-        var fileName: String = "unnamed"
-) : ResourceMessage(id, createdTime, senderPhone, senderAvatarUrl, type, url, uploadProgress, size) {
+        var fileName: String? = null
+) : ResourceMessage(id, createdTime, senderPhone, senderAvatarUrl, TYPE_FILE, isSent, url, uploadProgress, size) {
     override fun toMap(): HashMap<String, Any> {
         return super.toMap().apply {
-            put(FIELD_FILE_NAME, fileName)
+            fileName?.let { put(FIELD_FILE_NAME, it) }
         }
     }
 
@@ -28,7 +29,7 @@ data class FileMessage(
     }
 
     override fun getPreviewContent(context: Context): String {
-        return "[File] $fileName"
+        return "[File] ${fileName?:context.getString(R.string.label_no_name)}"
     }
 
     companion object {

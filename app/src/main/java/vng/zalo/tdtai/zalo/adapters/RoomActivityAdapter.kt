@@ -1,49 +1,51 @@
 package vng.zalo.tdtai.zalo.adapters
 
-import android.media.ThumbnailUtils
-import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.ProgressBar
-import android.widget.TextView
-import androidx.cardview.widget.CardView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.content.ContextCompat
-import com.airbnb.lottie.LottieAnimationView
+import com.airbnb.lottie.LottieCompositionFactory
 import com.airbnb.lottie.LottieDrawable
 import com.google.android.exoplayer2.ExoPlayer
-import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.SimpleExoPlayer
-import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory
-import com.google.android.exoplayer2.source.LoopingMediaSource
-import com.google.android.exoplayer2.source.MediaSource
-import com.google.android.exoplayer2.source.ProgressiveMediaSource
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
 import com.google.android.exoplayer2.trackselection.TrackSelector
-import com.google.android.exoplayer2.ui.PlayerView
 import com.google.android.exoplayer2.upstream.BandwidthMeter
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter
+import com.google.firebase.Timestamp
 import com.squareup.picasso.Picasso
+import kotlinx.android.synthetic.main.item_receive_room_activity.view.*
+import kotlinx.android.synthetic.main.item_seen_room_activity.view.*
+import kotlinx.android.synthetic.main.item_send_room_activity.view.*
+import kotlinx.android.synthetic.main.part_call_message.view.*
+import kotlinx.android.synthetic.main.part_chat_date.view.*
+import kotlinx.android.synthetic.main.part_chat_padding.view.*
+import kotlinx.android.synthetic.main.part_chat_time.view.*
+import kotlinx.android.synthetic.main.part_file_message.view.*
+import kotlinx.android.synthetic.main.part_image_message.view.*
+import kotlinx.android.synthetic.main.part_sticker_message.view.*
+import kotlinx.android.synthetic.main.part_text_message.view.*
+import kotlinx.android.synthetic.main.part_video_message.view.*
 import vng.zalo.tdtai.zalo.R
 import vng.zalo.tdtai.zalo.ZaloApplication
 import vng.zalo.tdtai.zalo.abstracts.BindableViewHolder
-import vng.zalo.tdtai.zalo.abstracts.ExternalSourceManager
+import vng.zalo.tdtai.zalo.abstracts.ResourceManager
 import vng.zalo.tdtai.zalo.abstracts.ZaloListAdapter
-import vng.zalo.tdtai.zalo.factories.CacheDataSourceFactory
 import vng.zalo.tdtai.zalo.models.message.*
 import vng.zalo.tdtai.zalo.utils.MessageDiffCallback
+import vng.zalo.tdtai.zalo.utils.RoomMemberDiffCallback
 import vng.zalo.tdtai.zalo.utils.Utils
+import vng.zalo.tdtai.zalo.utils.loadCompat
 import vng.zalo.tdtai.zalo.views.activities.RoomActivity
+import java.util.*
 
 
-class RoomActivityAdapter(private val roomActivity: RoomActivity, diffCallback: MessageDiffCallback) : ZaloListAdapter<Message, RoomActivityAdapter.MessageViewHolder>(diffCallback) {
-    private val cacheDataSourceFactory = CacheDataSourceFactory(roomActivity, 100 * 1024 * 1024, 10 * 1024 * 1024)
-    private val extractorsFactory = DefaultExtractorsFactory()
+class RoomActivityAdapter(private val roomActivity: RoomActivity, diffCallback: MessageDiffCallback) : ZaloListAdapter<Message, BindableViewHolder>(diffCallback) {
+    private val roomEnterTime = Timestamp.now()
+
     var exoPlayer: ExoPlayer
-    var lastTouchedVideoMessage: VideoMessage? = null
 
     init {
         val bandwidthMeter: BandwidthMeter = DefaultBandwidthMeter.Builder(roomActivity).build()
@@ -58,103 +60,123 @@ class RoomActivityAdapter(private val roomActivity: RoomActivity, diffCallback: 
     }
 
     override fun getItemViewType(position: Int): Int {
-        return when (currentList[position].senderPhone) {
-            ZaloApplication.curUser!!.phone -> VIEW_TYPE_SEND
+        return when {
+            currentList[position].type == Message.TYPE_SEEN -> VIEW_TYPE_SEEN
+            currentList[position].senderPhone == ZaloApplication.curUser!!.phone -> VIEW_TYPE_SEND
             else -> VIEW_TYPE_RECEIVE
         }
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MessageViewHolder {
-        return when (viewType) {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BindableViewHolder {
+        val holder = when (viewType) {
             VIEW_TYPE_SEND -> {
                 val v = LayoutInflater.from(parent.context).inflate(R.layout.item_send_room_activity, parent, false)
                 SendViewHolder(v)
             }
-            else -> {
+            VIEW_TYPE_RECEIVE -> {
                 val v = LayoutInflater.from(parent.context).inflate(R.layout.item_receive_room_activity, parent, false)
                 RecvViewHolder(v)
+            }
+            else -> {
+                val v = LayoutInflater.from(parent.context).inflate(R.layout.item_seen_room_activity, parent, false)
+                SeenViewHolder(v)
+            }
+        }
+
+        return holder.apply {
+            if (this is MessageViewHolder) {
+                itemView.apply {
+                    imageView.setOnClickListener(roomActivity)
+                    downloadFileImgView.setOnClickListener(roomActivity)
+                    callbackTV.setOnClickListener(roomActivity)
+                    videoMessageLayout.setOnClickListener(roomActivity)
+
+                    setOnLongClickListener(roomActivity)
+                }
             }
         }
     }
 
-    override fun onBindViewHolder(holder: MessageViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: BindableViewHolder, position: Int) {
         holder.bind(position)
     }
 
     override fun onBindViewHolder(
-            holder: MessageViewHolder,
+            holder: BindableViewHolder,
             position: Int,
             payloads: MutableList<Any?>
     ) {
-        if (payloads.isNotEmpty()) {
-            val curMessage = currentList[position]
-            val nextMessage = getNextNotTypingMessage(position)
+        try {
+            if (payloads.isNotEmpty()) {
+                val curMessage = currentList[position]
+                val nextMessage = getNextRealMessage(position)
 //            val prevMessage = getPreviousNotTypingMessage(position)
-            (payloads[0] as ArrayList<*>).forEach {
-                when (it) {
-                    Message.PAYLOAD_TIME -> holder.bindTime(curMessage, nextMessage)
-                    Message.PAYLOAD_AVATAR -> {
-                        when (holder.itemViewType) {
-                            VIEW_TYPE_RECEIVE -> (holder as RecvViewHolder).apply {
-                                bindAvatar(curMessage, nextMessage, shouldBindTime(curMessage, nextMessage))
+                (payloads[0] as ArrayList<*>).forEach {
+                    when (it) {
+                        Message.PAYLOAD_SEEN -> (holder as SeenViewHolder).bindSeenMembers(curMessage as SeenMessage)
+                        else -> {
+                            holder as MessageViewHolder
+                            when (it) {
+                                Message.PAYLOAD_TIME -> holder.bindTime(curMessage, nextMessage)
+                                Message.PAYLOAD_AVATAR -> {
+                                    when (holder.itemViewType) {
+                                        VIEW_TYPE_RECEIVE -> (holder as RecvViewHolder).apply {
+                                            bindAvatar(curMessage, nextMessage, shouldBindTime(curMessage, nextMessage))
+                                        }
+                                    }
+                                }
+                                Message.PAYLOAD_UPLOAD_PROGRESS -> (holder as SendViewHolder).bindUploadProgress(curMessage as ResourceMessage)
+                                Message.PAYLOAD_SEND_STATUS -> (holder as SendViewHolder).bindSendStatus(curMessage, nextMessage)
                             }
                         }
                     }
-                    Message.PAYLOAD_UPLOAD_PROGRESS -> (holder as SendViewHolder).bindUploadProgress(curMessage as ResourceMessage)
+                }
+            } else {
+                onBindViewHolder(holder, position)
+            }
+        } catch (t: Throwable) {
+            t.printStackTrace()
+        }
+    }
+
+    override fun onViewRecycled(holder: BindableViewHolder) {
+        if (holder is MessageViewHolder) {
+            holder.apply {
+                itemView.apply {
+                    textMessageLayout.visibility = View.GONE
+                    timeLayout.visibility = View.GONE
+                    sentImgView.visibility = View.GONE
+                    dateTextView.visibility = View.GONE
+                    fileMessageLayout.visibility = View.GONE
+                    callMessageLayout.visibility = View.GONE
+                    paddingView.visibility = View.GONE
+
+                    videoMessageLayout.visibility = View.GONE
+                    videoThumbImgView.setImageDrawable(null)
+                    stickerAnimView.visibility = View.GONE
+                    (stickerAnimView.drawable as LottieDrawable?)?.clearComposition()
+
+                    imageView.visibility = View.GONE
+                    imageView.setImageDrawable(null)
+
+                    if(holder is SendViewHolder){
+                        uploadImageProgressBar?.visibility = View.GONE
+                        uploadVideoProgressBar?.visibility = View.GONE
+                        uploadFileProgressBar?.visibility = View.GONE
+                    }else{
+                        avatarLayout?.visibility = View.GONE
+                        avatarImgView?.setImageDrawable(null)
+                        typingMessageLayout?.visibility = View.GONE
+                    }
                 }
             }
-        } else {
-            onBindViewHolder(holder, position)
         }
     }
 
-    override fun onViewAttachedToWindow(holder: MessageViewHolder) {
-        if (roomActivity.isRecyclerViewIdle()) {
-            holder.stickerAnimView.resumeAnimation()
-        }
-//        holder.playerView.onResume()
-//        holder.exoPlayer?.playWhenReady = true
-    }
-
-//    override fun onViewDetachedFromWindow(holder: MessageViewHolder) {
-//        holder.exoPlayer?.playWhenReady = false
-//        holder.playerView.onPause()
-//    }
-
-    override fun onViewRecycled(holder: MessageViewHolder) {
-        holder.apply {
-            contentTextView.visibility = View.GONE
-            timeTextView.visibility = View.GONE
-            dateTextView.visibility = View.GONE
-            fileViewLayout.visibility = View.GONE
-            callLayout.visibility = View.GONE
-            paddingView.visibility = View.GONE
-
-            cardView.visibility = View.GONE
-            exoPlayer.release()
-            mediaSource = null
-            videoThumbImgView.setImageDrawable(null)
-            isPreparing = false
-
-            stickerAnimView.visibility = View.GONE
-            (stickerAnimView.drawable as LottieDrawable?)?.clearComposition()
-
-            imageView.visibility = View.GONE
-            imageView.setImageDrawable(null)
-            uploadImageProgressBar?.visibility = View.GONE
-            uploadVideoProgressBar?.visibility = View.GONE
-            uploadFileProgressBar?.visibility = View.GONE
-
-            avatarImgView?.setImageDrawable(null)
-            avatarImgView?.visibility = View.GONE
-            typingAnimView?.visibility = View.GONE
-        }
-    }
-
-    private fun getPreviousNotTypingMessage(position: Int): Message? {
+    private fun getPreviousRealMessage(position: Int): Message? {
         var i = position + 1
         while (i <= currentList.lastIndex) {
-            if (currentList[i].type != Message.TYPE_TYPING) {
+            if (currentList[i].type != Message.TYPE_TYPING && currentList[i].type != Message.TYPE_SEEN) {
                 return currentList[i]
             }
             i++
@@ -162,10 +184,10 @@ class RoomActivityAdapter(private val roomActivity: RoomActivity, diffCallback: 
         return null
     }
 
-    private fun getNextNotTypingMessage(position: Int): Message? {
+    private fun getNextRealMessage(position: Int): Message? {
         var i = position - 1
         while (i >= 0) {
-            if (currentList[i].type != Message.TYPE_TYPING) {
+            if (currentList[i].type != Message.TYPE_TYPING && currentList[i].type != Message.TYPE_SEEN) {
                 return currentList[i]
             }
             i--
@@ -176,44 +198,6 @@ class RoomActivityAdapter(private val roomActivity: RoomActivity, diffCallback: 
     // view holder classes
 
     abstract inner class MessageViewHolder(itemView: View) : BindableViewHolder(itemView) {
-        val dateTextView: TextView = itemView.findViewById(R.id.dateTextView)
-        val timeTextView: TextView = itemView.findViewById(R.id.timeTextView)
-        val contentTextView: TextView = itemView.findViewById(R.id.contentTextView)
-        val stickerAnimView: LottieAnimationView = itemView.findViewById(R.id.stickerAnimView)
-        val imageView: ImageView = itemView.findViewById(R.id.imageView)
-        val paddingView: View = itemView.findViewById(R.id.paddingView)
-
-        // video view
-        val playerView: PlayerView = itemView.findViewById(R.id.playerView)
-        val videoThumbImgView: ImageView = itemView.findViewById(R.id.videoThumbImgView)
-        val cardView: CardView = itemView.findViewById(R.id.cardView)
-        private val videoDurationTV: TextView = itemView.findViewById(R.id.videoDurationTV)
-        var mediaSource: MediaSource? = null
-        var isPreparing = false
-
-        //file layout
-        val fileViewLayout: View = itemView.findViewById(R.id.fileViewLayout)
-        private val fileNameTextView: TextView = itemView.findViewById(R.id.fileNameTextView)
-        private val fileExtensionImgView: ImageView = itemView.findViewById(R.id.fileExtensionImgView)
-        private val fileDescTextView: TextView = itemView.findViewById(R.id.fileDescTextView)
-        val downloadFileImgView: View = itemView.findViewById(R.id.downloadFileImgView)
-        val openFileTextView: View = itemView.findViewById(R.id.openFileTextView)
-
-        //call layout
-        val callLayout: View = itemView.findViewById(R.id.callLayout)
-        private val callTitleTV: TextView = itemView.findViewById(R.id.callTitleTV)
-        private val callTimeTV: TextView = itemView.findViewById(R.id.callTimeTV)
-        private val callIconImgView: ImageView = itemView.findViewById(R.id.callIconImgView)
-        private val callbackTV: TextView = itemView.findViewById(R.id.callbackTV)
-
-        //upload progress bar
-        val uploadImageProgressBar: ProgressBar? = itemView.findViewById(R.id.uploadImageProgressBar)
-        val uploadVideoProgressBar: ProgressBar? = itemView.findViewById(R.id.uploadVideoProgressBar)
-        val uploadFileProgressBar: ProgressBar? = itemView.findViewById(R.id.uploadFileProgressBar)
-
-        val avatarImgView: ImageView? = itemView.findViewById(R.id.avatarImgView)
-        val typingAnimView: LottieAnimationView? = itemView.findViewById(R.id.typingAnimView)
-
         fun bindTime(curMessage: Message, nextMessage: Message?): Boolean {
             /* if one of these is true:
             - current curMessage is last curMessage
@@ -222,11 +206,28 @@ class RoomActivityAdapter(private val roomActivity: RoomActivity, diffCallback: 
             => display curMessage time
             */
             if (shouldBindTime(curMessage, nextMessage)) {
-                timeTextView.text = Utils.getTimeFormat(curMessage.createdTime!!.toDate())
-                timeTextView.visibility = View.VISIBLE
+                itemView.apply {
+                    timeTextView.text = Utils.getTimeFormat(curMessage.createdTime!!.toDate())
+                    timeLayout.visibility = View.VISIBLE
+                }
+//                itemView as ConstraintLayout
+//
+//                val timeLayout = View.inflate(itemView.context, R.layout.part_chat_time, null)
+//
+//                timeLayout.timeTextView.text = Utils.getTimeFormat(curMessage.createdTime!!.toDate())
+//                itemView.addView(timeLayout, 0)
+//
+//                ConstraintSet().apply {
+//                    clone(itemView)
+//                    connect(itemView.imageView.id, ConstraintSet.BOTTOM, timeLayout.id, ConstraintSet.TOP, 4)
+//                    connect(timeLayout.id, ConstraintSet.TOP, itemView.imageView.id, ConstraintSet.BOTTOM, 4)
+//                    connect(timeLayout.id, ConstraintSet.BOTTOM, itemView.id, ConstraintSet.BOTTOM, 16)
+//                    connect(timeLayout.id, ConstraintSet.END, itemView.id, ConstraintSet.END, 24)
+//                    applyTo(itemView)
+//                }
+
                 return true
             }
-            timeTextView.visibility = View.GONE
             return false
         }
 
@@ -237,20 +238,44 @@ class RoomActivityAdapter(private val roomActivity: RoomActivity, diffCallback: 
                 => display date
                 */
             if (prevMessage == null || Utils.areInDifferentDay(curMessage.createdTime!!.toDate(), prevMessage.createdTime!!.toDate())) {
-                dateTextView.text = Utils.getDateFormat(curMessage.createdTime!!.toDate())
-                dateTextView.visibility = View.VISIBLE
+                itemView.apply {
+                    dateTextView.text = Utils.getDateFormat(curMessage.createdTime!!.toDate())
+                    dateTextView.visibility = View.VISIBLE
+                }
             }
         }
 
         fun bindSticker(stickerMessage: StickerMessage) {
-            stickerAnimView.setAnimationFromUrl(stickerMessage.url)
+            itemView.apply {
+                LottieCompositionFactory.fromUrl(roomActivity, stickerMessage.url).addListener {
+                    stickerAnimView.setComposition(it)
+                    if (stickerAnimView.isAttachedToWindow && roomActivity.isRecyclerViewIdle()) {
+                        stickerAnimView.resumeAnimation()
+                    }
+                }
+//            stickerMessageAnimView.setAnimationFromUrl(stickerMessage.url)
 //            stickerAnimView.scaleType = ImageView.ScaleType.CENTER_CROP
-            stickerAnimView.visibility = View.VISIBLE
+                stickerAnimView.visibility = View.VISIBLE
+            }
         }
 
         fun bindText(textMessage: TextMessage) {
-            contentTextView.text = textMessage.content
-            contentTextView.visibility = View.VISIBLE
+            itemView.apply {
+                bindBackgroundColor(textMessageTV)
+
+                textMessageTV.text = textMessage.content
+//            textMessageTV.movementMethod = LinkMovementMethod.getInstance()
+
+                textMessageLayout.visibility = View.VISIBLE
+            }
+        }
+
+        private fun bindBackgroundColor(view: View) {
+            if (itemViewType == VIEW_TYPE_SEND) {
+                view.setBackgroundResource(R.color.sendMessageBackground)
+            } else {
+                view.setBackgroundResource(R.color.recvMessageBackground)
+            }
         }
 
         fun shouldBindTime(curMessage: Message, nextMessage: Message?): Boolean {
@@ -260,163 +285,126 @@ class RoomActivityAdapter(private val roomActivity: RoomActivity, diffCallback: 
         }
 
         fun bindImage(imageMessage: ImageMessage) {
-            setViewConstrainRatio(imageView, imageMessage.ratio!!)
+            itemView.apply {
+                setViewConstrainRatio(imageView, imageMessage.ratio!!)
 
-            imageView.visibility = View.VISIBLE
+                imageView.visibility = View.VISIBLE
 
-            Picasso.get().load(
-                    if (Utils.isNetworkUri(imageMessage.url) || Utils.isContentUri(imageMessage.url)) {
-                        imageMessage.url
-                    } else {
-                        "file://${imageMessage.url}"
-                    }
-            ).fit()
-                    .error(R.drawable.load_image_fail)
-                    .into(imageView)
-
-            imageView.setOnClickListener(roomActivity)
-
-            if (this is SendViewHolder) {
-                bindUploadProgress(imageMessage)
+                Picasso.get().loadCompat(imageMessage.url)
+                        .fit()
+                        .error(R.drawable.load_image_fail)
+                        .into(imageView)
             }
         }
 
         fun bindFile(fileMessage: FileMessage) {
-            fileViewLayout.visibility = View.VISIBLE
+            itemView.apply {
+                bindBackgroundColor(fileMessageLayout2)
 
-            fileNameTextView.text = fileMessage.fileName
+                fileMessageLayout.visibility = View.VISIBLE
 
-            val extension = Utils.getFileExtension(fileMessage.fileName)
-            fileExtensionImgView.setImageResource(Utils.getResIdFromFileExtension(roomActivity, extension))
+                fileNameTextView.text = fileMessage.fileName
+                        ?: roomActivity.getString(R.string.label_no_name)
 
-            val fileSizeFormat = if (fileMessage.size != -1L) Utils.getFormatFileSize(fileMessage.size) else ""
+                val extension = Utils.getFileExtension(fileMessage.fileName).toUpperCase(Locale.US)
+                fileExtensionImgView.setImageResource(Utils.getResIdFromFileExtension(roomActivity, extension))
 
-            fileDescTextView.text =
-                    if (extension != "" && fileSizeFormat != "") {
-                        String.format("%s - %s", extension, fileSizeFormat)
-                    } else if (extension != "") {
-                        extension
-                    } else {
-                        fileSizeFormat
-                    }
+                val fileSizeFormat = if (fileMessage.size != -1L) Utils.getFormatFileSize(fileMessage.size) else ""
 
-            downloadFileImgView.setOnClickListener(roomActivity)
+                fileDescTextView.text =
+                        if (extension != "" && fileSizeFormat != "") {
+                            String.format("%s - %s", extension, fileSizeFormat)
+                        } else if (extension != "") {
+                            extension
+                        } else {
+                            fileSizeFormat
+                        }
+            }
         }
 
         fun bindCall(callMessage: CallMessage) {
-            val context = itemView.context
+            itemView.apply {
+                bindBackgroundColor(callMessageLayout2)
 
-            callLayout.visibility = View.VISIBLE
+                val context = itemView.context
 
-            if (callMessage.isMissed) {
-                callTitleTV.setTextColor(ContextCompat.getColor(context, R.color.missedCall))
-                callTitleTV.text = context.getString(R.string.description_missed_call)
+                callMessageLayout.visibility = View.VISIBLE
 
-                callTimeTV.text = context.getString(
-                        if (callMessage.callType == CallMessage.CALL_TYPE_VOICE)
-                            R.string.description_voice_call
-                        else
-                            R.string.description_video_call
-                )
+                if (callMessage.isMissed) {
+                    callTitleTV.setTextColor(ContextCompat.getColor(context, R.color.missedCall))
+                    callTitleTV.text = context.getString(R.string.description_missed_call)
 
-                callIconImgView.setImageResource(R.drawable.missed_call)
-            } else {
-                callTimeTV.text = Utils.getCallTimeFormat(context, callMessage.callTime)
-
-                if (callMessage.senderPhone == ZaloApplication.curUser!!.phone) {
-                    callTitleTV.text = context.getString(
-                            if (callMessage.callType == CallMessage.CALL_TYPE_VOICE) {
-                                R.string.description_outgoing_voice_call
-                            } else {
-                                R.string.description_outgoing_video_call
-                            }
+                    callTimeTV.text = context.getString(
+                            if (callMessage.callType == CallMessage.CALL_TYPE_VOICE)
+                                R.string.description_voice_call
+                            else
+                                R.string.description_video_call
                     )
 
-                    callIconImgView.setImageResource(
-                            if (callMessage.isCanceled) {
-                                R.drawable.canceled_outgoing_call
-                            } else {
-                                R.drawable.success_outgoing_call
-                            }
-                    )
+                    callIconImgView.setImageResource(R.drawable.missed_call)
                 } else {
-                    callTitleTV.text = context.getString(
-                            if (callMessage.callType == CallMessage.CALL_TYPE_VOICE) {
-                                R.string.description_incoming_voice_call
-                            } else {
-                                R.string.description_incoming_video_call
-                            }
-                    )
+                    callTimeTV.text = Utils.getCallTimeFormat(context, callMessage.callTime)
 
-                    callIconImgView.setImageResource(
-                            if (callMessage.isCanceled) {
-                                R.drawable.canceled_incoming_call
-                            } else {
-                                R.drawable.success_incoming_call
-                            }
-                    )
+                    if (callMessage.senderPhone == ZaloApplication.curUser!!.phone) {
+                        callTitleTV.text = context.getString(
+                                if (callMessage.callType == CallMessage.CALL_TYPE_VOICE) {
+                                    R.string.description_outgoing_voice_call
+                                } else {
+                                    R.string.description_outgoing_video_call
+                                }
+                        )
+
+                        callIconImgView.setImageResource(
+                                if (callMessage.isCanceled) {
+                                    R.drawable.canceled_outgoing_call
+                                } else {
+                                    R.drawable.success_outgoing_call
+                                }
+                        )
+                    } else {
+                        callTitleTV.text = context.getString(
+                                if (callMessage.callType == CallMessage.CALL_TYPE_VOICE) {
+                                    R.string.description_incoming_voice_call
+                                } else {
+                                    R.string.description_incoming_video_call
+                                }
+                        )
+
+                        callIconImgView.setImageResource(
+                                if (callMessage.isCanceled) {
+                                    R.drawable.canceled_incoming_call
+                                } else {
+                                    R.drawable.success_incoming_call
+                                }
+                        )
+                    }
                 }
             }
-
-            callbackTV.setOnClickListener(roomActivity)
         }
 
         fun bindPadding(curMessage: Message, prevMessage: Message?) {
-            if (prevMessage != null && prevMessage.senderPhone != curMessage.senderPhone) {
-                paddingView.visibility = View.VISIBLE
-            } else {
-                paddingView.visibility = View.GONE
+            itemView.apply {
+                if (prevMessage != null && prevMessage.senderPhone != curMessage.senderPhone) {
+                    paddingView.visibility = View.VISIBLE
+                } else {
+                    paddingView.visibility = View.GONE
+                }
             }
         }
 
         fun bindVideo(videoMessage: VideoMessage) {
             itemView.apply {
-                setViewConstrainRatio(cardView, videoMessage.ratio!!)
+                setViewConstrainRatio(videoMessageLayout, videoMessage.ratio!!)
 
-                cardView.visibility = View.VISIBLE
+                ResourceManager.getVideoThumbUri(context, videoMessage.url) {
+                    Picasso.get().loadCompat(it)
+                            .fit()
+                            .into(videoThumbImgView)
+                }
+
+                videoMessageLayout.visibility = View.VISIBLE
 
                 videoDurationTV.text = Utils.getVideoDurationFormat(videoMessage.duration)
-
-                playerView.controllerAutoShow = false
-
-                mediaSource = LoopingMediaSource(
-                        ProgressiveMediaSource.Factory(
-                                cacheDataSourceFactory,
-                                extractorsFactory
-                        ).createMediaSource(Uri.parse(videoMessage.url))
-                )
-
-                val bandwidthMeter: BandwidthMeter = DefaultBandwidthMeter.Builder(roomActivity).build()
-                val trackSelector: TrackSelector = DefaultTrackSelector(roomActivity)
-
-                val exoPlayer = SimpleExoPlayer.Builder(roomActivity)
-                        .setBandwidthMeter(bandwidthMeter)
-                        .setTrackSelector(trackSelector)
-                        .build()
-
-                exoPlayer.playWhenReady = true
-                exoPlayer.addListener(object :Player.EventListener{
-                    override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
-                        if(isPreparing && playbackState == ExoPlayer.STATE_READY){
-                            videoThumbImgView.visibility = View.GONE
-                            isPreparing = false
-                        }
-                    }
-                })
-
-                cardView.setOnTouchListener { _, _ ->
-                    if (lastTouchedVideoMessage !== videoMessage) {
-                        playerView.player = exoPlayer
-                        exoPlayer.prepare(mediaSource!!)
-                        isPreparing = true
-                        lastTouchedVideoMessage = videoMessage
-                    }
-                    false
-                }
-
-                ExternalSourceManager.getVideoThumbBitmap(context, videoMessage.url){
-                    videoThumbImgView.setImageBitmap(it)
-                }
             }
         }
 
@@ -429,16 +417,24 @@ class RoomActivityAdapter(private val roomActivity: RoomActivity, diffCallback: 
             set.clone(constraintLayout)
             set.constrainMaxWidth(view.id, dimension.first)
             set.constrainMaxHeight(view.id, dimension.second)
-            set.setDimensionRatio(view.id, ratio)
+            set.setDimensionRatio(view.id, "H,$ratio")
             set.applyTo(constraintLayout)
         }
     }
 
     inner class SendViewHolder(itemView: View) : MessageViewHolder(itemView) {
+//        //send status
+//        val sentImgView: ImageView = itemView.findViewById(R.id.sentImgView)
+//        //avatar layout
+//        val avatarLayout: CardView? = itemView.findViewById(R.id.avatarLayout)
+//        val avatarImgView: ImageView? = itemView.findViewById(R.id.avatarImgView)
+//
+//        val typingMessageLayout: CardView? = itemView.findViewById(R.id.typingMessageLayout)
+
         override fun bind(position: Int) {
             val curMessage = currentList[position]
-            val nextMessage = getNextNotTypingMessage(position)
-            val prevMessage = getPreviousNotTypingMessage(position)
+            val nextMessage = getNextRealMessage(position)
+            val prevMessage = getPreviousRealMessage(position)
 
             when (curMessage.type) {
                 Message.TYPE_STICKER -> bindSticker(curMessage as StickerMessage)
@@ -452,29 +448,44 @@ class RoomActivityAdapter(private val roomActivity: RoomActivity, diffCallback: 
             bindDate(curMessage, prevMessage)
             bindTime(curMessage, nextMessage)
             bindPadding(curMessage, prevMessage)
-            if(curMessage is ResourceMessage){
+            if (curMessage is ResourceMessage) {
                 bindUploadProgress(curMessage)
             }
 
-            itemView.setOnLongClickListener(roomActivity)
+            //this is newest real message
+            if (curMessage.createdTime!! > roomEnterTime) {
+                bindSendStatus(curMessage, nextMessage)
+            }
         }
 
         fun bindUploadProgress(resourceMessage: ResourceMessage) {
-            val uploadProgressBar = when (resourceMessage.type) {
-                Message.TYPE_IMAGE -> uploadImageProgressBar
-                Message.TYPE_VIDEO -> uploadVideoProgressBar
-                else -> uploadFileProgressBar
-            }
-            if (resourceMessage.uploadProgress == null) {
-                uploadProgressBar!!.visibility = View.GONE
-                if (resourceMessage.type == Message.TYPE_FILE) {
-                    downloadFileImgView.visibility = View.VISIBLE
+            itemView.apply {
+                val uploadProgressBar = when (resourceMessage.type) {
+                    Message.TYPE_IMAGE -> uploadImageProgressBar
+                    Message.TYPE_VIDEO -> uploadVideoProgressBar
+                    else -> uploadFileProgressBar
                 }
-            } else {
-                uploadProgressBar!!.progress = resourceMessage.uploadProgress!!
-                uploadProgressBar.visibility = View.VISIBLE
-                if (resourceMessage.type == Message.TYPE_FILE) {
-                    downloadFileImgView.visibility = View.GONE
+                if (resourceMessage.uploadProgress == null) {
+                    uploadProgressBar!!.visibility = View.GONE
+                    if (resourceMessage.type == Message.TYPE_FILE) {
+                        itemView.downloadFileImgView.visibility = View.VISIBLE
+                    }
+                } else {
+                    uploadProgressBar!!.progress = resourceMessage.uploadProgress!!
+                    uploadProgressBar.visibility = View.VISIBLE
+                    if (resourceMessage.type == Message.TYPE_FILE) {
+                        itemView.downloadFileImgView.visibility = View.GONE
+                    }
+                }
+            }
+        }
+
+        fun bindSendStatus(curMessage: Message, nextMessage: Message?) {
+            if (shouldBindTime(curMessage, nextMessage)) {
+                itemView.sentImgView.visibility = if (curMessage.isSent) {
+                    View.VISIBLE
+                } else {
+                    View.GONE
                 }
             }
         }
@@ -483,8 +494,8 @@ class RoomActivityAdapter(private val roomActivity: RoomActivity, diffCallback: 
     inner class RecvViewHolder(itemView: View) : MessageViewHolder(itemView) {
         override fun bind(position: Int) {
             val curMessage = currentList[position]
-            val nextMessage = getNextNotTypingMessage(position)
-            val prevMessage = getPreviousNotTypingMessage(position)
+            val nextMessage = getNextRealMessage(position)
+            val prevMessage = getPreviousRealMessage(position)
 
             if (curMessage.type == Message.TYPE_TYPING) {
                 bindTyping()
@@ -505,12 +516,10 @@ class RoomActivityAdapter(private val roomActivity: RoomActivity, diffCallback: 
                 val isTimeBind = bindTime(curMessage, nextMessage)
                 bindAvatar(curMessage, nextMessage, isTimeBind)
             }
-
-            itemView.setOnLongClickListener(roomActivity)
         }
 
         private fun bindTyping() {
-            typingAnimView!!.visibility = View.VISIBLE
+            itemView.typingMessageLayout.visibility = View.VISIBLE
         }
 
         fun bindAvatar(curMessage: Message, nextMessage: Message?, isTimeBind: Boolean) {
@@ -522,23 +531,42 @@ class RoomActivityAdapter(private val roomActivity: RoomActivity, diffCallback: 
             if (isTimeBind || nextMessage!!.senderPhone != curMessage.senderPhone) {
                 showAvatar(curMessage)
             } else {
-                avatarImgView!!.visibility = View.GONE
+                itemView.avatarLayout.visibility = View.GONE
             }
         }
 
         private fun showAvatar(message: Message) {
-            avatarImgView!!.visibility = View.VISIBLE
-            Picasso.get()
-                    .load(message.senderAvatarUrl)
-                    .fit()
-                    .centerInside()
-                    .error(R.drawable.default_peer_avatar)
-                    .into(avatarImgView)
+            itemView.apply {
+                avatarLayout.visibility = View.VISIBLE
+                Picasso.get()
+                        .loadCompat(message.senderAvatarUrl)
+                        .fit()
+                        .centerCrop()
+                        .placeholder(R.drawable.default_peer_avatar)
+                        .into(avatarImgView)
+            }
+        }
+    }
+
+    inner class SeenViewHolder(itemView: View) : BindableViewHolder(itemView) {
+        val adapter = RoomMemberAdapter(RoomMemberDiffCallback())
+
+        override fun bind(position: Int) {
+            itemView.seenRecyclerView.adapter = adapter
+
+            val message = currentList[position] as SeenMessage
+
+            bindSeenMembers(message)
+        }
+
+        fun bindSeenMembers(message: SeenMessage) {
+            adapter.submitList(message.seenMembers)
         }
     }
 
     companion object {
         const val VIEW_TYPE_SEND = 0
         const val VIEW_TYPE_RECEIVE = 1
+        const val VIEW_TYPE_SEEN = 2
     }
 }

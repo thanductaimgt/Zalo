@@ -2,6 +2,7 @@ package vng.zalo.tdtai.zalo.models.room
 
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.DocumentSnapshot
+import vng.zalo.tdtai.zalo.models.RoomMember
 
 //mapping firestore data to POJO needs empty constructor
 data class RoomItemPeer(override var roomId: String? = null,
@@ -12,10 +13,10 @@ data class RoomItemPeer(override var roomId: String? = null,
                         override var unseenMsgNum: Int = 0,
                         override var lastSenderPhone: String? = null,
                         override var lastSenderName: String? = null,
-                        override var lastTypingPhone: String? = null,
+                        override var lastTypingMember: RoomMember? = null,
                         var phone: String? = null,
                         var lastOnlineTime: Timestamp? = Timestamp.now()) : RoomItem(
-        roomId, name, avatarUrl, lastMsg, lastMsgTime, unseenMsgNum, Room.TYPE_PEER, lastSenderPhone, lastSenderName, lastTypingPhone
+        roomId, name, avatarUrl, lastMsg, lastMsgTime, unseenMsgNum, Room.TYPE_PEER, lastSenderPhone, lastSenderName, lastTypingMember
 ) {
 
     override fun toMap(): HashMap<String, Any> {

@@ -10,14 +10,15 @@ abstract class ResourceMessage(
         senderPhone: String? = null,
         senderAvatarUrl: String? = null,
         type: Int? = null,
+        isSent:Boolean=false,
         open var url: String = "unknown",
         open var uploadProgress: Int? = null,
         open var size: Long = -1
-) : Message(id, createdTime, senderPhone, senderAvatarUrl, type) {
+) : Message(id, createdTime, senderPhone, senderAvatarUrl, type, isSent) {
     override fun toMap(): HashMap<String, Any> {
-        return super.toMap().apply {
-            put(FIELD_URL, url)
-            put(FIELD_SIZE, size)
+        return super.toMap().also {
+            it[FIELD_URL] = url
+            it[FIELD_SIZE] = size
         }
     }
 

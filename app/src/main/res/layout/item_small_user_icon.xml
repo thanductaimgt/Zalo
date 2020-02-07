@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<de.hdodenhof.circleimageview.CircleImageView tools:src="@drawable/official_account"
+    android:layout_marginStart="2dp"
+    app:civ_circle_background_color="@android:color/white"
+    android:id="@+id/userIconImgView"
+    android:layout_width="18dp"
+    android:layout_height="18dp"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android" />

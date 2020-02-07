@@ -15,16 +15,15 @@ import kotlinx.android.synthetic.main.fragment_chat.*
 import vng.zalo.tdtai.zalo.R
 import vng.zalo.tdtai.zalo.adapters.RoomItemAdapter
 import vng.zalo.tdtai.zalo.factories.ViewModelFactory
-import vng.zalo.tdtai.zalo.models.room.Room
 import vng.zalo.tdtai.zalo.models.room.RoomItemPeer
 import vng.zalo.tdtai.zalo.utils.Constants
 import vng.zalo.tdtai.zalo.utils.RoomItemDiffCallback
-import vng.zalo.tdtai.zalo.viewmodels.UserRoomItemsViewModel
+import vng.zalo.tdtai.zalo.viewmodels.RoomItemsViewModel
 import vng.zalo.tdtai.zalo.views.activities.RoomActivity
 
 
 class ChatFragment : Fragment(), View.OnClickListener {
-    private lateinit var viewModel: UserRoomItemsViewModel
+    private lateinit var viewModel: RoomItemsViewModel
     private lateinit var adapter: RoomItemAdapter
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -33,11 +32,12 @@ class ChatFragment : Fragment(), View.OnClickListener {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        viewModel = ViewModelProvider(this, ViewModelFactory.getInstance()).get(RoomItemsViewModel::class.java)
+
         initView()
 
-        viewModel = ViewModelProvider(this, ViewModelFactory.getInstance()).get(UserRoomItemsViewModel::class.java)
-        viewModel.liveRoomIdRoomItemMap.observe(viewLifecycleOwner, Observer { roomItems ->
-            adapter.submitList(roomItems.values.toList()) {
+        viewModel.liveRoomItemMap.observe(viewLifecycleOwner, Observer { roomItemMap ->
+            adapter.submitList(roomItemMap.values.sortedByDescending { it.lastMsgTime }) {
                 if (recyclerView.isNotEmpty()) {
                     // save index and top position
                     val layoutManager = recyclerView.layoutManager as LinearLayoutManager
@@ -56,6 +56,7 @@ class ChatFragment : Fragment(), View.OnClickListener {
         with(recyclerView) {
             adapter = this@ChatFragment.adapter
             layoutManager = LinearLayoutManager(activity)
+            setItemViewCacheSize(50)
         }
     }
 
@@ -67,14 +68,12 @@ class ChatFragment : Fragment(), View.OnClickListener {
 
                 startActivity(
                         Intent(activity, RoomActivity::class.java).apply {
-                            putExtra(Constants.ROOM_NAME, roomItem.getDisplayName())
+                            putExtra(Constants.ROOM_NAME, roomItem.name)
                             putExtra(Constants.ROOM_AVATAR, roomItem.avatarUrl)
                             putExtra(Constants.ROOM_ID, roomItem.roomId)
 
-                            val roomType = roomItem.roomType
-                            putExtra(Constants.ROOM_TYPE, roomItem.roomType)
-                            if (roomType == Room.TYPE_PEER) {
-                                putExtra(Constants.ROOM_PHONE, (roomItem as RoomItemPeer).phone)
+                            if (roomItem is RoomItemPeer) {
+                                putExtra(Constants.ROOM_PHONE, roomItem.phone)
                             }
                         }
                 )

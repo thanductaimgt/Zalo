@@ -2,7 +2,8 @@ package vng.zalo.tdtai.zalo.models.room
 
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.DocumentSnapshot
-import vng.zalo.tdtai.zalo.abstracts.ExternalSourceManager
+import vng.zalo.tdtai.zalo.abstracts.ResourceManager
+import vng.zalo.tdtai.zalo.models.RoomMember
 import java.util.*
 
 //mapping firestore data to POJO needs empty constructor
@@ -16,7 +17,7 @@ abstract class RoomItem(open var roomId: String? = null,
                         open var roomType: Int,
                         open var lastSenderPhone: String? = null,
                         open var lastSenderName: String? = null,//todo: change this
-                        open var lastTypingPhone: String? = null) {
+                        open var lastTypingMember: RoomMember? = null) {
 
     open fun toMap(): HashMap<String, Any> {
         return HashMap<String, Any>().apply {
@@ -42,12 +43,12 @@ abstract class RoomItem(open var roomId: String? = null,
         doc.getLong(FIELD_ROOM_TYPE)?.let { roomType = it.toInt() }
         doc.getString(FIELD_LAST_SENDER_PHONE)?.let { lastSenderPhone = it }
         doc.getString(FIELD_LAST_SENDER_NAME)?.let { lastSenderName = it }
-        doc.getString(FIELD_LAST_TYPING_PHONE)?.let { lastTypingPhone = it }
+//        doc.getString(FIELD_LAST_TYPING_PHONE)?.let { lastTypingMember = it }
     }
 
     fun getDisplayName(): String {
-        return if (roomType == Room.TYPE_PEER) {
-            ExternalSourceManager.getNameFromPhone((this as RoomItemPeer).phone!!) ?: name!!
+        return if (this is RoomItemPeer) {
+            ResourceManager.getNameFromPhone(this.phone!!) ?: name!!
         } else {
             name!!
         }
@@ -58,6 +59,7 @@ abstract class RoomItem(open var roomId: String? = null,
         const val PAYLOAD_SEEN_MESSAGE = 1
         const val PAYLOAD_ONLINE_STATUS = 2
         const val PAYLOAD_TYPING = 3
+        const val PAYLOAD_SELECT = 4
 
         const val FIELD_AVATAR_URL = "avatarUrl"
         const val FIELD_LAST_MSG = "lastMsg"

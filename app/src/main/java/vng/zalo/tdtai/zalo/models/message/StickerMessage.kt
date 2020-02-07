@@ -10,9 +10,9 @@ data class StickerMessage(
         override var createdTime: Timestamp? = null,
         override var senderPhone: String? = null,
         override var senderAvatarUrl: String? = null,
-        override var type: Int? = null,
+        override var isSent: Boolean=false,
         var url: String? = null
-) : Message(id, createdTime, senderPhone, senderAvatarUrl, type) {
+) : Message(id, createdTime, senderPhone, senderAvatarUrl, TYPE_STICKER, isSent) {
     override fun toMap(): HashMap<String, Any> {
         return super.toMap().apply {
             url?.let { put(FIELD_URL, it) }

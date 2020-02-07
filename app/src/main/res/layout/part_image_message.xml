@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.makeramen.roundedimageview.RoundedImageView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/imageView"
+    android:layout_width="0dp"
+    android:layout_height="0dp"
+    android:background="@color/strongGray"
+    android:contentDescription="@string/description_image"
+    android:scaleType="fitXY"
+    android:visibility="gone"
+    app:riv_corner_radius="@dimen/sizeRoundCornerMessageBg"
+    app:riv_mutate_background="true"
+    tools:layout_constraintDimensionRatio="9:16"
+    tools:layout_height="350dp"
+    tools:layout_width="200dp"
+    tools:src="@drawable/zalo"
+    tools:visibility="visible" />

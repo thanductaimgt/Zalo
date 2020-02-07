@@ -12,17 +12,20 @@ import kotlinx.android.synthetic.main.item_room.view.*
 import vng.zalo.tdtai.zalo.R
 import vng.zalo.tdtai.zalo.ZaloApplication
 import vng.zalo.tdtai.zalo.abstracts.BindableViewHolder
+import vng.zalo.tdtai.zalo.abstracts.ResourceManager
 import vng.zalo.tdtai.zalo.abstracts.ZaloListAdapter
 import vng.zalo.tdtai.zalo.models.room.Room
 import vng.zalo.tdtai.zalo.models.room.RoomItem
 import vng.zalo.tdtai.zalo.models.room.RoomItemPeer
 import vng.zalo.tdtai.zalo.utils.Constants
 import vng.zalo.tdtai.zalo.utils.Utils
+import vng.zalo.tdtai.zalo.utils.loadCompat
 
 class RoomItemAdapter(private val fragment: Fragment, diffCallback: DiffUtil.ItemCallback<RoomItem>) : ZaloListAdapter<RoomItem, RoomItemAdapter.RoomItemViewHolder>(diffCallback) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RoomItemViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_room, parent, false)
+        view.setOnClickListener(fragment as View.OnClickListener)
         return RoomItemViewHolder(view)
     }
 
@@ -53,17 +56,15 @@ class RoomItemAdapter(private val fragment: Fragment, diffCallback: DiffUtil.Ite
     inner class RoomItemViewHolder(itemView: View) : BindableViewHolder(itemView) {
         override fun bind(position: Int) {
             itemView.apply {
-                setOnClickListener(fragment as View.OnClickListener)
-
                 val roomItem = getItem(position)
 
                 nameTextView.text = roomItem.getDisplayName()
 
                 Picasso.get()
-                        .load(roomItem.avatarUrl)
-                        .error(if (roomItem.roomType == Room.TYPE_PEER) R.drawable.default_peer_avatar else R.drawable.default_group_avatar)
+                        .loadCompat(roomItem.avatarUrl)
+                        .placeholder(if (roomItem.roomType == Room.TYPE_PEER) R.drawable.default_peer_avatar else R.drawable.default_group_avatar)
                         .fit()
-                        .centerInside()
+                        .centerCrop()
                         .into(avatarImgView)
 
                 bindLastMessage(roomItem)
@@ -73,7 +74,7 @@ class RoomItemAdapter(private val fragment: Fragment, diffCallback: DiffUtil.Ite
         }
 
         fun bindOnlineStatus(roomItem: RoomItem) {
-            if(roomItem.roomType==Room.TYPE_PEER){
+            if (roomItem.roomType == Room.TYPE_PEER) {
                 itemView.apply {
                     if ((roomItem as RoomItemPeer).lastOnlineTime == null) {
                         onlineStatusImgView.visibility = View.VISIBLE
@@ -88,14 +89,32 @@ class RoomItemAdapter(private val fragment: Fragment, diffCallback: DiffUtil.Ite
             itemView.apply {
                 timeTextView.text = if (roomItem.lastMsgTime != null) Utils.getTimeDiffFormat(context, roomItem.lastMsgTime!!.toDate()) else ""
 
-                descTextView.text = if (roomItem.lastTypingPhone != null) {
+                descTextView.text = if (roomItem.lastTypingMember != null) {
                     typingAnimView.visibility = View.VISIBLE
                     typingAnimView.postDelayed({
                         typingAnimView.playAnimation()
                     }, 100)
                     descTextView.setTextColor(ContextCompat.getColor(context, R.color.lightPrimary))
-                    String.format("%s: %s", roomItem.lastTypingPhone, context.getString(R.string.description_typing))
+                    String.format("%s: %s",
+                            if (roomItem.lastTypingMember!!.phone == ZaloApplication.curUser!!.phone) {
+                                context.getString(R.string.label_me)
+                            } else {
+                                Picasso.get()
+                                        .loadCompat(roomItem.lastTypingMember!!.avatarUrl)
+                                        .placeholder(R.drawable.default_peer_avatar)
+                                        .fit()
+                                        .centerCrop()
+                                        .into(typingUserAvatarImgView)
+                                typingUserAvatarImgView.visibility = View.VISIBLE
+
+                                ResourceManager.getNameFromPhone(roomItem.lastTypingMember!!.phone!!)
+                                        ?: roomItem.lastTypingMember!!.name
+                            },
+                            context.getString(R.string.description_typing)
+                    )
                 } else {
+                    typingUserAvatarImgView.visibility = View.GONE
+
                     typingAnimView.visibility = View.GONE
                     descTextView.setTextColor(ContextCompat.getColor(context, android.R.color.black))
                     if (roomItem.lastSenderPhone != null) {
@@ -103,7 +122,8 @@ class RoomItemAdapter(private val fragment: Fragment, diffCallback: DiffUtil.Ite
                                 if (roomItem.lastSenderPhone == ZaloApplication.curUser!!.phone)
                                     context.getString(R.string.label_me)
                                 else
-                                    roomItem.lastSenderName
+                                    ResourceManager.getNameFromPhone(roomItem.lastSenderPhone!!)
+                                            ?: roomItem.lastSenderName
 
                         String.format("%s: %s", senderName, roomItem.lastMsg)
                     } else ""

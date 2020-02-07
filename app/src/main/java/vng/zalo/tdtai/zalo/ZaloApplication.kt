@@ -13,11 +13,11 @@ import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ProcessLifecycleOwner
 import androidx.multidex.MultiDexApplication
-import vng.zalo.tdtai.zalo.abstracts.ExternalSourceManager
+import vng.zalo.tdtai.zalo.abstracts.ResourceManager
 import vng.zalo.tdtai.zalo.models.User
-import vng.zalo.tdtai.zalo.networks.Database
+import vng.zalo.tdtai.zalo.storage.FirebaseDatabase
 import vng.zalo.tdtai.zalo.receivers.CallReceiver
-import vng.zalo.tdtai.zalo.services.NotificationService
+import vng.zalo.tdtai.zalo.services.AlwaysRunningNotificationDispatcher
 import vng.zalo.tdtai.zalo.utils.Constants
 import vng.zalo.tdtai.zalo.utils.TAG
 import vng.zalo.tdtai.zalo.views.fragments.AlertDialog
@@ -28,6 +28,10 @@ class ZaloApplication : MultiDexApplication() {
 
     override fun onCreate() {
         super.onCreate()
+
+        if (notificationDispatcher == null) {
+            notificationDispatcher = AlwaysRunningNotificationDispatcher.getInstance(applicationContext)
+        }
 
         if (SharedPrefsManager.isLogin(this) && PermissionManager.hasRequiredPermissions(this)) {
             val user = SharedPrefsManager.getUser(this)
@@ -41,6 +45,13 @@ class ZaloApplication : MultiDexApplication() {
 //                .build()
 //                ApplicationComponent applicationComponent = DaggerApplicationComponent.create();
 //        applicationComponent.inject(this)
+//        if (observerThread == null) {
+//            doListening = true
+//
+//            observerThread = Thread {
+//                observe(applicationContext)
+//            }.apply { start() }
+//        }
     }
 
     private fun observeProcessLifeCycle() {
@@ -51,14 +62,14 @@ class ZaloApplication : MultiDexApplication() {
         override fun onStart(owner: LifecycleOwner) {
             Log.d(TAG, "onStart")
             curUser?.phone?.let {
-                Database.setCurrentUserOnlineState(true)
+                FirebaseDatabase.setCurrentUserOnlineState(true)
             }
         }
 
         override fun onStop(owner: LifecycleOwner) {
             Log.d(TAG, "onStop")
             curUser?.phone?.let {
-                Database.setCurrentUserOnlineState(false)
+                FirebaseDatabase.setCurrentUserOnlineState(false)
             }
         }
     }
@@ -78,17 +89,21 @@ class ZaloApplication : MultiDexApplication() {
         var notificationDialog = AlertDialog()
         var processingDialog = ProcessingDialog()
 
+        var notificationDispatcher: AlwaysRunningNotificationDispatcher? = null
+
         fun initUser(context: Context, user: User) {
             this.curUser = user
             initSip(context.applicationContext)
             registerCallReceiver(context.applicationContext)
-            Database.setCurrentUserOnlineState(true)
-            ExternalSourceManager.initPhoneNameMap()
+//            Database.setCurrentUserOnlineState(true)
+            ResourceManager.initPhoneNameMap()
+//            notificationDispatcher?.onLogin()
         }
 
         fun removeCurrentUser(context: Context) {
-            context.stopService(Intent(context.applicationContext, NotificationService::class.java))
-            Database.setCurrentUserOnlineState(false)
+//            context.stopService(Intent(context.applicationContext, NotificationService::class.java))
+            notificationDispatcher?.onLogout()
+            FirebaseDatabase.setCurrentUserOnlineState(false)
             unregisterCallReceiver(context.applicationContext)
             removeSip()
             this.curUser = null
@@ -105,7 +120,7 @@ class ZaloApplication : MultiDexApplication() {
         private fun initSip(context: Context) {
             sipProfile = SipProfile.Builder("${Constants.SIP_ACCOUNT_PREFIX}${curUser!!.phone}", Constants.SIP_DOMAIN)
                     .setPassword(curUser!!.phone)
-                    .setAutoRegistration(true)
+//                    .setAutoRegistration(true)
                     .build()
 
             sipManager = SipManager.newInstance(context)
@@ -116,33 +131,30 @@ class ZaloApplication : MultiDexApplication() {
             openSip(pendingIntent)
         }
 
-        private fun openSip(pendingIntent: PendingIntent) {
+        private fun openSip(pendingIntent: PendingIntent, retryOnFail:Boolean = true) {
             try {
-                openSipInternal(pendingIntent)
+                sipManager?.open(sipProfile, pendingIntent, object : SipRegistrationListener {
+                    override fun onRegistering(localProfileUri: String?) {
+                        Log.d(TAG, "open: onRegistering")
+                    }
+
+                    override fun onRegistrationDone(localProfileUri: String?, expiryTime: Long) {
+                        Log.d(TAG, "open: onRegistrationDone")
+                    }
+
+                    override fun onRegistrationFailed(localProfileUri: String?, errorCode: Int, errorMessage: String?) {
+                        Log.d(TAG, "open: onRegistrationFailed")
+                    }
+                })
             } catch (t: Throwable) {
-                Handler().postDelayed({
-                    openSip(pendingIntent)
-                }, 10000)
+                if(retryOnFail){
+                    Handler().postDelayed({
+                        openSip(pendingIntent)
+                    }, 10000)
+                }
 
                 t.printStackTrace()
             }
-
-        }
-
-        private fun openSipInternal(pendingIntent: PendingIntent){
-            sipManager?.open(sipProfile, pendingIntent, object : SipRegistrationListener {
-                override fun onRegistering(localProfileUri: String?) {
-                    Log.d(TAG, "open: onRegistering")
-                }
-
-                override fun onRegistrationDone(localProfileUri: String?, expiryTime: Long) {
-                    Log.d(TAG, "open: onRegistrationDone")
-                }
-
-                override fun onRegistrationFailed(localProfileUri: String?, errorCode: Int, errorMessage: String?) {
-                    Log.d(TAG, "open: onRegistrationFailed")
-                }
-            })
         }
 
         private fun removeSip() {

@@ -11,7 +11,7 @@ import kotlinx.android.synthetic.main.activity_login.*
 import vng.zalo.tdtai.zalo.R
 import vng.zalo.tdtai.zalo.SharedPrefsManager
 import vng.zalo.tdtai.zalo.ZaloApplication
-import vng.zalo.tdtai.zalo.networks.Database
+import vng.zalo.tdtai.zalo.storage.FirebaseDatabase
 
 
 class LoginActivity : AppCompatActivity(), View.OnClickListener {
@@ -57,7 +57,7 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun validateLoginInfo(phone: String, password: String) {
-        Database.validateLoginInfo(phone, password) { user ->
+        FirebaseDatabase.validateLoginInfo(phone, password) { user ->
             if (user!=null) {
                 SharedPrefsManager.setUser(this, user)
 

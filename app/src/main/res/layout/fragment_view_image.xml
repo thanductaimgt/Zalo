@@ -12,9 +12,9 @@
         android:layout_height="match_parent"
         app:surface_type="texture_view" />
 
-    <ImageView
+    <com.github.chrisbanes.photoview.PhotoView
         android:contentDescription="@string/description_video"
-        android:id="@+id/viewImageImgView"
+        android:id="@+id/viewImagePhotoView"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 

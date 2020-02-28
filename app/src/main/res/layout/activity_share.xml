@@ -9,7 +9,7 @@
     android:layout_height="match_parent"
     android:focusable="true"
     android:focusableInTouchMode="true"
-    tools:context=".views.activities.CreateGroupActivity">
+    tools:context=".ui.create_group.CreateGroupActivity">
 
     <androidx.cardview.widget.CardView
         android:id="@+id/cardView"

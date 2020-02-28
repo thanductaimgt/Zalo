@@ -2,11 +2,12 @@ package vng.zalo.tdtai.zalo.utils
 
 import android.annotation.SuppressLint
 import androidx.recyclerview.widget.DiffUtil
-import vng.zalo.tdtai.zalo.models.message.Message
-import vng.zalo.tdtai.zalo.models.message.ResourceMessage
-import vng.zalo.tdtai.zalo.models.message.SeenMessage
+import vng.zalo.tdtai.zalo.model.message.Message
+import vng.zalo.tdtai.zalo.model.message.ResourceMessage
+import vng.zalo.tdtai.zalo.model.message.SeenMessage
+import javax.inject.Inject
 
-class MessageDiffCallback : DiffUtil.ItemCallback<Message>() {
+class MessageDiffCallback @Inject constructor() : DiffUtil.ItemCallback<Message>() {
 
     override fun areItemsTheSame(oldItem: Message, newItem: Message): Boolean {
         return oldItem.id == newItem.id

@@ -2,12 +2,13 @@ package vng.zalo.tdtai.zalo.utils
 
 import android.util.Log
 import androidx.recyclerview.widget.DiffUtil
-import vng.zalo.tdtai.zalo.models.room.Room
-import vng.zalo.tdtai.zalo.models.room.RoomItem
-import vng.zalo.tdtai.zalo.models.room.RoomItemGroup
-import vng.zalo.tdtai.zalo.models.room.RoomItemPeer
+import vng.zalo.tdtai.zalo.model.room.Room
+import vng.zalo.tdtai.zalo.model.room.RoomItem
+import vng.zalo.tdtai.zalo.model.room.RoomItemGroup
+import vng.zalo.tdtai.zalo.model.room.RoomItemPeer
+import javax.inject.Inject
 
-class RoomItemDiffCallback : DiffUtil.ItemCallback<RoomItem>() {
+class RoomItemDiffCallback @Inject constructor() : DiffUtil.ItemCallback<RoomItem>() {
 
     override fun areItemsTheSame(oldItem: RoomItem, newItem: RoomItem): Boolean {
         Log.d(TAG, if (oldItem.roomId == newItem.roomId) "same item" else "diff item")

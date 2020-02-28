@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/action_bar_bg"
-    tools:context=".views.activities.CallActivity">
+    tools:context=".ui.call.CallActivity">
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/avatarImgView"

@@ -9,9 +9,9 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentStatePagerAdapter
 import androidx.fragment.app.FragmentTransaction
-import androidx.lifecycle.Lifecycle
 import androidx.viewpager.widget.PagerAdapter
 
+@Suppress("DEPRECATION")
 abstract class MovableFragmentStatePagerAdapter(
         private val manager: FragmentManager,
         private val mBehavior:Int = FragmentStatePagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT
@@ -132,9 +132,9 @@ abstract class MovableFragmentStatePagerAdapter(
             unusedRestoredFragments.clear()
             savedStates.clear()
 
-            val fragmentIds: List<String> = state.getStringArrayList(KEY_FRAGMENT_IDS)
+            val fragmentIds: List<String> = state.getStringArrayList(KEY_FRAGMENT_IDS)!!
             val fragmentStates: List<Fragment.SavedState> =
-                    state.getParcelableArrayList(KEY_FRAGMENT_STATES)
+                    state.getParcelableArrayList(KEY_FRAGMENT_STATES)!!
 
             for ((index, id) in fragmentIds.withIndex()) {
                 savedStates.put(id, fragmentStates[index])

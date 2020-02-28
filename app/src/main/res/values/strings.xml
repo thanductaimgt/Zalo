@@ -124,6 +124,7 @@
     <string name="description_typing">đang soạn tin</string>
     <string name="description_processing">Đang xử lý</string>
     <string name="description_sent">Đã gửi</string>
+    <string name="description_no_connection">Không có kết nối</string>
 
     <string name="hint_phone_number">Số điện thoại</string>
     <string name="hint_password">Mật khẩu</string>

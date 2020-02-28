@@ -6,7 +6,7 @@ import android.content.Intent
 import android.util.Log
 import vng.zalo.tdtai.zalo.utils.Constants
 import vng.zalo.tdtai.zalo.utils.TAG
-import vng.zalo.tdtai.zalo.views.activities.CallActivity
+import vng.zalo.tdtai.zalo.ui.call.CallActivity
 
 class CallReceiver : BroadcastReceiver() {
 

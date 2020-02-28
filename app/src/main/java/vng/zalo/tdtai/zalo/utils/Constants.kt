@@ -1,7 +1,6 @@
 package vng.zalo.tdtai.zalo.utils
 
 import android.graphics.Bitmap
-import com.google.firebase.Timestamp
 import java.util.*
 
 object Constants {
@@ -37,9 +36,6 @@ object Constants {
     const val NOTIFICATION_LIKE_PENDING_INTENT = 1
     const val NOTIFICATION_REPLY_PENDING_INTENT = 2
 
-    const val SIP_DOMAIN = "sip.linphone.org"
-    const val SIP_ACCOUNT_PREFIX = "zalo.vng.tdtai.zalo.user."
-
     const val ACTION_CALL = "vng.zalo.tdtai.zalo.ACTION_CALL"
     const val IS_CALLER = "IS_CALLER"
     const val CALL_TYPE = "CALL_TYPE"
@@ -53,5 +49,5 @@ object Constants {
 
     const val DEFAULT_KEYBOARD_SIZE_DP = 320
 
-    val TIMESTAMP_EPOCH = Timestamp(Date(0))
+    val TIMESTAMP_EPOCH = Date(0).time
 }

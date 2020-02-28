@@ -10,28 +10,44 @@ import android.view.Window
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import com.google.android.gms.tasks.Task
-import com.google.firebase.Timestamp
 import com.squareup.picasso.Picasso
 import com.squareup.picasso.RequestCreator
+import dagger.Lazy
 import vng.zalo.tdtai.zalo.R
-import vng.zalo.tdtai.zalo.abstracts.ResourceManager
+import vng.zalo.tdtai.zalo.managers.ResourceManager
 import java.io.File
 import java.io.InputStream
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.*
+import javax.inject.Inject
+import javax.inject.Singleton
+import kotlin.collections.HashMap
 
+@Singleton
+class Utils @Inject constructor(
+        private val lazyResourceManager: Lazy<ResourceManager>
+) {
+    private val uriCache = HashMap<String, Uri>()
 
-object Utils {
-    fun getTimeDiffFormat(context: Context, date: Date): String {
-        val curDate = Date()
-        val diffByMillisecond = getTimeDiffInMillis(date, curDate)
+    fun getUri(uriString: String): Uri {
+        var res = uriCache[uriString]
+        if (res == null) {
+            res = Uri.parse(uriString)
+            uriCache[uriString] = res
+        }
+        return res!!
+    }
+
+    fun getTimeDiffFormat(context: Context, milli: Long): String {
+        val curMilli = System.currentTimeMillis()
+        val diffByMillisecond = curMilli - milli
         return when {
             diffByMillisecond < Constants.ONE_MIN_IN_MILLISECOND -> context.getString(R.string.label_just_now)
             diffByMillisecond < Constants.ONE_HOUR_IN_MILLISECOND -> formatTime(diffByMillisecond / Constants.ONE_MIN_IN_MILLISECOND.toLong(), context.getString(R.string.label_minute))
             diffByMillisecond < Constants.ONE_DAY_IN_MILLISECOND -> formatTime(diffByMillisecond / Constants.ONE_HOUR_IN_MILLISECOND.toLong(), context.getString(R.string.label_hour))
             diffByMillisecond < Constants.SEVEN_DAYS_IN_MILLISECOND -> formatTime(diffByMillisecond / Constants.ONE_DAY_IN_MILLISECOND.toLong(), context.getString(R.string.label_day))
-            else -> getDateFormat(date)
+            else -> getDateFormat(milli)
         }
     }
 
@@ -39,20 +55,16 @@ object Utils {
         return "$num $unit"
     }
 
-    private fun getTimeDiffInMillis(start: Date, end: Date): Long {
-        return end.time - start.time
+    fun areInDifferentDay(milli1: Long, milli2: Long): Boolean {
+        val day1 = milli1 / Constants.ONE_DAY_IN_MILLISECOND
+        val day2 = milli2 / Constants.ONE_DAY_IN_MILLISECOND
+        return day1 != day2
     }
 
-    fun areInDifferentDay(date1: Date, date2: Date): Boolean {
-        val format1 = getDateFormat(date1)
-        val format2 = getDateFormat(date2)
-        return format1 != format2
-    }
-
-    fun areInDifferentMin(date1: Date, date2: Date): Boolean {
-        val format1 = getTimeFormat(date1)
-        val format2 = getTimeFormat(date2)
-        return format1 != format2
+    fun areInDifferentMin(milli1: Long, milli2: Long): Boolean {
+        val min1 = milli1 / Constants.ONE_MIN_IN_MILLISECOND
+        val min2 = milli2 / Constants.ONE_MIN_IN_MILLISECOND
+        return min1 != min2
     }
 
     fun <TResult> assertTaskSuccessAndResultNotNull(task: Task<TResult>, tag: String, logMsgPrefix: String, callback: (result: TResult) -> Unit) {
@@ -114,8 +126,8 @@ object Utils {
     }
 
     fun getInputStream(context: Context, localPath: String): InputStream {
-        return if (ResourceManager.isContentUri(localPath)) {
-            context.contentResolver.openInputStream(Uri.parse(localPath))!!
+        return if (lazyResourceManager.get().isContentUri(localPath)) {
+            context.contentResolver.openInputStream(getUri(localPath))!!
         } else {
             File(localPath).inputStream()
         }
@@ -148,7 +160,7 @@ object Utils {
                 ""
             else
                 extension
-        }?:""
+        } ?: ""
     }
 
     fun getFormatFileSize(bytes: Long): String {
@@ -191,18 +203,18 @@ object Utils {
         return res.toString()
     }
 
-    fun getLastOnlineTimeFormat(context: Context, lastOnlineTime: Timestamp?): String {
-        val curDate = Date()
-        val date: Date
+    fun getLastOnlineTimeFormat(context: Context, lastOnlineTime: Long?): String {
+        val curMilli = System.currentTimeMillis()
+        val lastOnlineTimeMilli: Long
 
         val diffByMillisecond: Long
 
         if (lastOnlineTime == null) {
-            date = Date()
+            lastOnlineTimeMilli = curMilli
             diffByMillisecond = 0
         } else {
-            date = lastOnlineTime.toDate()
-            diffByMillisecond = getTimeDiffInMillis(date, curDate)
+            lastOnlineTimeMilli = lastOnlineTime
+            diffByMillisecond = curMilli - lastOnlineTimeMilli
         }
 
         return when (diffByMillisecond) {
@@ -212,7 +224,7 @@ object Utils {
             else -> {
                 "${context.getString(R.string.description_last_seen)}: ${
                 if (diffByMillisecond >= Constants.SEVEN_DAYS_IN_MILLISECOND) {
-                    getDateFormat(date)
+                    getDateFormat(lastOnlineTimeMilli)
                 } else {
                     "${
                     when {
@@ -258,12 +270,12 @@ object Utils {
         window.attributes = attrs
     }
 
-    fun getTimeFormat(date: Date): String {
-        return SimpleDateFormat.getTimeInstance(DateFormat.SHORT).format(date)
+    fun getTimeFormat(milli: Long): String {
+        return SimpleDateFormat.getTimeInstance(DateFormat.SHORT).format(milli)
     }
 
-    fun getDateFormat(date: Date): String {
-        return SimpleDateFormat.getDateInstance().format(date)
+    fun getDateFormat(milli: Long): String {
+        return SimpleDateFormat.getDateInstance().format(milli)
     }
 
     fun <T> getTwoListDiffElement(list1: List<T>, list2: List<T>): List<T> {
@@ -292,8 +304,8 @@ object Utils {
 val Any.TAG: String
     get() = this::class.java.simpleName
 
-fun Picasso.loadCompat(url: String?): RequestCreator {
-    return load(if (url == null || ResourceManager.isNetworkUri(url) || ResourceManager.isContentUri(url)) {
+fun Picasso.loadCompat(url: String?, resourceManager: ResourceManager): RequestCreator {
+    return load(if (url == null || resourceManager.isNetworkUri(url) || resourceManager.isContentUri(url)) {
         url
     } else {
         "file://$url"

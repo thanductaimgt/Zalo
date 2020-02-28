@@ -12,6 +12,7 @@ import android.view.WindowManager
 import android.widget.PopupWindow
 import kotlinx.android.synthetic.main.activity_room.*
 import vng.zalo.tdtai.zalo.R
+import vng.zalo.tdtai.zalo.abstracts.KeyboardHeightObserver
 
 
 /*

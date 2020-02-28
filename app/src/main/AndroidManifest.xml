@@ -26,13 +26,17 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme.Light"
         android:windowSoftInputMode="adjustResize">
-        <activity android:name=".views.activities.ShareActivity"
+        <activity android:name=".ui.profile.ProfileActivity"></activity>
+        <activity
+            android:name=".ui.share.ShareActivity"
             android:launchMode="singleTop"
             android:theme="@style/AppTheme.Light.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.SEND_MULTIPLE" />
                 <action android:name="android.intent.action.SEND" />
+
                 <category android:name="android.intent.category.DEFAULT" />
+
                 <data android:mimeType="*/*" />
             </intent-filter>
         </activity>
@@ -48,14 +52,13 @@
         </receiver>
 
         <activity
-            android:name=".views.activities.CallActivity"
-            android:screenOrientation="portrait"
+            android:name=".ui.call.CallActivity"
             android:theme="@style/AppTheme.Light.NoActionBar" /> <!-- <service -->
         <!-- android:name=".services.NotificationService" -->
         <!-- android:enabled="true" -->
         <!-- android:exported="true" -->
         <!-- android:stopWithTask="false" /> -->
-        <activity android:name=".views.activities.RegisterActivity" />
+        <activity android:name=".ui.register.RegisterActivity" />
 
         <provider
             android:name="androidx.core.content.FileProvider"
@@ -68,11 +71,11 @@
         </provider>
 
         <activity
-            android:name=".views.activities.CreateGroupActivity"
+            android:name=".ui.create_group.CreateGroupActivity"
             android:label="@string/description_create_group"
             android:theme="@style/AppTheme.Light.NoActionBar" />
         <activity
-            android:name=".views.activities.SplashActivity"
+            android:name=".ui.SplashActivity"
             android:theme="@style/AppTheme.SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -82,17 +85,17 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".views.activities.RoomActivity"
+            android:name=".ui.chat.ChatActivity"
             android:theme="@style/AppTheme.Light.NoActionBar" />
         <activity
-            android:name=".views.activities.HomeActivity"
+            android:name=".ui.home.HomeActivity"
             android:theme="@style/AppTheme.Light.NoActionBar" />
         <activity
-            android:name=".views.activities.LoginActivity"
-            android:parentActivityName=".views.activities.IntroActivity"
+            android:name=".ui.login.LoginActivity"
+            android:parentActivityName=".ui.intro.IntroActivity"
             android:theme="@style/AppTheme.Light.NoActionBar" />
         <activity
-            android:name=".views.activities.IntroActivity"
+            android:name=".ui.intro.IntroActivity"
             android:launchMode="singleTop"
             android:theme="@style/AppTheme.Light.NoActionBar" />
     </application>

@@ -19,7 +19,6 @@ import vng.zalo.tdtai.zalo.utils.TAG
 import javax.inject.Inject
 import javax.inject.Singleton
 
-@Singleton
 interface CallService {
     fun init()
 
@@ -81,7 +80,8 @@ interface CallService {
 
 class SipCallService @Inject constructor(
         private val application: ZaloApplication,
-        private val lazySessionManager: Lazy<SessionManager>//cycle
+        private val lazySessionManager: Lazy<SessionManager>,//cycle
+        private val lazySessionManager2: Lazy<SessionManager>//cycle
 ) : CallService {
     private val callReceiver: CallReceiver = CallReceiver()
     private val filter = IntentFilter().apply {
@@ -97,6 +97,9 @@ class SipCallService @Inject constructor(
     }
 
     override fun init() {
+        val a = lazySessionManager.get()
+        val b = lazySessionManager2.get()
+
         sipProfile = SipProfile.Builder("${SIP_ACCOUNT_PREFIX}${lazySessionManager.get().curUser!!.phone}", SIP_DOMAIN)
                 .setPassword(lazySessionManager.get().curUser!!.phone)
 //                    .setAutoRegistration(true)

@@ -9,6 +9,7 @@ import android.widget.Spinner
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import vng.zalo.tdtai.zalo.R
+import javax.inject.Inject
 
 class BoldSelectedSpinnerAdapter<T>(
         context: Context,

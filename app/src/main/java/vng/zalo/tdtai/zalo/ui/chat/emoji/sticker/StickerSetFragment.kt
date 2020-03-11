@@ -5,30 +5,24 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
-import dagger.android.AndroidInjector
 import dagger.android.HasAndroidInjector
+import dagger.android.support.DaggerFragment
 import kotlinx.android.synthetic.main.fragment_sticker_set.*
 import vng.zalo.tdtai.zalo.R
-import vng.zalo.tdtai.zalo.di.ViewModelFactory
 import vng.zalo.tdtai.zalo.model.message.Message
 import vng.zalo.tdtai.zalo.ui.chat.ChatActivity
 import javax.inject.Inject
 
-class StickerSetFragment(private val bucketName: String) : Fragment(), View.OnClickListener, HasAndroidInjector {
+class StickerSetFragment(val bucketName: String) : DaggerFragment(), View.OnClickListener, HasAndroidInjector {
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
     private val viewModel: StickerSetViewModel by viewModels { viewModelFactory }
 
     @Inject lateinit var adapter: StickerSetAdapter
-
-    override fun androidInjector(): AndroidInjector<Any> {
-        return DaggerStickerSetComponent.factory().create(bucketName)
-    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -46,8 +40,7 @@ class StickerSetFragment(private val bucketName: String) : Fragment(), View.OnCl
     }
 
     private fun initView() {
-        adapter = StickerSetAdapter(this)
-        with(recyclerView) {
+        recyclerView.apply {
             layoutManager = GridLayoutManager(activity, COLUMN_NUM)
             adapter = this@StickerSetFragment.adapter
             setHasFixedSize(true)

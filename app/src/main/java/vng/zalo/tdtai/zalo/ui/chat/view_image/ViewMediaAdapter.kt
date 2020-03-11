@@ -1,38 +1,29 @@
 package vng.zalo.tdtai.zalo.ui.chat.view_image
 
 import android.os.Parcelable
+import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
-import com.google.android.exoplayer2.SimpleExoPlayer
-import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory
-import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
-import com.google.android.exoplayer2.trackselection.TrackSelector
-import com.google.android.exoplayer2.upstream.BandwidthMeter
-import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter
+import com.google.android.exoplayer2.ExoPlayer
+import com.google.android.exoplayer2.extractor.ExtractorsFactory
+import com.google.android.exoplayer2.upstream.DataSource
 import vng.zalo.tdtai.zalo.abstracts.MovableFragmentStatePagerAdapter
 import vng.zalo.tdtai.zalo.model.message.ResourceMessage
-import vng.zalo.tdtai.zalo.ui.chat.CacheDataSourceFactory
-import vng.zalo.tdtai.zalo.ui.chat.ChatActivity
+import vng.zalo.tdtai.zalo.utils.Constants
 import javax.inject.Inject
+import javax.inject.Named
 
 class ViewMediaAdapter @Inject constructor(
-        private val chatActivity: ChatActivity
-) : MovableFragmentStatePagerAdapter(chatActivity.supportFragmentManager/*, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT*/) {
+        @Named(Constants.ACTIVITY_NAME) private val clickListener: View.OnClickListener,
+        @Named(Constants.ACTIVITY_NAME) fragmentManager: FragmentManager,
+        val exoPlayer:ExoPlayer,
+        private val cacheDataSourceFactory:DataSource.Factory,
+        private val extractorsFactory:ExtractorsFactory
+) : MovableFragmentStatePagerAdapter(fragmentManager/*, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT*/) {
     var resourceMessages = ArrayList<ResourceMessage>()
 
-    private val cacheDataSourceFactory= CacheDataSourceFactory(chatActivity, 100 * 1024 * 1024, 10 * 1024 * 1024)
-    private val extractorsFactory= DefaultExtractorsFactory()
-
-    private val bandwidthMeter: BandwidthMeter = DefaultBandwidthMeter.Builder(chatActivity).build()
-    private val trackSelector: TrackSelector = DefaultTrackSelector(chatActivity)
-
-    val exoPlayer = SimpleExoPlayer.Builder(chatActivity)
-            .setBandwidthMeter(bandwidthMeter)
-            .setTrackSelector(trackSelector)
-            .build()
-
     override fun getItem(position: Int): Fragment {
-        return ViewImageFragment(chatActivity, resourceMessages[position], exoPlayer, cacheDataSourceFactory, extractorsFactory)
+        return ViewImageFragment(clickListener, resourceMessages[position], exoPlayer, cacheDataSourceFactory, extractorsFactory)
     }
 
     override fun getItemId(position: Int): String {

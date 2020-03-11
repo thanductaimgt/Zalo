@@ -17,6 +17,7 @@ import vng.zalo.tdtai.zalo.model.room.Room
 import vng.zalo.tdtai.zalo.model.room.RoomItem
 import vng.zalo.tdtai.zalo.model.room.RoomItemPeer
 import vng.zalo.tdtai.zalo.utils.Constants
+import vng.zalo.tdtai.zalo.utils.RoomItemDiffCallback
 import vng.zalo.tdtai.zalo.utils.Utils
 import vng.zalo.tdtai.zalo.utils.loadCompat
 import javax.inject.Inject
@@ -26,7 +27,7 @@ class RoomItemAdapter @Inject constructor(
         private val sessionManager: SessionManager,
         private val resourceManager: ResourceManager,
         private val utils: Utils,
-        diffCallback: DiffUtil.ItemCallback<RoomItem>) : ZaloListAdapter<RoomItem, RoomItemAdapter.RoomItemViewHolder>(diffCallback) {
+        diffCallback: RoomItemDiffCallback) : ZaloListAdapter<RoomItem, RoomItemAdapter.RoomItemViewHolder>(diffCallback) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RoomItemViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_room, parent, false)

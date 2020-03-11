@@ -1,12 +1,13 @@
 package vng.zalo.tdtai.zalo
 
+import android.content.Context
 import android.util.Log
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ProcessLifecycleOwner
-import androidx.multidex.MultiDexApplication
+import androidx.multidex.MultiDex
 import dagger.android.AndroidInjector
-import dagger.android.HasAndroidInjector
+import dagger.android.DaggerApplication
 import vng.zalo.tdtai.zalo.di.DaggerAppComponent
 import vng.zalo.tdtai.zalo.managers.PermissionManager
 import vng.zalo.tdtai.zalo.managers.SessionManager
@@ -16,7 +17,7 @@ import vng.zalo.tdtai.zalo.repo.Storage
 import vng.zalo.tdtai.zalo.utils.TAG
 import javax.inject.Inject
 
-class ZaloApplication : MultiDexApplication(), HasAndroidInjector {
+class ZaloApplication : DaggerApplication() {
     @Inject
     lateinit var database: Database
     @Inject
@@ -29,7 +30,13 @@ class ZaloApplication : MultiDexApplication(), HasAndroidInjector {
     @Inject
     lateinit var permissionManager: PermissionManager
 
-    override fun androidInjector(): AndroidInjector<Any> {
+    //MultiDex
+    override fun attachBaseContext(base: Context?) {
+        super.attachBaseContext(base)
+        MultiDex.install(this)
+    }
+
+    override fun applicationInjector(): AndroidInjector<out DaggerApplication> {
         return DaggerAppComponent.factory().create(this)
     }
 

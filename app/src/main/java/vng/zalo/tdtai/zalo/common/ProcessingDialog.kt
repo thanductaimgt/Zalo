@@ -11,6 +11,8 @@ import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentManager
 import vng.zalo.tdtai.zalo.R
 import vng.zalo.tdtai.zalo.utils.TAG
+import javax.inject.Inject
+import javax.inject.Singleton
 
 interface ProcessingDialog{
     fun show(fm:FragmentManager)
@@ -18,7 +20,7 @@ interface ProcessingDialog{
     fun dismiss()
 }
 
-class ProcessingDialogFragment : DialogFragment(), ProcessingDialog {
+class ProcessingDialogFragment @Inject constructor() : DialogFragment(), ProcessingDialog {
     override fun onCreateView(
             inflater: LayoutInflater,
             container: ViewGroup?,

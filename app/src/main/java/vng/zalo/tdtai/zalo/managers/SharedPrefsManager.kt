@@ -8,7 +8,6 @@ import vng.zalo.tdtai.zalo.utils.Utils
 import javax.inject.Inject
 import javax.inject.Singleton
 
-@Singleton
 interface SharedPrefsManager {
     fun isLogin(context: Context): Boolean
 

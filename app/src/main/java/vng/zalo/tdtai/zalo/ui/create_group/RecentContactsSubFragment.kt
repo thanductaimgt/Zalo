@@ -22,7 +22,7 @@ class RecentContactsSubFragment : DaggerFragment() {
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
-    private val viewModel: CreateGroupActivityViewModel by viewModels { viewModelFactory }
+    private val viewModel: CreateGroupViewModel by viewModels { viewModelFactory }
 
     private lateinit var adapter: SelectRoomItemAdapter
 

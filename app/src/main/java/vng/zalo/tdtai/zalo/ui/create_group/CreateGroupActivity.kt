@@ -9,35 +9,34 @@ import android.view.WindowManager
 import android.view.inputmethod.EditorInfo
 import android.widget.FrameLayout
 import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.squareup.picasso.Picasso
-import dagger.android.AndroidInjector
-import dagger.android.HasAndroidInjector
 import dagger.android.support.DaggerAppCompatActivity
 import kotlinx.android.synthetic.main.activity_create_group.*
 import kotlinx.android.synthetic.main.bottom_sheet_upload.view.*
 import vng.zalo.tdtai.zalo.R
-import vng.zalo.tdtai.zalo.ZaloApplication
-import vng.zalo.tdtai.zalo.managers.ExternalIntentManager
 import vng.zalo.tdtai.zalo.common.ChooseRoomItemAdapter
 import vng.zalo.tdtai.zalo.common.ProcessingDialog
+import vng.zalo.tdtai.zalo.managers.ExternalIntentManager
 import vng.zalo.tdtai.zalo.managers.ResourceManager
 import vng.zalo.tdtai.zalo.managers.SessionManager
 import vng.zalo.tdtai.zalo.model.RoomMember
 import vng.zalo.tdtai.zalo.model.room.RoomGroup
 import vng.zalo.tdtai.zalo.model.room.RoomItem
 import vng.zalo.tdtai.zalo.model.room.RoomItemPeer
-import vng.zalo.tdtai.zalo.utils.*
 import vng.zalo.tdtai.zalo.ui.chat.ChatActivity
+import vng.zalo.tdtai.zalo.utils.Constants
+import vng.zalo.tdtai.zalo.utils.TAG
+import vng.zalo.tdtai.zalo.utils.Utils
+import vng.zalo.tdtai.zalo.utils.loadCompat
 import java.util.*
 import javax.inject.Inject
 
-class CreateGroupActivity : AppCompatActivity(), View.OnClickListener, HasAndroidInjector {
+class CreateGroupActivity : DaggerAppCompatActivity(), View.OnClickListener {
     @Inject lateinit var externalIntentManager: ExternalIntentManager
     @Inject lateinit var utils: Utils
     @Inject lateinit var sessionManager: SessionManager
@@ -51,14 +50,10 @@ class CreateGroupActivity : AppCompatActivity(), View.OnClickListener, HasAndroi
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
-    private val viewModel: CreateGroupActivityViewModel by viewModels { viewModelFactory }
+    private val viewModel: CreateGroupViewModel by viewModels { viewModelFactory }
 
     private var isAvatarSet = false
     private var takenImageUrl:String?=null
-
-    override fun androidInjector(): AndroidInjector<Any> {
-        return DaggerCreateGroupComponent.factory().create(this)
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

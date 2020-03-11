@@ -5,10 +5,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import dagger.android.support.DaggerFragment
 import kotlinx.android.synthetic.main.fragment_contact.*
 import vng.zalo.tdtai.zalo.R
+import javax.inject.Inject
 
-class ContactFragment : Fragment() {
+class ContactFragment : DaggerFragment() {
+    @Inject lateinit var adapter:ContactFragmentAdapter
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_contact, container, false)
@@ -19,7 +23,7 @@ class ContactFragment : Fragment() {
     }
 
     private fun initView() {
-        viewPager.adapter = ContactFragmentAdapter(this, childFragmentManager)
+        viewPager.adapter = adapter
 
         tabLayout.setupWithViewPager(viewPager)
     }

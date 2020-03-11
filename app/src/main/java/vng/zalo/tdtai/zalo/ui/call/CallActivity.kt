@@ -3,7 +3,6 @@ package vng.zalo.tdtai.zalo.ui.call
 import android.app.KeyguardManager
 import android.content.Context
 import android.media.AudioManager
-import android.net.sip.SipAudioCall
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
@@ -11,16 +10,14 @@ import android.view.View
 import android.view.WindowManager
 import android.widget.Toast
 import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.squareup.picasso.Picasso
-import dagger.android.AndroidInjector
-import dagger.android.HasAndroidInjector
 import dagger.android.support.DaggerAppCompatActivity
 import kotlinx.android.synthetic.main.activity_call.*
 import vng.zalo.tdtai.zalo.R
 import vng.zalo.tdtai.zalo.common.AlertDialog
+import vng.zalo.tdtai.zalo.di.DaggerAppComponent
 import vng.zalo.tdtai.zalo.managers.CallService
 import vng.zalo.tdtai.zalo.managers.ResourceManager
 import vng.zalo.tdtai.zalo.model.message.CallMessage
@@ -32,7 +29,7 @@ import kotlin.math.max
 import kotlin.math.min
 
 
-class CallActivity : AppCompatActivity(), View.OnClickListener, HasAndroidInjector {
+class CallActivity : DaggerAppCompatActivity(), View.OnClickListener {
     @Inject lateinit var alertDialog: AlertDialog
 
     @Inject lateinit var resourceManager: ResourceManager
@@ -40,6 +37,7 @@ class CallActivity : AppCompatActivity(), View.OnClickListener, HasAndroidInject
     @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
     private val viewModel: CallViewModel by viewModels { viewModelFactory }
 
+    val audioCallListener = AudioCallListener()
     private lateinit var audioManager: AudioManager
     private var keyguardManager: KeyguardManager? = null
 
@@ -59,10 +57,6 @@ class CallActivity : AppCompatActivity(), View.OnClickListener, HasAndroidInject
 
             handler.postDelayed(this, 500)
         }
-    }
-
-    override fun androidInjector(): AndroidInjector<Any> {
-        return DaggerCallComponent.factory().create(intent, AudioCallListener())
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -111,7 +105,7 @@ class CallActivity : AppCompatActivity(), View.OnClickListener, HasAndroidInject
             })
 
             viewModel.liveRoom.observe(this, Observer {
-                nameTextView.text = it.getDisplayName()
+                nameTextView.text = it.getDisplayName(resourceManager)
                 Picasso.get().loadCompat(it.avatarUrl, resourceManager).fit().centerCrop().into(avatarImgView)
             })
         } catch (e: Exception) {
@@ -183,7 +177,7 @@ class CallActivity : AppCompatActivity(), View.OnClickListener, HasAndroidInject
         setContentView(R.layout.activity_call)
 
         if (viewModel.isCaller) {
-            nameTextView.text = viewModel.liveRoom.value!!.getDisplayName()
+            nameTextView.text = viewModel.liveRoom.value!!.getDisplayName(resourceManager)
             Picasso.get().loadCompat(viewModel.liveRoom.value!!.avatarUrl, resourceManager).fit().centerCrop().into(avatarImgView)
         } else {
             statusTextView.text = getString(R.string.description_incoming_call)

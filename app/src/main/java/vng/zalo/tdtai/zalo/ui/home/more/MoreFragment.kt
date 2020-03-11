@@ -7,13 +7,20 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 
 import com.squareup.picasso.Picasso
+import dagger.android.support.DaggerFragment
 import kotlinx.android.synthetic.main.fragment_more.*
 
 import vng.zalo.tdtai.zalo.R
 import vng.zalo.tdtai.zalo.ZaloApplication
+import vng.zalo.tdtai.zalo.managers.ResourceManager
+import vng.zalo.tdtai.zalo.managers.SessionManager
 import vng.zalo.tdtai.zalo.utils.loadCompat
+import javax.inject.Inject
 
-class MoreFragment : Fragment() {
+class MoreFragment : DaggerFragment() {
+    @Inject lateinit var sessionManager: SessionManager
+    @Inject lateinit var resourceManager: ResourceManager
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
@@ -22,11 +29,11 @@ class MoreFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         Picasso.get()
-                .loadCompat(ZaloApplication.curUser!!.avatarUrl)
+                .loadCompat(sessionManager.curUser!!.avatarUrl, resourceManager)
                 .fit()
                 .centerCrop()
                 .into(avatarImgView)
 
-        nameTextView.text = ZaloApplication.curUser!!.name
+        nameTextView.text = sessionManager.curUser!!.name
     }
 }

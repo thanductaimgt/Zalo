@@ -7,25 +7,32 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import io.reactivex.Observer
 import io.reactivex.disposables.Disposable
-import vng.zalo.tdtai.zalo.ZaloApplication
 import vng.zalo.tdtai.zalo.managers.MessageManager
+import vng.zalo.tdtai.zalo.managers.SessionManager
 import vng.zalo.tdtai.zalo.model.message.Message
 import vng.zalo.tdtai.zalo.model.room.RoomItem
-import vng.zalo.tdtai.zalo.repo.FirebaseDatabase
+import vng.zalo.tdtai.zalo.repo.Database
 import vng.zalo.tdtai.zalo.utils.TAG
 import vng.zalo.tdtai.zalo.utils.Utils
+import javax.inject.Inject
 
 
-class ShareActivityViewModel(intent: Intent) : ViewModel() {
+class ShareViewModel @Inject constructor(
+        intent: Intent,
+        utils: Utils,
+        sessionManager: SessionManager,
+        private val database: Database,
+        private val messageManager: MessageManager
+) : ViewModel() {
     val liveSelectedRoomItems: MutableLiveData<ArrayList<RoomItem>> = MutableLiveData(ArrayList())
 
     val liveRoomItems: MutableLiveData<List<RoomItem>> = MutableLiveData(ArrayList())
 
-    private val localUris = Utils.getLocalUris(intent)
+    private val localUris = utils.getLocalUris(intent)
 
     init {
-        FirebaseDatabase.getUserRooms(
-                userPhone = ZaloApplication.curUser!!.phone!!
+        database.getUserRooms(
+                userPhone = sessionManager.curUser!!.phone!!
         ) { liveRoomItems.value = it }
     }
 
@@ -33,8 +40,8 @@ class ShareActivityViewModel(intent: Intent) : ViewModel() {
         var count = 0
         var isAnyFail = false
         liveSelectedRoomItems.value!!.forEach {
-            FirebaseDatabase.getRoomInfo(it.roomId!!) { room ->
-                MessageManager.addNewMessagesToFirestore(context, room, localUris, Message.TYPE_FILE, object : Observer<Message> {
+            database.getRoomInfo(it.roomId!!) { room ->
+                messageManager.addNewMessagesToFirestore(context, room, localUris, Message.TYPE_FILE, object : Observer<Message> {
                     override fun onComplete() {
                         count++
                         Log.d(TAG, "count: $count, select: ${liveSelectedRoomItems.value!!.size}")

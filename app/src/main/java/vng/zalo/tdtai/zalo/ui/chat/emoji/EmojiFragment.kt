@@ -4,31 +4,25 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.airbnb.lottie.LottieAnimationView
 import com.airbnb.lottie.RenderMode
 import com.google.android.material.tabs.TabLayout
-import dagger.android.AndroidInjector
-import dagger.android.HasAndroidInjector
+import dagger.android.support.DaggerFragment
 import kotlinx.android.synthetic.main.fragment_emoji.*
 import vng.zalo.tdtai.zalo.R
 import vng.zalo.tdtai.zalo.model.StickerSetItem
 import javax.inject.Inject
 
 
-class EmojiFragment : Fragment(), TabLayout.OnTabSelectedListener, HasAndroidInjector {
+class EmojiFragment : DaggerFragment(), TabLayout.OnTabSelectedListener {
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
     private val viewModel: EmojiViewModel by viewModels { viewModelFactory }
 
     @Inject lateinit var adapter: EmojiAdapter
-
-    override fun androidInjector(): AndroidInjector<Any> {
-        return DaggerEmojiComponent.factory().create(childFragmentManager)
-    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -44,8 +38,6 @@ class EmojiFragment : Fragment(), TabLayout.OnTabSelectedListener, HasAndroidInj
     }
 
     private fun initView() {
-        adapter = EmojiAdapter(childFragmentManager)
-
         viewPager.apply {
             adapter = this@EmojiFragment.adapter
             addOnPageChangeListener(TabLayout.TabLayoutOnPageChangeListener(tabLayout))

@@ -20,7 +20,6 @@ import java.io.File
 import javax.inject.Inject
 import javax.inject.Singleton
 
-@Singleton
 interface MessageManager {
     fun addNewMessagesToFirestore(context: Context, room: Room, contents: List<String>, messageType: Int, observer: Observer<Message>? = null)
     fun deleteMessageAndAttachedData(roomId: String, message: Message, onSuccess: (() -> Unit)? = null)

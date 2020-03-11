@@ -50,4 +50,8 @@ object Constants {
     const val DEFAULT_KEYBOARD_SIZE_DP = 320
 
     val TIMESTAMP_EPOCH = Date(0).time
+
+    const val ACTIVITY_NAME = "activity"
+    const val FRAGMENT_NAME = "fragment"
+    const val SUB_FRAGMENT_NAME = "sub_fragment"
 }

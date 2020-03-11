@@ -30,7 +30,6 @@ import java.io.InputStream
 import javax.inject.Inject
 import javax.inject.Singleton
 
-@Singleton
 interface ResourceManager {
     fun createTempFile(context: Context, fileType: Int, callback: (file: File?) -> Unit)
     fun getImageDimension(context: Context, localUri: String): String

@@ -22,7 +22,7 @@ class AllContactsSubFragment : DaggerFragment() {
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
-    private val viewModel: CreateGroupActivityViewModel by viewModels { viewModelFactory }
+    private val viewModel: CreateGroupViewModel by viewModels { viewModelFactory }
 
     private lateinit var adapter: SelectRoomItemAdapter
 
@@ -45,7 +45,7 @@ class AllContactsSubFragment : DaggerFragment() {
     private fun initView() {
         adapter = SelectRoomItemAdapter(RoomItemDiffCallback(), false, viewModel.liveSelectedRoomItems, utils, resourceManager)
 
-        with(recyclerView) {
+        recyclerView.apply {
             layoutManager = LinearLayoutManager(activity)
             adapter = this@AllContactsSubFragment.adapter
             isNestedScrollingEnabled = false

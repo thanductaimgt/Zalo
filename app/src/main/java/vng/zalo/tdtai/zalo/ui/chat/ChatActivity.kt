@@ -14,7 +14,6 @@ import android.view.inputmethod.EditorInfo
 import android.widget.FrameLayout
 import android.widget.Toast
 import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.view.forEach
 import androidx.core.view.forEachIndexed
@@ -28,8 +27,7 @@ import androidx.viewpager.widget.ViewPager
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.squareup.picasso.Picasso
-import dagger.android.AndroidInjector
-import dagger.android.HasAndroidInjector
+import dagger.android.support.DaggerAppCompatActivity
 import io.reactivex.Completable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -52,7 +50,6 @@ import vng.zalo.tdtai.zalo.repo.Database
 import vng.zalo.tdtai.zalo.services.NotificationService
 import vng.zalo.tdtai.zalo.ui.chat.emoji.EmojiFragment
 import vng.zalo.tdtai.zalo.ui.chat.view_image.ViewMediaAdapter
-import vng.zalo.tdtai.zalo.ui.home.chat.ChatAdapter
 import vng.zalo.tdtai.zalo.utils.*
 import java.io.FileNotFoundException
 import java.util.concurrent.atomic.AtomicInteger
@@ -62,7 +59,7 @@ import kotlin.math.max
 import kotlin.math.min
 
 
-class ChatActivity : AppCompatActivity(), View.OnClickListener, View.OnLongClickListener, KeyboardHeightObserver, HasAndroidInjector {
+class ChatActivity : DaggerAppCompatActivity(), View.OnClickListener, View.OnLongClickListener, KeyboardHeightObserver {
     @Inject lateinit var sharedPrefsManager: SharedPrefsManager
     @Inject lateinit var notificationService: NotificationService
     @Inject lateinit var sessionManager: SessionManager
@@ -111,13 +108,6 @@ class ChatActivity : AppCompatActivity(), View.OnClickListener, View.OnLongClick
             }
         }
 
-    override fun androidInjector(): AndroidInjector<Any> {
-        return DaggerChatComnponent.Factory().create(
-                this,
-                intent
-        )
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -127,8 +117,6 @@ class ChatActivity : AppCompatActivity(), View.OnClickListener, View.OnLongClick
                         intent.getStringExtra(Constants.ROOM_ID)!!
                 )
         )
-
-//        viewModel = ViewModelProvider(this, ViewModelFactory.getInstance(intent = intent)).get(ChatViewModel::class.java)
 
         initView()
 
@@ -334,6 +322,8 @@ class ChatActivity : AppCompatActivity(), View.OnClickListener, View.OnLongClick
             val includeEdge = true
             addItemDecoration(GridSpacingItemDecoration(spanCount, spacing, includeEdge))
             adapter = messageActionAdapter
+            messageActionAdapter.actions = actions
+            messageActionAdapter.notifyDataSetChanged()
         }
     }
 
@@ -674,10 +664,6 @@ class ChatActivity : AppCompatActivity(), View.OnClickListener, View.OnLongClick
 
     private fun getViewHolder(position: Int): BindableViewHolder {
         return chatRecyclerView.getChildViewHolder(chatRecyclerView[position]) as BindableViewHolder
-    }
-
-    fun isRecyclerViewIdle(): Boolean {
-        return chatRecyclerView.scrollState == RecyclerView.SCROLL_STATE_IDLE
     }
 
     fun getMoreImageMessages(curMessage: ImageMessage, l: Int = 10, r: Int = 10, alsoAddCurMessage: Boolean = false): ArrayList<ImageMessage> {

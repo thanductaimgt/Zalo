@@ -11,7 +11,6 @@ import vng.zalo.tdtai.zalo.utils.Utils
 import javax.inject.Inject
 import javax.inject.Singleton
 
-@Singleton
 interface ExternalIntentManager {
     fun dispatchChooserIntent(activity: Activity, requestCode: Int, chooserType: Int, allowMultiple: Boolean)
     fun dispatchCaptureIntent(activity: Activity, requestCode: Int, captureType: Int, callback: ((localPath: String?) -> Unit)? = null)

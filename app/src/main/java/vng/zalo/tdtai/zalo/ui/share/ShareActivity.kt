@@ -4,37 +4,43 @@ import android.os.Bundle
 import android.view.View
 import android.view.WindowManager
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
+import androidx.activity.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import dagger.android.support.DaggerAppCompatActivity
 import kotlinx.android.synthetic.main.activity_share.*
 import vng.zalo.tdtai.zalo.R
-import vng.zalo.tdtai.zalo.ZaloApplication
 import vng.zalo.tdtai.zalo.abstracts.NotScrollableLinearLayoutManager
 import vng.zalo.tdtai.zalo.common.ChooseRoomItemAdapter
-import vng.zalo.tdtai.zalo.ui.create_group.SelectRoomItemAdapter
-import vng.zalo.tdtai.zalo.di.ViewModelFactory
+import vng.zalo.tdtai.zalo.common.ProcessingDialog
+import vng.zalo.tdtai.zalo.managers.ResourceManager
 import vng.zalo.tdtai.zalo.model.room.Room
 import vng.zalo.tdtai.zalo.model.room.RoomItem
+import vng.zalo.tdtai.zalo.ui.create_group.SelectRoomItemAdapter
 import vng.zalo.tdtai.zalo.utils.RoomItemDiffCallback
 import vng.zalo.tdtai.zalo.utils.Utils
+import javax.inject.Inject
 
-class ShareActivity : AppCompatActivity(), View.OnClickListener {
+class ShareActivity : DaggerAppCompatActivity(), View.OnClickListener {
+    @Inject lateinit var resourceManager: ResourceManager
+    @Inject lateinit var processingDialog: ProcessingDialog
+    @Inject lateinit var utils: Utils
+
     private lateinit var recentRecyclerViewAdapter: SelectRoomItemAdapter
     private lateinit var groupRecyclerViewAdapter: SelectRoomItemAdapter
     private lateinit var peerRecyclerViewAdapter: SelectRoomItemAdapter
 
-    private lateinit var selectedRecyclerViewAdapter: ChooseRoomItemAdapter
+    @Inject lateinit var selectedRecyclerViewAdapter: ChooseRoomItemAdapter
 
-    lateinit var viewModel: ShareActivityViewModel
+    @Inject
+    lateinit var viewModelFactory: ViewModelProvider.Factory
+    private val viewModel: ShareViewModel by viewModels { viewModelFactory }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_share)
-
-        viewModel = ViewModelProvider(this, ViewModelFactory.getInstance(intent = intent)).get(ShareActivityViewModel::class.java)
 
         initView()
 
@@ -60,35 +66,35 @@ class ShareActivity : AppCompatActivity(), View.OnClickListener {
 
         viewModel.liveRoomItems.observe(this, Observer { roomItems ->
             recentRecyclerViewAdapter.submitList(roomItems.sortedByDescending { it.lastMsgTime }.take(6))
-            groupRecyclerViewAdapter.submitList(roomItems.filter { it.roomType == Room.TYPE_GROUP }.sortedBy { it.getDisplayName() }.take(6))
-            peerRecyclerViewAdapter.submitList(roomItems.filter { it.roomType == Room.TYPE_PEER }.sortedBy { it.getDisplayName() }.take(5))
+            groupRecyclerViewAdapter.submitList(roomItems.filter { it.roomType == Room.TYPE_GROUP }.sortedBy { it.getDisplayName(resourceManager) }.take(6))
+            peerRecyclerViewAdapter.submitList(roomItems.filter { it.roomType == Room.TYPE_PEER }.sortedBy { it.getDisplayName(resourceManager) }.take(5))
         })
     }
 
     private fun initView() {
         window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN)
 
-        selectedRecyclerViewAdapter = ChooseRoomItemAdapter(RoomItemDiffCallback())
+        selectedRecyclerViewAdapter = ChooseRoomItemAdapter(this, resourceManager, RoomItemDiffCallback())
         recyclerView.apply {
             adapter = selectedRecyclerViewAdapter
             layoutManager = LinearLayoutManager(this@ShareActivity, RecyclerView.HORIZONTAL, false)
         }
 
-        recentRecyclerViewAdapter = SelectRoomItemAdapter(RoomItemDiffCallback(), false, viewModel.liveSelectedRoomItems)
+        recentRecyclerViewAdapter = SelectRoomItemAdapter(RoomItemDiffCallback(), false, viewModel.liveSelectedRoomItems, utils, resourceManager)
         recentRecyclerView.apply {
             adapter = recentRecyclerViewAdapter
             layoutManager = NotScrollableLinearLayoutManager(this@ShareActivity)
             isNestedScrollingEnabled = false
         }
 
-        groupRecyclerViewAdapter = SelectRoomItemAdapter(RoomItemDiffCallback(), false, viewModel.liveSelectedRoomItems)
+        groupRecyclerViewAdapter = SelectRoomItemAdapter(RoomItemDiffCallback(), false, viewModel.liveSelectedRoomItems, utils, resourceManager)
         groupRecyclerView.apply {
             adapter = groupRecyclerViewAdapter
             layoutManager = NotScrollableLinearLayoutManager(this@ShareActivity)
             isNestedScrollingEnabled = false
         }
 
-        peerRecyclerViewAdapter = SelectRoomItemAdapter(RoomItemDiffCallback(), false, viewModel.liveSelectedRoomItems)
+        peerRecyclerViewAdapter = SelectRoomItemAdapter(RoomItemDiffCallback(), false, viewModel.liveSelectedRoomItems, utils, resourceManager)
         peerRecyclerView.apply {
             adapter = peerRecyclerViewAdapter
             layoutManager = NotScrollableLinearLayoutManager(this@ShareActivity)
@@ -122,7 +128,7 @@ class ShareActivity : AppCompatActivity(), View.OnClickListener {
             }
             R.id.sendImgView -> {
                 viewModel.addNewMessagesToFirestore(this) { isSuccess ->
-                    ZaloApplication.processingDialog.dismiss()
+                    processingDialog.dismiss()
                     Toast.makeText(this,
                             if (isSuccess) {
                                 "Đã gửi"
@@ -131,10 +137,10 @@ class ShareActivity : AppCompatActivity(), View.OnClickListener {
                             }, Toast.LENGTH_SHORT).show()
                     finish()
                 }
-                ZaloApplication.processingDialog.show(supportFragmentManager)
+                processingDialog.show(supportFragmentManager)
             }
             R.id.backImgView -> {
-                Utils.hideKeyboard(this, rootView)
+                utils.hideKeyboard(this, rootView)
                 finish()
             }
         }

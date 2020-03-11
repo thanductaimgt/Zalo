@@ -11,7 +11,9 @@ import vng.zalo.tdtai.zalo.model.room.RoomItemGroup
 import vng.zalo.tdtai.zalo.model.room.RoomItemPeer
 import vng.zalo.tdtai.zalo.repo.Database
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class RoomItemsViewModel @Inject constructor(
         private val database: Database,
         sessionManager: SessionManager

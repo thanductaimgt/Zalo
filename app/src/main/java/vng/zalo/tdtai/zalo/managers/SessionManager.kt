@@ -7,7 +7,6 @@ import vng.zalo.tdtai.zalo.services.NotificationService
 import javax.inject.Inject
 import javax.inject.Singleton
 
-@Singleton
 interface SessionManager {
     var isOnline: Boolean
     var curUser: User?

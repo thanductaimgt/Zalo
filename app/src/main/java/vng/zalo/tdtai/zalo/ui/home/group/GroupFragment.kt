@@ -29,7 +29,7 @@ import vng.zalo.tdtai.zalo.utils.Constants
 import java.util.*
 import javax.inject.Inject
 
-class GroupFragment : DaggerFragment(), View.OnClickListener {
+class GroupFragment: DaggerFragment(), View.OnClickListener {
     @Inject lateinit var sharedPrefsManager: SharedPrefsManager
     @Inject lateinit var resourceManager: ResourceManager
 
@@ -38,6 +38,7 @@ class GroupFragment : DaggerFragment(), View.OnClickListener {
     private val viewModel: RoomItemsViewModel by viewModels { viewModelFactory }
 
     @Inject lateinit var adapter: RoomItemAdapter
+
     private var groupSortType = 0
     private val roomItemsObserver = RoomItemsObserver()
 

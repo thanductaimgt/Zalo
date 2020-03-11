@@ -1,6 +1,5 @@
 package vng.zalo.tdtai.zalo.ui.home
 
-//import vng.zalo.tdtai.zalo.services.NotificationService
 import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
@@ -9,9 +8,14 @@ import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.PopupMenu
 import androidx.viewpager.widget.ViewPager
+import dagger.android.AndroidInjection
+import dagger.android.AndroidInjector
+import dagger.android.HasAndroidInjector
 import dagger.android.support.DaggerAppCompatActivity
 import kotlinx.android.synthetic.main.activity_home.*
 import vng.zalo.tdtai.zalo.R
+import vng.zalo.tdtai.zalo.ZaloApplication
+import vng.zalo.tdtai.zalo.di.DaggerAppComponent
 import vng.zalo.tdtai.zalo.repo.Database
 import vng.zalo.tdtai.zalo.ui.create_group.CreateGroupActivity
 import vng.zalo.tdtai.zalo.repo.FirebaseDatabase
@@ -22,6 +26,8 @@ import javax.inject.Inject
 class HomeActivity : DaggerAppCompatActivity(), View.OnClickListener {
     @Inject lateinit var utils: Utils
     @Inject lateinit var database: Database
+
+    @Inject lateinit var adapter: HomeAdapter
 
     override fun onClick(v: View) {
         when (v.id) {
@@ -36,6 +42,7 @@ class HomeActivity : DaggerAppCompatActivity(), View.OnClickListener {
     }
 
     private lateinit var prevMenuItem: MenuItem
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -58,7 +65,7 @@ class HomeActivity : DaggerAppCompatActivity(), View.OnClickListener {
         prevMenuItem = bottomNavigationView.menu.getItem(0)
 
         viewPager.apply {
-            adapter = HomeAdapter(supportFragmentManager)
+            adapter = this@HomeActivity.adapter
             viewPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
                 override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
 

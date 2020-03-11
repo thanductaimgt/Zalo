@@ -24,7 +24,8 @@ import kotlin.math.min
 //@Singleton
 class FirebaseStorage @Inject constructor(
         private val application: ZaloApplication,
-        private val resourceManager: ResourceManager
+        private val resourceManager: ResourceManager,
+        private val utils: Utils
 ):Storage {
     private val firebaseStorage: FirebaseStorage
         get() = FirebaseStorage.getInstance()
@@ -56,7 +57,7 @@ class FirebaseStorage @Inject constructor(
 
                 ByteArrayInputStream(bitmapData)
             }
-            else -> Utils.getInputStream(application, localPath)
+            else -> utils.getInputStream(application, localPath)
         }
 
         val fileStorageRef = firebaseStorage.reference.child(storagePath)
@@ -68,7 +69,7 @@ class FirebaseStorage @Inject constructor(
                     }
                 }.continueWithTask {
                     var isSuccess = false
-                    Utils.assertTaskSuccess(it, TAG, "addFileAndGetDownloadUrl") {
+                    utils.assertTaskSuccess(it, TAG, "addFileAndGetDownloadUrl") {
                         isSuccess = true
                     }
                     if (isSuccess) {
@@ -77,7 +78,7 @@ class FirebaseStorage @Inject constructor(
                         null
                     }
                 }.addOnCompleteListener { task ->
-                    Utils.assertTaskSuccessAndResultNotNull(task, TAG, "addFile") { uri ->
+                    utils.assertTaskSuccessAndResultNotNull(task, TAG, "addFile") { uri ->
                         onComplete?.invoke(uri.toString())
                     }
                 }
@@ -102,7 +103,7 @@ class FirebaseStorage @Inject constructor(
     override fun getStickerSetUrls(bucketName: String, callback: ((List<String>) -> Unit)?) {
         Log.d(TAG, firebaseStorage.reference.child("${FOLDER_STICKER_SETS}/$bucketName/").path)
         firebaseStorage.reference.child("${FOLDER_STICKER_SETS}/$bucketName/").listAll().addOnCompleteListener { task ->
-            Utils.assertTaskSuccessAndResultNotNull(task, TAG, "getStickerSetUrls.listAll") { listResult ->
+            utils.assertTaskSuccessAndResultNotNull(task, TAG, "getStickerSetUrls.listAll") { listResult ->
                 val stickerUrlsTasks = ArrayList<Task<Uri>>()
                 listResult.items.forEach {
                     stickerUrlsTasks.add(it.downloadUrl)
@@ -111,7 +112,7 @@ class FirebaseStorage @Inject constructor(
                 Tasks.whenAll(stickerUrlsTasks).addOnCompleteListener {
                     val stickerUrls = ArrayList<String>()
                     stickerUrlsTasks.forEachIndexed { index, task ->
-                        Utils.assertTaskSuccessAndResultNotNull(task, TAG, "getStickerSetUrls.task[$index]") { uri ->
+                        utils.assertTaskSuccessAndResultNotNull(task, TAG, "getStickerSetUrls.task[$index]") { uri ->
                             stickerUrls.add(uri.toString())
                         }
                     }
@@ -125,7 +126,7 @@ class FirebaseStorage @Inject constructor(
     override fun addStickerSet(name: String, localPaths: List<String>, callback: ((bucketName: String) -> Unit)?) {
         /*
          */
-        val bucketName = Utils.getStickerBucketNameFromName(name)
+        val bucketName = utils.getStickerBucketNameFromName(name)
         callback?.invoke(bucketName)
     }
 
@@ -133,7 +134,7 @@ class FirebaseStorage @Inject constructor(
         val fileStoragePath = getRoomDataStoragePath(roomId)
 
         firebaseStorage.reference.child(fileStoragePath).delete().addOnCompleteListener {
-            Utils.assertTaskSuccess(it, TAG, "deleteAttachedDataFromStorage") { onSuccess?.invoke() }
+            utils.assertTaskSuccess(it, TAG, "deleteAttachedDataFromStorage") { onSuccess?.invoke() }
         }
     }
 

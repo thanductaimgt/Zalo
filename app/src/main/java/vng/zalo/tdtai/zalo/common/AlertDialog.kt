@@ -15,7 +15,6 @@ import vng.zalo.tdtai.zalo.utils.TAG
 import javax.inject.Inject
 import javax.inject.Singleton
 
-@Singleton
 interface AlertDialog{
     fun show(fm:FragmentManager, title:String, description:String,
              button1Text:String?=null,

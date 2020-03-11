@@ -5,22 +5,22 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import com.airbnb.lottie.LottieCompositionFactory
+import dagger.android.support.DaggerAppCompatActivity
 import kotlinx.android.synthetic.main.activity_login.*
 import vng.zalo.tdtai.zalo.R
+import vng.zalo.tdtai.zalo.managers.SessionManager
 import vng.zalo.tdtai.zalo.managers.SharedPrefsManager
-import vng.zalo.tdtai.zalo.ZaloApplication
 import vng.zalo.tdtai.zalo.repo.Database
-import vng.zalo.tdtai.zalo.repo.FirebaseDatabase
 import vng.zalo.tdtai.zalo.ui.home.HomeActivity
 import vng.zalo.tdtai.zalo.ui.intro.IntroActivity
 import javax.inject.Inject
 
 
-class LoginActivity : AppCompatActivity(), View.OnClickListener {
-    @Inject
-    lateinit var database: Database
+class LoginActivity : DaggerAppCompatActivity(), View.OnClickListener {
+    @Inject lateinit var database: Database
+    @Inject lateinit var sessionManager: SessionManager
+    @Inject lateinit var sharedPrefsManager: SharedPrefsManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -66,9 +66,9 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
     private fun validateLoginInfo(phone: String, password: String) {
         database.validateLoginInfo(phone, password) { user ->
             if (user!=null) {
-                SharedPrefsManager.setUser(this, user)
+                sharedPrefsManager.setUser(this, user)
 
-                (application as ZaloApplication).initUser(user)
+                sessionManager.initUser(user)
 
                 LottieCompositionFactory.fromRawRes(this, R.raw.success).addListener {
                     animView.apply {

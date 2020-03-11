@@ -1,11 +1,10 @@
-package vng.zalo.tdtai.zalo.ui.home.contacts
+package vng.zalo.tdtai.zalo.ui.home.contacts.official_account
 
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -13,13 +12,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import dagger.android.support.DaggerFragment
 import kotlinx.android.synthetic.main.sub_fragment_official_account.*
 import vng.zalo.tdtai.zalo.R
-import vng.zalo.tdtai.zalo.di.ViewModelFactory
-import vng.zalo.tdtai.zalo.ui.home.RoomItemsViewModel
-import vng.zalo.tdtai.zalo.utils.RoomItemDiffCallback
 import vng.zalo.tdtai.zalo.utils.TAG
 import javax.inject.Inject
 
-class OfficialAccountSubFragment : DaggerFragment(), View.OnClickListener {
+class OfficialAccountFragment : DaggerFragment(), View.OnClickListener {
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
     private val viewModel: OfficialAccountViewModel by viewModels { viewModelFactory }
@@ -43,7 +39,7 @@ class OfficialAccountSubFragment : DaggerFragment(), View.OnClickListener {
     private fun initView() {
         recyclerView.apply {
             layoutManager = LinearLayoutManager(activity)
-            adapter = this@OfficialAccountSubFragment.subFragmentAdapter
+            adapter = this@OfficialAccountFragment.subFragmentAdapter
         }
     }
 

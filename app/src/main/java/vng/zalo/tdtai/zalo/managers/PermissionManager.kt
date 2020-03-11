@@ -9,7 +9,6 @@ import androidx.core.content.PermissionChecker
 import javax.inject.Inject
 import javax.inject.Singleton
 
-@Singleton
 interface PermissionManager {
     fun hasRequiredPermissions(context: Context): Boolean
     fun requestRequiredPermissions(activity: Activity)

@@ -12,7 +12,6 @@ import io.reactivex.Observer
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
-import vng.zalo.tdtai.zalo.ZaloApplication
 import vng.zalo.tdtai.zalo.managers.MessageManager
 import vng.zalo.tdtai.zalo.managers.SessionManager
 import vng.zalo.tdtai.zalo.model.RoomMember
@@ -24,13 +23,10 @@ import vng.zalo.tdtai.zalo.model.room.RoomGroup
 import vng.zalo.tdtai.zalo.model.room.RoomItem
 import vng.zalo.tdtai.zalo.model.room.RoomPeer
 import vng.zalo.tdtai.zalo.repo.Database
-import vng.zalo.tdtai.zalo.repo.FirebaseDatabase
 import vng.zalo.tdtai.zalo.utils.Constants
 import vng.zalo.tdtai.zalo.utils.TAG
 import vng.zalo.tdtai.zalo.utils.Utils
 import javax.inject.Inject
-import kotlin.collections.ArrayList
-import kotlin.collections.HashMap
 
 
 class ChatViewModel @Inject constructor(

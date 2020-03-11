@@ -5,9 +5,13 @@ import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
 import vng.zalo.tdtai.zalo.model.StickerSetItem
 import vng.zalo.tdtai.zalo.ui.chat.emoji.sticker.StickerSetFragment
+import vng.zalo.tdtai.zalo.utils.Constants
 import javax.inject.Inject
+import javax.inject.Named
 
-class EmojiAdapter @Inject constructor(fm: FragmentManager) : FragmentPagerAdapter(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
+class EmojiAdapter @Inject constructor(
+        @Named(Constants.FRAGMENT_NAME) fm: FragmentManager
+) : FragmentPagerAdapter(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
     var stickerSetItems = ArrayList<StickerSetItem>()
 
     override fun getItem(position: Int): Fragment {

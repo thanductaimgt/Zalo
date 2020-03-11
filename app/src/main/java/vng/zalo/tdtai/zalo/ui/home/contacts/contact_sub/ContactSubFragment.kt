@@ -1,4 +1,4 @@
-package vng.zalo.tdtai.zalo.ui.home.contacts
+package vng.zalo.tdtai.zalo.ui.home.contacts.contact_sub
 
 import android.content.Intent
 import android.os.Bundle
@@ -6,7 +6,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -14,17 +13,13 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import dagger.android.support.DaggerFragment
 import kotlinx.android.synthetic.main.sub_fragment_contact.*
 import vng.zalo.tdtai.zalo.R
-import vng.zalo.tdtai.zalo.ZaloApplication
-import vng.zalo.tdtai.zalo.di.ViewModelFactory
 import vng.zalo.tdtai.zalo.managers.CallService
 import vng.zalo.tdtai.zalo.managers.ResourceManager
-import vng.zalo.tdtai.zalo.managers.SessionManager
 import vng.zalo.tdtai.zalo.model.room.Room
 import vng.zalo.tdtai.zalo.model.room.RoomItemPeer
-import vng.zalo.tdtai.zalo.utils.Constants
-import vng.zalo.tdtai.zalo.utils.RoomItemDiffCallback
 import vng.zalo.tdtai.zalo.ui.chat.ChatActivity
 import vng.zalo.tdtai.zalo.ui.home.RoomItemsViewModel
+import vng.zalo.tdtai.zalo.utils.Constants
 import javax.inject.Inject
 
 

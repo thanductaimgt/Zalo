@@ -43,7 +43,6 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 
-@Singleton
 interface NotificationService {
     fun start()
 

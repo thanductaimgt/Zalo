@@ -1,11 +1,13 @@
-package vng.zalo.tdtai.zalo.ui.home.chat
+package vng.zalo.tdtai.zalo.ui.chat
 
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.RecyclerView
 import com.airbnb.lottie.LottieCompositionFactory
 import com.airbnb.lottie.LottieDrawable
 import com.google.android.exoplayer2.ExoPlayer
@@ -15,6 +17,7 @@ import com.google.android.exoplayer2.trackselection.TrackSelector
 import com.google.android.exoplayer2.upstream.BandwidthMeter
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter
 import com.squareup.picasso.Picasso
+import kotlinx.android.synthetic.main.activity_room.*
 import kotlinx.android.synthetic.main.item_receive_room_activity.view.*
 import kotlinx.android.synthetic.main.item_seen_room_activity.view.*
 import kotlinx.android.synthetic.main.item_send_room_activity.view.*
@@ -28,24 +31,21 @@ import kotlinx.android.synthetic.main.part_sticker_message.view.*
 import kotlinx.android.synthetic.main.part_text_message.view.*
 import kotlinx.android.synthetic.main.part_video_message.view.*
 import vng.zalo.tdtai.zalo.R
-import vng.zalo.tdtai.zalo.ZaloApplication
 import vng.zalo.tdtai.zalo.abstracts.BindableViewHolder
 import vng.zalo.tdtai.zalo.managers.ResourceManager
 import vng.zalo.tdtai.zalo.abstracts.ZaloListAdapter
 import vng.zalo.tdtai.zalo.managers.SessionManager
-import vng.zalo.tdtai.zalo.ui.chat.RoomMemberAdapter
 import vng.zalo.tdtai.zalo.model.message.*
-import vng.zalo.tdtai.zalo.utils.MessageDiffCallback
-import vng.zalo.tdtai.zalo.utils.RoomMemberDiffCallback
-import vng.zalo.tdtai.zalo.utils.Utils
-import vng.zalo.tdtai.zalo.utils.loadCompat
-import vng.zalo.tdtai.zalo.ui.chat.ChatActivity
+import vng.zalo.tdtai.zalo.utils.*
 import java.util.*
 import javax.inject.Inject
+import javax.inject.Named
 
 
 class ChatAdapter @Inject constructor(
-        private val chatActivity: ChatActivity,
+        context: Context,
+        @Named(Constants.ACTIVITY_NAME) private val clickListener: View.OnClickListener,
+        private val longClickListener: View.OnLongClickListener,
         diffCallback: MessageDiffCallback,
         private val sessionManager: SessionManager,
         private val utils: Utils,
@@ -56,10 +56,10 @@ class ChatAdapter @Inject constructor(
     var exoPlayer: ExoPlayer
 
     init {
-        val bandwidthMeter: BandwidthMeter = DefaultBandwidthMeter.Builder(chatActivity).build()
-        val trackSelector: TrackSelector = DefaultTrackSelector(chatActivity)
+        val bandwidthMeter: BandwidthMeter = DefaultBandwidthMeter.Builder(context).build()
+        val trackSelector: TrackSelector = DefaultTrackSelector(context)
 
-        exoPlayer = SimpleExoPlayer.Builder(chatActivity)
+        exoPlayer = SimpleExoPlayer.Builder(context)
                 .setBandwidthMeter(bandwidthMeter)
                 .setTrackSelector(trackSelector)
                 .build()
@@ -94,12 +94,12 @@ class ChatAdapter @Inject constructor(
         return holder.apply {
             if (this is MessageViewHolder) {
                 itemView.apply {
-                    imageView.setOnClickListener(chatActivity)
-                    downloadFileImgView.setOnClickListener(chatActivity)
-                    callbackTV.setOnClickListener(chatActivity)
-                    videoMessageLayout.setOnClickListener(chatActivity)
+                    imageView.setOnClickListener(clickListener)
+                    downloadFileImgView.setOnClickListener(clickListener)
+                    callbackTV.setOnClickListener(clickListener)
+                    videoMessageLayout.setOnClickListener(clickListener)
 
-                    setOnLongClickListener(chatActivity)
+                    setOnLongClickListener(longClickListener)
                 }
             }
         }
@@ -257,9 +257,9 @@ class ChatAdapter @Inject constructor(
 
         fun bindSticker(stickerMessage: StickerMessage) {
             itemView.apply {
-                LottieCompositionFactory.fromUrl(chatActivity, stickerMessage.url).addListener {
+                LottieCompositionFactory.fromUrl(context, stickerMessage.url).addListener {
                     stickerAnimView.setComposition(it)
-                    if (stickerAnimView.isAttachedToWindow && chatActivity.isRecyclerViewIdle()) {
+                    if (stickerAnimView.isAttachedToWindow && (context as ChatActivity).chatRecyclerView.scrollState == RecyclerView.SCROLL_STATE_IDLE) {
                         stickerAnimView.resumeAnimation()
                     }
                 }
@@ -314,10 +314,10 @@ class ChatAdapter @Inject constructor(
                 fileMessageLayout.visibility = View.VISIBLE
 
                 fileNameTextView.text = fileMessage.fileName
-                        ?: chatActivity.getString(R.string.label_no_name)
+                        ?: context.getString(R.string.label_no_name)
 
                 val extension = utils.getFileExtension(fileMessage.fileName).toUpperCase(Locale.US)
-                fileExtensionImgView.setImageResource(utils.getResIdFromFileExtension(chatActivity, extension))
+                fileExtensionImgView.setImageResource(utils.getResIdFromFileExtension(context, extension))
 
                 val fileSizeFormat = if (fileMessage.size != -1L) utils.getFormatFileSize(fileMessage.size) else ""
 

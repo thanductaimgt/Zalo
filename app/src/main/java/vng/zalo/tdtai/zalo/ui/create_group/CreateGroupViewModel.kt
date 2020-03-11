@@ -11,7 +11,7 @@ import vng.zalo.tdtai.zalo.repo.Storage
 import javax.inject.Inject
 
 
-class CreateGroupActivityViewModel @Inject constructor(
+class CreateGroupViewModel @Inject constructor(
         private val database: Database,
         private val storage: Storage,
         sessionManager: SessionManager

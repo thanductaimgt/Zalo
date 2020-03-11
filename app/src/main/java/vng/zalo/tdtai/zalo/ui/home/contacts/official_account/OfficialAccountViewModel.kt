@@ -1,4 +1,4 @@
-package vng.zalo.tdtai.zalo.ui.home.contacts
+package vng.zalo.tdtai.zalo.ui.home.contacts.official_account
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel

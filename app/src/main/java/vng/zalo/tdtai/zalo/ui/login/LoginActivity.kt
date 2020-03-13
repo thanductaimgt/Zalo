@@ -66,7 +66,7 @@ class LoginActivity : DaggerAppCompatActivity(), View.OnClickListener {
     private fun validateLoginInfo(phone: String, password: String) {
         database.validateLoginInfo(phone, password) { user ->
             if (user!=null) {
-                sharedPrefsManager.setUser(this, user)
+                sharedPrefsManager.setUser(user)
 
                 sessionManager.initUser(user)
 

@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
-import androidx.recyclerview.widget.DiffUtil
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.item_room.view.*
 import vng.zalo.tdtai.zalo.R
@@ -19,7 +18,7 @@ import vng.zalo.tdtai.zalo.model.room.RoomItemPeer
 import vng.zalo.tdtai.zalo.utils.Constants
 import vng.zalo.tdtai.zalo.utils.RoomItemDiffCallback
 import vng.zalo.tdtai.zalo.utils.Utils
-import vng.zalo.tdtai.zalo.utils.loadCompat
+import vng.zalo.tdtai.zalo.utils.smartLoad
 import javax.inject.Inject
 
 class RoomItemAdapter @Inject constructor(
@@ -67,11 +66,11 @@ class RoomItemAdapter @Inject constructor(
                 nameTextView.text = roomItem.getDisplayName(resourceManager)
 
                 Picasso.get()
-                        .loadCompat(roomItem.avatarUrl, resourceManager)
-                        .placeholder(if (roomItem.roomType == Room.TYPE_PEER) R.drawable.default_peer_avatar else R.drawable.default_group_avatar)
-                        .fit()
-                        .centerCrop()
-                        .into(avatarImgView)
+                        .smartLoad(roomItem.avatarUrl, resourceManager, avatarImgView) {
+                            it.placeholder(if (roomItem.roomType == Room.TYPE_PEER) R.drawable.default_peer_avatar else R.drawable.default_group_avatar)
+                                    .fit()
+                                    .centerCrop()
+                        }
 
                 bindLastMessage(roomItem)
                 bindSeenStatus(roomItem)
@@ -93,7 +92,7 @@ class RoomItemAdapter @Inject constructor(
 
         fun bindLastMessage(roomItem: RoomItem) {
             itemView.apply {
-                timeTextView.text = if (roomItem.lastMsgTime != null) utils.getTimeDiffFormat(context, roomItem.lastMsgTime!!) else ""
+                timeTextView.text = if (roomItem.lastMsgTime != null) utils.getTimeDiffFormat(roomItem.lastMsgTime!!) else ""
 
                 descTextView.text = if (roomItem.lastTypingMember != null) {
                     typingAnimView.visibility = View.VISIBLE
@@ -106,11 +105,12 @@ class RoomItemAdapter @Inject constructor(
                                 context.getString(R.string.label_me)
                             } else {
                                 Picasso.get()
-                                        .loadCompat(roomItem.lastTypingMember!!.avatarUrl, resourceManager)
-                                        .placeholder(R.drawable.default_peer_avatar)
-                                        .fit()
-                                        .centerCrop()
-                                        .into(typingUserAvatarImgView)
+                                        .smartLoad(roomItem.lastTypingMember!!.avatarUrl, resourceManager, typingUserAvatarImgView) {
+                                            it.placeholder(R.drawable.default_peer_avatar)
+                                                    .fit()
+                                                    .centerCrop()
+                                        }
+
                                 typingUserAvatarImgView.visibility = View.VISIBLE
 
                                 resourceManager.getNameFromPhone(roomItem.lastTypingMember!!.phone!!)

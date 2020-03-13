@@ -32,8 +32,8 @@ import kotlinx.android.synthetic.main.part_text_message.view.*
 import kotlinx.android.synthetic.main.part_video_message.view.*
 import vng.zalo.tdtai.zalo.R
 import vng.zalo.tdtai.zalo.abstracts.BindableViewHolder
-import vng.zalo.tdtai.zalo.managers.ResourceManager
 import vng.zalo.tdtai.zalo.abstracts.ZaloListAdapter
+import vng.zalo.tdtai.zalo.managers.ResourceManager
 import vng.zalo.tdtai.zalo.managers.SessionManager
 import vng.zalo.tdtai.zalo.model.message.*
 import vng.zalo.tdtai.zalo.utils.*
@@ -167,11 +167,11 @@ class ChatAdapter @Inject constructor(
                     imageView.visibility = View.GONE
                     imageView.setImageDrawable(null)
 
-                    if(holder is SendViewHolder){
+                    if (holder is SendViewHolder) {
                         uploadImageProgressBar?.visibility = View.GONE
                         uploadVideoProgressBar?.visibility = View.GONE
                         uploadFileProgressBar?.visibility = View.GONE
-                    }else{
+                    } else {
                         avatarLayout?.visibility = View.GONE
                         avatarImgView?.setImageDrawable(null)
                         typingMessageLayout?.visibility = View.GONE
@@ -235,8 +235,8 @@ class ChatAdapter @Inject constructor(
 //                }
 
                 return true
-            }else if(itemView.timeLayout.visibility != View.GONE){
-                    itemView.timeLayout.visibility = View.GONE
+            } else if (itemView.timeLayout.visibility != View.GONE) {
+                itemView.timeLayout.visibility = View.GONE
             }
             return false
         }
@@ -263,8 +263,6 @@ class ChatAdapter @Inject constructor(
                         stickerAnimView.resumeAnimation()
                     }
                 }
-//            stickerMessageAnimView.setAnimationFromUrl(stickerMessage.url)
-//            stickerAnimView.scaleType = ImageView.ScaleType.CENTER_CROP
                 stickerAnimView.visibility = View.VISIBLE
             }
         }
@@ -300,10 +298,9 @@ class ChatAdapter @Inject constructor(
 
                 imageView.visibility = View.VISIBLE
 
-                Picasso.get().loadCompat(imageMessage.url, resourceManager)
-                        .fit()
-                        .error(R.drawable.load_image_fail)
-                        .into(imageView)
+                Picasso.get().smartLoad(imageMessage.url, resourceManager, imageView) {
+                    it.fit().error(R.drawable.load_image_fail)
+                }
             }
         }
 
@@ -317,7 +314,7 @@ class ChatAdapter @Inject constructor(
                         ?: context.getString(R.string.label_no_name)
 
                 val extension = utils.getFileExtension(fileMessage.fileName).toUpperCase(Locale.US)
-                fileExtensionImgView.setImageResource(utils.getResIdFromFileExtension(context, extension))
+                fileExtensionImgView.setImageResource(utils.getResIdFromFileExtension(extension))
 
                 val fileSizeFormat = if (fileMessage.size != -1L) utils.getFormatFileSize(fileMessage.size) else ""
 
@@ -353,7 +350,7 @@ class ChatAdapter @Inject constructor(
 
                     callIconImgView.setImageResource(R.drawable.missed_call)
                 } else {
-                    callTimeTV.text = utils.getCallTimeFormat(context, callMessage.callTime)
+                    callTimeTV.text = utils.getCallTimeFormat(callMessage.callTime)
 
                     if (callMessage.senderPhone == sessionManager.curUser!!.phone) {
                         callTitleTV.text = context.getString(
@@ -406,10 +403,10 @@ class ChatAdapter @Inject constructor(
             itemView.apply {
                 setViewConstrainRatio(videoMessageLayout, videoMessage.ratio!!)
 
-                resourceManager.getVideoThumbUri(context, videoMessage.url) {
-                    Picasso.get().loadCompat(it, resourceManager)
-                            .fit()
-                            .into(videoThumbImgView)
+                resourceManager.getVideoThumbUri(videoMessage.url) {uri->
+                    Picasso.get().smartLoad(uri, resourceManager, videoThumbImgView) {
+                        it.fit()
+                    }
                 }
 
                 videoMessageLayout.visibility = View.VISIBLE
@@ -549,11 +546,11 @@ class ChatAdapter @Inject constructor(
             itemView.apply {
                 avatarLayout.visibility = View.VISIBLE
                 Picasso.get()
-                        .loadCompat(message.senderAvatarUrl, resourceManager)
-                        .fit()
-                        .centerCrop()
-                        .placeholder(R.drawable.default_peer_avatar)
-                        .into(avatarImgView)
+                        .smartLoad(message.senderAvatarUrl, resourceManager, avatarImgView) {
+                            it.fit()
+                                    .centerCrop()
+                                    .placeholder(R.drawable.default_peer_avatar)
+                        }
             }
         }
     }

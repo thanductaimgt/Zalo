@@ -32,20 +32,27 @@ import vng.zalo.tdtai.zalo.ui.chat.ChatActivity
 import vng.zalo.tdtai.zalo.utils.Constants
 import vng.zalo.tdtai.zalo.utils.TAG
 import vng.zalo.tdtai.zalo.utils.Utils
-import vng.zalo.tdtai.zalo.utils.loadCompat
+import vng.zalo.tdtai.zalo.utils.smartLoad
 import java.util.*
 import javax.inject.Inject
 
 class CreateGroupActivity : DaggerAppCompatActivity(), View.OnClickListener {
-    @Inject lateinit var externalIntentManager: ExternalIntentManager
-    @Inject lateinit var utils: Utils
-    @Inject lateinit var sessionManager: SessionManager
-    @Inject lateinit var resourceManager: ResourceManager
+    @Inject
+    lateinit var externalIntentManager: ExternalIntentManager
+    @Inject
+    lateinit var utils: Utils
+    @Inject
+    lateinit var sessionManager: SessionManager
+    @Inject
+    lateinit var resourceManager: ResourceManager
 
-    @Inject lateinit var processingDialog: ProcessingDialog
+    @Inject
+    lateinit var processingDialog: ProcessingDialog
 
-    @Inject lateinit var viewPagerAdapter: CreateGroupViewPagerAdapter
-    @Inject lateinit var selectedRecyclerViewAdapter: ChooseRoomItemAdapter
+    @Inject
+    lateinit var viewPagerAdapter: CreateGroupViewPagerAdapter
+    @Inject
+    lateinit var selectedRecyclerViewAdapter: ChooseRoomItemAdapter
     private lateinit var bottomSheetDialog: BottomSheetDialog
 
     @Inject
@@ -53,7 +60,7 @@ class CreateGroupActivity : DaggerAppCompatActivity(), View.OnClickListener {
     private val viewModel: CreateGroupViewModel by viewModels { viewModelFactory }
 
     private var isAvatarSet = false
-    private var takenImageUrl:String?=null
+    private var takenImageUrl: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -159,7 +166,7 @@ class CreateGroupActivity : DaggerAppCompatActivity(), View.OnClickListener {
                 createGroupIfNeeded()
             }
             R.id.backImgView -> {
-                utils.hideKeyboard(this, rootView)
+                utils.hideKeyboard(rootView)
                 finish()
             }
         }
@@ -244,8 +251,10 @@ class CreateGroupActivity : DaggerAppCompatActivity(), View.OnClickListener {
     }
 
     private fun updateRoomAvatar(localUri: String?) {
-        Picasso.get().loadCompat(localUri, resourceManager).fit()
-                .centerCrop().into(uploadAvatarImgView)
+        Picasso.get().smartLoad(localUri, resourceManager, uploadAvatarImgView) {
+            it.fit()
+                    .centerCrop()
+        }
 
         if (!isAvatarSet) {
             uploadAvatarImgView.setBackgroundColor(ContextCompat.getColor(this, android.R.color.white))

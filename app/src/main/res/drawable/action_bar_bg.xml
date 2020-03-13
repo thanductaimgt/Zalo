@@ -7,6 +7,7 @@
                 android:startColor="@color/lightPrimary"
                 android:endColor="@color/lightAccent"
                 android:type="linear" />
+            <corners android:radius="@dimen/sizeRoundCornerRadiusLayout"/>
         </shape>
     </item>
 </selector>

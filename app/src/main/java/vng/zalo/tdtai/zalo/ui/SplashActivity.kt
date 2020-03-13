@@ -22,7 +22,7 @@ class SplashActivity : DaggerAppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        if (permissionManager.hasRequiredPermissions(this)) {
+        if (permissionManager.hasRequiredPermissions()) {
             moveToNextActivity()
         } else {
             permissionManager.requestRequiredPermissions(this)
@@ -31,9 +31,9 @@ class SplashActivity : DaggerAppCompatActivity() {
 
     private fun moveToNextActivity() {
         startActivity(Intent(this,
-                if (sharedPrefsManager.isLogin(this)) {
+                if (sharedPrefsManager.isLogin()) {
                     if (!sessionManager.isUserInit()) {
-                        val user = sharedPrefsManager.getUser(this)
+                        val user = sharedPrefsManager.getUser()
                         sessionManager.initUser(user)
                     }
                     HomeActivity::class.java

@@ -1,6 +1,5 @@
 package vng.zalo.tdtai.zalo.ui.share
 
-import android.content.Context
 import android.content.Intent
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
@@ -36,12 +35,12 @@ class ShareViewModel @Inject constructor(
         ) { liveRoomItems.value = it }
     }
 
-    fun addNewMessagesToFirestore(context: Context, callback: ((isSuccess: Boolean) -> Unit)? = null) {
+    fun addNewMessagesToFirestore(callback: ((isSuccess: Boolean) -> Unit)? = null) {
         var count = 0
         var isAnyFail = false
         liveSelectedRoomItems.value!!.forEach {
             database.getRoomInfo(it.roomId!!) { room ->
-                messageManager.addNewMessagesToFirestore(context, room, localUris, Message.TYPE_FILE, object : Observer<Message> {
+                messageManager.addNewMessagesToFirestore(room, localUris, Message.TYPE_FILE, object : Observer<Message> {
                     override fun onComplete() {
                         count++
                         Log.d(TAG, "count: $count, select: ${liveSelectedRoomItems.value!!.size}")

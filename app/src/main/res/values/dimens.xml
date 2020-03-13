@@ -12,6 +12,7 @@
     <dimen name="sizeRoundCornerMessageBg">10dp</dimen>
     <dimen name="sizeTextBig">16sp</dimen>
     <dimen name="sizeTextHuge">24sp</dimen>
+    <dimen name="sizeTextEnormous">30sp</dimen>
     <dimen name="sizeTextNormal">14sp</dimen>
     <dimen name="sizeTextSmall">11sp</dimen>
     <dimen name="sizeButtonPaddingVertical">12dp</dimen>
@@ -30,4 +31,5 @@
     <dimen name="sizeMessagesMinGap">3dp</dimen>
     <dimen name="sizeSpecial1MessagesMinGap">8dp</dimen>
     <dimen name="sizeSpecial2MessagesMinGap">2dp</dimen>
+    <dimen name="minMediaMessageWidth">120dp</dimen>
 </resources>

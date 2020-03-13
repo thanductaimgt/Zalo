@@ -1,7 +1,6 @@
 package vng.zalo.tdtai.zalo.ui.chat
 
 import android.annotation.SuppressLint
-import android.content.Context
 import android.content.Intent
 import android.os.Handler
 import android.util.Log
@@ -230,7 +229,7 @@ class ChatViewModel @Inject constructor(
             lastSubmittedTime = curTime
         } else {
             val gap = curTime - lastSubmittedTime!!
-            if (gap > 500) {
+            if (gap > 100) {
                 liveMessageMap.value = lastMessageMap
                 lastSubmittedTime = curTime
             } else {
@@ -255,8 +254,8 @@ class ChatViewModel @Inject constructor(
         submitMessages(liveMessageMap.value!!.values.toList())
     }
 
-    fun addNewMessagesToFirestore(context: Context, contents: List<String>, type: Int, observer: Observer<Message>) {
-        messageManager.addNewMessagesToFirestore(context, room, contents, type, observer)
+    fun addNewMessagesToFirestore(contents: List<String>, type: Int, observer: Observer<Message>) {
+        messageManager.addNewMessagesToFirestore(room, contents, type, observer)
     }
 
     fun addCurUserToCurRoomTypingMembers() {

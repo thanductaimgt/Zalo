@@ -2,57 +2,62 @@ package vng.zalo.tdtai.zalo.managers
 
 import android.content.Context
 import android.content.SharedPreferences
+import vng.zalo.tdtai.zalo.ZaloApplication
 import vng.zalo.tdtai.zalo.model.User
 import vng.zalo.tdtai.zalo.utils.Constants
 import vng.zalo.tdtai.zalo.utils.Utils
 import javax.inject.Inject
-import javax.inject.Singleton
 
 interface SharedPrefsManager {
-    fun isLogin(context: Context): Boolean
+    fun isLogin(): Boolean
 
-    fun setIsLogin(context: Context, isLogin: Boolean)
+    fun setIsLogin(isLogin: Boolean)
 
-    fun getUser(context: Context): User
+    fun getUser(): User
 
-    fun setUser(context: Context, user: User)
+    fun setUser(user: User)
 
-    fun getGroupSortType(context: Context): Int
+    fun getGroupSortType(): Int
 
-    fun setGroupSortType(context: Context, position: Int)
+    fun setGroupSortType(position: Int)
 
-    fun getVideoThumbCacheUri(context: Context, videoUri: String): String?
+    fun getVideoThumbCacheUri(videoUri: String): String?
 
-    fun setVideoThumbCacheUri(context: Context, videoUri: String, thumbUri: String)
+    fun setVideoThumbCacheUri(videoUri: String, thumbUri: String)
 
-    fun getKeyboardSize(context: Context): Int
+    fun getKeyboardSize(): Int
 
-    fun setKeyboardSize(context: Context, sizeInPx: Int)
+    fun setKeyboardSize(sizeInPx: Int)
+
+    fun getFirebaseMessagingToken():String?
+
+    fun setFirebaseMessagingToken(token:String)
 }
 
 class SharedPrefsManagerImpl @Inject constructor(
+        private val application: ZaloApplication,
         private val utils: Utils
 ) : SharedPrefsManager {
-    private fun getSharedPrefs(context: Context, sharePrefsName: String = APP_SHARE_PREFERENCES_NAME): SharedPreferences {
-        return context.getSharedPreferences(sharePrefsName, Context.MODE_PRIVATE)
+    private fun getSharedPrefs(sharePrefsName: String = APP_SHARE_PREFERENCES_NAME): SharedPreferences {
+        return application.getSharedPreferences(sharePrefsName, Context.MODE_PRIVATE)
     }
 
-    private fun getSharedPrefsEditor(context: Context, sharePrefsName: String = APP_SHARE_PREFERENCES_NAME): SharedPreferences.Editor {
-        return getSharedPrefs(context, sharePrefsName).edit()
+    private fun getSharedPrefsEditor(sharePrefsName: String = APP_SHARE_PREFERENCES_NAME): SharedPreferences.Editor {
+        return getSharedPrefs(sharePrefsName).edit()
     }
 
-    override fun isLogin(context: Context): Boolean {
-        return getSharedPrefs(context).getBoolean(User.FIELD_IS_LOGIN, false)
+    override fun isLogin(): Boolean {
+        return getSharedPrefs().getBoolean(User.FIELD_IS_LOGIN, false)
     }
 
-    override fun setIsLogin(context: Context, isLogin: Boolean) {
-        val editor = getSharedPrefsEditor(context)
+    override fun setIsLogin(isLogin: Boolean) {
+        val editor = getSharedPrefsEditor()
         editor.putBoolean(FIELD_IS_LOGIN, isLogin)
         editor.apply()
     }
 
-    override fun getUser(context: Context): User {
-        val prefs = getSharedPrefs(context)
+    override fun getUser(): User {
+        val prefs = getSharedPrefs()
         prefs.apply {
             return User(
                     phone = getString(User.FIELD_PHONE, null),
@@ -65,8 +70,8 @@ class SharedPrefsManagerImpl @Inject constructor(
         }
     }
 
-    override fun setUser(context: Context, user: User) {
-        getSharedPrefsEditor(context).apply {
+    override fun setUser(user: User) {
+        getSharedPrefsEditor().apply {
             putString(User.FIELD_PHONE, user.phone)
             putString(User.FIELD_NAME, user.name)
             putString(User.FIELD_AVATAR_URL, user.avatarUrl)
@@ -79,37 +84,48 @@ class SharedPrefsManagerImpl @Inject constructor(
         }
     }
 
-    override fun getGroupSortType(context: Context): Int {
-        return getSharedPrefs(context).getInt(FIELD_GROUP_SORT_TYPE, 0)
+    override fun getGroupSortType(): Int {
+        return getSharedPrefs().getInt(FIELD_GROUP_SORT_TYPE, 0)
     }
 
-    override fun setGroupSortType(context: Context, position: Int) {
-        getSharedPrefsEditor(context).apply {
+    override fun setGroupSortType(position: Int) {
+        getSharedPrefsEditor().apply {
             putInt(FIELD_GROUP_SORT_TYPE, position)
             apply()
         }
     }
 
-    override fun getVideoThumbCacheUri(context: Context, videoUri: String): String? {
-        val prefs = getSharedPrefs(context, VIDEO_THUMB_SHARE_PREFERENCES_NAME)
+    override fun getVideoThumbCacheUri(videoUri: String): String? {
+        val prefs = getSharedPrefs(VIDEO_THUMB_SHARE_PREFERENCES_NAME)
         return prefs.getString(videoUri, null)
     }
 
-    override fun setVideoThumbCacheUri(context: Context, videoUri: String, thumbUri: String) {
-        val editor = getSharedPrefsEditor(context, VIDEO_THUMB_SHARE_PREFERENCES_NAME)
+    override fun setVideoThumbCacheUri(videoUri: String, thumbUri: String) {
+        val editor = getSharedPrefsEditor(VIDEO_THUMB_SHARE_PREFERENCES_NAME)
         editor.putString(videoUri, thumbUri)
         editor.apply()
     }
 
-    override fun getKeyboardSize(context: Context): Int {
-        val prefs = getSharedPrefs(context)
-        return prefs.getInt(FIELD_KEYBOARD_SIZE, utils.dpToPx(context, Constants.DEFAULT_KEYBOARD_SIZE_DP).toInt())
+    override fun getKeyboardSize(): Int {
+        val prefs = getSharedPrefs()
+        return prefs.getInt(FIELD_KEYBOARD_SIZE, utils.dpToPx(Constants.DEFAULT_KEYBOARD_SIZE_DP).toInt())
     }
 
-    override fun setKeyboardSize(context: Context, sizeInPx: Int) {
-        val editor = getSharedPrefsEditor(context)
+    override fun setKeyboardSize(sizeInPx: Int) {
+        val editor = getSharedPrefsEditor()
         editor.putInt(FIELD_KEYBOARD_SIZE, sizeInPx)
         editor.apply()
+    }
+
+    override fun getFirebaseMessagingToken(): String? {
+        return getSharedPrefs().getString(FIREBASE_MESSAGING_TOKEN, null)
+    }
+
+    override fun setFirebaseMessagingToken(token: String) {
+        getSharedPrefsEditor().apply {
+            putString(FIREBASE_MESSAGING_TOKEN, token)
+            apply()
+        }
     }
 
     companion object{
@@ -119,5 +135,7 @@ class SharedPrefsManagerImpl @Inject constructor(
         private const val FIELD_IS_LOGIN = "isLogin"
         private const val FIELD_GROUP_SORT_TYPE = "groupSortType"
         private const val FIELD_KEYBOARD_SIZE = "keyboardSize"
+
+        private const val FIREBASE_MESSAGING_TOKEN = "FIREBASE_MESSAGING_TOKEN"
     }
 }

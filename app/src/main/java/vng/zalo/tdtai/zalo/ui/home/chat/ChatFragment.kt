@@ -25,7 +25,7 @@ import javax.inject.Inject
 class ChatFragment: DaggerFragment(), View.OnClickListener {
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
-    private val viewModel: RoomItemsViewModel by viewModels { viewModelFactory }
+    private val viewModel: RoomItemsViewModel by viewModels({requireActivity()}, { viewModelFactory })
 
     @Inject lateinit var adapter: RoomItemAdapter
 

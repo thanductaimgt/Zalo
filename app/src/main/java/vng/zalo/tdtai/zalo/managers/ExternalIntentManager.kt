@@ -9,7 +9,6 @@ import vng.zalo.tdtai.zalo.R
 import vng.zalo.tdtai.zalo.utils.TAG
 import vng.zalo.tdtai.zalo.utils.Utils
 import javax.inject.Inject
-import javax.inject.Singleton
 
 interface ExternalIntentManager {
     fun dispatchChooserIntent(activity: Activity, requestCode: Int, chooserType: Int, allowMultiple: Boolean)
@@ -67,10 +66,10 @@ class ExternalIntentManagerImpl @Inject constructor(
             // Ensure that there's a camera activity to handle the intent
             captureIntent.resolveActivity(activity.packageManager)?.let {
                 // Create the File where the photo should go
-                resourceManager.createTempFile(activity, fileType) { file ->
+                resourceManager.createTempFile(fileType) { file ->
                     utils.assertNotNull(file, TAG, "dispatchCaptureIntent") { fileNotNull ->
                         val fileRealUriString: String = fileNotNull.absolutePath
-                        val fileContentUri: Uri = resourceManager.getContentUri(activity, fileRealUriString)
+                        val fileContentUri: Uri = resourceManager.getContentUri(fileRealUriString)
 
                         captureIntent.apply {
                             putExtra(MediaStore.EXTRA_OUTPUT, fileContentUri)

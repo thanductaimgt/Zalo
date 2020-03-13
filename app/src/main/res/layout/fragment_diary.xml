@@ -1,44 +1,78 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <Button
-        android:id="@+id/logoutButton"
+    <TextView
+        android:id="@+id/appNameTV"
+        android:layout_marginStart="8dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:textColor="@color/lightPrimary"
+        android:textStyle="bold"
+        android:textSize="@dimen/sizeTextEnormous"
+        android:text="@string/label_app_name"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="logout" />
+        android:layout_height="wrap_content"/>
 
-    <Button
-        android:id="@+id/addStickerSet"
+    <ImageView
+        android:contentDescription="@string/description_notification"
+        android:layout_marginEnd="4dp"
+        android:padding="6dp"
+        android:src="@drawable/notification"
+        app:layout_constraintDimensionRatio="1:1"
+        app:layout_constraintTop_toTopOf="@id/appNameTV"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:id="@+id/notiImgView"
+        android:layout_width="40dp"
+        android:layout_height="0dp"/>
+
+    <TextView
+        tools:visibility="visible"
+        android:visibility="gone"
+        android:textStyle="bold"
+        android:textColor="@color/whiteText"
+        android:padding="2dp"
+        android:textSize="@dimen/sizeTextSmall"
+        tools:text="50+"
+        android:layout_marginEnd="6dp"
+        android:background="@android:drawable/ic_notification_overlay"
+        app:layout_constraintEnd_toEndOf="@id/notiImgView"
+        app:layout_constraintTop_toTopOf="@id/notiImgView"
+        app:layout_constraintDimensionRatio="1:1"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="add sticker set" />
+        android:layout_height="wrap_content"/>
 
-    <EditText
-        android:id="@+id/stickerSetNameEditText"
+    <ImageView
+        android:contentDescription="@string/hint_search"
+        android:layout_marginEnd="4dp"
+        android:padding="6dp"
+        android:src="@drawable/search2"
+        app:layout_constraintDimensionRatio="1:1"
+        app:layout_constraintTop_toTopOf="@id/notiImgView"
+        app:layout_constraintEnd_toStartOf="@id/notiImgView"
+        android:id="@+id/searchImgView"
+        android:layout_width="40dp"
+        android:layout_height="0dp"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:orientation="horizontal"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        tools:listitem="@layout/item_story"
+        android:id="@+id/storyRecyclerView"
+        app:layout_constraintTop_toBottomOf="@id/appNameTV"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="sticker set name" />
-    <Button
-        android:text="add friend"
-        android:id="@+id/addFriendButton"
-        android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
-    <EditText
-        android:id="@+id/phoneEditText"
-        android:hint="phone"
+
+    <androidx.recyclerview.widget.RecyclerView
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        tools:listitem="@layout/item_post"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/storyRecyclerView"
+        android:id="@+id/postRecyclerView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
-    <Button
-        android:text="start noti service"
-        android:id="@+id/startNotiServiceButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
-    <Button
-        android:text="stop noti service"
-        android:id="@+id/stopNotiServiceButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
-</LinearLayout>
+        android:layout_height="0dp"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

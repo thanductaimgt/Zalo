@@ -40,6 +40,7 @@ data class User(
         const val FIELD_JOIN_DATE = "joinDate"
         const val FIELD_IS_LOGIN = "isLogin"
         const val FIELD_LAST_ONLINE_TIME = "lastOnlineTime"
+        const val FIELD_FIREBASE_MESSAGING_TOKEN = "firebaseToken"
 
         fun fromDoc(doc:DocumentSnapshot):User{
             return User().apply { applyDoc(doc) }

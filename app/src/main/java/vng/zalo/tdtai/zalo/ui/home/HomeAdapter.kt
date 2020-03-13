@@ -9,6 +9,7 @@ import vng.zalo.tdtai.zalo.ui.home.contacts.ContactFragment
 import vng.zalo.tdtai.zalo.ui.home.diary.DiaryFragment
 import vng.zalo.tdtai.zalo.ui.home.group.GroupFragment
 import vng.zalo.tdtai.zalo.ui.home.more.MoreFragment
+import vng.zalo.tdtai.zalo.ui.home.test.TestFragment
 import vng.zalo.tdtai.zalo.utils.Constants
 import javax.inject.Inject
 import javax.inject.Named
@@ -18,15 +19,19 @@ class HomeAdapter @Inject constructor(
 ) : FragmentStatePagerAdapter(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
     override fun getItem(position: Int): Fragment {
         return when (position) {
-            1 -> ContactFragment()
-            2 -> GroupFragment()
-            3 -> DiaryFragment()
-            4 -> MoreFragment()
-            else -> ChatFragment()
+//            1 -> ContactFragment()
+//            2 -> GroupFragment()
+//            3 -> DiaryFragment()
+//            4 -> MoreFragment()
+//            else -> ChatFragment()
+            1 -> ChatFragment()
+            2 -> MoreFragment()
+            3->TestFragment()
+            else -> DiaryFragment()
         }
     }
 
     override fun getCount(): Int {
-        return 5
+        return 4
     }
 }

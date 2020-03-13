@@ -8,7 +8,6 @@ import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
-import vng.zalo.tdtai.zalo.ZaloApplication
 import vng.zalo.tdtai.zalo.managers.ResourceManager
 import vng.zalo.tdtai.zalo.model.message.Message
 import vng.zalo.tdtai.zalo.model.room.Room
@@ -23,7 +22,6 @@ import kotlin.math.min
 
 //@Singleton
 class FirebaseStorage @Inject constructor(
-        private val application: ZaloApplication,
         private val resourceManager: ResourceManager,
         private val utils: Utils
 ):Storage {
@@ -40,10 +38,10 @@ class FirebaseStorage @Inject constructor(
         val inputStream = when (fileType) {
             Message.TYPE_IMAGE -> {
                 var bitmap = getScaledDownBitmap(
-                        resourceManager.getImageBitmap(application, localPath)
+                        resourceManager.getImageBitmap(localPath)
                 )
 
-                val rotationDegree = resourceManager.getImageRotation(application, localPath)
+                val rotationDegree = resourceManager.getImageRotation(localPath)
                 if (rotationDegree != 0) {
                     bitmap = rotateImage(bitmap, rotationDegree)
                 }
@@ -57,7 +55,7 @@ class FirebaseStorage @Inject constructor(
 
                 ByteArrayInputStream(bitmapData)
             }
-            else -> utils.getInputStream(application, localPath)
+            else -> utils.getInputStream(localPath)
         }
 
         val fileStorageRef = firebaseStorage.reference.child(storagePath)

@@ -127,7 +127,7 @@ class ShareActivity : DaggerAppCompatActivity(), View.OnClickListener {
                 processNewClickOnItem(item)
             }
             R.id.sendImgView -> {
-                viewModel.addNewMessagesToFirestore(this) { isSuccess ->
+                viewModel.addNewMessagesToFirestore { isSuccess ->
                     processingDialog.dismiss()
                     Toast.makeText(this,
                             if (isSuccess) {
@@ -140,7 +140,7 @@ class ShareActivity : DaggerAppCompatActivity(), View.OnClickListener {
                 processingDialog.show(supportFragmentManager)
             }
             R.id.backImgView -> {
-                utils.hideKeyboard(this, rootView)
+                utils.hideKeyboard(rootView)
                 finish()
             }
         }

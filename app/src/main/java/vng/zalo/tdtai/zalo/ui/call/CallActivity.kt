@@ -17,12 +17,11 @@ import dagger.android.support.DaggerAppCompatActivity
 import kotlinx.android.synthetic.main.activity_call.*
 import vng.zalo.tdtai.zalo.R
 import vng.zalo.tdtai.zalo.common.AlertDialog
-import vng.zalo.tdtai.zalo.di.DaggerAppComponent
 import vng.zalo.tdtai.zalo.managers.CallService
 import vng.zalo.tdtai.zalo.managers.ResourceManager
 import vng.zalo.tdtai.zalo.model.message.CallMessage
 import vng.zalo.tdtai.zalo.utils.Constants
-import vng.zalo.tdtai.zalo.utils.loadCompat
+import vng.zalo.tdtai.zalo.utils.smartLoad
 import javax.inject.Inject
 import kotlin.math.ceil
 import kotlin.math.max
@@ -104,9 +103,11 @@ class CallActivity : DaggerAppCompatActivity(), View.OnClickListener {
                 }
             })
 
-            viewModel.liveRoom.observe(this, Observer {
-                nameTextView.text = it.getDisplayName(resourceManager)
-                Picasso.get().loadCompat(it.avatarUrl, resourceManager).fit().centerCrop().into(avatarImgView)
+            viewModel.liveRoom.observe(this, Observer {roomPeer->
+                nameTextView.text = roomPeer.getDisplayName(resourceManager)
+                Picasso.get().smartLoad(roomPeer.avatarUrl, resourceManager, avatarImgView){
+                    it.fit().centerCrop()
+                }
             })
         } catch (e: Exception) {
             alertDialog.show(supportFragmentManager,
@@ -178,7 +179,9 @@ class CallActivity : DaggerAppCompatActivity(), View.OnClickListener {
 
         if (viewModel.isCaller) {
             nameTextView.text = viewModel.liveRoom.value!!.getDisplayName(resourceManager)
-            Picasso.get().loadCompat(viewModel.liveRoom.value!!.avatarUrl, resourceManager).fit().centerCrop().into(avatarImgView)
+            Picasso.get().smartLoad(viewModel.liveRoom.value!!.avatarUrl, resourceManager, avatarImgView){
+                it.fit().centerCrop()
+            }
         } else {
             statusTextView.text = getString(R.string.description_incoming_call)
 
@@ -293,7 +296,6 @@ class CallActivity : DaggerAppCompatActivity(), View.OnClickListener {
                 }
 
                 viewModel.addNewCallMessage(
-                        this@CallActivity,
                         CallMessage.CALL_TYPE_VOICE,
                         callTime,
                         isMissed
@@ -313,7 +315,6 @@ class CallActivity : DaggerAppCompatActivity(), View.OnClickListener {
 
             if (viewModel.isCaller) {
                 viewModel.addNewCallMessage(
-                        this@CallActivity,
                         CallMessage.CALL_TYPE_VOICE,
                         0,
                         true

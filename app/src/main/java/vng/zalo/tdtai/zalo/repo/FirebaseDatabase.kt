@@ -683,6 +683,27 @@ class FirebaseDatabase @Inject constructor(
         }
     }
 
+    override fun updateFirebaseMessagingToken(oldToken: String?, newToken: String) {
+        val docRef = firebaseFirestore.collection(COLLECTION_USERS)
+                .document(sessionManager.curUser!!.phone!!)
+
+        firebaseFirestore.batch().apply {
+            oldToken?.let {
+                update(docRef, hashMapOf<String, Any>(
+                        User.FIELD_FIREBASE_MESSAGING_TOKEN to FieldValue.arrayRemove(oldToken)
+                ))
+            }
+
+            update(docRef, hashMapOf<String, Any>(
+                    User.FIELD_FIREBASE_MESSAGING_TOKEN to FieldValue.arrayUnion(newToken)
+            ))
+
+            commit().addOnCompleteListener {
+                utils.assertTaskSuccess(it, TAG, "updateFirebaseMessagingToken")
+            }
+        }
+    }
+
     companion object{
         private const val COLLECTION_USERS = "users"
         private const val COLLECTION_ROOMS = "rooms"

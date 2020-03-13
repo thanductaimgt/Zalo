@@ -11,7 +11,7 @@ import vng.zalo.tdtai.zalo.abstracts.ZaloListAdapter
 import vng.zalo.tdtai.zalo.managers.ResourceManager
 import vng.zalo.tdtai.zalo.model.room.RoomItem
 import vng.zalo.tdtai.zalo.utils.RoomItemDiffCallback
-import vng.zalo.tdtai.zalo.utils.loadCompat
+import vng.zalo.tdtai.zalo.utils.smartLoad
 import javax.inject.Inject
 
 class ContactSubFragmentAdapter @Inject constructor(
@@ -39,10 +39,10 @@ class ContactSubFragmentAdapter @Inject constructor(
                 nameTextView.text = roomItem.getDisplayName(resourceManager)
 
                 Picasso.get()
-                        .loadCompat(roomItem.avatarUrl, resourceManager)
-                        .fit()
-                        .centerCrop()
-                        .into(avatarImgView)
+                        .smartLoad(roomItem.avatarUrl, resourceManager, avatarImgView) {
+                            it.fit()
+                                    .centerCrop()
+                        }
             }
         }
     }

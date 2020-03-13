@@ -13,7 +13,7 @@ import vng.zalo.tdtai.zalo.managers.ResourceManager
 import vng.zalo.tdtai.zalo.model.room.RoomItem
 import vng.zalo.tdtai.zalo.utils.RoomItemDiffCallback
 import vng.zalo.tdtai.zalo.utils.Utils
-import vng.zalo.tdtai.zalo.utils.loadCompat
+import vng.zalo.tdtai.zalo.utils.smartLoad
 
 class SelectRoomItemAdapter (
         diffCallback: RoomItemDiffCallback,
@@ -51,17 +51,17 @@ class SelectRoomItemAdapter (
 
                 nameTextView.text = roomItem.getDisplayName(resourceManager)
                 if (shouldDisplayDesc && roomItem.lastMsgTime != null) {
-                    descTextView.text = utils.getTimeDiffFormat(context, roomItem.lastMsgTime!!)
+                    descTextView.text = utils.getTimeDiffFormat(roomItem.lastMsgTime!!)
                     descTextView.visibility = View.VISIBLE
                 } else {
                     descTextView.visibility = View.GONE
                 }
 
                 Picasso.get()
-                        .loadCompat(roomItem.avatarUrl, resourceManager)
-                        .fit()
-                        .centerCrop()
-                        .into(avatarImgView)
+                        .smartLoad(roomItem.avatarUrl, resourceManager, avatarImgView) {
+                            it.fit()
+                                    .centerCrop()
+                        }
 
                 bindSelectState(roomItem)
 

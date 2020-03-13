@@ -2,6 +2,8 @@ package vng.zalo.tdtai.zalo.utils
 
 import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.drawable.Drawable
 import android.icu.lang.UCharacter.GraphemeClusterBreak.T
 import android.net.Uri
 import android.util.Log
@@ -9,11 +11,13 @@ import android.view.View
 import android.view.Window
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
+import android.widget.ImageView
 import com.google.android.gms.tasks.Task
-import com.squareup.picasso.Picasso
-import com.squareup.picasso.RequestCreator
+import com.squareup.picasso.*
+import com.squareup.picasso.Target
 import dagger.Lazy
 import vng.zalo.tdtai.zalo.R
+import vng.zalo.tdtai.zalo.ZaloApplication
 import vng.zalo.tdtai.zalo.managers.ResourceManager
 import java.io.File
 import java.io.InputStream
@@ -26,6 +30,7 @@ import kotlin.collections.HashMap
 
 @Singleton
 class Utils @Inject constructor(
+        private val application: ZaloApplication,
         private val lazyResourceManager: Lazy<ResourceManager>
 ) {
     private val uriCache = HashMap<String, Uri>()
@@ -39,14 +44,14 @@ class Utils @Inject constructor(
         return res!!
     }
 
-    fun getTimeDiffFormat(context: Context, milli: Long): String {
+    fun getTimeDiffFormat(milli: Long): String {
         val curMilli = System.currentTimeMillis()
         val diffByMillisecond = curMilli - milli
         return when {
-            diffByMillisecond < Constants.ONE_MIN_IN_MILLISECOND -> context.getString(R.string.label_just_now)
-            diffByMillisecond < Constants.ONE_HOUR_IN_MILLISECOND -> formatTime(diffByMillisecond / Constants.ONE_MIN_IN_MILLISECOND.toLong(), context.getString(R.string.label_minute))
-            diffByMillisecond < Constants.ONE_DAY_IN_MILLISECOND -> formatTime(diffByMillisecond / Constants.ONE_HOUR_IN_MILLISECOND.toLong(), context.getString(R.string.label_hour))
-            diffByMillisecond < Constants.SEVEN_DAYS_IN_MILLISECOND -> formatTime(diffByMillisecond / Constants.ONE_DAY_IN_MILLISECOND.toLong(), context.getString(R.string.label_day))
+            diffByMillisecond < Constants.ONE_MIN_IN_MILLISECOND -> application.getString(R.string.label_just_now)
+            diffByMillisecond < Constants.ONE_HOUR_IN_MILLISECOND -> formatTime(diffByMillisecond / Constants.ONE_MIN_IN_MILLISECOND.toLong(), application.getString(R.string.label_minute))
+            diffByMillisecond < Constants.ONE_DAY_IN_MILLISECOND -> formatTime(diffByMillisecond / Constants.ONE_HOUR_IN_MILLISECOND.toLong(), application.getString(R.string.label_hour))
+            diffByMillisecond < Constants.SEVEN_DAYS_IN_MILLISECOND -> formatTime(diffByMillisecond / Constants.ONE_DAY_IN_MILLISECOND.toLong(), application.getString(R.string.label_day))
             else -> getDateFormat(milli)
         }
     }
@@ -101,33 +106,33 @@ class Utils @Inject constructor(
         return bucketName.replace(Regex(" "), "_")
     }
 
-    fun dpToPx(context: Context, valueInDp: Int): Float {
-        val metrics = context.resources.displayMetrics
+    fun dpToPx(valueInDp: Int): Float {
+        val metrics = application.resources.displayMetrics
         return valueInDp / metrics.density
     }
 
-    fun pxToDp(context: Context, valueInPx: Float): Int {
-        return (valueInPx / context.resources.displayMetrics.density).toInt()
+    fun pxToDp(valueInPx: Float): Int {
+        return (valueInPx / application.resources.displayMetrics.density).toInt()
     }
 
 //    fun parseFileName(fileUri: String): String {
 //        return fileUri.substring(fileUri.lastIndexOf('/') + 1)
 //    }
 
-    fun hideKeyboard(context: Context, view: View) {
-        val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+    fun hideKeyboard(view: View) {
+        val imm = application.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(view.windowToken, 0)
         view.clearFocus()
     }
 
-    fun showKeyboard(context: Context, view: View) {
-        val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+    fun showKeyboard(view: View) {
+        val imm = application.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.showSoftInput(view, InputMethodManager.SHOW_IMPLICIT)
     }
 
-    fun getInputStream(context: Context, localPath: String): InputStream {
+    fun getInputStream(localPath: String): InputStream {
         return if (lazyResourceManager.get().isContentUri(localPath)) {
-            context.contentResolver.openInputStream(getUri(localPath))!!
+            application.contentResolver.openInputStream(getUri(localPath))!!
         } else {
             File(localPath).inputStream()
         }
@@ -137,10 +142,10 @@ class Utils @Inject constructor(
         return sipProfileName.takeLastWhile { it != '.' }
     }
 
-    fun getResIdFromFileExtension(context: Context, fileExtension: String): Int {
-        val resourceId = context.resources.getIdentifier(
+    fun getResIdFromFileExtension(fileExtension: String): Int {
+        val resourceId = application.resources.getIdentifier(
                 fileExtension.toLowerCase(Locale.US), "drawable",
-                context.packageName
+                application.packageName
         )
 
         return if (resourceId != 0) resourceId else R.drawable.file
@@ -184,26 +189,26 @@ class Utils @Inject constructor(
     }
 
     //callTime: seconds
-    fun getCallTimeFormat(context: Context, callTime: Int): String {
+    fun getCallTimeFormat(callTime: Int): String {
         var time = callTime.toLong()
         val res = StringBuilder()
 
         if (time > 3600) {
             val hours = time / 3600
-            res.append("${formatTime(hours, context.getString(R.string.label_hour))} ")
+            res.append("${formatTime(hours, application.getString(R.string.label_hour))} ")
             time -= hours * 3600
         }
 
         val mins = time / 60
-        res.append("${formatTime(mins, context.getString(R.string.label_minute))} ")
+        res.append("${formatTime(mins, application.getString(R.string.label_minute))} ")
         time -= mins * 60
 
         val secs = time
-        res.append(formatTime(secs, context.getString(R.string.label_second)))
+        res.append(formatTime(secs, application.getString(R.string.label_second)))
         return res.toString()
     }
 
-    fun getLastOnlineTimeFormat(context: Context, lastOnlineTime: Long?): String {
+    fun getLastOnlineTimeFormat(lastOnlineTime: Long?): String {
         val curMilli = System.currentTimeMillis()
         val lastOnlineTimeMilli: Long
 
@@ -219,21 +224,21 @@ class Utils @Inject constructor(
 
         return when (diffByMillisecond) {
             0L -> {
-                context.getString(R.string.description_just_online)
+                application.getString(R.string.description_just_online)
             }
             else -> {
-                "${context.getString(R.string.description_last_seen)}: ${
+                "${application.getString(R.string.description_last_seen)}: ${
                 if (diffByMillisecond >= Constants.SEVEN_DAYS_IN_MILLISECOND) {
                     getDateFormat(lastOnlineTimeMilli)
                 } else {
                     "${
                     when {
-                        diffByMillisecond < Constants.ONE_MIN_IN_MILLISECOND -> context.getString(R.string.description_less_than_one_min)
-                        diffByMillisecond < Constants.ONE_HOUR_IN_MILLISECOND -> formatTime(diffByMillisecond / Constants.ONE_MIN_IN_MILLISECOND.toLong(), context.getString(R.string.label_minute))
-                        diffByMillisecond < Constants.ONE_DAY_IN_MILLISECOND -> formatTime(diffByMillisecond / Constants.ONE_HOUR_IN_MILLISECOND.toLong(), context.getString(R.string.label_hour))
-                        else -> formatTime(diffByMillisecond / Constants.ONE_DAY_IN_MILLISECOND.toLong(), context.getString(R.string.label_day))
+                        diffByMillisecond < Constants.ONE_MIN_IN_MILLISECOND -> application.getString(R.string.description_less_than_one_min)
+                        diffByMillisecond < Constants.ONE_HOUR_IN_MILLISECOND -> formatTime(diffByMillisecond / Constants.ONE_MIN_IN_MILLISECOND.toLong(), application.getString(R.string.label_minute))
+                        diffByMillisecond < Constants.ONE_DAY_IN_MILLISECOND -> formatTime(diffByMillisecond / Constants.ONE_HOUR_IN_MILLISECOND.toLong(), application.getString(R.string.label_hour))
+                        else -> formatTime(diffByMillisecond / Constants.ONE_DAY_IN_MILLISECOND.toLong(), application.getString(R.string.label_day))
                     }
-                    } ${context.getString(R.string.description_ago)}"
+                    } ${application.getString(R.string.description_ago)}"
                 }
                 }"
             }
@@ -297,6 +302,10 @@ class Utils @Inject constructor(
         }
         return localUris.reversed()
     }
+
+    fun getMetricFormat(metric:Int):String{
+        return "6.9k"
+    }
 }
 
 // extension functions
@@ -304,10 +313,67 @@ class Utils @Inject constructor(
 val Any.TAG: String
     get() = this::class.java.simpleName
 
-fun Picasso.loadCompat(url: String?, resourceManager: ResourceManager): RequestCreator {
-    return load(if (url == null || resourceManager.isNetworkUri(url) || resourceManager.isContentUri(url)) {
-        url
+private fun Picasso.loadCompat(url: String?, resourceManager: ResourceManager): RequestCreator {
+    val doCache: Boolean
+    val urlToLoad: String?
+    if (url == null || resourceManager.isNetworkUri(url) || resourceManager.isContentUri(url)) {
+        urlToLoad = url
+        doCache = url != null && resourceManager.isNetworkUri(url)
     } else {
-        "file://$url"
-    })
+        urlToLoad = "file://$url"
+        doCache = false
+    }
+    return load(urlToLoad).let { if (!doCache) it.networkPolicy(NetworkPolicy.NO_STORE) else it }
+}
+
+fun Picasso.smartLoad(url: String?, resourceManager: ResourceManager, imageView: ImageView, applyConfig: (requestCreator: RequestCreator) -> Unit) {
+    var requestCreator = loadCompat(url, resourceManager)
+    applyConfig(requestCreator)
+
+    requestCreator.networkPolicy(NetworkPolicy.OFFLINE)
+            .into(imageView, object : Callback.EmptyCallback() {
+                override fun onError(e: Exception?) {
+                    requestCreator = Picasso.get().loadCompat(url, resourceManager)
+                    applyConfig(requestCreator)
+
+                    requestCreator.networkPolicy(NetworkPolicy.NO_CACHE)
+                            .memoryPolicy(MemoryPolicy.NO_CACHE)
+                            .into(imageView)
+                }
+            })
+}
+
+fun Picasso.smartLoad(url: String?, resourceManager: ResourceManager, target: Target, applyConfig: (requestCreator: RequestCreator) -> Unit) {
+    var requestCreator = loadCompat(url, resourceManager)
+    applyConfig(requestCreator)
+
+    requestCreator.networkPolicy(NetworkPolicy.OFFLINE)
+            .into(object : Target {
+                override fun onPrepareLoad(placeHolderDrawable: Drawable?) {
+                    target.onPrepareLoad(placeHolderDrawable)
+                }
+
+                override fun onBitmapFailed(e: java.lang.Exception?, errorDrawable: Drawable?) {
+                    requestCreator = Picasso.get().loadCompat(url, resourceManager)
+                    applyConfig(requestCreator)
+
+                    requestCreator.networkPolicy(NetworkPolicy.NO_CACHE)
+                            .memoryPolicy(MemoryPolicy.NO_CACHE)
+                            .into(object : Target {
+                                override fun onPrepareLoad(placeHolderDrawable: Drawable?) {}
+
+                                override fun onBitmapFailed(e: java.lang.Exception?, errorDrawable: Drawable?) {
+                                    target.onBitmapFailed(e, errorDrawable)
+                                }
+
+                                override fun onBitmapLoaded(bitmap: Bitmap?, from: Picasso.LoadedFrom?) {
+                                    target.onBitmapLoaded(bitmap, from)
+                                }
+                            })
+                }
+
+                override fun onBitmapLoaded(bitmap: Bitmap?, from: Picasso.LoadedFrom?) {
+                    target.onBitmapLoaded(bitmap, from)
+                }
+            })
 }

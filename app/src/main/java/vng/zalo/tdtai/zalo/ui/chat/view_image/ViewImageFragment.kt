@@ -19,7 +19,7 @@ import vng.zalo.tdtai.zalo.managers.ResourceManager
 import vng.zalo.tdtai.zalo.model.message.ImageMessage
 import vng.zalo.tdtai.zalo.model.message.ResourceMessage
 import vng.zalo.tdtai.zalo.utils.Utils
-import vng.zalo.tdtai.zalo.utils.loadCompat
+import vng.zalo.tdtai.zalo.utils.smartLoad
 import javax.inject.Inject
 
 class ViewImageFragment(
@@ -45,19 +45,19 @@ class ViewImageFragment(
     private fun initView() {
         when (resourceMessage) {
             is ImageMessage -> {
-                Picasso.get().loadCompat(resourceMessage.url, resourceManager)
-                        .fit()
+                Picasso.get().smartLoad(resourceMessage.url, resourceManager, viewImagePhotoView) {
+                    it.fit()
                         .centerInside()
-                        .into(viewImagePhotoView)
+                }
 
                 viewImageProgressBar.visibility = View.GONE
             }
             else -> {//video
-                resourceManager.getVideoThumbUri(requireContext(), resourceMessage.url) {
-                    Picasso.get().loadCompat(it, resourceManager)
-                            .fit()
-                            .centerInside()
-                            .into(viewImagePhotoView)
+                resourceManager.getVideoThumbUri(resourceMessage.url) {uri->
+                    Picasso.get().smartLoad(uri, resourceManager, viewImagePhotoView) {
+                        it.fit()
+                                .centerInside()
+                    }
                 }
 
                 viewImagePlayerView.controllerAutoShow = false

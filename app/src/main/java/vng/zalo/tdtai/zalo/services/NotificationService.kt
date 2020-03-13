@@ -38,9 +38,8 @@ import vng.zalo.tdtai.zalo.repo.Database
 import vng.zalo.tdtai.zalo.ui.chat.ChatActivity
 import vng.zalo.tdtai.zalo.utils.Constants
 import vng.zalo.tdtai.zalo.utils.TAG
-import vng.zalo.tdtai.zalo.utils.loadCompat
+import vng.zalo.tdtai.zalo.utils.smartLoad
 import javax.inject.Inject
-import javax.inject.Singleton
 
 
 interface NotificationService {
@@ -109,7 +108,7 @@ class AlwaysRunningNotificationService @Inject constructor(
 
             val obj = object {}
             while (doListening) {
-                keepAlive(application)
+                keepAlive()
                 Thread.sleep(3000)
 
                 synchronized(obj) {}
@@ -122,11 +121,11 @@ class AlwaysRunningNotificationService @Inject constructor(
         }
     }
 
-    private fun keepAlive(context: Context) {
+    private fun keepAlive() {
         Handler(Looper.getMainLooper()).post {
-            val toast = Toast(context)
+            val toast = Toast(application)
 
-            toast.view = View(context)
+            toast.view = View(application)
             toast.view.visibility = View.GONE
             toast.duration = Toast.LENGTH_LONG
 //            val toast = Toast.makeText(context, "${Random().nextInt()}", Toast.LENGTH_LONG)
@@ -207,12 +206,14 @@ class AlwaysRunningNotificationService @Inject constructor(
             if (notification.roomAvatarTarget == null) {
                 notification.roomAvatarTarget = RoomAvatarTarget(roomItem)
 
-                Picasso.get().loadCompat(roomItem.avatarUrl, resourceManager).placeholder(
-                        if (roomItem.roomType == Room.TYPE_PEER)
-                            R.drawable.default_peer_avatar
-                        else
-                            R.drawable.default_group_avatar
-                ).into(notification.roomAvatarTarget!!)
+                Picasso.get().smartLoad(roomItem.avatarUrl, resourceManager, notification.roomAvatarTarget!!) {
+                    it.placeholder(
+                            if (roomItem.roomType == Room.TYPE_PEER)
+                                R.drawable.default_peer_avatar
+                            else
+                                R.drawable.default_group_avatar
+                    )
+                }
             }
         }
 
@@ -223,9 +224,9 @@ class AlwaysRunningNotificationService @Inject constructor(
                 notification.senderAvatarTargets[roomItem.lastSenderPhone!!] = SenderAvatarTarget(roomItem)
 
                 database.getUserAvatarUrl(roomItem.lastSenderPhone!!) { avatarUrl ->
-                    Picasso.get().loadCompat(avatarUrl, resourceManager)
-                            .placeholder(R.drawable.default_peer_avatar)
-                            .into(notification.senderAvatarTargets[roomItem.lastSenderPhone!!]!!)
+                    Picasso.get().smartLoad(avatarUrl, resourceManager, notification.senderAvatarTargets[roomItem.lastSenderPhone!!]!!) {
+                        it.placeholder(R.drawable.default_peer_avatar)
+                    }
                 }
             }
         }

@@ -77,7 +77,7 @@ class GroupFragment: DaggerFragment(), View.OnClickListener {
 
         sortGroupSpinner.adapter = spinnerAdapter
 
-        groupSortType = sharedPrefsManager.getGroupSortType(requireContext())
+        groupSortType = sharedPrefsManager.getGroupSortType()
         sortGroupSpinner.setSelection(groupSortType)
 
         sortGroupSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
@@ -91,7 +91,7 @@ class GroupFragment: DaggerFragment(), View.OnClickListener {
                     id: Long
             ) {
                 groupSortType = position
-                sharedPrefsManager.setGroupSortType(context!!, position)
+                sharedPrefsManager.setGroupSortType(position)
 
                 roomItemsObserver.onChanged(viewModel.liveRoomItemMap.value!!)
             }

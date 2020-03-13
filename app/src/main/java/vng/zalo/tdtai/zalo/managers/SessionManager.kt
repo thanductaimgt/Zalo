@@ -5,7 +5,6 @@ import vng.zalo.tdtai.zalo.model.User
 import vng.zalo.tdtai.zalo.repo.Database
 import vng.zalo.tdtai.zalo.services.NotificationService
 import javax.inject.Inject
-import javax.inject.Singleton
 
 interface SessionManager {
     var isOnline: Boolean

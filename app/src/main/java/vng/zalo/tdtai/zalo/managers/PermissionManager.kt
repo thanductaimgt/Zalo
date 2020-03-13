@@ -2,15 +2,14 @@ package vng.zalo.tdtai.zalo.managers
 
 import android.Manifest
 import android.app.Activity
-import android.content.Context
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.PermissionChecker
+import vng.zalo.tdtai.zalo.ZaloApplication
 import javax.inject.Inject
-import javax.inject.Singleton
 
 interface PermissionManager {
-    fun hasRequiredPermissions(context: Context): Boolean
+    fun hasRequiredPermissions(): Boolean
     fun requestRequiredPermissions(activity: Activity)
 
     companion object {
@@ -18,13 +17,15 @@ interface PermissionManager {
     }
 }
 
-class PermissionManagerImpl @Inject constructor() : PermissionManager {
-    override fun hasRequiredPermissions(context: Context): Boolean {
+class PermissionManagerImpl @Inject constructor(
+        private val application: ZaloApplication
+) : PermissionManager {
+    override fun hasRequiredPermissions(): Boolean {
         var hasPermissions = true
         for (p in allPermissionsId) {
             hasPermissions =
                     hasPermissions && ContextCompat.checkSelfPermission(
-                            context,
+                            application,
                             p
                     ) == PermissionChecker.PERMISSION_GRANTED
         }

@@ -14,9 +14,11 @@ import vng.zalo.tdtai.zalo.ui.home.chat.ChatFragmentModule
 import vng.zalo.tdtai.zalo.ui.home.contacts.ContactFragment
 import vng.zalo.tdtai.zalo.ui.home.contacts.ContactModule
 import vng.zalo.tdtai.zalo.ui.home.diary.DiaryFragment
+import vng.zalo.tdtai.zalo.ui.home.diary.DiaryModule
 import vng.zalo.tdtai.zalo.ui.home.group.GroupFragment
 import vng.zalo.tdtai.zalo.ui.home.group.GroupFragmentModule
 import vng.zalo.tdtai.zalo.ui.home.more.MoreFragment
+import vng.zalo.tdtai.zalo.ui.home.test.TestFragment
 import vng.zalo.tdtai.zalo.utils.Constants
 import javax.inject.Named
 
@@ -31,11 +33,14 @@ interface HomeModule {
     @ContributesAndroidInjector(modules = [GroupFragmentModule::class])
     fun groupFragment(): GroupFragment
 
-    @ContributesAndroidInjector
+    @ContributesAndroidInjector(modules = [DiaryModule::class])
     fun diaryFragment(): DiaryFragment
 
     @ContributesAndroidInjector
     fun moreFragment(): MoreFragment
+
+    @ContributesAndroidInjector
+    fun testFragment(): TestFragment
 
     @Binds
     fun bindContext(homeActivity: HomeActivity): Context

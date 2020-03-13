@@ -4,17 +4,13 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
-
 import com.squareup.picasso.Picasso
 import dagger.android.support.DaggerFragment
 import kotlinx.android.synthetic.main.fragment_more.*
-
 import vng.zalo.tdtai.zalo.R
-import vng.zalo.tdtai.zalo.ZaloApplication
 import vng.zalo.tdtai.zalo.managers.ResourceManager
 import vng.zalo.tdtai.zalo.managers.SessionManager
-import vng.zalo.tdtai.zalo.utils.loadCompat
+import vng.zalo.tdtai.zalo.utils.smartLoad
 import javax.inject.Inject
 
 class MoreFragment : DaggerFragment() {
@@ -29,10 +25,10 @@ class MoreFragment : DaggerFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         Picasso.get()
-                .loadCompat(sessionManager.curUser!!.avatarUrl, resourceManager)
-                .fit()
-                .centerCrop()
-                .into(avatarImgView)
+                .smartLoad(sessionManager.curUser!!.avatarUrl, resourceManager, avatarImgView) {
+                    it.fit()
+                            .centerCrop()
+                }
 
         nameTextView.text = sessionManager.curUser!!.name
     }

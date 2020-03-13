@@ -11,8 +11,7 @@ import vng.zalo.tdtai.zalo.abstracts.ZaloListAdapter
 import vng.zalo.tdtai.zalo.managers.ResourceManager
 import vng.zalo.tdtai.zalo.model.RoomMember
 import vng.zalo.tdtai.zalo.utils.RoomMemberDiffCallback
-import vng.zalo.tdtai.zalo.utils.loadCompat
-import javax.inject.Inject
+import vng.zalo.tdtai.zalo.utils.smartLoad
 
 class RoomMemberAdapter (
         roomMemberDiffCallback: RoomMemberDiffCallback,
@@ -28,11 +27,11 @@ class RoomMemberAdapter (
 
     inner class UserIconViewHolder(itemView: View) : BindableViewHolder(itemView) {
         override fun bind(position: Int) {
-            Picasso.get().loadCompat(currentList[position].avatarUrl, resourceManager)
-                    .placeholder(R.drawable.default_peer_avatar)
-                    .fit()
-                    .centerCrop()
-                    .into(itemView.userIconImgView)
+            Picasso.get().smartLoad(currentList[position].avatarUrl, resourceManager, itemView.userIconImgView) {
+                it.placeholder(R.drawable.default_peer_avatar)
+                        .fit()
+                        .centerCrop()
+            }
         }
     }
 }

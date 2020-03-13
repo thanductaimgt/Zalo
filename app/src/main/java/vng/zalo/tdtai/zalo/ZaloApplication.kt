@@ -43,8 +43,8 @@ class ZaloApplication : DaggerApplication() {
     override fun onCreate() {
         super.onCreate()
 
-        if (sharedPrefsManager.isLogin(this) && permissionManager.hasRequiredPermissions(this)) {
-            val user = sharedPrefsManager.getUser(this)
+        if (sharedPrefsManager.isLogin() && permissionManager.hasRequiredPermissions()) {
+            val user = sharedPrefsManager.getUser()
             sessionManager.initUser(user)
         }
 

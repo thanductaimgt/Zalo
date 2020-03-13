@@ -5,20 +5,13 @@ import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
 import android.view.WindowManager
-import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.PopupMenu
 import androidx.viewpager.widget.ViewPager
-import dagger.android.AndroidInjection
-import dagger.android.AndroidInjector
-import dagger.android.HasAndroidInjector
 import dagger.android.support.DaggerAppCompatActivity
 import kotlinx.android.synthetic.main.activity_home.*
 import vng.zalo.tdtai.zalo.R
-import vng.zalo.tdtai.zalo.ZaloApplication
-import vng.zalo.tdtai.zalo.di.DaggerAppComponent
 import vng.zalo.tdtai.zalo.repo.Database
 import vng.zalo.tdtai.zalo.ui.create_group.CreateGroupActivity
-import vng.zalo.tdtai.zalo.repo.FirebaseDatabase
 import vng.zalo.tdtai.zalo.utils.Utils
 import javax.inject.Inject
 
@@ -31,13 +24,13 @@ class HomeActivity : DaggerAppCompatActivity(), View.OnClickListener {
 
     override fun onClick(v: View) {
         when (v.id) {
-            R.id.searchImgView -> {
-                utils.showKeyboard(this, searchEditText)
-            }
-            R.id.createGroupImgView -> {
-                startActivity(Intent(this, CreateGroupActivity::class.java))
-            }
-            R.id.moreImgView -> displayPopupMenu(v)
+//            R.id.searchImgView -> {
+//                utils.showKeyboard(searchEditText)
+//            }
+//            R.id.createGroupImgView -> {
+//                startActivity(Intent(this, CreateGroupActivity::class.java))
+//            }
+//            R.id.moreImgView -> displayPopupMenu(v)
         }
     }
 
@@ -45,12 +38,6 @@ class HomeActivity : DaggerAppCompatActivity(), View.OnClickListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-//        try {
-//            startService(Intent(this, NotificationService::class.java))
-//        }catch (e:Throwable){
-//            e.printStackTrace()
-//        }
 
         initView()
 
@@ -85,32 +72,33 @@ class HomeActivity : DaggerAppCompatActivity(), View.OnClickListener {
 
         bottomNavigationView.setOnNavigationItemSelectedListener { item ->
             when (item.itemId) {
-                R.id.navigation_chat -> viewPager.currentItem = 0
-                R.id.navigation_contacts -> viewPager.currentItem = 1
-                R.id.navigation_groups -> viewPager.currentItem = 2
-                R.id.navigation_diary -> viewPager.currentItem = 3
-                R.id.navigation_more -> viewPager.currentItem = 4
+                R.id.navigation_chat -> viewPager.currentItem = 1
+//                R.id.navigation_contacts -> viewPager.currentItem = 1
+//                R.id.navigation_groups -> viewPager.currentItem = 2
+                R.id.navigation_diary -> viewPager.currentItem = 0
+                R.id.navigation_more -> viewPager.currentItem = 2
+                R.id.navigation_test -> viewPager.currentItem = 3
             }
             false
         }
 
-        searchImgView.setOnClickListener(this)
-        createGroupImgView.setOnClickListener(this)
-        moreImgView.setOnClickListener(this)
+//        searchImgView.setOnClickListener(this)
+//        createGroupImgView.setOnClickListener(this)
+//        moreImgView.setOnClickListener(this)
     }
 
-    private fun displayPopupMenu(view: View) {
-        //Creating the instance of PopupMenu
-        val popupMenu = PopupMenu(this, view)
-
-        popupMenu.menuInflater.inflate(R.menu.menu_home_activity, popupMenu.menu)
-        popupMenu.setOnMenuItemClickListener {
-            when (it.itemId) {
-
-            }
-            true
-        }
-
-        popupMenu.show() //showing popup menu
-    }
+//    private fun displayPopupMenu(view: View) {
+//        //Creating the instance of PopupMenu
+//        val popupMenu = PopupMenu(this, view)
+//
+//        popupMenu.menuInflater.inflate(R.menu.menu_home_activity, popupMenu.menu)
+//        popupMenu.setOnMenuItemClickListener {
+//            when (it.itemId) {
+//
+//            }
+//            true
+//        }
+//
+//        popupMenu.show() //showing popup menu
+//    }
 }

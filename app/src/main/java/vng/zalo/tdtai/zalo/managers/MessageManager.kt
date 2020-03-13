@@ -1,7 +1,5 @@
 package vng.zalo.tdtai.zalo.managers
 
-import android.app.Application
-import android.content.Context
 import android.media.MediaMetadataRetriever
 import android.provider.OpenableColumns
 import android.util.Log
@@ -10,6 +8,7 @@ import io.reactivex.Observable
 import io.reactivex.Observer
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
+import vng.zalo.tdtai.zalo.ZaloApplication
 import vng.zalo.tdtai.zalo.model.message.*
 import vng.zalo.tdtai.zalo.model.room.Room
 import vng.zalo.tdtai.zalo.repo.Database
@@ -18,14 +17,14 @@ import vng.zalo.tdtai.zalo.utils.TAG
 import vng.zalo.tdtai.zalo.utils.Utils
 import java.io.File
 import javax.inject.Inject
-import javax.inject.Singleton
 
 interface MessageManager {
-    fun addNewMessagesToFirestore(context: Context, room: Room, contents: List<String>, messageType: Int, observer: Observer<Message>? = null)
+    fun addNewMessagesToFirestore(room: Room, contents: List<String>, messageType: Int, observer: Observer<Message>? = null)
     fun deleteMessageAndAttachedData(roomId: String, message: Message, onSuccess: (() -> Unit)? = null)
 }
 
 class MessageManagerImpl @Inject constructor(
+        private val application: ZaloApplication,
         private val database: Database,
         private val storage: Storage,
         private val sessionManager: SessionManager,
@@ -33,9 +32,9 @@ class MessageManagerImpl @Inject constructor(
         private val sharedPrefsManager: SharedPrefsManager,
         private val utils: Utils
 ) : MessageManager {
-    override fun addNewMessagesToFirestore(context: Context, room: Room, contents: List<String>, messageType: Int, observer: Observer<Message>?) {
+    override fun addNewMessagesToFirestore(room: Room, contents: List<String>, messageType: Int, observer: Observer<Message>?) {
         Observable.create<Message> { emitter ->
-                    addNewMessagesToFirestoreInternal(context, room, contents, messageType, emitter)
+                    addNewMessagesToFirestoreInternal(room, contents, messageType, emitter)
                 }.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .also {
@@ -47,7 +46,7 @@ class MessageManagerImpl @Inject constructor(
                 }
     }
 
-    private fun addNewMessagesToFirestoreInternal(context: Context, room: Room, contents: List<String>, messageType: Int, emitter: Emitter<Message>) {
+    private fun addNewMessagesToFirestoreInternal(room: Room, contents: List<String>, messageType: Int, emitter: Emitter<Message>) {
         var curTimeStamp = System.currentTimeMillis()
 
         contents.forEach { content ->
@@ -62,14 +61,14 @@ class MessageManagerImpl @Inject constructor(
                     createTextMessage(room, content, curTimeStamp)
                 }
                 else -> {
-                    createResourceMessage(context, room, content, curTimeStamp, messageType)
+                    createResourceMessage(room, content, curTimeStamp, messageType)
                 }
             }
 
             emitter.onNext(message)
 
             if (message is ResourceMessage) {
-                uploadResourceAndAddMessage(context, room, message, emitter)
+                uploadResourceAndAddMessage(room, message, emitter)
             } else {
                 database.addNewMessageAndUpdateUsersRoom(
                         curRoom = room,
@@ -94,12 +93,12 @@ class MessageManagerImpl @Inject constructor(
         )
     }
 
-    private fun createResourceMessage(context: Context, room: Room, content: String, createdTime: Long, messageType: Int): ResourceMessage {
+    private fun createResourceMessage(room: Room, content: String, createdTime: Long, messageType: Int): ResourceMessage {
         @Suppress("NAME_SHADOWING")
         var messageType = messageType
 
         if (messageType == Message.TYPE_FILE) {
-            val mimeType = context.contentResolver.getType(utils.getUri(content))
+            val mimeType = application.contentResolver.getType(utils.getUri(content))
             if (mimeType != null) {
                 if (mimeType.startsWith("image/")) {
                     messageType = Message.TYPE_IMAGE
@@ -111,20 +110,20 @@ class MessageManagerImpl @Inject constructor(
 
         val message = when (messageType) {
             Message.TYPE_IMAGE -> {
-                createImageMessage(context, room, content, createdTime)
+                createImageMessage(room, content, createdTime)
             }
             Message.TYPE_VIDEO -> {
-                createVideoMessage(context, room, content, createdTime)
+                createVideoMessage(room, content, createdTime)
             }
             else -> {//Message.TYPE_FILE
-                createFileMessage(context, room, content, createdTime)
+                createFileMessage(room, content, createdTime)
             }
         }
 
         val uri = utils.getUri(content)
         if (resourceManager.isContentUri(content)) {
 //            if (DocumentsContract.isDocumentUri(context, uri)) {
-            with(context.contentResolver.query(uri, arrayOf(OpenableColumns.SIZE), null, null, null)) {
+            with(application.contentResolver.query(uri, arrayOf(OpenableColumns.SIZE), null, null, null)) {
                 this?.let { cursor ->
                     if (cursor.moveToNext()) {
                         message.size = cursor.getLong(0)
@@ -137,8 +136,8 @@ class MessageManagerImpl @Inject constructor(
         return message
     }
 
-    private fun createImageMessage(context: Context, room: Room, content: String, createdTime: Long): ImageMessage {
-        val ratio = resourceManager.getImageDimension(context, content)
+    private fun createImageMessage(room: Room, content: String, createdTime: Long): ImageMessage {
+        val ratio = resourceManager.getImageDimension(content)
 
         return ImageMessage(
                 id = database.getNewMessageId(room.id!!),
@@ -152,7 +151,7 @@ class MessageManagerImpl @Inject constructor(
         )
     }
 
-    private fun createFileMessage(context: Context, room: Room, content: String, createdTime: Long): FileMessage {
+    private fun createFileMessage(room: Room, content: String, createdTime: Long): FileMessage {
         // resolve file info
         var fileName: String? = null
 
@@ -160,7 +159,7 @@ class MessageManagerImpl @Inject constructor(
             resourceManager.isContentUri(content) -> {
                 val localUri = utils.getUri(content)
 
-                with(context.contentResolver.query(localUri, arrayOf(OpenableColumns.DISPLAY_NAME), null, null, null)) {
+                with(application.contentResolver.query(localUri, arrayOf(OpenableColumns.DISPLAY_NAME), null, null, null)) {
                     if (this != null && moveToFirst()) {
                         fileName = getString(0)
                     } else {
@@ -187,10 +186,10 @@ class MessageManagerImpl @Inject constructor(
         )
     }
 
-    private fun createVideoMessage(context: Context, room: Room, content: String, createdTime: Long): VideoMessage {
+    private fun createVideoMessage(room: Room, content: String, createdTime: Long): VideoMessage {
         val retriever = MediaMetadataRetriever()
         if (resourceManager.isContentUri(content)) {
-            retriever.setDataSource(context, utils.getUri(content))
+            retriever.setDataSource(application, utils.getUri(content))
         } else {
             retriever.setDataSource(content)
         }
@@ -224,7 +223,6 @@ class MessageManagerImpl @Inject constructor(
     }
 
     private fun uploadResourceAndAddMessage(
-            context: Context,
             room: Room,
             message: ResourceMessage,
             emitter: Emitter<Message>) {
@@ -260,8 +258,8 @@ class MessageManagerImpl @Inject constructor(
                     }
 
                     if (newMessage is VideoMessage) {
-                        val thumbUriString = sharedPrefsManager.getVideoThumbCacheUri(context, localResourceUri)
-                        thumbUriString?.let { sharedPrefsManager.setVideoThumbCacheUri(context, downloadUrl, it) }
+                        val thumbUriString = sharedPrefsManager.getVideoThumbCacheUri(localResourceUri)
+                        thumbUriString?.let { sharedPrefsManager.setVideoThumbCacheUri(downloadUrl, it) }
                     }
                 })
     }

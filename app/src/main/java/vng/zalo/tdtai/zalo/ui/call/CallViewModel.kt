@@ -5,13 +5,12 @@ import android.content.Intent
 import android.net.sip.SipSession
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import vng.zalo.tdtai.zalo.managers.MessageManager
 import vng.zalo.tdtai.zalo.managers.CallService
+import vng.zalo.tdtai.zalo.managers.MessageManager
 import vng.zalo.tdtai.zalo.model.message.Message
 import vng.zalo.tdtai.zalo.model.room.RoomPeer
 import vng.zalo.tdtai.zalo.repo.Database
 import vng.zalo.tdtai.zalo.utils.Constants
-import vng.zalo.tdtai.zalo.utils.Utils
 import javax.inject.Inject
 
 
@@ -54,7 +53,7 @@ class CallViewModel @Inject constructor(
                 liveRoom.value!!.memberMap = it.memberMap
 
                 if(doNeedAddMessage){
-                    messageManager.addNewMessagesToFirestore(context, liveRoom.value!!, contents, Message.TYPE_CALL)
+                    messageManager.addNewMessagesToFirestore(liveRoom.value!!, contents, Message.TYPE_CALL)
                 }
             }
 
@@ -75,7 +74,7 @@ class CallViewModel @Inject constructor(
         }
     }
 
-    fun addNewCallMessage(context: Context, callType:Int, callTime:Int, isMissed:Boolean, isCancel:Boolean=false) {
+    fun addNewCallMessage(callType:Int, callTime:Int, isMissed:Boolean, isCancel:Boolean=false) {
         val contents = ArrayList<String>().apply {
             add("$callType.$callTime.$isMissed.$isCancel")
         }
@@ -83,7 +82,7 @@ class CallViewModel @Inject constructor(
             this.contents = contents
             doNeedAddMessage = true
         }else{
-            messageManager.addNewMessagesToFirestore(context, liveRoom.value!!, contents, Message.TYPE_CALL)
+            messageManager.addNewMessagesToFirestore(liveRoom.value!!, contents, Message.TYPE_CALL)
         }
     }
 }

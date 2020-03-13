@@ -17,7 +17,6 @@ import vng.zalo.tdtai.zalo.ui.call.CallActivity
 import vng.zalo.tdtai.zalo.utils.Constants
 import vng.zalo.tdtai.zalo.utils.TAG
 import javax.inject.Inject
-import javax.inject.Singleton
 
 interface CallService {
     fun init()
@@ -92,8 +91,8 @@ class SipCallService @Inject constructor(
     private var sipProfile: SipProfile? = null
     private var sipListener: SipAudioCall.Listener? = null
 
-    private fun registerCallReceiver(context: Context) {
-        context.registerReceiver(callReceiver, filter)
+    private fun registerCallReceiver() {
+        application.registerReceiver(callReceiver, filter)
     }
 
     override fun init() {
@@ -112,12 +111,12 @@ class SipCallService @Inject constructor(
 
         openSip(pendingIntent)
 
-        registerCallReceiver(application)
+        registerCallReceiver()
     }
 
     override fun stop() {
         removeSip()
-        unregisterCallReceiver(application)
+        unregisterCallReceiver()
     }
 
     override fun isInit(): Boolean {
@@ -188,8 +187,8 @@ class SipCallService @Inject constructor(
         }
     }
 
-    private fun unregisterCallReceiver(context: Context) {
-        sipManager?.let { context.unregisterReceiver(callReceiver) }
+    private fun unregisterCallReceiver() {
+        sipManager?.let { application.unregisterReceiver(callReceiver) }
     }
 
     private inner class AudioCallImpl(private val sipAudioCall: SipAudioCall) : CallService.AudioCall {

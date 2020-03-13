@@ -11,7 +11,7 @@ import vng.zalo.tdtai.zalo.abstracts.ZaloListAdapter
 import vng.zalo.tdtai.zalo.managers.ResourceManager
 import vng.zalo.tdtai.zalo.model.room.RoomItem
 import vng.zalo.tdtai.zalo.utils.RoomItemDiffCallback
-import vng.zalo.tdtai.zalo.utils.loadCompat
+import vng.zalo.tdtai.zalo.utils.smartLoad
 import javax.inject.Inject
 
 class ChooseRoomItemAdapter @Inject constructor(
@@ -33,10 +33,9 @@ class ChooseRoomItemAdapter @Inject constructor(
         override fun bind(position: Int) {
             itemView.apply {
                 Picasso.get()
-                        .loadCompat(currentList[position].avatarUrl, resourceManager)
-                        .fit()
-                        .centerCrop()
-                        .into(avatarImgView)
+                        .smartLoad(currentList[position].avatarUrl, resourceManager, avatarImgView){
+                            it.fit().centerCrop()
+                        }
             }
         }
     }

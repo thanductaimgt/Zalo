@@ -3,7 +3,6 @@ package vng.zalo.tdtai.zalo.managers
 import android.annotation.SuppressLint
 import android.content.ContentResolver
 import android.content.ContentUris
-import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.ImageDecoder
@@ -21,6 +20,7 @@ import androidx.exifinterface.media.ExifInterface
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
+import vng.zalo.tdtai.zalo.ZaloApplication
 import vng.zalo.tdtai.zalo.utils.Constants
 import vng.zalo.tdtai.zalo.utils.TAG
 import vng.zalo.tdtai.zalo.utils.Utils
@@ -28,17 +28,16 @@ import java.io.File
 import java.io.FileOutputStream
 import java.io.InputStream
 import javax.inject.Inject
-import javax.inject.Singleton
 
 interface ResourceManager {
-    fun createTempFile(context: Context, fileType: Int, callback: (file: File?) -> Unit)
-    fun getImageDimension(context: Context, localUri: String): String
-    fun getImageRotation(context: Context, localUri: String): Int
-    fun getImageBitmap(context: Context, localPath: String): Bitmap
-    fun getVideoThumbUri(context: Context, videoUri: String, callback: (uri: String) -> Unit)
+    fun createTempFile(fileType: Int, callback: (file: File?) -> Unit)
+    fun getImageDimension(localUri: String): String
+    fun getImageRotation(localUri: String): Int
+    fun getImageBitmap(localPath: String): Bitmap
+    fun getVideoThumbUri(videoUri: String, callback: (uri: String) -> Unit)
     fun getNameFromPhone(phone: String): String?
     fun initPhoneNameMap()
-    fun getContentUri(context: Context, realUriString: String): Uri
+    fun getContentUri(realUriString: String): Uri
     fun isContentUri(localPath: String): Boolean
     fun isNetworkUri(uri: String): Boolean
 
@@ -50,15 +49,16 @@ interface ResourceManager {
 }
 
 class ResourceManagerImpl @Inject constructor(
+        private val application: ZaloApplication,
         private val sharedPrefsManager: SharedPrefsManager,
         private val utils: Utils
 ) : ResourceManager {
     private val phoneNameMap = HashMap<String, String>()
 
     @SuppressLint("CheckResult")
-    override fun createTempFile(context: Context, fileType: Int, callback: (file: File?) -> Unit) {
+    override fun createTempFile(fileType: Int, callback: (file: File?) -> Unit) {
         Single.fromCallable {
-                    context.getExternalFilesDir(Environment.DIRECTORY_PICTURES)?.let {
+                    application.getExternalFilesDir(Environment.DIRECTORY_PICTURES)?.let {
                         File.createTempFile(
                                 Constants.FILE_PREFIX, /* prefix */
                                 ".${when (fileType) {
@@ -79,18 +79,18 @@ class ResourceManagerImpl @Inject constructor(
                 )
     }
 
-    override fun getImageDimension(context: Context, localUri: String): String {
-        val inputStream = utils.getInputStream(context, localUri)
+    override fun getImageDimension(localUri: String): String {
+        val inputStream = utils.getInputStream(localUri)
 
         val bitmapOptions = BitmapFactory.Options()
         bitmapOptions.inJustDecodeBounds = true
 
-        BitmapFactory.decodeResourceStream(context.resources, TypedValue(), inputStream, Rect(), bitmapOptions)
+        BitmapFactory.decodeResourceStream(application.resources, TypedValue(), inputStream, Rect(), bitmapOptions)
 
         var width = bitmapOptions.outWidth
         var height = bitmapOptions.outHeight
 
-        val rotationDegree = getImageRotation(context, localUri)
+        val rotationDegree = getImageRotation(localUri)
         if (rotationDegree == 90 || rotationDegree == 270) {
             val temp = width
             width = height
@@ -99,8 +99,8 @@ class ResourceManagerImpl @Inject constructor(
         return "${width}:${height}"
     }
 
-    override fun getImageRotation(context: Context, localUri: String): Int {
-        val input: InputStream = utils.getInputStream(context, localUri)
+    override fun getImageRotation(localUri: String): Int {
+        val input: InputStream = utils.getInputStream(localUri)
         val ei: ExifInterface
         ei = if (Build.VERSION.SDK_INT > 23) ExifInterface(input) else ExifInterface(localUri)
         return when (ei.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL)) {
@@ -111,16 +111,16 @@ class ResourceManagerImpl @Inject constructor(
         }
     }
 
-    override fun getImageBitmap(context: Context, localPath: String): Bitmap {
+    override fun getImageBitmap(localPath: String): Bitmap {
         val localFileUri = Uri.parse(localPath)
 
         return if (isContentUri(localPath)) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                val source = ImageDecoder.createSource(context.contentResolver, localFileUri)
+                val source = ImageDecoder.createSource(application.contentResolver, localFileUri)
                 ImageDecoder.decodeBitmap(source)
             } else {
                 @Suppress("DEPRECATION")
-                MediaStore.Images.Media.getBitmap(context.contentResolver, localFileUri)
+                MediaStore.Images.Media.getBitmap(application.contentResolver, localFileUri)
             }
         } else {
             val options = BitmapFactory.Options()
@@ -129,12 +129,12 @@ class ResourceManagerImpl @Inject constructor(
         }
     }
 
-    private fun getVideoThumbBitmap(context: Context, videoUri: String): Bitmap? {
+    private fun getVideoThumbBitmap(videoUri: String): Bitmap? {
         val retriever = MediaMetadataRetriever()
         try {
             when {
                 isContentUri(videoUri) -> {
-                    retriever.setDataSource(context, utils.getUri(videoUri))
+                    retriever.setDataSource(application, utils.getUri(videoUri))
                 }
                 isNetworkUri(videoUri) -> {
                     retriever.setDataSource(videoUri, HashMap())
@@ -152,8 +152,8 @@ class ResourceManagerImpl @Inject constructor(
         }
     }
 
-    private fun saveVideoThumb(context: Context, bitmap: Bitmap?): String {
-        val thumbPath = "${getVideoThumbDir(context)}/${System.currentTimeMillis()}"
+    private fun saveVideoThumb(bitmap: Bitmap?): String {
+        val thumbPath = "${getVideoThumbDir()}/${System.currentTimeMillis()}"
         val output = FileOutputStream(thumbPath)
         try {
             bitmap?.compress(Constants.IMAGE_COMPRESS_FORMAT, Constants.IMAGE_COMPRESS_QUALITY, output)
@@ -166,15 +166,15 @@ class ResourceManagerImpl @Inject constructor(
     }
 
     @SuppressLint("CheckResult")
-    override fun getVideoThumbUri(context: Context, videoUri: String, callback: (uri: String) -> Unit) {
-        var thumbUriString = sharedPrefsManager.getVideoThumbCacheUri(context, videoUri)
+    override fun getVideoThumbUri(videoUri: String, callback: (uri: String) -> Unit) {
+        var thumbUriString = sharedPrefsManager.getVideoThumbCacheUri(videoUri)
         if (thumbUriString != null && File(thumbUriString).exists()) {
             callback(thumbUriString)
         } else {
             Single.fromCallable {
-                        val bitmap = getVideoThumbBitmap(context, videoUri)
-                        thumbUriString = saveVideoThumb(context, bitmap)
-                        sharedPrefsManager.setVideoThumbCacheUri(context, videoUri, thumbUriString!!)
+                        val bitmap = getVideoThumbBitmap(videoUri)
+                        thumbUriString = saveVideoThumb(bitmap)
+                        sharedPrefsManager.setVideoThumbCacheUri(videoUri, thumbUriString!!)
                         thumbUriString!!
                     }.subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
@@ -184,8 +184,8 @@ class ResourceManagerImpl @Inject constructor(
         }
     }
 
-    private fun getVideoThumbDir(context: Context): String {
-        return context.cacheDir.absolutePath
+    private fun getVideoThumbDir(): String {
+        return application.cacheDir.absolutePath
     }
 
     //    fun getVideoDimension(context: Context, localUri: String): String {
@@ -208,27 +208,27 @@ class ResourceManagerImpl @Inject constructor(
         return phoneNameMap[phone]
     }
 
-    override fun getContentUri(context: Context, realUriString: String): Uri {
+    override fun getContentUri(realUriString: String): Uri {
         return FileProvider.getUriForFile(
-                context,
-                getProviderAuthority(context),
+                application,
+                getProviderAuthority(),
                 File(realUriString)
         )
     }
 
-    fun getRealUriString(context: Context, contentUri: Uri): String? {
+    fun getRealUriString(contentUri: Uri): String? {
         return if (isAboveKitKat()) { // Android OS above sdk version 19.
-            getUriRealPathAboveKitkat(context, contentUri)
+            getUriRealPathAboveKitkat(contentUri)
         } else { // Android OS below sdk version 19
-            getMediaRealPath(context.contentResolver, contentUri, null)
+            getMediaRealPath(application.contentResolver, contentUri, null)
         }
     }
 
-    private fun getUriRealPathAboveKitkat(context: Context, uri: Uri): String? {
+    private fun getUriRealPathAboveKitkat(uri: Uri): String? {
         var res: String? = null
         if (isFileUri(uri)) {
             res = uri.path
-        } else if (isDocumentUri(context, uri)) { // Get uri related document id.
+        } else if (isDocumentUri(uri)) { // Get uri related document id.
             val documentId = DocumentsContract.getDocumentId(uri)
             // Get uri authority.
             val uriAuthority = uri.authority
@@ -254,13 +254,13 @@ class ResourceManagerImpl @Inject constructor(
                     }
                     // Get where clause with real document id.
                     val whereClause = MediaStore.Images.Media._ID + " = " + realDocId
-                    res = getMediaRealPath(context.contentResolver, mediaContentUri, whereClause)
+                    res = getMediaRealPath(application.contentResolver, mediaContentUri, whereClause)
                 }
             } else if (isDownloadDoc(uriAuthority)) { // Build download uri.
                 val downloadUri = utils.getUri("content://downloads/public_downloads")
                 // Append download document id at uri end.
                 val downloadUriAppendId = ContentUris.withAppendedId(downloadUri, java.lang.Long.valueOf(documentId))
-                res = getMediaRealPath(context.contentResolver, downloadUriAppendId, null)
+                res = getMediaRealPath(application.contentResolver, downloadUriAppendId, null)
             } else if (isExternalStoreDoc(uriAuthority)) {
                 val idArr = documentId.split(":").toTypedArray()
                 if (idArr.size == 2) {
@@ -276,7 +276,7 @@ class ResourceManagerImpl @Inject constructor(
             res = if (isGooglePhotoDoc(uri.authority)) {
                 uri.lastPathSegment
             } else {
-                getMediaRealPath(context.contentResolver, uri, null)
+                getMediaRealPath(application.contentResolver, uri, null)
             }
         }
         return res
@@ -288,10 +288,10 @@ class ResourceManagerImpl @Inject constructor(
     }
 
     /* Check whether this uri represent a document or not. */
-    private fun isDocumentUri(ctx: Context?, uri: Uri?): Boolean {
+    private fun isDocumentUri(uri: Uri?): Boolean {
         var ret = false
-        if (ctx != null && uri != null) {
-            ret = DocumentsContract.isDocumentUri(ctx, uri)
+        if (uri != null) {
+            ret = DocumentsContract.isDocumentUri(application, uri)
         }
         return ret
     }
@@ -388,7 +388,7 @@ class ResourceManagerImpl @Inject constructor(
         return res
     }
 
-    private fun getProviderAuthority(context: Context): String {
-        return "${context.applicationContext.packageName}.${Constants.PROVIDER_AUTHORITY}"
+    private fun getProviderAuthority(): String {
+        return "${application.applicationContext.packageName}.${Constants.PROVIDER_AUTHORITY}"
     }
 }

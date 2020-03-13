@@ -72,4 +72,6 @@ interface Database {
     fun deleteRoom(room: Room, membersPhone: List<String>, callback: (() -> Unit)? = null)
 
     fun getUserAvatarUrl(phone: String, callback: ((avatarUrl: String) -> Unit)? = null)
+
+    fun updateFirebaseMessagingToken(oldToken: String?, newToken:String)
 }

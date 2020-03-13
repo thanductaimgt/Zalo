@@ -60,25 +60,48 @@ import kotlin.math.min
 
 
 class ChatActivity : DaggerAppCompatActivity(), View.OnClickListener, View.OnLongClickListener, KeyboardHeightObserver {
-    @Inject lateinit var sharedPrefsManager: SharedPrefsManager
-    @Inject lateinit var notificationService: NotificationService
-    @Inject lateinit var sessionManager: SessionManager
-    @Inject lateinit var externalIntentManager: ExternalIntentManager
-    @Inject lateinit var messageManager: MessageManager
-    @Inject lateinit var callService: CallService
-    @Inject lateinit var resourceManager: ResourceManager
-    @Inject lateinit var utils: Utils
+    @Inject
+    lateinit var sharedPrefsManager: SharedPrefsManager
 
-    @Inject lateinit var database: Database
+    @Inject
+    lateinit var notificationService: NotificationService
 
-    @Inject lateinit var alertDialog: AlertDialog
+    @Inject
+    lateinit var sessionManager: SessionManager
 
-    @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
+    @Inject
+    lateinit var externalIntentManager: ExternalIntentManager
+
+    @Inject
+    lateinit var messageManager: MessageManager
+
+    @Inject
+    lateinit var callService: CallService
+
+    @Inject
+    lateinit var resourceManager: ResourceManager
+
+    @Inject
+    lateinit var utils: Utils
+
+    @Inject
+    lateinit var database: Database
+
+    @Inject
+    lateinit var alertDialog: AlertDialog
+
+    @Inject
+    lateinit var viewModelFactory: ViewModelProvider.Factory
     private val viewModel: ChatViewModel by viewModels { viewModelFactory }
 
-    @Inject lateinit var chatAdapter: ChatAdapter
-    @Inject lateinit var viewMediaAdapter: ViewMediaAdapter
-    @Inject lateinit var messageActionAdapter: MessageActionAdapter
+    @Inject
+    lateinit var chatAdapter: ChatAdapter
+
+    @Inject
+    lateinit var viewMediaAdapter: ViewMediaAdapter
+
+    @Inject
+    lateinit var messageActionAdapter: MessageActionAdapter
 
     private var emojiFragment: EmojiFragment? = null
     private var isMessageJustSentByMe = false
@@ -102,7 +125,7 @@ class ChatActivity : DaggerAppCompatActivity(), View.OnClickListener, View.OnLon
     private var keyboardHeight = 0
         set(value) {
             if (value != field) {
-                sharedPrefsManager.setKeyboardSize(this, value)
+                sharedPrefsManager.setKeyboardSize(value)
                 frameLayout.layoutParams.height = value
                 field = value
             }
@@ -129,7 +152,7 @@ class ChatActivity : DaggerAppCompatActivity(), View.OnClickListener, View.OnLon
         viewModel.liveSeenPhones.observe(this, messagesObserver)
 
         viewModel.livePeerLastOnlineTime.observe(this, Observer { lastOnlineTime ->
-            onlineStatusTextView.text = utils.getLastOnlineTimeFormat(this, lastOnlineTime)
+            onlineStatusTextView.text = utils.getLastOnlineTimeFormat(lastOnlineTime)
 
             if (lastOnlineTime == null && viewModel.room.type == Room.TYPE_PEER) {
                 onlineStatusImgView.visibility = View.VISIBLE
@@ -229,9 +252,9 @@ class ChatActivity : DaggerAppCompatActivity(), View.OnClickListener, View.OnLon
         msgEditText.setOnFocusChangeListener { _, b ->
             if (b) {
                 frameLayout.visibility = View.GONE
-                utils.showKeyboard(this, msgEditText)
+                utils.showKeyboard(msgEditText)
             } else {
-                utils.hideKeyboard(this, rootView)
+                utils.hideKeyboard(rootView)
             }
         }
 
@@ -240,7 +263,7 @@ class ChatActivity : DaggerAppCompatActivity(), View.OnClickListener, View.OnLon
         initMessageActionsView()
         initViewImageLayout()
 
-        keyboardHeight = sharedPrefsManager.getKeyboardSize(this)
+        keyboardHeight = sharedPrefsManager.getKeyboardSize()
 
         //make recycler view stay at same offset when keyboard on, off
 
@@ -399,7 +422,7 @@ class ChatActivity : DaggerAppCompatActivity(), View.OnClickListener, View.OnLon
                 }
             }
             R.id.emojiImgView -> {
-                utils.hideKeyboard(this@ChatActivity, rootView)
+                utils.hideKeyboard(rootView)
                 showOrHideEmojiFragment()
             }
             R.id.uploadImageImgView -> {
@@ -615,7 +638,7 @@ class ChatActivity : DaggerAppCompatActivity(), View.OnClickListener, View.OnLon
     }
 
     fun sendMessages(contents: List<String>, type: Int) {
-        viewModel.addNewMessagesToFirestore(this, contents, type, SendMessageObserver())
+        viewModel.addNewMessagesToFirestore(contents, type, SendMessageObserver())
         isMessageJustSentByMe = true
     }
 
@@ -731,7 +754,7 @@ class ChatActivity : DaggerAppCompatActivity(), View.OnClickListener, View.OnLon
         moreImgViewVID.setOnClickListener(this)
     }
 
-    private fun showMessageActionView(message: Message){
+    private fun showMessageActionView(message: Message) {
         messageActionsView.apply {
             nameTextView.text = message.senderPhone
             descTextView.text = message.getPreviewContent(this@ChatActivity)
@@ -739,18 +762,16 @@ class ChatActivity : DaggerAppCompatActivity(), View.OnClickListener, View.OnLon
                 Message.TYPE_TEXT -> imageView.visibility = View.GONE
                 Message.TYPE_CALL -> imageView.visibility = View.GONE
                 Message.TYPE_FILE -> {
-                    Picasso.get().load(
-                                    utils.getResIdFromFileExtension(this@ChatActivity,
-                                            utils.getFileExtension((message as FileMessage).fileName)))
+                    Picasso.get().load(utils.getResIdFromFileExtension(
+                                    utils.getFileExtension((message as FileMessage).fileName)))
                             .into(imageView)
                     imageView.visibility = View.VISIBLE
                 }
                 Message.TYPE_IMAGE -> {
                     Picasso.get()
-                            .loadCompat((message as ImageMessage).url, resourceManager)
-                            .fit()
-                            .centerCrop()
-                            .into(imageView)
+                            .smartLoad((message as ImageMessage).url, resourceManager, imageView) {
+                                it.fit().centerCrop()
+                            }
 
                     imageView.visibility = View.VISIBLE
                 }
@@ -759,12 +780,12 @@ class ChatActivity : DaggerAppCompatActivity(), View.OnClickListener, View.OnLon
                     imageView.visibility = View.VISIBLE
                 }
                 Message.TYPE_VIDEO -> {
-                    resourceManager.getVideoThumbUri(context, (message as VideoMessage).url) {
-                        Picasso.get().loadCompat(it, resourceManager)
-                                .fit()
-                                .centerCrop()
-                                .error(R.drawable.load_image_fail)
-                                .into(imageView)
+                    resourceManager.getVideoThumbUri((message as VideoMessage).url) { uri ->
+                        Picasso.get().smartLoad(uri, resourceManager, imageView) {
+                            it.fit()
+                                    .centerCrop()
+                                    .error(R.drawable.load_image_fail)
+                        }
                     }
                     imageView.visibility = View.VISIBLE
                 }

@@ -2,22 +2,25 @@ package vng.zalo.tdtai.zalo
 
 import android.content.Context
 import android.util.Log
+import androidx.camera.camera2.Camera2Config
+import androidx.camera.core.CameraXConfig
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ProcessLifecycleOwner
 import androidx.multidex.MultiDex
 import dagger.android.AndroidInjector
 import dagger.android.DaggerApplication
 import vng.zalo.tdtai.zalo.di.DaggerAppComponent
-import vng.zalo.tdtai.zalo.managers.PermissionManager
-import vng.zalo.tdtai.zalo.managers.SessionManager
-import vng.zalo.tdtai.zalo.managers.SharedPrefsManager
-import vng.zalo.tdtai.zalo.repo.Database
-import vng.zalo.tdtai.zalo.repo.Storage
-import vng.zalo.tdtai.zalo.utils.TAG
+import vng.zalo.tdtai.zalo.manager.PermissionManager
+import vng.zalo.tdtai.zalo.manager.SessionManager
+import vng.zalo.tdtai.zalo.manager.SharedPrefsManager
+import vng.zalo.tdtai.zalo.repository.Database
+import vng.zalo.tdtai.zalo.repository.Storage
+import vng.zalo.tdtai.zalo.util.TAG
 import javax.inject.Inject
 
-class ZaloApplication : DaggerApplication() {
+class ZaloApplication : DaggerApplication(), CameraXConfig.Provider {
     @Inject
     lateinit var database: Database
     @Inject
@@ -30,6 +33,12 @@ class ZaloApplication : DaggerApplication() {
     @Inject
     lateinit var permissionManager: PermissionManager
 
+    val liveShouldReleaseVideoFocus = MutableLiveData(false)
+
+    override fun getCameraXConfig(): CameraXConfig {
+        return Camera2Config.defaultConfig()
+    }
+
     //MultiDex
     override fun attachBaseContext(base: Context?) {
         super.attachBaseContext(base)
@@ -37,7 +46,8 @@ class ZaloApplication : DaggerApplication() {
     }
 
     override fun applicationInjector(): AndroidInjector<out DaggerApplication> {
-        return DaggerAppComponent.factory().create(this)
+        appComponent =  DaggerAppComponent.factory().create(this) as DaggerAppComponent
+        return appComponent
     }
 
     override fun onCreate() {
@@ -58,16 +68,20 @@ class ZaloApplication : DaggerApplication() {
     inner class ZaloProcessLifecycleObserver : DefaultLifecycleObserver {
         override fun onStart(owner: LifecycleOwner) {
             Log.d(TAG, "onStart")
-            sessionManager.curUser?.phone?.let {
+            sessionManager.curUser?.id?.let {
                 database.setCurrentUserOnlineState(true)
             }
         }
 
         override fun onStop(owner: LifecycleOwner) {
             Log.d(TAG, "onStop")
-            sessionManager.curUser?.phone?.let {
+            sessionManager.curUser?.id?.let {
                 database.setCurrentUserOnlineState(false)
             }
         }
+    }
+
+    companion object{
+        lateinit var appComponent: DaggerAppComponent
     }
 }

@@ -1,105 +1,174 @@
 package vng.zalo.tdtai.zalo.ui.home.diary
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
-import dagger.android.support.DaggerFragment
+import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.fragment_diary.*
+import kotlinx.android.synthetic.main.item_story_preview.view.*
 import vng.zalo.tdtai.zalo.R
-import vng.zalo.tdtai.zalo.managers.SessionManager
-import vng.zalo.tdtai.zalo.managers.SharedPrefsManager
-import vng.zalo.tdtai.zalo.repo.Database
-import vng.zalo.tdtai.zalo.repo.Storage
-import vng.zalo.tdtai.zalo.services.NotificationService
+import vng.zalo.tdtai.zalo.base.BaseFragment
+import vng.zalo.tdtai.zalo.common.StoryPreviewAdapter
+import vng.zalo.tdtai.zalo.data_model.story.StoryGroup
+import vng.zalo.tdtai.zalo.ui.create_post.CreatePostActivity
+import vng.zalo.tdtai.zalo.ui.home.HomeActivity
+import vng.zalo.tdtai.zalo.util.smartLoad
 import javax.inject.Inject
 
-class DiaryFragment : DaggerFragment(), View.OnClickListener {
-    @Inject lateinit var database: Database
-    @Inject lateinit var storage: Storage
-    @Inject lateinit var sessionManager: SessionManager
-    @Inject lateinit var notificationService: NotificationService
-    @Inject lateinit var sharedPrefsManager: SharedPrefsManager
+class DiaryFragment : BaseFragment() {
+    private val viewModel: DiaryViewModel by viewModels { viewModelFactory }
 
     @Inject
-    lateinit var viewModelFactory: ViewModelProvider.Factory
-    private val viewModel: DiaryViewModel by viewModels({requireActivity()}, { viewModelFactory })
+    lateinit var diaryAdapter: DiaryAdapter
 
-    @Inject lateinit var postAdapter:PostAdapter
-    @Inject lateinit var storyAdapter:StoryAdapter
+    @Inject
+    lateinit var storyPreviewAdapter: StoryPreviewAdapter
+
+    @Inject
+    lateinit var homeActivity: HomeActivity
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_diary, container, false)
+        return inflater.inflate(R.layout.fragment_diary, container, false).apply {
+            makeRoomForStatusBar(requireActivity(), this)
+        }
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        initView()
+    override fun onBindViews() {
+        postRecyclerView.adapter = diaryAdapter
+        storyRecyclerView.adapter = storyPreviewAdapter
 
-        viewModel.livePosts.observe(viewLifecycleOwner, Observer {
-            postAdapter.submitList(it)
+        Picasso.get().smartLoad(sessionManager.curUser!!.avatarUrl, resourceManager, avatarImgView2) {
+            it.fit().centerCrop()
+        }
+
+        avatarImgView2.setOnClickListener(this)
+        createPostTV.setOnClickListener(this)
+        cameraImgView.setOnClickListener(this)
+    }
+
+    override fun onViewsBound() {
+        viewModel.liveDiaries.observe(viewLifecycleOwner, Observer {
+            diaryAdapter.submitList(it)
         })
 
-        viewModel.liveStories.observe(viewLifecycleOwner, Observer {
-            storyAdapter.submitList(it)
+        var isFirstTime = true
+        viewModel.liveStoryGroups.observe(viewLifecycleOwner, Observer { storyGroups ->
+            if (isFirstTime) {
+                isFirstTime = false
+                return@Observer
+            }
+
+            val myStoryGroup = storyGroups.firstOrNull { it.ownerId == sessionManager.curUser!!.id }
+            if (myStoryGroup == null) {
+                storyPreviewAdapter.submitList(storyGroups.toMutableList().apply {
+                    add(0, StoryGroup(id = StoryGroup.ID_CREATE_STORY))
+                })
+            } else {
+                storyPreviewAdapter.submitList(storyGroups)
+            }
+        })
+
+        viewModel.liveIsAnyStory.observe(viewLifecycleOwner, Observer {
+            if (it) {
+                viewModel.refreshRecentStoryGroup()
+            }
         })
     }
 
-    private fun initView(){
-        postRecyclerView.adapter = postAdapter
-        storyRecyclerView.adapter = storyAdapter
+    override fun onClick(view: View) {
+        when (view.id) {
+            R.id.storyPreviewItemRoot -> {
+                val position = storyRecyclerView.getChildAdapterPosition(view)
+                val storyGroup = storyPreviewAdapter.currentList[position] as StoryGroup
+
+                if (storyGroup.id == StoryGroup.ID_CREATE_STORY) {
+                    homeActivity.openCamera()
+                } else {
+                    view.apply {
+                        borderView.visibility = View.GONE
+                        progressBar.visibility = View.VISIBLE
+                        loadingAnimView.visibility = View.VISIBLE
+                    }
+
+                    database.getStories(arrayListOf(storyGroup)) {
+//                        var loadedCount = 0
+//                        var loadCount = 0
+//                        val preLoadImage = { url: String ->
+//                            Picasso.get().smartLoad(url, resourceManager, object : Target {
+//                                override fun onPrepareLoad(placeHolderDrawable: Drawable?) {
+//                                    loadCount++
+//                                }
+//
+//                                override fun onBitmapFailed(e: Exception?, errorDrawable: Drawable?) {
+//                                    view.loadingAnimView.visibility = View.GONE
+//                                }
+//
+//                                override fun onBitmapLoaded(bitmap: Bitmap?, from: Picasso.LoadedFrom?) {
+//                                    loadedCount++
+//                                    Log.d(TAG, "loadedCount: $loadedCount, loadCount: $loadCount")
+//                                    if (loadedCount >= loadCount) {
+//                                        homeActivity.addStoryFragment(storyGroup, viewModel.liveStoryGroups.value!!)
+//
+//                                        view.apply {
+//                                            borderView.visibility = View.VISIBLE
+//                                            progressBar.visibility = View.GONE
+//                                            loadingAnimView.visibility = View.GONE
+//                                        }
+//                                    }
+//                                }
+//                            })
+//                        }
+//
+//                        storyGroup.stories!!.forEach {
+//                            when (it) {
+//                                is ImageStory -> preLoadImage(it.imageUrl!!)
+//                                is VideoStory -> {
+//                                    resourceManager.getVideoThumbUri(it.videoUrl!!) { uri ->
+//                                        preLoadImage(uri)
+//                                    }
+//                                }
+//                            }
+//                        }
+                        homeActivity.addStoryFragment(storyGroup, viewModel.liveStoryGroups.value!!)
+
+                        view.apply {
+                            borderView.visibility = View.VISIBLE
+                            progressBar.visibility = View.GONE
+                            loadingAnimView.visibility = View.GONE
+                        }
+                    }
+                }
+            }
+            R.id.cameraImgView -> homeActivity.openCamera()
+            R.id.avatarImgView -> {
+                addProfileFragment(view)
+            }
+            R.id.avatarImgView2 -> {
+                homeActivity.addProfileFragment(sessionManager.curUser!!.id!!)
+            }
+            R.id.nameTextView -> {
+                addProfileFragment(view)
+            }
+            R.id.createPostTV -> {
+                startActivity(Intent(requireActivity(), CreatePostActivity::class.java))
+            }
+            R.id.playerView -> {
+
+            }
+            R.id.imageView -> {
+
+            }
+        }
     }
 
-    override fun onClick(v: View) {
-//        when (v.id) {
-//            R.id.logoutButton -> {
-//                logOut()
-//
-//                startActivity(Intent(context, LoginActivity::class.java).apply {
-//                    addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
-//                })
-//
-//                (requireContext() as Activity).finish()
-//            }
-//            R.id.addStickerSet -> {
-//                val name = stickerSetNameEditText.text.toString()
-//                if (name != "") {
-//                    storage.addStickerSet(name = name, localPaths = ArrayList()) { bucketName ->
-//                        storage.getStickerSetUrls(bucketName = bucketName) { stickerUrls ->
-//                            database.addStickerSet(name = name, bucketName = bucketName, stickerUrls = stickerUrls) {
-//                                Toast.makeText(context, "sticker set added", Toast.LENGTH_SHORT).show()
-//                            }
-//                        }
-//                    }
-//                } else {
-//                    Toast.makeText(context, "sticker set name can not be empty", Toast.LENGTH_SHORT).show()
-//                }
-//            }
-//            R.id.addFriendButton -> {
-//                val phone = phoneEditText.text.toString()
-//                when {
-//                    phone.length < 10 -> {
-//                        Toast.makeText(context, "must be a 10-digit phone number", Toast.LENGTH_SHORT).show()
-//                    }
-//                    phone == sessionManager.curUser!!.phone -> {
-//                        Toast.makeText(context, "cannot add yourself", Toast.LENGTH_SHORT).show()
-//                    }
-//                    else -> {
-//                        database.addFriend(phone) { isSuccess ->
-//                            if (isSuccess) {
-//                                Toast.makeText(context, "add friend success", Toast.LENGTH_SHORT).show()
-//                            } else {
-//                                Toast.makeText(context, "add friend fail", Toast.LENGTH_SHORT).show()
-//                            }
-//                        }
-//                    }
-//                }
-//            }
-//            R.id.startNotiServiceButton-> notificationService.start()
-//            R.id.stopNotiServiceButton-> notificationService.stop()
-//        }
+    private fun addProfileFragment(view: View) {
+        val position = postRecyclerView.getChildAdapterPosition(view.parent as View)
+        val post = diaryAdapter.currentList[position]
+        homeActivity.addProfileFragment(post.ownerId!!)
     }
 }

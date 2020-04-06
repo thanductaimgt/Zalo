@@ -1,0 +1,241 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <com.google.android.exoplayer2.ui.PlayerView
+        android:id="@+id/playerView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@null"
+        app:surface_type="texture_view"
+        app:use_controller="false"
+        tools:foreground="@color/strongGray" />
+
+    <ImageView
+        android:id="@+id/previewImgView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="@id/playerView"
+        app:layout_constraintEnd_toEndOf="@id/playerView"
+        app:layout_constraintStart_toStartOf="@id/playerView"
+        app:layout_constraintTop_toTopOf="@id/playerView"
+        tools:src="@drawable/zalo" />
+
+    <ImageView
+        android:id="@+id/playPauseImgView"
+        android:layout_width="100dp"
+        android:layout_height="0dp"
+        android:src="@drawable/ic_play_arrow_black_24dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintDimensionRatio="1:1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:tint="@color/whiteTransparent2"
+        tools:visibility="visible" />
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/watchOwnerAvatarImgView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="10dp"
+        app:civ_border_color="@android:color/white"
+        app:civ_border_width="2dp"
+        app:civ_circle_background_color="@android:color/black"
+        app:layout_constraintBottom_toBottomOf="@id/addIcon"
+        app:layout_constraintDimensionRatio="H,1:1"
+        app:layout_constraintEnd_toEndOf="@id/musicOwnerAvatarImgView"
+        app:layout_constraintStart_toStartOf="@id/musicOwnerAvatarImgView"
+        tools:src="@drawable/default_peer_avatar" />
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/addIcon"
+        android:layout_width="30dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="18dp"
+        android:padding="4dp"
+        android:src="@drawable/ic_add_black_24dp"
+        app:civ_circle_background_color="@color/lightPrimary"
+        app:layout_constraintBottom_toTopOf="@id/emojiImgView"
+        app:layout_constraintDimensionRatio="1:1"
+        app:layout_constraintEnd_toEndOf="@id/watchOwnerAvatarImgView"
+        app:layout_constraintStart_toStartOf="@id/watchOwnerAvatarImgView" />
+
+    <ImageView
+        android:id="@+id/emojiImgView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:src="@drawable/heart2"
+        app:layout_constraintBottom_toTopOf="@id/reactCountTextView"
+        app:layout_constraintDimensionRatio="H,1:1"
+        app:layout_constraintEnd_toEndOf="@id/shareImgView"
+        app:layout_constraintStart_toStartOf="@id/shareImgView" />
+
+    <TextView
+        android:id="@+id/reactCountTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="18dp"
+        android:textColor="@android:color/white"
+        android:textSize="@dimen/sizeTextSmall"
+        app:layout_constraintBottom_toTopOf="@id/commentImgView"
+        app:layout_constraintEnd_toEndOf="@id/shareImgView"
+        app:layout_constraintStart_toStartOf="@id/shareImgView"
+        tools:text="1.5M" />
+
+    <ImageView
+        android:id="@+id/commentImgView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:src="@drawable/comment_black"
+        app:layout_constraintBottom_toTopOf="@id/commentNumTextView"
+        app:layout_constraintDimensionRatio="H,1:1"
+        app:layout_constraintEnd_toEndOf="@id/shareImgView"
+        app:layout_constraintStart_toStartOf="@id/shareImgView"
+        app:tint="@android:color/white" />
+
+    <TextView
+        android:id="@+id/commentNumTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="18dp"
+        android:textColor="@android:color/white"
+        android:textSize="@dimen/sizeTextSmall"
+        app:layout_constraintBottom_toTopOf="@id/shareImgView"
+        app:layout_constraintEnd_toEndOf="@id/shareImgView"
+        app:layout_constraintStart_toStartOf="@id/shareImgView"
+        tools:text="441.2k" />
+
+    <ImageView
+        android:id="@+id/shareImgView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="18dp"
+        android:layout_marginEnd="10dp"
+        android:src="@drawable/ic_share_black_24dp"
+        app:layout_constraintBottom_toTopOf="@id/shareNumTextView"
+        app:layout_constraintDimensionRatio="H,1:1"
+        app:layout_constraintEnd_toEndOf="@id/musicOwnerAvatarImgView"
+        app:layout_constraintStart_toStartOf="@id/musicOwnerAvatarImgView"
+        app:tint="@android:color/white" />
+
+    <TextView
+        android:id="@+id/shareNumTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="40dp"
+        android:textColor="@android:color/white"
+        android:textSize="@dimen/sizeTextSmall"
+        app:layout_constraintBottom_toTopOf="@id/musicOwnerAvatarImgView"
+        app:layout_constraintEnd_toEndOf="@id/shareImgView"
+        app:layout_constraintStart_toStartOf="@id/shareImgView"
+        tools:text="441.2k" />
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/musicOwnerAvatarImgView"
+        android:layout_width="56dp"
+        android:layout_height="0dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="@dimen/sizeBottomNavigationHeight"
+        android:cropToPadding="false"
+        app:civ_border_width="10dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintDimensionRatio="1:1"
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:src="@drawable/official_account" />
+
+    <ImageView
+        android:id="@+id/musicIcon"
+        android:layout_width="28dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="8dp"
+        android:src="@drawable/ic_music"
+        app:layout_constraintBottom_toBottomOf="@id/musicOwnerAvatarImgView"
+        app:layout_constraintDimensionRatio="1:1"
+        app:layout_constraintStart_toStartOf="parent"
+        app:tint="@android:color/white" />
+
+    <FrameLayout
+        android:id="@+id/musicNameLayout"
+        android:layout_marginStart="4dp"
+        app:layout_constraintBottom_toBottomOf="@id/musicIcon"
+        app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintStart_toEndOf="@id/musicIcon"
+        app:layout_constraintTop_toTopOf="@id/musicIcon"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp">
+        <TextView
+            android:id="@+id/musicNameTextView"
+            android:layout_width="150dp"
+            android:layout_height="match_parent"
+            android:ellipsize="marquee"
+            android:gravity="center_vertical"
+            android:marqueeRepeatLimit="marquee_forever"
+            android:scrollHorizontally="true"
+            android:singleLine="true"
+            android:textColor="@android:color/white"
+            tools:text="nhac nen abcxyz" />
+    </FrameLayout>
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.7" />
+
+    <vng.zalo.tdtai.zalo.widget.ExpandableTextView
+        android:id="@+id/descTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginBottom="8dp"
+        android:maxHeight="200dp"
+        android:scrollbars="vertical"
+        android:textColor="@android:color/white"
+        app:layout_constrainedWidth="true"
+        app:layout_constraintBottom_toTopOf="@id/musicNameLayout"
+        app:layout_constraintEnd_toStartOf="@id/guideline"
+        app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintStart_toStartOf="@id/musicIcon"
+        app:trimLength="50"
+        tools:text="E gi asdsado kdsado khong sang do duodsado khong sang do duodsado khong sang do duodsado khong sang do duodsado khong sang do duodsado khong sang do duodsado khong sang do duodsado khong sang do duodsado khong sang do duodsado khong sang do duodsado khong sang do duodsado khong sang do duodsado khong sang do duodsado khong sang do duodsado khong sang do duodsado khong sang do duodsado khong sang do duodsado khong sang do duohong sang do duoc dau asdasdasdsadasdasdasdasdasdasdasdasdasdasdasdasdasdasdsadsadasdasdas jkc sdfs fsjdkfsd sdfsndkfjs sdnfsdjskd sdfnjsdsdkf sdnfjksdfnsdf sdfjejc  sdnfksdjf sdfskdjfnksd sdkfjnsdkfsdnf sdfjsfksndf sdkfnsdjkfsnd sfkjsdnfsdf sdfkjssnkdfn sndfjk :))" />
+
+    <TextView
+        app:layout_constrainedWidth="true"
+        android:layout_marginEnd="8dp"
+        app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintEnd_toStartOf="@id/musicOwnerAvatarImgView"
+        android:id="@+id/nameTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginBottom="8dp"
+        android:ellipsize="end"
+        android:maxLength="150"
+        android:maxLines="1"
+        android:scrollHorizontally="true"
+        android:textColor="@android:color/white"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@id/descTextView"
+        app:layout_constraintStart_toStartOf="@id/musicIcon"
+        tools:text="\@ Tran Ngoc Phuong Dung" />
+    <!--    <FrameLayout-->
+    <!--        android:layout_marginStart="8dp"-->
+    <!--        app:layout_constraintStart_toEndOf="@id/musicIcon"-->
+    <!--        app:layout_constraintTop_toTopOf="@id/musicIcon"-->
+    <!--        app:layout_constraintBottom_toBottomOf="@id/musicIcon"-->
+    <!--        android:layout_width="200dp"-->
+    <!--        android:layout_height="wrap_content">-->
+    <!--        <TextView-->
+    <!--            android:translationX="190dp"-->
+    <!--            android:textColor="@android:color/white"-->
+    <!--            tools:text="nhac nen abcxyz"-->
+    <!--            android:layout_width="wrap_content"-->
+    <!--            android:layout_height="wrap_content"/>-->
+    <!--    </FrameLayout>-->
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,28 +1,16 @@
 package vng.zalo.tdtai.zalo.ui.share
 
 import android.content.Intent
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import io.reactivex.Observer
 import io.reactivex.disposables.Disposable
-import vng.zalo.tdtai.zalo.managers.MessageManager
-import vng.zalo.tdtai.zalo.managers.SessionManager
-import vng.zalo.tdtai.zalo.model.message.Message
-import vng.zalo.tdtai.zalo.model.room.RoomItem
-import vng.zalo.tdtai.zalo.repo.Database
-import vng.zalo.tdtai.zalo.utils.TAG
-import vng.zalo.tdtai.zalo.utils.Utils
+import vng.zalo.tdtai.zalo.base.BaseViewModel
+import vng.zalo.tdtai.zalo.data_model.message.Message
+import vng.zalo.tdtai.zalo.data_model.room.RoomItem
 import javax.inject.Inject
 
 
-class ShareViewModel @Inject constructor(
-        intent: Intent,
-        utils: Utils,
-        sessionManager: SessionManager,
-        private val database: Database,
-        private val messageManager: MessageManager
-) : ViewModel() {
+class ShareViewModel @Inject constructor(intent: Intent) : BaseViewModel() {
     val liveSelectedRoomItems: MutableLiveData<ArrayList<RoomItem>> = MutableLiveData(ArrayList())
 
     val liveRoomItems: MutableLiveData<List<RoomItem>> = MutableLiveData(ArrayList())
@@ -31,38 +19,40 @@ class ShareViewModel @Inject constructor(
 
     init {
         database.getUserRooms(
-                userPhone = sessionManager.curUser!!.phone!!
+                userId = sessionManager.curUser!!.id!!
         ) { liveRoomItems.value = it }
     }
 
     fun addNewMessagesToFirestore(callback: ((isSuccess: Boolean) -> Unit)? = null) {
         var count = 0
         var isAnyFail = false
+
+        val observer = object :Observer<Message> {
+            override fun onComplete() {
+                count++
+                if (count == liveSelectedRoomItems.value!!.size) {
+                    callback?.invoke(true)
+                }
+            }
+
+            override fun onSubscribe(d: Disposable) {//To change body of created functions use File | Settings | File Templates.
+            }
+
+            override fun onNext(t: Message) {//To change body of created functions use File | Settings | File Templates.
+            }
+
+            override fun onError(e: Throwable) {
+                if (!isAnyFail) {
+                    isAnyFail = true
+                    callback?.invoke(false)
+                }
+                e.printStackTrace()
+            }
+        }
+
         liveSelectedRoomItems.value!!.forEach {
             database.getRoomInfo(it.roomId!!) { room ->
-                messageManager.addNewMessagesToFirestore(room, localUris, Message.TYPE_FILE, object : Observer<Message> {
-                    override fun onComplete() {
-                        count++
-                        Log.d(TAG, "count: $count, select: ${liveSelectedRoomItems.value!!.size}")
-                        if (count == liveSelectedRoomItems.value!!.size) {
-                            callback?.invoke(true)
-                        }
-                    }
-
-                    override fun onSubscribe(d: Disposable) {//To change body of created functions use File | Settings | File Templates.
-                    }
-
-                    override fun onNext(t: Message) {//To change body of created functions use File | Settings | File Templates.
-                    }
-
-                    override fun onError(e: Throwable) {
-                        if (!isAnyFail) {
-                            isAnyFail = true
-                            callback?.invoke(false)
-                        }
-                        e.printStackTrace()
-                    }
-                })
+                messageManager.addNewMessagesToFirestore(room, localUris, Message.TYPE_FILE, observer)
             }
         }
     }

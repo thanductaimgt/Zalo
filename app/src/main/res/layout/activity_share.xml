@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout
-
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -28,7 +27,8 @@
                 android:layout_height="0dp"
                 android:background="?attr/selectableItemBackground"
                 android:padding="16dp"
-                android:src="@drawable/left_arrow_black"
+                app:tint="@android:color/black"
+                android:src="@drawable/left_arrow"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintDimensionRatio="1:1"
                 app:layout_constraintStart_toStartOf="parent"
@@ -58,26 +58,42 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>
 
-    <SearchView
-        android:id="@+id/searchView"
-        android:layout_width="0dp"
-        android:layout_height="32dp"
-        android:layout_marginStart="8dp"
+    <EditText
+        android:textSize="@dimen/sizeTextNormal"
+        android:id="@+id/searchEditText"
+        android:layout_width="match_parent"
+        android:layout_height="36dp"
+        android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:background="@drawable/round_gray_bg"
-        android:queryHint="@string/hint_search"
-        app:layout_constraintCircleRadius="@dimen/sizeRoundCornerRadiusLayout"
+        android:layout_marginEnd="16dp"
+        android:background="@drawable/search_bg"
+        android:hint="@string/hint_search"
+        android:inputType="text"
+        android:paddingStart="44dp"
+        android:paddingEnd="16dp"
+        android:textColor="@color/whiteText"
+        android:textColorHint="@color/whiteTransparent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/cardView"
-        tools:layout_editor_absoluteY="128dp" />
+        app:layout_constraintTop_toBottomOf="@id/cardView" />
+
+    <ImageView
+        android:contentDescription="@string/hint_search"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="4dp"
+        android:padding="10dp"
+        android:src="@drawable/search"
+        app:layout_constraintBottom_toBottomOf="@id/searchEditText"
+        app:layout_constraintDimensionRatio="H,1:1"
+        app:layout_constraintStart_toStartOf="@id/searchEditText"
+        app:layout_constraintTop_toTopOf="@id/searchEditText" />
 
     <View
         android:layout_marginTop="8dp"
         android:id="@+id/line7"
         android:background="@color/lightWeakGray"
-        app:layout_constraintTop_toBottomOf="@id/searchView"
+        app:layout_constraintTop_toBottomOf="@id/searchEditText"
         android:layout_width="match_parent"
         android:layout_height="1dp"/>
 
@@ -127,7 +143,7 @@
                 android:paddingTop="8dp"
                 android:paddingEnd="16dp"
                 android:paddingBottom="8dp"
-                android:text="@string/label_more"
+                android:text="@string/label_read_more"
                 android:textColor="@color/lightPrimary"
                 app:layout_constraintTop_toBottomOf="@id/line5" />
 
@@ -136,7 +152,8 @@
                 android:layout_height="0dp"
                 android:padding="12dp"
                 android:rotation="180"
-                android:src="@drawable/left_arrow_black"
+                app:tint="@android:color/black"
+                android:src="@drawable/left_arrow"
                 app:layout_constraintBottom_toBottomOf="@id/moreRecentTV"
                 app:layout_constraintDimensionRatio="W,1:1"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -186,7 +203,7 @@
                 android:paddingTop="8dp"
                 android:paddingEnd="16dp"
                 android:paddingBottom="8dp"
-                android:text="@string/label_more"
+                android:text="@string/label_read_more"
                 android:textColor="@color/lightPrimary"
                 app:layout_constraintTop_toBottomOf="@id/line1" />
 
@@ -195,7 +212,8 @@
                 android:layout_height="0dp"
                 android:padding="12dp"
                 android:rotation="180"
-                android:src="@drawable/left_arrow_black"
+                app:tint="@android:color/black"
+                android:src="@drawable/left_arrow"
                 app:layout_constraintBottom_toBottomOf="@id/moreGroupTV"
                 app:layout_constraintDimensionRatio="W,1:1"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -245,7 +263,7 @@
                 android:paddingTop="8dp"
                 android:paddingEnd="16dp"
                 android:paddingBottom="8dp"
-                android:text="@string/label_more"
+                android:text="@string/label_read_more"
                 android:textColor="@color/lightPrimary"
                 app:layout_constraintTop_toBottomOf="@id/line3" />
 
@@ -254,7 +272,8 @@
                 android:layout_height="0dp"
                 android:padding="12dp"
                 android:rotation="180"
-                android:src="@drawable/left_arrow_black"
+                app:tint="@android:color/black"
+                android:src="@drawable/left_arrow"
                 app:layout_constraintBottom_toBottomOf="@id/morePeerTV"
                 app:layout_constraintDimensionRatio="W,1:1"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -271,6 +290,8 @@
     </ScrollView>
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:clickable="true"
+        android:focusable="true"
         android:id="@+id/selectedListLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -291,7 +312,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            tools:listitem="@layout/item_user_icon" />
+            tools:listitem="@layout/item_remove_user" />
 
         <ImageView
             android:id="@+id/imageView"
@@ -340,7 +361,7 @@
             android:layout_height="40dp"
             android:layout_marginTop="8dp"
             android:contentDescription="@string/description_send"
-            android:src="@drawable/send_white"
+            android:src="@drawable/send_telegram"
             app:layout_constraintDimensionRatio="1:1"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/recyclerView"

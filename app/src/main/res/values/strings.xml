@@ -6,11 +6,12 @@
     <string name="label_english"><u>Tiếng Anh</u></string>
     <string name="label_get_password"><u><b>Lấy lại mật khẩu</b></u></string>
     <string name="label_chat_tab">Tin nhắn</string>
+    <string name="label_watch_tab">Xem</string>
     <string name="label_contacts_tab">Danh bạ</string>
     <string name="label_groups_tab">Nhóm</string>
     <string name="label_faq"><b><u>Câu hỏi thường gặp</u></b></string>
     <string name="label_diary_tab">Nhật ký</string>
-    <string name="label_more_tab">Thêm</string>
+    <string name="label_more">Thêm</string>
     <string name="label_newly_updated_friends">Bạn mới cập nhật</string>
     <string name="label_all_contacts">Tất cả danh bạ</string>
     <string name="label_update">Cập nhật</string>
@@ -30,6 +31,7 @@
     <string name="label_joined_groups">Nhóm đã tham gia</string>
     <string name="label_recent">Gần đây</string>
     <string name="label_upload_image">Tải ảnh lên</string>
+    <string name="label_upload">Tải lên</string>
     <string name="label_upload_video">Tải video lên</string>
     <string name="label_create_new">Tạo mới</string>
     <string name="label_choose_from_lib">Chọn từ thư viện</string>
@@ -45,6 +47,7 @@
     <string name="label_like">Thích</string>
     <string name="label_reply">Trả lời</string>
     <string name="label_add_friend">Thêm bạn</string>
+    <string name="label_add">Thêm</string>
     <string name="label_new_group">Nhóm mới</string>
     <string name="label_scan_qr">Quét mã QR</string>
     <string name="label_zalo_desktop">Zalo cho Máy Tính</string>
@@ -66,8 +69,21 @@
     <string name="label_end_call">Kết thúc cuộc gọi</string>
     <string name="label_callback">Gọi lại</string>
     <string name="label_no_name">Không tên</string>
-    <string name="label_more">Xem thêm</string>
+    <string name="label_read_more">Xem thêm</string>
     <string name="label_friends">Bạn bè</string>
+    <string name="label_discard_image">Bỏ ảnh ?</string>
+    <string name="label_discard">Bỏ</string>
+    <string name="label_keep">Giữ lại</string>
+    <string name="label_profile">Trang cá nhân</string>
+    <string name="label_add_story_to_highlights">Thêm vào tin nổi bật</string>
+    <string name="label_new_highlight_story">Tin nổi bật mới</string>
+    <string name="label_highlight_story">Tin nổi bật</string>
+    <string name="label_create_post">Tạo bài viết</string>
+    <string name="label_post">Đăng</string>
+    <string name="label_add_image">Thêm ảnh</string>
+    <string name="label_add_video">Thêm video</string>
+    <string name="label_camera">Camera</string>
+    <string name="label_discard_post">Bỏ bài viết ?</string>
 
     <string-array name="sort_group_options">
         <item>Hoạt động cuối</item>
@@ -126,7 +142,19 @@
     <string name="description_sent">Đã gửi</string>
     <string name="description_no_connection">Không có kết nối</string>
     <string name="description_your_story">Tin của bạn</string>
+    <string name="description_recent_story">Tin gần đây</string>
+    <string name="description_create_story">Tạo tin</string>
     <string name="description_notification">Thông báo</string>
+    <string name="description_back_again_to_exit">Bấm lần nữa để thoát</string>
+    <string name="description_discard_image">Nếu quay lại bây giờ bạn sẽ mất ảnh này</string>
+    <string name="description_post">Bài đăng</string>
+    <string name="description_followers">Người theo dõi</string>
+    <string name="description_following">Đang theo dõi</string>
+    <string name="description_story_created">Đã thêm vào tin của bạn</string>
+    <string name="description_story_marked">Đã thêm vào tin nổi bật</string>
+    <string name="description_story_unmarked">Đã xóa khỏi tin nổi bật</string>
+    <string name="description_discard_post">Nếu quay lại bây giờ thay đổi của bạn sẽ không được lưu lại</string>
+
 
     <string name="hint_phone_number">Số điện thoại</string>
     <string name="hint_password">Mật khẩu</string>
@@ -134,4 +162,5 @@
     <string name="hint_search">Tìm kiếm</string>
     <string name="hint_full_name">Tên đầy đủ</string>
     <string name="hint_search_friends_messages">Tìm bạn bè, tin nhắn &#8230;</string>
+    <string name="hint_create_post">Bạn đang nghĩ gì ?</string>
 </resources>

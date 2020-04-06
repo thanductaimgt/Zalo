@@ -1,32 +1,19 @@
 package vng.zalo.tdtai.zalo.common
 
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.Window
-import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentManager
 import kotlinx.android.synthetic.main.dialog_alert.*
 import vng.zalo.tdtai.zalo.R
-import vng.zalo.tdtai.zalo.utils.TAG
+import vng.zalo.tdtai.zalo.base.BaseDialog
+import vng.zalo.tdtai.zalo.util.TAG
 import javax.inject.Inject
 import javax.inject.Singleton
 
-interface AlertDialog{
-    fun show(fm:FragmentManager, title:String, description:String,
-             button1Text:String?=null,
-             button1Action:(()->Any)?=null,
-             button2Text:String?=null,
-             button2Action:(()->Any)?=null,
-             button3Text:String?=null,
-             button3Action:(()->Any)?=null)
-}
-
-class AlertDialogFragment @Inject constructor() : DialogFragment(),
-        View.OnClickListener, AlertDialog {
+@Singleton
+class AlertDialog @Inject constructor() : BaseDialog() {
     private var title:String?=null
     private var description: String?=null
     private var button1Text:String?=null
@@ -36,8 +23,8 @@ class AlertDialogFragment @Inject constructor() : DialogFragment(),
     private var button3Text:String?=null
     private var button3Action:(()->Any)?=null
 
-    override fun onClick(v: View?) {
-        when (v!!.id) {
+    override fun onClick(view: View) {
+        when (view.id) {
             R.id.buttonTextView1 -> {
                 button1Action?.invoke()
             }
@@ -59,21 +46,8 @@ class AlertDialogFragment @Inject constructor() : DialogFragment(),
         return inflater.inflate(R.layout.dialog_alert, container, false)
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        initView()
-    }
-
-    override fun onStart() {
-        super.onStart()
-        dialog?.window?.setLayout(
-                ViewGroup.LayoutParams.WRAP_CONTENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT
-        )
-    }
-
-    private fun initView() {
-        dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-        dialog?.window?.requestFeature(Window.FEATURE_NO_TITLE)
+    override fun onBindViews() {
+        super.onBindViews()
 
         titleTextView.text = title
         descTextView.text = description
@@ -98,13 +72,13 @@ class AlertDialogFragment @Inject constructor() : DialogFragment(),
         }
     }
 
-    override fun show(fm:FragmentManager, title:String, description:String,
-             button1Text:String?,
-             button1Action:(()->Any)?,
-             button2Text:String?,
-             button2Action:(()->Any)?,
-             button3Text:String?,
-             button3Action:(()->Any)?) {
+    fun show(fm:FragmentManager, title:String, description:String,
+                      button1Text:String?=null,
+                      button1Action:(()->Any)?=null,
+                      button2Text:String?=null,
+                      button2Action:(()->Any)?=null,
+                      button3Text:String?=null,
+                      button3Action:(()->Any)?=null) {
         this.title = title
         this.description = description
         this.button1Text = button1Text

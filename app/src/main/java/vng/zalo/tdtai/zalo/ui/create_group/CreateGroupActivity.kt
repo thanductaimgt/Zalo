@@ -1,73 +1,78 @@
 package vng.zalo.tdtai.zalo.ui.create_group
 
-import android.app.Activity
 import android.content.Intent
-import android.os.Bundle
-import android.util.Log
 import android.view.View
-import android.view.WindowManager
 import android.view.inputmethod.EditorInfo
 import android.widget.FrameLayout
 import androidx.activity.viewModels
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.android.material.tabs.TabLayout
+import com.google.android.material.tabs.TabLayoutMediator
+import com.google.android.material.tabs.TabLayoutMediator.TabConfigurationStrategy
 import com.squareup.picasso.Picasso
-import dagger.android.support.DaggerAppCompatActivity
 import kotlinx.android.synthetic.main.activity_create_group.*
 import kotlinx.android.synthetic.main.bottom_sheet_upload.view.*
 import vng.zalo.tdtai.zalo.R
+import vng.zalo.tdtai.zalo.base.BaseActivity
 import vng.zalo.tdtai.zalo.common.ChooseRoomItemAdapter
-import vng.zalo.tdtai.zalo.common.ProcessingDialog
-import vng.zalo.tdtai.zalo.managers.ExternalIntentManager
-import vng.zalo.tdtai.zalo.managers.ResourceManager
-import vng.zalo.tdtai.zalo.managers.SessionManager
-import vng.zalo.tdtai.zalo.model.RoomMember
-import vng.zalo.tdtai.zalo.model.room.RoomGroup
-import vng.zalo.tdtai.zalo.model.room.RoomItem
-import vng.zalo.tdtai.zalo.model.room.RoomItemPeer
+import vng.zalo.tdtai.zalo.manager.ExternalIntentManager
+import vng.zalo.tdtai.zalo.data_model.RoomMember
+import vng.zalo.tdtai.zalo.data_model.room.RoomGroup
+import vng.zalo.tdtai.zalo.data_model.room.RoomItem
+import vng.zalo.tdtai.zalo.data_model.room.RoomItemPeer
 import vng.zalo.tdtai.zalo.ui.chat.ChatActivity
-import vng.zalo.tdtai.zalo.utils.Constants
-import vng.zalo.tdtai.zalo.utils.TAG
-import vng.zalo.tdtai.zalo.utils.Utils
-import vng.zalo.tdtai.zalo.utils.smartLoad
+import vng.zalo.tdtai.zalo.util.Constants
+import vng.zalo.tdtai.zalo.util.TAG
+import vng.zalo.tdtai.zalo.util.smartLoad
 import java.util.*
 import javax.inject.Inject
 
-class CreateGroupActivity : DaggerAppCompatActivity(), View.OnClickListener {
-    @Inject
-    lateinit var externalIntentManager: ExternalIntentManager
-    @Inject
-    lateinit var utils: Utils
-    @Inject
-    lateinit var sessionManager: SessionManager
-    @Inject
-    lateinit var resourceManager: ResourceManager
 
+class CreateGroupActivity : BaseActivity() {
     @Inject
-    lateinit var processingDialog: ProcessingDialog
+    lateinit var pagerAdapter: CreateGroupPagerAdapter
 
-    @Inject
-    lateinit var viewPagerAdapter: CreateGroupViewPagerAdapter
     @Inject
     lateinit var selectedRecyclerViewAdapter: ChooseRoomItemAdapter
     private lateinit var bottomSheetDialog: BottomSheetDialog
 
-    @Inject
-    lateinit var viewModelFactory: ViewModelProvider.Factory
     private val viewModel: CreateGroupViewModel by viewModels { viewModelFactory }
 
     private var isAvatarSet = false
     private var takenImageUrl: String? = null
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    override fun onBindViews() {
         setContentView(R.layout.activity_create_group)
 
-        initView()
+        viewPager.adapter = pagerAdapter
 
+//        tabLayout.setupWithViewPager(viewPager)
+        TabLayoutMediator(tabLayout, viewPager,
+                TabConfigurationStrategy { tab: TabLayout.Tab, position: Int -> tab.text = pagerAdapter.getTabTitle(position) }
+        ).attach()
+
+        selectedRecyclerView.adapter = selectedRecyclerViewAdapter
+
+        nameTextView.setOnEditorActionListener { _, actionId, _ ->
+            when (actionId) {
+                EditorInfo.IME_ACTION_DONE -> {
+                    false
+                }
+                else -> true
+            }
+        }
+
+        initBottomSheet()
+
+        uploadAvatarImgView.setOnClickListener(this)
+        createGroupImgView.setOnClickListener(this)
+        backImgView.setOnClickListener(this)
+    }
+
+    override fun onViewsBound() {
         viewModel.liveSelectedRoomItems.observe(this, Observer {
             val oldSize = selectedRecyclerViewAdapter.currentList.size
             selectedRecyclerViewAdapter.submitList(it) {
@@ -87,32 +92,6 @@ class CreateGroupActivity : DaggerAppCompatActivity(), View.OnClickListener {
         viewModel.liveAvatarLocalUri.observe(this, Observer {
             updateRoomAvatar(it)
         })
-    }
-
-    private fun initView() {
-        window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN)
-
-        viewPager.adapter = viewPagerAdapter
-
-        tabLayout.setupWithViewPager(viewPager)
-
-        selectedRecyclerView.adapter = selectedRecyclerViewAdapter
-
-        nameTextView.setOnEditorActionListener { _, actionId, _ ->
-            when (actionId) {
-                EditorInfo.IME_ACTION_DONE -> {
-                    false
-                }
-                else -> true
-            }
-        }
-
-        initBottomSheet()
-
-        uploadAvatarImgView.setOnClickListener(this)
-        searchView.setOnClickListener(this)
-        createGroupImgView.setOnClickListener(this)
-        backImgView.setOnClickListener(this)
     }
 
     private fun initBottomSheet() {
@@ -145,9 +124,6 @@ class CreateGroupActivity : DaggerAppCompatActivity(), View.OnClickListener {
 
     override fun onClick(view: View) {
         when (view.id) {
-            R.id.searchView -> {
-                searchView.isIconified = false
-            }
             R.id.itemUserIconRootLayout -> {
                 val itemPosition = selectedRecyclerView.getChildAdapterPosition(view)
                 val item = selectedRecyclerViewAdapter.currentList[itemPosition]
@@ -179,7 +155,7 @@ class CreateGroupActivity : DaggerAppCompatActivity(), View.OnClickListener {
             startActivity(
                     Intent(this, ChatActivity::class.java).apply {
                         putExtra(Constants.ROOM_NAME, curRoomItem.name)
-                        putExtra(Constants.ROOM_PHONE, curRoomItem.phone)
+                        putExtra(Constants.ROOM_PHONE, curRoomItem.peerId)
                         putExtra(Constants.ROOM_AVATAR, curRoomItem.avatarUrl)
                         putExtra(Constants.ROOM_ID, curRoomItem.roomId)
                     }
@@ -190,7 +166,7 @@ class CreateGroupActivity : DaggerAppCompatActivity(), View.OnClickListener {
             val groupName = if (nameTextView.text.toString() != "") {
                 nameTextView.text.toString()
             } else {
-                viewModel.liveSelectedRoomItems.value!!.joinToString(transform = { roomItem -> (roomItem as RoomItemPeer).phone!! })
+                viewModel.liveSelectedRoomItems.value!!.joinToString(transform = { roomItem -> (roomItem as RoomItemPeer).peerId!! })
             }
 
             val curTimestamp = System.currentTimeMillis()
@@ -202,18 +178,18 @@ class CreateGroupActivity : DaggerAppCompatActivity(), View.OnClickListener {
                     memberMap = HashMap<String, RoomMember>().apply {
                         viewModel.liveSelectedRoomItems.value!!.forEach {
                             it as RoomItemPeer
-                            put(it.phone!!, RoomMember(
+                            put(it.peerId!!, RoomMember(
                                     avatarUrl = it.avatarUrl,
                                     joinDate = curTimestamp,
-                                    phone = it.phone,
+                                    userId = it.peerId,
                                     name = it.name
                             ))
                         }
 
-                        put(sessionManager.curUser!!.phone!!, RoomMember(
+                        put(sessionManager.curUser!!.id!!, RoomMember(
                                 avatarUrl = sessionManager.curUser!!.avatarUrl,
                                 joinDate = curTimestamp,
-                                phone = sessionManager.curUser!!.phone,
+                                userId = sessionManager.curUser!!.id,
                                 name = sessionManager.curUser!!.name))
                     }
             )
@@ -231,23 +207,18 @@ class CreateGroupActivity : DaggerAppCompatActivity(), View.OnClickListener {
         }
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, intent: Intent?) {
-        super.onActivityResult(requestCode, resultCode, intent)
-        if (resultCode == Activity.RESULT_OK) {
-            when (requestCode) {
-                Constants.CHOOSE_IMAGE_REQUEST -> {
-                    utils.assertNotNull(intent, TAG, "CHOOSE_IMAGES_REQUEST.intent") { intentNotNull ->
-                        viewModel.liveAvatarLocalUri.value = intentNotNull.data!!.toString()
-                    }
-                }
-                Constants.CAPTURE_IMAGE_REQUEST -> {
-                    viewModel.liveAvatarLocalUri.value = takenImageUrl
+    override fun onActivityResult(requestCode: Int, intent: Intent?) {
+        when (requestCode) {
+            Constants.CHOOSE_IMAGE_REQUEST -> {
+                utils.assertNotNull(intent, TAG, "CHOOSE_IMAGES_REQUEST.intent") { intentNotNull ->
+                    viewModel.liveAvatarLocalUri.value = intentNotNull.data!!.toString()
                 }
             }
-            bottomSheetDialog.dismiss()
-        } else {
-            Log.d(TAG, "resultCode != Activity.RESULT_OK")
+            Constants.CAPTURE_IMAGE_REQUEST -> {
+                viewModel.liveAvatarLocalUri.value = takenImageUrl
+            }
         }
+        bottomSheetDialog.dismiss()
     }
 
     private fun updateRoomAvatar(localUri: String?) {

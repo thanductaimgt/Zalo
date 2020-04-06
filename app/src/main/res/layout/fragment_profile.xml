@@ -1,0 +1,323 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="@android:color/white"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@null">
+
+        <com.google.android.material.appbar.CollapsingToolbarLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="@dimen/size_action_bar_height"
+            app:layout_scrollFlags="scroll|exitUntilCollapsed">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/size_action_bar_height"
+                app:layout_constraintTop_toBottomOf="@id/idTextView">
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/avatarImgView"
+                    android:layout_width="80dp"
+                    android:layout_height="0dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="8dp"
+                    app:civ_border_color="@color/lightAccent"
+                    app:civ_border_width="1dp"
+                    app:layout_constraintDimensionRatio="1:1"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:src="@drawable/official_account" />
+
+                <TextView
+                    android:id="@+id/postNumTextView"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:textAlignment="center"
+                    android:textSize="@dimen/sizeTextBig"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toTopOf="@id/postNumDescTextView"
+                    app:layout_constraintEnd_toStartOf="@id/followerNumTextView"
+                    app:layout_constraintStart_toEndOf="@id/avatarImgView"
+                    app:layout_constraintTop_toTopOf="@id/avatarImgView"
+                    app:layout_constraintVertical_chainStyle="packed"
+                    tools:text="405" />
+
+                <TextView
+                    android:id="@+id/followerNumTextView"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:textAlignment="center"
+                    android:textSize="@dimen/sizeTextBig"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toBottomOf="@id/postNumTextView"
+                    app:layout_constraintEnd_toStartOf="@id/followingNumTextView"
+                    app:layout_constraintStart_toEndOf="@id/postNumTextView"
+                    tools:text="201K" />
+
+                <TextView
+                    android:id="@+id/followingNumTextView"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginEnd="16dp"
+                    android:textAlignment="center"
+                    android:textSize="@dimen/sizeTextBig"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toBottomOf="@id/postNumTextView"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/followerNumTextView"
+                    tools:text="145" />
+
+                <TextView
+                    android:id="@+id/postNumDescTextView"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/description_post"
+                    android:textAlignment="center"
+                    android:textSize="@dimen/sizeTextSmall"
+                    app:layout_constraintBottom_toBottomOf="@id/avatarImgView"
+                    app:layout_constraintEnd_toEndOf="@id/postNumTextView"
+                    app:layout_constraintStart_toStartOf="@id/postNumTextView"
+                    app:layout_constraintTop_toBottomOf="@id/postNumTextView" />
+
+                <TextView
+                    android:id="@+id/followerNumDescTextView"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/description_followers"
+                    android:textAlignment="center"
+                    android:textSize="@dimen/sizeTextSmall"
+                    app:layout_constraintEnd_toEndOf="@id/followerNumTextView"
+                    app:layout_constraintStart_toStartOf="@id/followerNumTextView"
+                    app:layout_constraintTop_toTopOf="@id/postNumDescTextView" />
+
+                <TextView
+                    android:id="@+id/followingNumDescTextView"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/description_following"
+                    android:textAlignment="center"
+                    android:textSize="@dimen/sizeTextSmall"
+                    app:layout_constraintEnd_toEndOf="@id/followingNumTextView"
+                    app:layout_constraintStart_toStartOf="@id/followingNumTextView"
+                    app:layout_constraintTop_toTopOf="@id/postNumDescTextView" />
+
+                <TextView
+                    android:id="@+id/nameTextView"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:textStyle="bold"
+                    app:layout_constraintEnd_toEndOf="@id/followingNumTextView"
+                    app:layout_constraintStart_toStartOf="@id/avatarImgView"
+                    app:layout_constraintTop_toBottomOf="@id/avatarImgView"
+                    tools:text="Nguyễn TMinh Tuyền" />
+
+                <TextView
+                    android:id="@+id/descTextView"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    app:layout_constraintEnd_toEndOf="@id/followingNumTextView"
+                    app:layout_constraintStart_toStartOf="@id/nameTextView"
+                    app:layout_constraintTop_toBottomOf="@id/nameTextView"
+                    tools:text="21 | 04.04.99 Freelance model\nwww.facebook.com/tuyennguyen4499" />
+
+                <TextView
+                    android:id="@+id/followedByTextView"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:textSize="@dimen/sizeTextSmall"
+                    app:layout_constraintEnd_toEndOf="@id/followingNumTextView"
+                    app:layout_constraintStart_toStartOf="@id/descTextView"
+                    app:layout_constraintTop_toBottomOf="@id/descTextView"
+                    tools:text="Theo dõi bởi thutrang20" />
+
+                <TextView
+                    android:id="@+id/followTextView"
+                    android:layout_width="0dp"
+                    android:layout_height="30dp"
+                    android:background="@drawable/follow_button_bg"
+                    android:drawableEnd="@drawable/ic_keyboard_arrow_down_black_24dp"
+                    android:ellipsize="end"
+                    android:gravity="center_vertical"
+                    android:maxLines="1"
+                    android:scrollHorizontally="true"
+                    android:text="Đang theo dõi"
+                    android:textAlignment="center"
+                    android:textColor="@android:color/white"
+                    app:layout_constraintBottom_toBottomOf="@id/showSuggestImgView"
+                    app:layout_constraintEnd_toStartOf="@id/messageTextView"
+                    app:layout_constraintStart_toStartOf="@id/avatarImgView"
+                    app:layout_constraintTop_toTopOf="@id/showSuggestImgView" />
+
+                <TextView
+                    android:id="@+id/messageTextView"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_marginStart="8dp"
+                    android:background="@drawable/follow_button_bg"
+                    android:ellipsize="end"
+                    android:scrollHorizontally="true"
+                    android:text="@string/hint_message"
+                    android:textAlignment="center"
+                    android:textColor="@android:color/white"
+                    app:layout_constrainedWidth="true"
+                    app:layout_constraintBottom_toBottomOf="@id/showSuggestImgView"
+                    app:layout_constraintEnd_toStartOf="@id/showSuggestImgView"
+                    app:layout_constraintStart_toEndOf="@id/followTextView"
+                    app:layout_constraintTop_toTopOf="@id/showSuggestImgView" />
+
+                <ImageView
+                    android:id="@+id/showSuggestImgView"
+                    android:layout_width="30dp"
+                    android:layout_height="0dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="16dp"
+                    android:background="@drawable/transparent_black_border_bg"
+                    android:padding="10dp"
+                    android:rotation="-90"
+                    android:src="@drawable/left_arrow"
+                    app:layout_constraintDimensionRatio="1:1"
+                    app:layout_constraintEnd_toEndOf="@id/followingNumTextView"
+                    app:layout_constraintStart_toEndOf="@id/messageTextView"
+                    app:layout_constraintTop_toBottomOf="@id/followedByTextView"
+                    app:tint="@android:color/black" />
+
+                <vng.zalo.tdtai.zalo.util.NestedScrollableHost
+                    android:id="@+id/storyLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toBottomOf="@id/followTextView">
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/storyGroupRecyclerView"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:clipToPadding="false"
+                        android:orientation="horizontal"
+                        android:paddingHorizontal="8dp"
+                        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                        tools:listitem="@layout/item_story_preview" />
+                </vng.zalo.tdtai.zalo.util.NestedScrollableHost>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/size_action_bar_height"
+                android:background="@android:color/white"
+                app:layout_collapseMode="pin">
+
+                <ImageView
+                    android:background="?attr/selectableItemBackground"
+                    android:id="@+id/backImgView"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:padding="16dp"
+                    android:src="@drawable/left_arrow"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintDimensionRatio="W,1:1"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:tint="@android:color/black" />
+
+                <TextView
+                    android:id="@+id/idTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/sizeTextBig"
+                    android:textStyle="bold"
+                    app:layout_constrainedWidth="true"
+                    app:layout_constraintBottom_toBottomOf="@id/backImgView"
+                    app:layout_constraintEnd_toStartOf="@id/verifiedIcon"
+                    app:layout_constraintHorizontal_bias="0"
+                    app:layout_constraintHorizontal_chainStyle="packed"
+                    app:layout_constraintStart_toEndOf="@id/backImgView"
+                    app:layout_constraintTop_toTopOf="@id/backImgView"
+                    tools:text="mintuyenn" />
+
+                <ImageView
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:id="@+id/verifiedIcon"
+                    android:layout_width="24dp"
+                    android:layout_height="0dp"
+                    android:padding="6dp"
+                    android:src="@drawable/verified"
+                    app:layout_constraintDimensionRatio="1:1"
+                    app:layout_constraintEnd_toStartOf="@id/moreImgView"
+                    app:layout_constraintStart_toEndOf="@id/idTextView"
+                    app:layout_constraintTop_toTopOf="@id/idTextView" />
+
+                <ImageView
+                    tools:visibility="visible"
+                    android:visibility="gone"
+                    android:background="?attr/selectableItemBackground"
+                    android:id="@+id/moreImgView"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:padding="16dp"
+                    android:rotation="90"
+                    android:src="@drawable/more"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintDimensionRatio="W,1:1"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <ImageView
+                    tools:visibility="visible"
+                    android:visibility="gone"
+                    android:background="?attr/selectableItemBackground"
+                    android:id="@+id/settingsImgView"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:padding="14dp"
+                    android:rotation="90"
+                    app:tint="@android:color/black"
+                    android:src="@drawable/settings"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintDimensionRatio="W,1:1"
+                    app:layout_constraintEnd_toStartOf="@id/moreImgView"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </com.google.android.material.appbar.CollapsingToolbarLayout>
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior">
+
+        <com.google.android.material.tabs.TabLayout
+            android:id="@+id/tabLayout"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/sizeBottomNavigationHeight"
+            app:layout_constraintTop_toBottomOf="@id/storyLayout" />
+
+        <vng.zalo.tdtai.zalo.util.NestedScrollableHost
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/toolbar">
+
+            <androidx.viewpager2.widget.ViewPager2
+                android:id="@+id/viewPager"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+        </vng.zalo.tdtai.zalo.util.NestedScrollableHost>
+    </LinearLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

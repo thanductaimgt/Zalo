@@ -4,23 +4,18 @@ import android.content.Context
 import android.content.Intent
 import android.net.sip.SipSession
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import vng.zalo.tdtai.zalo.managers.CallService
-import vng.zalo.tdtai.zalo.managers.MessageManager
-import vng.zalo.tdtai.zalo.model.message.Message
-import vng.zalo.tdtai.zalo.model.room.RoomPeer
-import vng.zalo.tdtai.zalo.repo.Database
-import vng.zalo.tdtai.zalo.utils.Constants
+import vng.zalo.tdtai.zalo.base.BaseViewModel
+import vng.zalo.tdtai.zalo.manager.CallService
+import vng.zalo.tdtai.zalo.data_model.message.Message
+import vng.zalo.tdtai.zalo.data_model.room.RoomPeer
+import vng.zalo.tdtai.zalo.util.Constants
 import javax.inject.Inject
 
 
 class CallViewModel @Inject constructor(
-        private val messageManager: MessageManager,
         intent: Intent,
-        listenerAudio:CallService.AudioCallListener,
-        database: Database,
-        callService: CallService
-) : ViewModel() {
+        listenerAudio:CallService.AudioCallListener
+) : BaseViewModel() {
     var isExternalSpeakerEnabled = false
     var isRecorderEnabled = true
     var startTime: Long = 0
@@ -44,7 +39,7 @@ class CallViewModel @Inject constructor(
                     avatarUrl = intent.getStringExtra(Constants.ROOM_AVATAR),
                     id = intent.getStringExtra(Constants.ROOM_ID),
                     name = intent.getStringExtra(Constants.ROOM_NAME),
-                    phone = intent.getStringExtra(Constants.ROOM_PHONE)
+                    peerId = intent.getStringExtra(Constants.ROOM_PHONE)
             )
 
             //get current room info
@@ -57,7 +52,7 @@ class CallViewModel @Inject constructor(
                 }
             }
 
-            audioCall = callService.makeAudioCall(liveRoom.value!!.phone!!, listenerAudio)
+            audioCall = callService.makeAudioCall(liveRoom.value!!.peerId!!, listenerAudio)
         } else {
             audioCall = callService.takeAudioCall(intent, listenerAudio)
 
@@ -68,7 +63,7 @@ class CallViewModel @Inject constructor(
                         avatarUrl = it.avatarUrl,
                         id = it.roomId,
                         name = it.name,
-                        phone = it.phone
+                        peerId = it.peerId
                 )
             }
         }

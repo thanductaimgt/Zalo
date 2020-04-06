@@ -1,0 +1,290 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/rootView"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.chat.ChatActivity"
+    android:background="@color/lightPrimaryDark">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/size_action_bar_height"
+        android:background="@drawable/primary_gradient_bg"
+        android:orientation="vertical"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/backImgView"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:background="?attr/selectableItemBackground"
+            android:contentDescription="@string/description_back"
+            android:padding="16dp"
+            android:src="@drawable/left_arrow"
+            app:layout_constraintDimensionRatio="1:1"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <TextView
+            android:gravity="bottom"
+            android:id="@+id/roomNameTextView"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:scrollHorizontally="true"
+            android:textColor="@color/whiteText"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toTopOf="@id/onlineStatusTextView"
+            app:layout_constraintEnd_toStartOf="@id/voiceCallImgView"
+            app:layout_constraintStart_toEndOf="@id/backImgView"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_chainStyle="packed"
+            tools:text="Nguyen Thi Ngannnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn" />
+
+        <TextView
+            android:gravity="top"
+            android:id="@+id/onlineStatusTextView"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:scrollHorizontally="true"
+            android:textColor="@color/whiteText"
+            android:textSize="@dimen/sizeTextSmall"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@id/roomNameTextView"
+            app:layout_constraintStart_toStartOf="@id/roomNameTextView"
+            app:layout_constraintTop_toBottomOf="@id/roomNameTextView"
+            tools:text="Truy cập 7 giờ trướcccccccccccccccccccccccccccccccc" />
+
+        <ImageView
+            android:contentDescription="@string/description_voice_call"
+            android:id="@+id/voiceCallImgView"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:background="?attr/selectableItemBackground"
+            android:padding="@dimen/sizePaddingButtonRoomActivity"
+            android:src="@drawable/call"
+            app:layout_constraintDimensionRatio="1:1"
+            app:layout_constraintEnd_toStartOf="@id/videoCallImgView" />
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/onlineStatusImgView"
+            android:layout_width="0dp"
+            android:layout_height="8dp"
+            android:layout_margin="12dp"
+            android:src="@color/online"
+            android:visibility="gone"
+            app:layout_constraintDimensionRatio="1:1"
+            app:layout_constraintEnd_toEndOf="@id/voiceCallImgView"
+            app:layout_constraintTop_toTopOf="@id/voiceCallImgView"
+            tools:visibility="visible" />
+
+        <ImageView
+            android:contentDescription="@string/description_video_call"
+            android:id="@+id/videoCallImgView"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:background="?attr/selectableItemBackground"
+            android:padding="@dimen/sizePaddingButtonRoomActivity"
+            android:src="@drawable/video2"
+            app:layout_constraintDimensionRatio="1:1"
+            app:layout_constraintEnd_toStartOf="@id/moreImgView" />
+
+        <ImageView
+            android:contentDescription="@string/label_more"
+            android:id="@+id/moreImgView"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:background="?attr/selectableItemBackground"
+            android:padding="@dimen/sizePaddingButtonRoomActivity"
+            android:src="@drawable/more2"
+            app:layout_constraintDimensionRatio="1:1"
+            app:layout_constraintEnd_toEndOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/chatRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:background="@color/colorChatBg"
+        android:clipToPadding="false"
+        android:paddingTop="16dp"
+        android:paddingBottom="16dp"
+        app:layout_constraintBottom_toTopOf="@id/cardView"
+        app:layout_constraintTop_toBottomOf="@id/toolbar"
+        tools:listitem="@layout/item_message_send" />
+
+    <com.airbnb.lottie.LottieAnimationView
+        android:visibility="gone"
+        tools:visibility="visible"
+        android:id="@+id/loadingAnimView"
+        android:layout_width="48dp"
+        android:layout_height="0dp"
+        app:layout_constraintDimensionRatio="1:1"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/toolbar"
+        app:lottie_enableMergePathsForKitKatAndAbove="true"
+        app:lottie_loop="true"
+        app:lottie_autoPlay="true"
+        app:lottie_rawRes="@raw/loading"
+        app:lottie_renderMode="software"
+        android:layout_marginBottom="8dp"/>
+
+    <com.makeramen.roundedimageview.RoundedImageView
+        android:id="@+id/deleteRoomButton"
+        android:layout_width="40dp"
+        android:layout_height="0dp"
+        android:layout_margin="8dp"
+        android:background="@color/blackText"
+        android:padding="4dp"
+        android:src="@drawable/delete"
+        app:layout_constraintDimensionRatio="1:1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/toolbar"
+        app:riv_border_color="@android:color/white"
+        app:riv_border_width="1dp"
+        app:riv_mutate_background="true"
+        app:riv_oval="true" />
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="@id/frameLayout">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <EditText
+                android:id="@+id/msgEditText"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:background="@null"
+                android:hint="@string/hint_message"
+                android:imeOptions="actionSend"
+                android:inputType="text"
+                android:nextFocusLeft="@id/msgEditText"
+                android:nextFocusUp="@id/msgEditText"
+                app:layout_constraintBottom_toBottomOf="@id/emojiImgView"
+                app:layout_constraintLeft_toRightOf="@id/emojiImgView"
+                app:layout_constraintRight_toLeftOf="@id/uploadFileImgView"
+                app:layout_constraintTop_toTopOf="@id/emojiImgView" />
+
+            <ImageView
+                android:id="@+id/emojiImgView"
+                android:layout_width="48dp"
+                android:layout_height="0dp"
+                android:background="?attr/selectableItemBackground"
+                android:contentDescription="@string/description_emoji_icon"
+                android:padding="4dp"
+                android:src="@drawable/ic_emoji"
+                app:tint="@color/blackText"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintDimensionRatio="h,1:1"
+                app:layout_constraintLeft_toLeftOf="parent" />
+
+            <ImageView
+                android:id="@+id/uploadVideoImgView"
+                android:layout_width="40dp"
+                android:layout_height="0dp"
+                android:background="?attr/selectableItemBackground"
+                android:contentDescription="@string/description_attach_picture_icon"
+                android:paddingLeft="6dp"
+                android:paddingTop="12dp"
+                android:paddingRight="6dp"
+                android:paddingBottom="12dp"
+                android:src="@drawable/video3"
+                app:layout_constraintBottom_toBottomOf="@id/emojiImgView"
+                app:layout_constraintEnd_toStartOf="@id/sendMsgImgView"
+                app:layout_constraintTop_toTopOf="@id/emojiImgView" />
+
+            <ImageView
+                android:id="@+id/uploadImageImgView"
+                android:layout_width="40dp"
+                android:layout_height="0dp"
+                android:background="?attr/selectableItemBackground"
+                android:contentDescription="@string/description_attach_picture_icon"
+                android:paddingLeft="6dp"
+                android:paddingTop="12dp"
+                android:paddingRight="6dp"
+                android:paddingBottom="12dp"
+                android:src="@drawable/photo"
+                app:layout_constraintBottom_toBottomOf="@id/emojiImgView"
+                app:layout_constraintEnd_toStartOf="@id/uploadVideoImgView"
+                app:layout_constraintTop_toTopOf="@id/emojiImgView" />
+
+            <ImageView
+                android:id="@+id/sendMsgImgView"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:background="?attr/selectableItemBackground"
+                android:contentDescription="@string/description_send"
+                android:padding="6dp"
+                android:src="@drawable/send_telegram"
+                android:visibility="gone"
+                app:layout_constraintDimensionRatio="W,1:1"
+                app:layout_constraintBottom_toBottomOf="@id/emojiImgView"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@id/emojiImgView"
+                tools:visibility="visible" />
+
+            <ImageView
+                android:id="@+id/uploadVoiceImgView"
+                android:layout_width="40dp"
+                android:layout_height="0dp"
+                android:background="?attr/selectableItemBackground"
+                android:contentDescription="@string/description_attach_voice_icon"
+                android:paddingLeft="6dp"
+                android:paddingTop="12dp"
+                android:paddingRight="6dp"
+                android:paddingBottom="12dp"
+                android:src="@drawable/mic"
+                app:layout_constraintBottom_toBottomOf="@id/emojiImgView"
+                app:layout_constraintRight_toLeftOf="@id/uploadImageImgView"
+                app:layout_constraintTop_toTopOf="@id/emojiImgView" />
+
+            <ImageView
+                android:id="@+id/uploadFileImgView"
+                android:layout_width="40dp"
+                android:layout_height="0dp"
+                android:background="?attr/selectableItemBackground"
+                android:contentDescription="@string/description_attach_file_icon"
+                android:paddingLeft="4dp"
+                android:paddingTop="14dp"
+                android:paddingRight="4dp"
+                android:paddingBottom="14dp"
+                android:src="@drawable/attach_file"
+                app:layout_constraintBottom_toBottomOf="@id/emojiImgView"
+                app:layout_constraintRight_toLeftOf="@id/uploadVoiceImgView"
+                app:layout_constraintTop_toTopOf="@id/emojiImgView" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.cardview.widget.CardView>
+
+    <FrameLayout
+        android:background="@android:color/white"
+        android:id="@+id/frameLayout"
+        android:layout_width="match_parent"
+        android:layout_height="320dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        tools:visibility="visible" />
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/viewImageLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="invisible"
+        tools:visibility="gone">
+
+        <include
+            layout="@layout/fragment_media"
+            app:layout_constraintBottom_toBottomOf="parent" />
+    </androidx.cardview.widget.CardView>
+</androidx.constraintlayout.widget.ConstraintLayout>

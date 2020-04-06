@@ -1,25 +1,19 @@
 package vng.zalo.tdtai.zalo.ui.register
 
-import android.os.Bundle
 import android.view.View
-import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_register.*
 import vng.zalo.tdtai.zalo.R
+import vng.zalo.tdtai.zalo.base.BaseActivity
 
-class RegisterActivity : AppCompatActivity(), View.OnClickListener {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+class RegisterActivity : BaseActivity() {
+    override fun onBindViews() {
         setContentView(R.layout.activity_register)
 
-        initView()
-    }
-
-    private fun initView() {
         continueButton.setOnClickListener(this)
     }
 
-    override fun onClick(p0: View?) {
-        when (p0!!.id) {
+    override fun onClick(view: View) {
+        when (view.id) {
 //            R.id.continueButton -> startActivity(Intent(this, a).apply {
 //                putExtra(Constants.REGISTER_NAME, nameTextInputEditText.text.toString())
 //            })

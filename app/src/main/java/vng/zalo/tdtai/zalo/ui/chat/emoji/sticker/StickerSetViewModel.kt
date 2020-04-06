@@ -1,16 +1,11 @@
 package vng.zalo.tdtai.zalo.ui.chat.emoji.sticker
 
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import vng.zalo.tdtai.zalo.model.StickerSet
-import vng.zalo.tdtai.zalo.repo.Database
-import vng.zalo.tdtai.zalo.repo.FirebaseDatabase
+import vng.zalo.tdtai.zalo.base.BaseViewModel
+import vng.zalo.tdtai.zalo.data_model.StickerSet
 import javax.inject.Inject
 
-class StickerSetViewModel @Inject constructor(
-        bucketName: String,
-        database: Database
-) : ViewModel() {
+class StickerSetViewModel @Inject constructor(bucketName: String) : BaseViewModel() {
 
     val liveStickerSet: MutableLiveData<StickerSet> = MutableLiveData()
 

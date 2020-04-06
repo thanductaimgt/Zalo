@@ -4,11 +4,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/action_bar_bg"
+    android:background="@drawable/primary_gradient_bg"
     tools:context=".ui.call.CallActivity">
 
     <de.hdodenhof.circleimageview.CircleImageView
-        android:id="@+id/avatarImgView"
+        android:id="@+id/watchOwnerAvatarImgView"
         android:layout_width="100dp"
         android:layout_height="0dp"
         app:civ_circle_background_color="@android:color/white"
@@ -31,7 +31,7 @@
         app:layout_constraintBottom_toTopOf="@id/statusTextView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/avatarImgView"
+        app:layout_constraintTop_toBottomOf="@id/watchOwnerAvatarImgView"
         tools:text="Mom" />
 
     <TextView
@@ -104,14 +104,12 @@
 
     <ImageView
         android:id="@+id/backImgView"
-        android:layout_width="40dp"
+        android:layout_width="56dp"
         android:layout_height="0dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
         android:layout_marginBottom="12dp"
         android:background="?attr/selectableItemBackgroundBorderless"
-        android:padding="10dp"
-        android:src="@drawable/left_arrow_white"
+        android:padding="16dp"
+        android:src="@drawable/left_arrow"
         app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

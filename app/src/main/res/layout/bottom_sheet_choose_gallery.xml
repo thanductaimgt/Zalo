@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingBottom="16dp"
+    app:layout_behavior="android.support.design.widget.BottomSheetBehavior">
+
+    <TextView
+        app:layout_constraintTop_toTopOf="parent"
+        android:textSize="@dimen/sizeTextBig"
+        android:id="@+id/titleTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginRight="16dp"
+        android:text="@string/label_upload"
+        android:textStyle="bold" />
+
+    <View
+        android:layout_marginTop="8dp"
+        android:id="@+id/line"
+        app:layout_constraintTop_toBottomOf="@id/titleTextView"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:background="@color/lightDividerBg" />
+
+    <TextView
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/line"
+        android:id="@+id/uploadImageTV"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="?attr/selectableItemBackground"
+        android:paddingStart="64dp"
+        android:paddingTop="16dp"
+        android:paddingEnd="64dp"
+        android:paddingBottom="16dp"
+        android:text="@string/description_image"/>
+
+    <ImageView
+        android:layout_marginStart="16dp"
+        app:layout_constraintBottom_toBottomOf="@id/uploadImageTV"
+        android:id="@+id/takePicIconImgView"
+        app:layout_constraintDimensionRatio="1:1"
+        android:src="@drawable/photo2"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/uploadImageTV"
+        android:layout_width="30dp"
+        android:layout_height="0dp"/>
+
+    <TextView
+        app:layout_constraintTop_toBottomOf="@id/uploadImageTV"
+        android:background="?attr/selectableItemBackground"
+        android:id="@+id/uploadVideoTV"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="64dp"
+        android:paddingTop="16dp"
+        android:paddingEnd="64dp"
+        android:paddingBottom="16dp"
+        android:text="@string/description_video"/>
+
+    <ImageView
+        android:layout_marginStart="16dp"
+        app:layout_constraintBottom_toBottomOf="@id/uploadVideoTV"
+        android:id="@+id/choosePicIconImgView"
+        app:layout_constraintDimensionRatio="1:1"
+        android:src="@drawable/video"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/uploadVideoTV"
+        android:layout_width="30dp"
+        android:layout_height="0dp"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

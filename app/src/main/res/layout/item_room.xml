@@ -14,8 +14,8 @@
         android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp"
         android:layout_marginStart="16dp"
-        android:id="@+id/avatarImgView"
-        android:layout_width="@dimen/size_margin_recv_msg_item"
+        android:id="@+id/watchOwnerAvatarImgView"
+        android:layout_width="@dimen/size_room_item_avatar"
         android:layout_height="0dp"
         android:contentDescription="@string/description_avatar"
         app:layout_constraintDimensionRatio="h,1:1"
@@ -30,8 +30,8 @@
         android:visibility="gone"
         app:civ_border_color="@android:color/white"
         app:civ_border_width="2dp"
-        app:layout_constraintEnd_toEndOf="@id/avatarImgView"
-        app:layout_constraintBottom_toBottomOf="@id/avatarImgView"
+        app:layout_constraintEnd_toEndOf="@id/watchOwnerAvatarImgView"
+        app:layout_constraintBottom_toBottomOf="@id/watchOwnerAvatarImgView"
         android:layout_width="15dp"
         android:layout_height="0dp"
         app:layout_constraintDimensionRatio="1:1"
@@ -51,8 +51,8 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
         app:layout_constraintEnd_toStartOf="@id/timeTextView"
-        app:layout_constraintStart_toEndOf="@id/avatarImgView"
-        app:layout_constraintTop_toTopOf="@id/avatarImgView" />
+        app:layout_constraintStart_toEndOf="@id/watchOwnerAvatarImgView"
+        app:layout_constraintTop_toTopOf="@id/watchOwnerAvatarImgView" />
 
     <de.hdodenhof.circleimageview.CircleImageView
         app:layout_constraintHorizontal_chainStyle="packed"
@@ -79,7 +79,7 @@
         android:scrollHorizontally="true"
         android:ellipsize="end"
         android:maxLines="1"
-        app:layout_constraintBottom_toBottomOf="@id/avatarImgView"
+        app:layout_constraintBottom_toBottomOf="@id/watchOwnerAvatarImgView"
         android:id="@+id/descTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -137,7 +137,7 @@
         android:id="@+id/divider"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_width="0dp"
-        android:layout_height="1dp"
+        android:layout_height="1px"
         android:background="@color/lightLine"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="@id/descTextView" />

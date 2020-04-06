@@ -9,34 +9,40 @@ import androidx.core.view.get
 import androidx.core.view.isNotEmpty
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import dagger.android.support.DaggerFragment
 import kotlinx.android.synthetic.main.fragment_chat.*
 import vng.zalo.tdtai.zalo.R
-import vng.zalo.tdtai.zalo.common.RoomItemAdapter
-import vng.zalo.tdtai.zalo.model.room.RoomItemPeer
+import vng.zalo.tdtai.zalo.base.BaseFragment
+import vng.zalo.tdtai.zalo.data_model.room.RoomItemPeer
 import vng.zalo.tdtai.zalo.ui.chat.ChatActivity
-import vng.zalo.tdtai.zalo.ui.home.RoomItemsViewModel
-import vng.zalo.tdtai.zalo.utils.Constants
+import vng.zalo.tdtai.zalo.ui.create_group.CreateGroupActivity
+import vng.zalo.tdtai.zalo.util.Constants
 import javax.inject.Inject
 
 
-class ChatFragment: DaggerFragment(), View.OnClickListener {
-    @Inject
-    lateinit var viewModelFactory: ViewModelProvider.Factory
-    private val viewModel: RoomItemsViewModel by viewModels({requireActivity()}, { viewModelFactory })
+class ChatFragment: BaseFragment() {
+    private val viewModel: ChatFragmentViewModel by viewModels{ viewModelFactory }
 
-    @Inject lateinit var adapter: RoomItemAdapter
+    @Inject lateinit var adapter: ChatFragmentAdapter
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_chat, container, false)
+        return inflater.inflate(R.layout.fragment_chat, container, false).apply {
+            makeRoomForStatusBar(requireActivity(), this)
+        }
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        initView()
+    override fun onBindViews() {
+        recyclerView.apply {
+            adapter = this@ChatFragment.adapter
+            layoutManager = LinearLayoutManager(activity)
+            setItemViewCacheSize(25)
+        }
 
+        createGroupButton.setOnClickListener(this)
+    }
+
+    override fun onViewsBound() {
         viewModel.liveRoomItemMap.observe(viewLifecycleOwner, Observer { roomItemMap ->
             adapter.submitList(roomItemMap.values.sortedByDescending { it.lastMsgTime }) {
                 if (recyclerView.isNotEmpty()) {
@@ -51,18 +57,10 @@ class ChatFragment: DaggerFragment(), View.OnClickListener {
         })
     }
 
-    private fun initView() {
-        with(recyclerView) {
-            adapter = this@ChatFragment.adapter
-            layoutManager = LinearLayoutManager(activity)
-            setItemViewCacheSize(50)
-        }
-    }
-
-    override fun onClick(v: View) {
-        when (v.id) {
+    override fun onClick(view: View) {
+        when (view.id) {
             R.id.itemRoomRootLayout -> {
-                val position = recyclerView.getChildAdapterPosition(v)
+                val position = recyclerView.getChildAdapterPosition(view)
                 val roomItem = adapter.currentList[position]
 
                 startActivity(
@@ -72,11 +70,12 @@ class ChatFragment: DaggerFragment(), View.OnClickListener {
                             putExtra(Constants.ROOM_ID, roomItem.roomId)
 
                             if (roomItem is RoomItemPeer) {
-                                putExtra(Constants.ROOM_PHONE, roomItem.phone)
+                                putExtra(Constants.ROOM_PHONE, roomItem.peerId)
                             }
                         }
                 )
             }
+            R.id.createGroupButton->startActivity(Intent(requireContext(), CreateGroupActivity::class.java))
         }
     }
 

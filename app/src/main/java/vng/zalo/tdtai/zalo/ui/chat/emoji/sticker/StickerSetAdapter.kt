@@ -6,20 +6,18 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.item_sticker.view.*
 import vng.zalo.tdtai.zalo.R
-import vng.zalo.tdtai.zalo.abstracts.BindableViewHolder
-import vng.zalo.tdtai.zalo.model.Sticker
-import vng.zalo.tdtai.zalo.utils.Constants
+import vng.zalo.tdtai.zalo.base.BindableViewHolder
+import vng.zalo.tdtai.zalo.data_model.Sticker
 import javax.inject.Inject
-import javax.inject.Named
 
 class StickerSetAdapter @Inject constructor(
-        @Named(Constants.FRAGMENT_NAME) private val clickListener: View.OnClickListener
+       private val stickerSetFragment: StickerSetFragment
 ) : RecyclerView.Adapter<StickerSetAdapter.StickerSetViewHolder>() {
     var stickers: List<Sticker> = ArrayList()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): StickerSetViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_sticker, parent, false)
-        view.setOnClickListener(clickListener)
+        view.setOnClickListener(stickerSetFragment)
         return StickerSetViewHolder(view)
     }
 

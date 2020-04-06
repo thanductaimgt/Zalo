@@ -11,7 +11,7 @@
     android:paddingBottom="8dp">
 
     <de.hdodenhof.circleimageview.CircleImageView
-        android:id="@+id/avatarImgView"
+        android:id="@+id/watchOwnerAvatarImgView"
         android:layout_width="48dp"
         android:layout_height="0dp"
         app:civ_circle_background_color="@android:color/white"
@@ -31,9 +31,9 @@
         android:maxLines="1"
         android:scrollHorizontally="true"
         app:layout_constraintBottom_toTopOf="@id/descTextView"
-        app:layout_constraintLeft_toRightOf="@id/avatarImgView"
+        app:layout_constraintLeft_toRightOf="@id/watchOwnerAvatarImgView"
         app:layout_constraintRight_toLeftOf="@id/radioButton"
-        app:layout_constraintTop_toTopOf="@id/avatarImgView"
+        app:layout_constraintTop_toTopOf="@id/watchOwnerAvatarImgView"
         tools:text="a very long name abcxyz0123456789abcdef" />
 
     <TextView
@@ -49,8 +49,8 @@
         android:ellipsize="end"
         android:maxLines="1"
         android:scrollHorizontally="true"
-        app:layout_constraintBottom_toBottomOf="@id/avatarImgView"
-        app:layout_constraintLeft_toRightOf="@id/avatarImgView"
+        app:layout_constraintBottom_toBottomOf="@id/watchOwnerAvatarImgView"
+        app:layout_constraintLeft_toRightOf="@id/watchOwnerAvatarImgView"
         app:layout_constraintRight_toLeftOf="@id/radioButton"
         app:layout_constraintTop_toBottomOf="@id/nameTextView"
         tools:text="a very long name abcxyz0123456789abcdef" />
@@ -60,8 +60,9 @@
         android:layout_width="30dp"
         android:layout_height="24dp"
         android:clickable="false"
-        app:layout_constraintBottom_toBottomOf="@id/avatarImgView"
+        android:focusable="false"
+        app:layout_constraintBottom_toBottomOf="@id/watchOwnerAvatarImgView"
         app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="@id/avatarImgView" />
+        app:layout_constraintTop_toTopOf="@id/watchOwnerAvatarImgView" />
 </androidx.constraintlayout.widget.ConstraintLayout>

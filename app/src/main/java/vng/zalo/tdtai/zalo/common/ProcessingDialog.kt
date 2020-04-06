@@ -1,26 +1,25 @@
 package vng.zalo.tdtai.zalo.common
 
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.os.Handler
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.Window
-import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentManager
 import vng.zalo.tdtai.zalo.R
-import vng.zalo.tdtai.zalo.utils.TAG
+import vng.zalo.tdtai.zalo.base.BaseDialog
+import vng.zalo.tdtai.zalo.util.TAG
 import javax.inject.Inject
 import javax.inject.Singleton
 
-interface ProcessingDialog{
-    fun show(fm:FragmentManager)
+@Singleton
+class ProcessingDialog @Inject constructor() : BaseDialog() {
+    private var lastShowTime: Long? = null
 
-    fun dismiss()
-}
+    init {
+        isCancelable = false
+    }
 
-class ProcessingDialogFragment @Inject constructor() : DialogFragment(), ProcessingDialog {
     override fun onCreateView(
             inflater: LayoutInflater,
             container: ViewGroup?,
@@ -29,24 +28,25 @@ class ProcessingDialogFragment @Inject constructor() : DialogFragment(), Process
         return inflater.inflate(R.layout.dialog_processing, container, false)
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        initView()
-    }
-
-    override fun onStart() {
-        super.onStart()
-        dialog?.window?.setLayout(
-                ViewGroup.LayoutParams.WRAP_CONTENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT
-        )
-    }
-
-    private fun initView() {
-        dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-        dialog?.window?.requestFeature(Window.FEATURE_NO_TITLE)
-    }
-
-    override fun show(fm:FragmentManager) {
+    fun show(fm: FragmentManager) {
+        lastShowTime = System.currentTimeMillis()
         show(fm, TAG)
+    }
+
+    override fun dismiss() {
+        lastShowTime?.let {
+            val showTime = System.currentTimeMillis() - lastShowTime!!
+            if (showTime >= MIN_SHOW_TIME) {
+                super.dismiss()
+            } else {
+                Handler().postDelayed({
+                    super.dismiss()
+                }, MIN_SHOW_TIME - showTime)
+            }
+        }
+    }
+
+    companion object {
+        const val MIN_SHOW_TIME = 1000
     }
 }

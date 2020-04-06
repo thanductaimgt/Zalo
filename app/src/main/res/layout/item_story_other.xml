@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <include
+        layout="@layout/item_story_base"/>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/footerLayoutOther"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/black_gradient_bg_bottom"
+        android:paddingHorizontal="8dp"
+        android:paddingBottom="8dp"
+        android:paddingTop="20dp"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <ImageView
+            android:id="@+id/cameraImgView"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:src="@drawable/camera"
+            app:layout_constraintBottom_toBottomOf="@id/msgEditText"
+            app:layout_constraintDimensionRatio="W,1:1"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/msgEditText" />
+
+        <EditText
+            tools:text="asdasdasdasdasdasdsadasdasdasdasdasdasdasdasdasdad"
+            android:inputType="text"
+            android:id="@+id/msgEditText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:background="@drawable/transparent_white_border_bg"
+            android:hint="@string/hint_message"
+            android:paddingHorizontal="16dp"
+            android:paddingVertical="12dp"
+            android:textColor="@android:color/white"
+            android:textColorHint="@color/strongGray"
+            app:layout_constraintEnd_toStartOf="@id/emojiImgView"
+            app:layout_constraintStart_toEndOf="@id/cameraImgView"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/emojiImgView"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:padding="8dp"
+            android:src="@drawable/heart2"
+            app:layout_constraintBottom_toBottomOf="@id/msgEditText"
+            app:layout_constraintDimensionRatio="W,1:1"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/msgEditText" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

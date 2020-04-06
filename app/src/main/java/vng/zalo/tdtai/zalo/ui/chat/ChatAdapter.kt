@@ -1,6 +1,5 @@
 package vng.zalo.tdtai.zalo.ui.chat
 
-import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,67 +9,49 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.airbnb.lottie.LottieCompositionFactory
 import com.airbnb.lottie.LottieDrawable
-import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.SimpleExoPlayer
-import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
-import com.google.android.exoplayer2.trackselection.TrackSelector
-import com.google.android.exoplayer2.upstream.BandwidthMeter
-import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter
 import com.squareup.picasso.Picasso
-import kotlinx.android.synthetic.main.activity_room.*
-import kotlinx.android.synthetic.main.item_receive_room_activity.view.*
-import kotlinx.android.synthetic.main.item_seen_room_activity.view.*
-import kotlinx.android.synthetic.main.item_send_room_activity.view.*
-import kotlinx.android.synthetic.main.part_call_message.view.*
-import kotlinx.android.synthetic.main.part_chat_date.view.*
-import kotlinx.android.synthetic.main.part_chat_padding.view.*
-import kotlinx.android.synthetic.main.part_chat_time.view.*
-import kotlinx.android.synthetic.main.part_file_message.view.*
-import kotlinx.android.synthetic.main.part_image_message.view.*
-import kotlinx.android.synthetic.main.part_sticker_message.view.*
-import kotlinx.android.synthetic.main.part_text_message.view.*
-import kotlinx.android.synthetic.main.part_video_message.view.*
+import kotlinx.android.synthetic.main.activity_chat.*
+import kotlinx.android.synthetic.main.item_message_receive.view.*
+import kotlinx.android.synthetic.main.item_message_seen.view.*
+import kotlinx.android.synthetic.main.item_message_send.view.*
+import kotlinx.android.synthetic.main.part_message_call.view.*
+import kotlinx.android.synthetic.main.part_message_date.view.*
+import kotlinx.android.synthetic.main.part_message_file.view.*
+import kotlinx.android.synthetic.main.part_message_image.view.*
+import kotlinx.android.synthetic.main.part_message_padding.view.*
+import kotlinx.android.synthetic.main.part_message_sticker.view.*
+import kotlinx.android.synthetic.main.part_message_text.view.*
+import kotlinx.android.synthetic.main.part_message_time.view.*
+import kotlinx.android.synthetic.main.part_message_video.view.*
 import vng.zalo.tdtai.zalo.R
-import vng.zalo.tdtai.zalo.abstracts.BindableViewHolder
-import vng.zalo.tdtai.zalo.abstracts.ZaloListAdapter
-import vng.zalo.tdtai.zalo.managers.ResourceManager
-import vng.zalo.tdtai.zalo.managers.SessionManager
-import vng.zalo.tdtai.zalo.model.message.*
-import vng.zalo.tdtai.zalo.utils.*
+import vng.zalo.tdtai.zalo.base.BaseListAdapter
+import vng.zalo.tdtai.zalo.base.BindableViewHolder
+import vng.zalo.tdtai.zalo.data_model.message.*
+import vng.zalo.tdtai.zalo.manager.ResourceManager
+import vng.zalo.tdtai.zalo.manager.SessionManager
+import vng.zalo.tdtai.zalo.util.MessageDiffCallback
+import vng.zalo.tdtai.zalo.util.RoomMemberDiffCallback
+import vng.zalo.tdtai.zalo.util.Utils
+import vng.zalo.tdtai.zalo.util.smartLoad
 import java.util.*
 import javax.inject.Inject
-import javax.inject.Named
 
 
 class ChatAdapter @Inject constructor(
-        context: Context,
-        @Named(Constants.ACTIVITY_NAME) private val clickListener: View.OnClickListener,
-        private val longClickListener: View.OnLongClickListener,
-        diffCallback: MessageDiffCallback,
+        private val chatActivity: ChatActivity,
         private val sessionManager: SessionManager,
         private val utils: Utils,
-        private val resourceManager: ResourceManager
-) : ZaloListAdapter<Message, BindableViewHolder>(diffCallback) {
+        private val resourceManager: ResourceManager,
+        val exoPlayer: SimpleExoPlayer,
+        diffCallback: MessageDiffCallback
+) : BaseListAdapter<Message, BindableViewHolder>(diffCallback) {
     private val roomEnterTime = System.currentTimeMillis()
-
-    var exoPlayer: ExoPlayer
-
-    init {
-        val bandwidthMeter: BandwidthMeter = DefaultBandwidthMeter.Builder(context).build()
-        val trackSelector: TrackSelector = DefaultTrackSelector(context)
-
-        exoPlayer = SimpleExoPlayer.Builder(context)
-                .setBandwidthMeter(bandwidthMeter)
-                .setTrackSelector(trackSelector)
-                .build()
-
-        exoPlayer.playWhenReady = true
-    }
 
     override fun getItemViewType(position: Int): Int {
         return when {
             currentList[position].type == Message.TYPE_SEEN -> VIEW_TYPE_SEEN
-            currentList[position].senderPhone == sessionManager.curUser!!.phone -> VIEW_TYPE_SEND
+            currentList[position].senderId == sessionManager.curUser!!.id -> VIEW_TYPE_SEND
             else -> VIEW_TYPE_RECEIVE
         }
     }
@@ -78,15 +59,15 @@ class ChatAdapter @Inject constructor(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BindableViewHolder {
         val holder = when (viewType) {
             VIEW_TYPE_SEND -> {
-                val v = LayoutInflater.from(parent.context).inflate(R.layout.item_send_room_activity, parent, false)
+                val v = LayoutInflater.from(parent.context).inflate(R.layout.item_message_send, parent, false)
                 SendViewHolder(v)
             }
             VIEW_TYPE_RECEIVE -> {
-                val v = LayoutInflater.from(parent.context).inflate(R.layout.item_receive_room_activity, parent, false)
+                val v = LayoutInflater.from(parent.context).inflate(R.layout.item_message_receive, parent, false)
                 RecvViewHolder(v)
             }
             else -> {
-                val v = LayoutInflater.from(parent.context).inflate(R.layout.item_seen_room_activity, parent, false)
+                val v = LayoutInflater.from(parent.context).inflate(R.layout.item_message_seen, parent, false)
                 SeenViewHolder(v)
             }
         }
@@ -94,12 +75,12 @@ class ChatAdapter @Inject constructor(
         return holder.apply {
             if (this is MessageViewHolder) {
                 itemView.apply {
-                    imageView.setOnClickListener(clickListener)
-                    downloadFileImgView.setOnClickListener(clickListener)
-                    callbackTV.setOnClickListener(clickListener)
-                    videoMessageLayout.setOnClickListener(clickListener)
+                    imageView.setOnClickListener(chatActivity)
+                    downloadFileImgView.setOnClickListener(chatActivity)
+                    callbackTV.setOnClickListener(chatActivity)
+                    videoMessageLayout.setOnClickListener(chatActivity)
 
-                    setOnLongClickListener(longClickListener)
+                    setOnLongClickListener(chatActivity)
                 }
             }
         }
@@ -112,38 +93,29 @@ class ChatAdapter @Inject constructor(
     override fun onBindViewHolder(
             holder: BindableViewHolder,
             position: Int,
-            payloads: MutableList<Any?>
+            payloads: ArrayList<*>
     ) {
-        try {
-            if (payloads.isNotEmpty()) {
-                val curMessage = currentList[position]
-                val nextMessage = getNextRealMessage(position)
-//            val prevMessage = getPreviousNotTypingMessage(position)
-                (payloads[0] as ArrayList<*>).forEach {
+        val curMessage = currentList[position]
+        val nextMessage = getNextRealMessage(position)
+        payloads.forEach {
+            when (it) {
+                Message.PAYLOAD_SEEN -> (holder as SeenViewHolder).bindSeenMembers(curMessage as SeenMessage)
+                else -> {
+                    holder as MessageViewHolder
                     when (it) {
-                        Message.PAYLOAD_SEEN -> (holder as SeenViewHolder).bindSeenMembers(curMessage as SeenMessage)
-                        else -> {
-                            holder as MessageViewHolder
-                            when (it) {
-                                Message.PAYLOAD_TIME -> holder.bindTime(curMessage, nextMessage)
-                                Message.PAYLOAD_AVATAR -> {
-                                    when (holder.itemViewType) {
-                                        VIEW_TYPE_RECEIVE -> (holder as RecvViewHolder).apply {
-                                            bindAvatar(curMessage, nextMessage, shouldBindTime(curMessage, nextMessage))
-                                        }
-                                    }
+                        Message.PAYLOAD_TIME -> holder.bindTime(curMessage, nextMessage)
+                        Message.PAYLOAD_AVATAR -> {
+                            when (holder.itemViewType) {
+                                VIEW_TYPE_RECEIVE -> (holder as RecvViewHolder).apply {
+                                    bindAvatar(curMessage, nextMessage, shouldBindTime(curMessage, nextMessage))
                                 }
-                                Message.PAYLOAD_UPLOAD_PROGRESS -> (holder as SendViewHolder).bindUploadProgress(curMessage as ResourceMessage)
-                                Message.PAYLOAD_SEND_STATUS -> (holder as SendViewHolder).bindSendStatus(curMessage, nextMessage)
                             }
                         }
+                        Message.PAYLOAD_UPLOAD_PROGRESS -> (holder as SendViewHolder).bindUploadProgress(curMessage as ResourceMessage)
+                        Message.PAYLOAD_SEND_STATUS -> (holder as SendViewHolder).bindSendStatus(curMessage, nextMessage)
                     }
                 }
-            } else {
-                onBindViewHolder(holder, position)
             }
-        } catch (t: Throwable) {
-            t.printStackTrace()
         }
     }
 
@@ -173,7 +145,7 @@ class ChatAdapter @Inject constructor(
                         uploadFileProgressBar?.visibility = View.GONE
                     } else {
                         avatarLayout?.visibility = View.GONE
-                        avatarImgView?.setImageDrawable(null)
+                        watchOwnerAvatarImgView?.setImageDrawable(null)
                         typingMessageLayout?.visibility = View.GONE
                     }
                 }
@@ -220,7 +192,7 @@ class ChatAdapter @Inject constructor(
                 }
 //                itemView as ConstraintLayout
 //
-//                val timeLayout = View.inflate(itemView.context, R.layout.part_chat_time, null)
+//                val timeLayout = View.inflate(itemView.context, R.layout.part_message_time, null)
 //
 //                timeLayout.timeTextView.text = Utils.getTimeFormat(curMessage.createdTime!!.toDate())
 //                itemView.addView(timeLayout, 0)
@@ -352,7 +324,7 @@ class ChatAdapter @Inject constructor(
                 } else {
                     callTimeTV.text = utils.getCallTimeFormat(callMessage.callTime)
 
-                    if (callMessage.senderPhone == sessionManager.curUser!!.phone) {
+                    if (callMessage.senderId == sessionManager.curUser!!.id) {
                         callTitleTV.text = context.getString(
                                 if (callMessage.callType == CallMessage.CALL_TYPE_VOICE) {
                                     R.string.description_outgoing_voice_call
@@ -391,7 +363,7 @@ class ChatAdapter @Inject constructor(
 
         fun bindPadding(curMessage: Message, prevMessage: Message?) {
             itemView.apply {
-                if (prevMessage != null && prevMessage.senderPhone != curMessage.senderPhone) {
+                if (prevMessage != null && prevMessage.senderId != curMessage.senderId) {
                     paddingView.visibility = View.VISIBLE
                 } else {
                     paddingView.visibility = View.GONE
@@ -403,7 +375,7 @@ class ChatAdapter @Inject constructor(
             itemView.apply {
                 setViewConstrainRatio(videoMessageLayout, videoMessage.ratio!!)
 
-                resourceManager.getVideoThumbUri(videoMessage.url) {uri->
+                resourceManager.getVideoThumbUri(videoMessage.url) { uri ->
                     Picasso.get().smartLoad(uri, resourceManager, videoThumbImgView) {
                         it.fit()
                     }
@@ -416,14 +388,14 @@ class ChatAdapter @Inject constructor(
         }
 
         private fun setViewConstrainRatio(view: View, ratio: String) {
-            val dimension = utils.getDimension(ratio)
+            val size = utils.getSize(ratio)
 
             val constraintLayout = view.parent as ConstraintLayout
 
             val set = ConstraintSet()
             set.clone(constraintLayout)
-            set.constrainMaxWidth(view.id, dimension.first)
-            set.constrainMaxHeight(view.id, dimension.second)
+            set.constrainMaxWidth(view.id, size.width)
+            set.constrainMaxHeight(view.id, size.height)
             set.setDimensionRatio(view.id, "H,$ratio")
             set.applyTo(constraintLayout)
         }
@@ -535,7 +507,7 @@ class ChatAdapter @Inject constructor(
             - next curMessage sender != current curMessage sender
             => display avatarUrl
             */
-            if (isTimeBind || nextMessage!!.senderPhone != curMessage.senderPhone) {
+            if (isTimeBind || nextMessage!!.senderId != curMessage.senderId) {
                 showAvatar(curMessage)
             } else {
                 itemView.avatarLayout.visibility = View.GONE
@@ -546,7 +518,7 @@ class ChatAdapter @Inject constructor(
             itemView.apply {
                 avatarLayout.visibility = View.VISIBLE
                 Picasso.get()
-                        .smartLoad(message.senderAvatarUrl, resourceManager, avatarImgView) {
+                        .smartLoad(message.senderAvatarUrl, resourceManager, watchOwnerAvatarImgView) {
                             it.fit()
                                     .centerCrop()
                                     .placeholder(R.drawable.default_peer_avatar)
@@ -556,7 +528,7 @@ class ChatAdapter @Inject constructor(
     }
 
     inner class SeenViewHolder(itemView: View) : BindableViewHolder(itemView) {
-        val adapter = RoomMemberAdapter(RoomMemberDiffCallback(), resourceManager)
+        val adapter = RoomMemberAdapter(resourceManager, RoomMemberDiffCallback())
 
         override fun bind(position: Int) {
             itemView.seenRecyclerView.adapter = adapter

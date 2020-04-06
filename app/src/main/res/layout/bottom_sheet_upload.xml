@@ -54,7 +54,7 @@
         app:layout_constraintBottom_toBottomOf="@id/captureTV"
         android:id="@+id/takePicIconImgView"
         app:layout_constraintDimensionRatio="1:1"
-        android:src="@drawable/upload_picture2"
+        android:src="@drawable/camera2"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@id/captureTV"
         android:layout_width="30dp"

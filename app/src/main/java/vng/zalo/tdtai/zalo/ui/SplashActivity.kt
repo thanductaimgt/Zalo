@@ -4,24 +4,15 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
-import dagger.android.support.DaggerAppCompatActivity
-import vng.zalo.tdtai.zalo.managers.PermissionManager
-import vng.zalo.tdtai.zalo.managers.SessionManager
-import vng.zalo.tdtai.zalo.managers.SharedPrefsManager
+import vng.zalo.tdtai.zalo.base.BaseActivity
+import vng.zalo.tdtai.zalo.manager.PermissionManager
 import vng.zalo.tdtai.zalo.ui.home.HomeActivity
 import vng.zalo.tdtai.zalo.ui.intro.IntroActivity
-import vng.zalo.tdtai.zalo.utils.TAG
-import javax.inject.Inject
+import vng.zalo.tdtai.zalo.util.TAG
 
 
-class SplashActivity : DaggerAppCompatActivity() {
-    @Inject lateinit var permissionManager: PermissionManager
-    @Inject lateinit var sharedPrefsManager: SharedPrefsManager
-    @Inject lateinit var sessionManager: SessionManager
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
+class SplashActivity : BaseActivity() {
+    override fun onViewsBound() {
         if (permissionManager.hasRequiredPermissions()) {
             moveToNextActivity()
         } else {

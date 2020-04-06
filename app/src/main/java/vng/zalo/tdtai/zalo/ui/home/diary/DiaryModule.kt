@@ -1,5 +1,6 @@
 package vng.zalo.tdtai.zalo.ui.home.diary
 
+import android.view.View
 import androidx.lifecycle.ViewModel
 import dagger.Binds
 import dagger.Module
@@ -12,4 +13,7 @@ interface DiaryModule {
     @IntoMap
     @ViewModelKey(DiaryViewModel::class)
     fun bindDiaryViewModel(viewModel: DiaryViewModel): ViewModel
+
+    @Binds
+    fun bindClickListener(diaryFragment: DiaryFragment):View.OnClickListener
 }

@@ -4,15 +4,21 @@ import dagger.Component
 import dagger.android.AndroidInjectionModule
 import dagger.android.AndroidInjector
 import vng.zalo.tdtai.zalo.ZaloApplication
+import vng.zalo.tdtai.zalo.base.BaseViewModel
 import javax.inject.Singleton
 
 @Singleton
 @Component(modules = [
     AndroidInjectionModule::class,
     AppModule::class,
-    SubComponentModule::class
+    AndroidModule::class
 ])
-interface AppComponent:AndroidInjector<ZaloApplication> {
+interface AppComponent : AndroidInjector<ZaloApplication> {
     @Component.Factory
-    interface Factory:AndroidInjector.Factory<ZaloApplication>
+    interface Factory : AndroidInjector.Factory<ZaloApplication>
+//    {
+//        override fun create(@BindsInstance instance: ZaloApplication): AppComponent
+//    }
+
+    fun inject(viewModel: BaseViewModel)
 }

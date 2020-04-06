@@ -1,21 +1,14 @@
 package vng.zalo.tdtai.zalo.ui.create_group
 
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import vng.zalo.tdtai.zalo.managers.SessionManager
-import vng.zalo.tdtai.zalo.model.message.Message
-import vng.zalo.tdtai.zalo.model.room.Room
-import vng.zalo.tdtai.zalo.model.room.RoomItem
-import vng.zalo.tdtai.zalo.repo.Database
-import vng.zalo.tdtai.zalo.repo.Storage
+import vng.zalo.tdtai.zalo.base.BaseViewModel
+import vng.zalo.tdtai.zalo.data_model.room.Room
+import vng.zalo.tdtai.zalo.data_model.room.RoomItem
+import vng.zalo.tdtai.zalo.repository.Storage
 import javax.inject.Inject
 
 
-class CreateGroupViewModel @Inject constructor(
-        private val database: Database,
-        private val storage: Storage,
-        sessionManager: SessionManager
-) : ViewModel() {
+class CreateGroupViewModel @Inject constructor() : BaseViewModel() {
     val liveSelectedRoomItems: MutableLiveData<ArrayList<RoomItem>> = MutableLiveData(ArrayList())
 
     val liveRoomItems: MutableLiveData<List<RoomItem>> = MutableLiveData(ArrayList())
@@ -24,7 +17,7 @@ class CreateGroupViewModel @Inject constructor(
 
     init {
         database.getUserRooms(
-                userPhone = sessionManager.curUser!!.phone!!,
+                userId = sessionManager.curUser!!.id!!,
                 roomType = Room.TYPE_PEER
         ) { liveRoomItems.value = it }
     }
@@ -39,14 +32,11 @@ class CreateGroupViewModel @Inject constructor(
         newRoom.id = newRoomId
         // save room avatarUrl in storage
         if (avatarLocalPath != null) {
-            storage.addResourceAndGetDownloadUrl(
+            storage.addFileAndGetDownloadUrl(
                     avatarLocalPath,
                     avatarStoragePath,
-                    Message.TYPE_IMAGE
+                    Storage.FILE_TYPE_IMAGE
             ) {downloadUrl->
-                // delete local file
-//                MediaManager.deleteZaloFileAtUri(context, avatarLocalPath)
-
                 //change from localPath to storagePath
                 newRoom.avatarUrl = downloadUrl
 

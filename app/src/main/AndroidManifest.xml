@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="vng.zalo.tdtai.zalo">
 
     <uses-permission android:name="android.permission.INTERNET" />
@@ -11,6 +12,7 @@
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.CAMERA" />
 
     <uses-feature android:name="android.hardware.sip.voip" />
     <uses-feature
@@ -25,9 +27,15 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme.Light"
-        android:windowSoftInputMode="adjustResize">
+        android:windowSoftInputMode="adjustResize"
+        tools:replace="android:allowBackup,android:label">
+        <activity android:name=".ui.create_post.CreatePostActivity"
+            android:theme="@style/AppTheme.Light.NoActionBar.LightStatusBar" />
+        <meta-data
+            android:name="com.google.firebase.ml.vision.DEPENDENCIES"
+            android:value="face" /> <!-- To use multiple models: android:value="face,model2,model3" -->
         <service
-            android:name=".services.MessagingService"
+            android:name=".service.MessagingService"
             android:enabled="true"
             android:exported="false">
             <intent-filter>
@@ -35,11 +43,10 @@
             </intent-filter>
         </service>
 
-        <activity android:name=".ui.profile.ProfileActivity" />
         <activity
             android:name=".ui.share.ShareActivity"
             android:launchMode="singleTop"
-            android:theme="@style/AppTheme.Light.NoActionBar">
+            android:theme="@style/AppTheme.Light.NoActionBar.LightStatusBar">
             <intent-filter>
                 <action android:name="android.intent.action.SEND_MULTIPLE" />
                 <action android:name="android.intent.action.SEND" />
@@ -51,7 +58,7 @@
         </activity>
 
         <receiver
-            android:name=".receivers.BootReceiver"
+            android:name=".receiver.BootReceiver"
             android:enabled="true"
             android:exported="false">
             <intent-filter>
@@ -63,7 +70,6 @@
         <activity
             android:name=".ui.call.CallActivity"
             android:theme="@style/AppTheme.Light.NoActionBar" />
-
         <activity android:name=".ui.register.RegisterActivity" />
 
         <provider
@@ -78,8 +84,7 @@
 
         <activity
             android:name=".ui.create_group.CreateGroupActivity"
-            android:label="@string/description_create_group"
-            android:theme="@style/AppTheme.Light.NoActionBar" />
+            android:theme="@style/AppTheme.Light.NoActionBar.LightStatusBar" />
         <activity
             android:name=".ui.SplashActivity"
             android:theme="@style/AppTheme.SplashTheme">
@@ -95,15 +100,14 @@
             android:theme="@style/AppTheme.Light.NoActionBar" />
         <activity
             android:name=".ui.home.HomeActivity"
-            android:theme="@style/AppTheme.Light.NoActionBar" />
+            android:theme="@style/AppTheme.Light.NoActionBar.LightStatusBar" />
         <activity
             android:name=".ui.login.LoginActivity"
             android:parentActivityName=".ui.intro.IntroActivity"
             android:theme="@style/AppTheme.Light.NoActionBar" />
         <activity
             android:name=".ui.intro.IntroActivity"
-            android:launchMode="singleTop"
-            android:theme="@style/AppTheme.Light.NoActionBar" />
+            android:theme="@style/AppTheme.Light.NoActionBar.LightStatusBar" />
     </application>
 
 </manifest>

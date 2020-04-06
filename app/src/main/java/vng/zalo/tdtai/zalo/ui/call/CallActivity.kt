@@ -4,36 +4,26 @@ import android.app.KeyguardManager
 import android.content.Context
 import android.media.AudioManager
 import android.os.Build
-import android.os.Bundle
 import android.os.Handler
 import android.view.View
 import android.view.WindowManager
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import com.squareup.picasso.Picasso
-import dagger.android.support.DaggerAppCompatActivity
 import kotlinx.android.synthetic.main.activity_call.*
 import vng.zalo.tdtai.zalo.R
-import vng.zalo.tdtai.zalo.common.AlertDialog
-import vng.zalo.tdtai.zalo.managers.CallService
-import vng.zalo.tdtai.zalo.managers.ResourceManager
-import vng.zalo.tdtai.zalo.model.message.CallMessage
-import vng.zalo.tdtai.zalo.utils.Constants
-import vng.zalo.tdtai.zalo.utils.smartLoad
-import javax.inject.Inject
+import vng.zalo.tdtai.zalo.base.BaseActivity
+import vng.zalo.tdtai.zalo.manager.CallService
+import vng.zalo.tdtai.zalo.data_model.message.CallMessage
+import vng.zalo.tdtai.zalo.util.Constants
+import vng.zalo.tdtai.zalo.util.smartLoad
 import kotlin.math.ceil
 import kotlin.math.max
 import kotlin.math.min
 
 
-class CallActivity : DaggerAppCompatActivity(), View.OnClickListener {
-    @Inject lateinit var alertDialog: AlertDialog
-
-    @Inject lateinit var resourceManager: ResourceManager
-
-    @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
+class CallActivity : BaseActivity() {
     private val viewModel: CallViewModel by viewModels { viewModelFactory }
 
     val audioCallListener = AudioCallListener()
@@ -58,12 +48,49 @@ class CallActivity : DaggerAppCompatActivity(), View.OnClickListener {
         }
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    @Suppress("DEPRECATION")
+    override fun onBindViews() {
+        // show activity if screen is locked or turn off
+        window.apply {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
+                    setShowWhenLocked(true)
+                    setTurnScreenOn(true)
+                } else {
+                    addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED or
+                            WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON)
+                }
 
+                keyguardManager?.requestDismissKeyguard(this@CallActivity, null)
+            } else {
+                addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED or
+                        WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON or
+                        WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD)
+            }
+        }
+
+        setContentView(R.layout.activity_call, true)
+
+        if (viewModel.isCaller) {
+            nameTextView.text = viewModel.liveRoom.value!!.getDisplayName(resourceManager)
+            Picasso.get().smartLoad(viewModel.liveRoom.value!!.avatarUrl, resourceManager, watchOwnerAvatarImgView){
+                it.fit().centerCrop()
+            }
+        } else {
+            statusTextView.text = getString(R.string.description_incoming_call)
+
+            answerImgView.visibility = View.VISIBLE
+            answerImgView.setOnClickListener(this)
+        }
+
+        speakerImgView.setOnClickListener(this)
+        cancelCallImgView.setOnClickListener(this)
+        recorderImgView.setOnClickListener(this)
+        backImgView.setOnClickListener(this)
+    }
+
+    override fun onViewsBound() {
         try {
-            initView()
-
             viewModel.liveCallState.observe(this, Observer {
                 when (it) {
                     STATE_ESTABLISHED -> {
@@ -105,7 +132,7 @@ class CallActivity : DaggerAppCompatActivity(), View.OnClickListener {
 
             viewModel.liveRoom.observe(this, Observer {roomPeer->
                 nameTextView.text = roomPeer.getDisplayName(resourceManager)
-                Picasso.get().smartLoad(roomPeer.avatarUrl, resourceManager, avatarImgView){
+                Picasso.get().smartLoad(roomPeer.avatarUrl, resourceManager, watchOwnerAvatarImgView){
                     it.fit().centerCrop()
                 }
             })
@@ -123,44 +150,6 @@ class CallActivity : DaggerAppCompatActivity(), View.OnClickListener {
         keyguardManager = getSystemService(Context.KEYGUARD_SERVICE) as KeyguardManager
     }
 
-    @Suppress("DEPRECATION")
-    override fun onStart() {
-        super.onStart()
-
-        // show activity if screen is locked or turn off
-        window.apply {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
-                    setShowWhenLocked(true)
-                    setTurnScreenOn(true)
-                } else {
-                    addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED or
-                            WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON)
-                }
-
-                keyguardManager?.requestDismissKeyguard(this@CallActivity, null)
-            } else {
-                addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED or
-                        WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON or
-                        WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD)
-            }
-        }
-    }
-
-    public override fun onPause() {
-        super.onPause()
-        handler.removeCallbacks(timerRunnable)
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        try {
-            viewModel.audioCall.close()
-        } catch (e: Throwable) {
-            e.printStackTrace()
-        }
-    }
-
     private fun initAudioManager() {
         audioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
 
@@ -174,25 +163,9 @@ class CallActivity : DaggerAppCompatActivity(), View.OnClickListener {
         externalSpeakerIncreaseVolume = ceil((speakerMaxVolume - speakerMinVolume) / 2f).toInt()
     }
 
-    private fun initView() {
-        setContentView(R.layout.activity_call)
-
-        if (viewModel.isCaller) {
-            nameTextView.text = viewModel.liveRoom.value!!.getDisplayName(resourceManager)
-            Picasso.get().smartLoad(viewModel.liveRoom.value!!.avatarUrl, resourceManager, avatarImgView){
-                it.fit().centerCrop()
-            }
-        } else {
-            statusTextView.text = getString(R.string.description_incoming_call)
-
-            answerImgView.visibility = View.VISIBLE
-            answerImgView.setOnClickListener(this)
-        }
-
-        speakerImgView.setOnClickListener(this)
-        cancelCallImgView.setOnClickListener(this)
-        recorderImgView.setOnClickListener(this)
-        backImgView.setOnClickListener(this)
+    public override fun onPause() {
+        super.onPause()
+        handler.removeCallbacks(timerRunnable)
     }
 
     override fun onClick(view: View) {
@@ -357,6 +330,15 @@ class CallActivity : DaggerAppCompatActivity(), View.OnClickListener {
         //when other is ringing
         override fun onRingingBack() {
             viewModel.liveCallState.postValue(STATE_RINGING_BACK)
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        try {
+            viewModel.audioCall.close()
+        } catch (e: Throwable) {
+            e.printStackTrace()
         }
     }
 

@@ -1,0 +1,13 @@
+#!/bin/bash
+
+
+#  run ./install_apk #install debug apk
+#  run ./install_apk #release  install release apk
+
+if [ $1 == "release" ]; then
+    adb install -r ./app/build/outputs/apk/app-release.apk
+    echo "install release apk"
+else
+    echo "install debug apk"
+    adb install -r ./app/build/outputs/apk/app-debug.apk
+fi

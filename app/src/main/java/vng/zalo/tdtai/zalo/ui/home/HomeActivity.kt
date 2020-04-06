@@ -1,104 +1,169 @@
 package vng.zalo.tdtai.zalo.ui.home
 
-import android.content.Intent
-import android.os.Bundle
+import android.animation.ObjectAnimator
+import android.os.Handler
 import android.view.MenuItem
-import android.view.View
-import android.view.WindowManager
-import androidx.appcompat.widget.PopupMenu
-import androidx.viewpager.widget.ViewPager
-import dagger.android.support.DaggerAppCompatActivity
+import android.widget.Toast
+import androidx.activity.viewModels
+import androidx.viewpager2.widget.ViewPager2
 import kotlinx.android.synthetic.main.activity_home.*
 import vng.zalo.tdtai.zalo.R
-import vng.zalo.tdtai.zalo.repo.Database
-import vng.zalo.tdtai.zalo.ui.create_group.CreateGroupActivity
-import vng.zalo.tdtai.zalo.utils.Utils
+import vng.zalo.tdtai.zalo.base.BaseActivity
+import vng.zalo.tdtai.zalo.data_model.media.Media
+import vng.zalo.tdtai.zalo.ui.camera.CameraFragment
 import javax.inject.Inject
 
 
-class HomeActivity : DaggerAppCompatActivity(), View.OnClickListener {
-    @Inject lateinit var utils: Utils
-    @Inject lateinit var database: Database
+class HomeActivity : BaseActivity() {
+    private val viewModel: HomeViewModel by viewModels { viewModelFactory }
 
-    @Inject lateinit var adapter: HomeAdapter
-
-    override fun onClick(v: View) {
-        when (v.id) {
-//            R.id.searchImgView -> {
-//                utils.showKeyboard(searchEditText)
-//            }
-//            R.id.createGroupImgView -> {
-//                startActivity(Intent(this, CreateGroupActivity::class.java))
-//            }
-//            R.id.moreImgView -> displayPopupMenu(v)
-        }
-    }
+    @Inject
+    lateinit var pagerAdapter: HomeAdapter
 
     private lateinit var prevMenuItem: MenuItem
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    private lateinit var bottomNavigationAnimator: ObjectAnimator
 
-        initView()
+    var cameraFragment: CameraFragment?=null
 
-        database.setCurrentUserOnlineState(true)
-    }
-
-    private fun initView() {
+    override fun onBindViews() {
+        requestFullScreen()
         setContentView(R.layout.activity_home)
-
-        window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN)
 
         prevMenuItem = bottomNavigationView.menu.getItem(0)
 
         viewPager.apply {
-            adapter = this@HomeActivity.adapter
-            viewPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
+            adapter = this@HomeActivity.pagerAdapter
+            setCurrentItem(1, false)
+            registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
                 override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
+                    if (position == 0) {
+                        if (cameraFragment?.isCameraBinding == false) {
+                            showOrHideStatusBar(position)
 
+                            cameraFragment!!.bindUseCases()
+                        }
+                    } else if (position == 1) {
+                        if (cameraFragment?.isCameraBinding == true) {
+                            showOrHideStatusBar(position)
+
+                            cameraFragment!!.unbindAllUseCases()
+                        }
+                    }
                 }
 
                 override fun onPageSelected(position: Int) {
-                    prevMenuItem.isChecked = false
-                    prevMenuItem = bottomNavigationView.menu.getItem(position).apply { isChecked = true }
-                }
+                    if (position > 0) {
+                        prevMenuItem.isChecked = false
+                        prevMenuItem = bottomNavigationView.menu.getItem(position - 1).apply { isChecked = true }
 
-                override fun onPageScrollStateChanged(state: Int) {
-
+                        showOrHideStatusBar(position)
+                    }
                 }
             })
             offscreenPageLimit = 5
         }
 
         bottomNavigationView.setOnNavigationItemSelectedListener { item ->
-            when (item.itemId) {
-                R.id.navigation_chat -> viewPager.currentItem = 1
-//                R.id.navigation_contacts -> viewPager.currentItem = 1
-//                R.id.navigation_groups -> viewPager.currentItem = 2
-                R.id.navigation_diary -> viewPager.currentItem = 0
-                R.id.navigation_more -> viewPager.currentItem = 2
-                R.id.navigation_test -> viewPager.currentItem = 3
+            val position: Int = when (item.itemId) {
+                R.id.navigation_diary -> 1
+                R.id.navigation_chat -> 2
+                R.id.navigation_watch -> 3
+                R.id.navigation_more -> 4
+                else -> 5
             }
+            viewPager.setCurrentItem(position, false)
             false
         }
 
-//        searchImgView.setOnClickListener(this)
-//        createGroupImgView.setOnClickListener(this)
-//        moreImgView.setOnClickListener(this)
+        bottomNavigationAnimator = ObjectAnimator().apply {
+            target = bottomNavigationView
+            setPropertyName("translationY")
+            setFloatValues(0f, resources.getDimension(R.dimen.sizeBottomNavigationHeight))
+            duration = 250
+        }
     }
 
-//    private fun displayPopupMenu(view: View) {
-//        //Creating the instance of PopupMenu
-//        val popupMenu = PopupMenu(this, view)
-//
-//        popupMenu.menuInflater.inflate(R.menu.menu_home_activity, popupMenu.menu)
-//        popupMenu.setOnMenuItemClickListener {
-//            when (it.itemId) {
-//
-//            }
-//            true
-//        }
-//
-//        popupMenu.show() //showing popup menu
-//    }
+    override fun onViewsBound() {
+        database.setCurrentUserOnlineState(true)
+    }
+
+    fun showOrHideStatusBar(position: Int) {
+        if (position == 0 || position == 3 && sharedPrefsManager.isWatchTabFullScreen()) {
+            hideStatusBar()
+            hideBottomNavigation()
+        } else {
+            showBottomNavigation()
+            showStatusBar()
+        }
+    }
+
+    private var isBottomNavigationShown = true
+
+    fun hideBottomNavigation() {
+        if (isBottomNavigationShown) {
+            isBottomNavigationShown = false
+            bottomNavigationAnimator.start()
+        }
+    }
+
+    fun showBottomNavigation() {
+        if (!isBottomNavigationShown) {
+            isBottomNavigationShown = true
+            bottomNavigationAnimator.reverse()
+        }
+    }
+
+    private fun navigateHome() {
+        viewPager.currentItem = 1
+    }
+
+    fun openCamera() {
+        viewPager.currentItem = 0
+    }
+
+    override fun onFragmentResult(fragmentType: Int, result: Any?) {
+        when (fragmentType) {
+            FRAGMENT_EDIT_MEDIA -> {
+                viewModel.createStory(result as Media) { isSuccess ->
+                    processingDialog.dismiss()
+
+                    Toast.makeText(this, getString(
+                            if (isSuccess) {
+                                removeEditMediaFragment()
+                                navigateHome()
+
+                                R.string.description_story_created
+                            } else {
+                                R.string.label_error_occurred
+                            }
+                    ), Toast.LENGTH_SHORT).show()
+
+                    resourceManager.deleteFileOrFolder(result.uri)
+                }
+            }
+            FRAGMENT_CAMERA -> navigateHome()
+        }
+    }
+
+    private var doubleBackToExitPressedOnce = false
+    override fun onBackPressedCustomized(): Boolean {
+        if (!super.onBackPressedCustomized()) {
+            when {
+                viewPager.currentItem == 0 -> {
+                    navigateHome()
+                }
+                doubleBackToExitPressedOnce -> {
+                    return false
+                }
+                else -> {
+                    this.doubleBackToExitPressedOnce = true
+                    Toast.makeText(this, getString(R.string.description_back_again_to_exit), Toast.LENGTH_SHORT).show()
+
+                    Handler().postDelayed({ doubleBackToExitPressedOnce = false }, 2000)
+                }
+            }
+        }
+        return true
+    }
 }

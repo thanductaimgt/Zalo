@@ -2,7 +2,12 @@
     <style name="AppTheme.Light.NoActionBar" parent="AppTheme.Light">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
-<!--        <item name="actionOverflowButtonStyle">@style/OverFlow</item>-->
+        <!--        <item name="android:windowTranslucentStatus">true</item>-->
+<!--        <item name="android:windowTranslucentNavigation">true</item>-->
+        <!--        <item name="actionOverflowButtonStyle">@style/OverFlow</item>-->
+    </style>
+
+    <style name="AppTheme.Light.NoActionBar.LightStatusBar">
     </style>
 
     <style name="MyActionBarTheme" parent="AppTheme.Light.NoActionBar">

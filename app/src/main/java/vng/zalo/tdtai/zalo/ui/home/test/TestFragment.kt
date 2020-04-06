@@ -7,30 +7,20 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import dagger.android.support.DaggerFragment
 import kotlinx.android.synthetic.main.fragment_test.*
 import vng.zalo.tdtai.zalo.R
-import vng.zalo.tdtai.zalo.managers.SessionManager
-import vng.zalo.tdtai.zalo.managers.SharedPrefsManager
-import vng.zalo.tdtai.zalo.repo.Database
-import vng.zalo.tdtai.zalo.repo.Storage
-import vng.zalo.tdtai.zalo.services.NotificationService
+import vng.zalo.tdtai.zalo.base.BaseFragment
 import vng.zalo.tdtai.zalo.ui.login.LoginActivity
-import javax.inject.Inject
 
-class TestFragment : DaggerFragment(), View.OnClickListener {
-    @Inject lateinit var database: Database
-    @Inject lateinit var storage: Storage
-    @Inject lateinit var sessionManager: SessionManager
-    @Inject lateinit var notificationService: NotificationService
-    @Inject lateinit var sharedPrefsManager: SharedPrefsManager
-
+class TestFragment : BaseFragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_test, container, false)
+        return inflater.inflate(R.layout.fragment_test, container, false).apply {
+            makeRoomForStatusBar(requireActivity(), this)
+        }
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onBindViews() {
         logoutButton.setOnClickListener(this)
         addStickerSet.setOnClickListener(this)
         addFriendButton.setOnClickListener(this)
@@ -38,16 +28,16 @@ class TestFragment : DaggerFragment(), View.OnClickListener {
         stopNotiServiceButton.setOnClickListener(this)
     }
 
-    override fun onClick(v: View) {
-        when (v.id) {
+    override fun onClick(view: View) {
+        when (view.id) {
             R.id.logoutButton -> {
-                logOut()
-
                 startActivity(Intent(context, LoginActivity::class.java).apply {
                     addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
                 })
 
                 (requireContext() as Activity).finish()
+
+                logOut()
             }
             R.id.addStickerSet -> {
                 val name = stickerSetNameEditText.text.toString()
@@ -69,7 +59,7 @@ class TestFragment : DaggerFragment(), View.OnClickListener {
                     phone.length < 10 -> {
                         Toast.makeText(context, "must be a 10-digit phone number", Toast.LENGTH_SHORT).show()
                     }
-                    phone == sessionManager.curUser!!.phone -> {
+                    phone == sessionManager.curUser!!.id -> {
                         Toast.makeText(context, "cannot add yourself", Toast.LENGTH_SHORT).show()
                     }
                     else -> {

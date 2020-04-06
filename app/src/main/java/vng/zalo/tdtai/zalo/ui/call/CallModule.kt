@@ -7,7 +7,7 @@ import dagger.Module
 import dagger.Provides
 import dagger.multibindings.IntoMap
 import vng.zalo.tdtai.zalo.di.ViewModelKey
-import vng.zalo.tdtai.zalo.managers.CallService
+import vng.zalo.tdtai.zalo.manager.CallService
 
 @Module(includes = [CallModule.ProvideModule::class])
 interface CallModule {

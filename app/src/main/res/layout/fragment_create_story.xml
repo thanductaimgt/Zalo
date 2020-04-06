@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/rootLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/black"
+    android:clipChildren="false">
+
+    <com.google.android.exoplayer2.ui.PlayerView
+        app:surface_type="texture_view"
+        app:use_controller="false"
+        android:id="@+id/playerView"
+        tools:foreground="@android:color/black"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="fitCenter"
+        tools:src="@drawable/zalo" />
+
+    <ImageView
+        android:id="@+id/closeImgView"
+        android:layout_width="56dp"
+        android:layout_height="0dp"
+        android:elevation="1dp"
+        android:padding="19dp"
+        android:src="@drawable/cancel"
+        app:layout_constraintDimensionRatio="1:1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        tools:visibility="visible"
+        android:visibility="gone"
+        app:tint="@android:color/white"
+        android:id="@+id/muteImgView"
+        android:layout_width="56dp"
+        android:layout_height="0dp"
+        android:elevation="1dp"
+        android:padding="17dp"
+        android:src="@drawable/external_speaker"
+        app:layout_constraintDimensionRatio="1:1"
+        app:layout_constraintEnd_toEndOf="@id/closeImgView"
+        app:layout_constraintTop_toBottomOf="@id/closeImgView" />
+
+    <ImageView
+        android:id="@+id/downloadImgView"
+        android:layout_width="56dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginBottom="8dp"
+        android:padding="15dp"
+        android:src="@drawable/download"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintDimensionRatio="1:1"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <ImageView
+        android:id="@+id/emojiImgView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:padding="8dp"
+        android:src="@drawable/ic_emoji"
+        app:layout_constraintBottom_toBottomOf="@id/downloadImgView"
+        app:layout_constraintDimensionRatio="W,1:1"
+        app:layout_constraintStart_toEndOf="@id/downloadImgView"
+        app:layout_constraintTop_toTopOf="@id/downloadImgView" />
+
+    <ImageView
+        android:id="@+id/addTextImgView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:padding="8dp"
+        android:src="@drawable/ic_text"
+        app:layout_constraintBottom_toBottomOf="@id/downloadImgView"
+        app:layout_constraintDimensionRatio="W,1:1"
+        app:layout_constraintStart_toEndOf="@id/emojiImgView"
+        app:layout_constraintTop_toTopOf="@id/downloadImgView" />
+
+    <ImageView
+        android:id="@+id/musicImgView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:padding="8dp"
+        android:src="@drawable/ic_music"
+        app:layout_constraintBottom_toBottomOf="@id/downloadImgView"
+        app:layout_constraintDimensionRatio="W,1:1"
+        app:layout_constraintStart_toEndOf="@id/addTextImgView"
+        app:layout_constraintTop_toTopOf="@id/downloadImgView" />
+
+    <ImageView
+        android:id="@+id/sendImgView"
+        android:layout_width="52dp"
+        android:layout_height="0dp"
+        android:layout_marginEnd="8dp"
+        android:src="@drawable/send_telegram"
+        android:layout_margin="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintDimensionRatio="1:1"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        app:civ_border_width="1dp"
+        app:civ_border_color="@android:color/white"
+        app:layout_constraintStart_toStartOf="@id/sendImgView"
+        android:layout_marginBottom="2dp"
+        android:id="@+id/avatarImgView"
+        android:layout_width="40dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@id/nameTextView"
+        app:layout_constraintDimensionRatio="1:1"
+        app:layout_constraintEnd_toEndOf="@id/sendImgView"
+        tools:src="@drawable/official_account" />
+
+    <TextView
+        android:textStyle="bold"
+        android:textSize="@dimen/sizeTextSmall"
+        android:id="@+id/nameTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="24dp"
+        android:text="@string/description_your_story"
+        android:textColor="@android:color/white"
+        app:layout_constraintBottom_toTopOf="@id/sendImgView"
+        app:layout_constraintEnd_toEndOf="@id/sendImgView" />
+</androidx.constraintlayout.widget.ConstraintLayout>

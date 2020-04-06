@@ -5,37 +5,24 @@ import android.content.Intent
 import android.os.Handler
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import com.google.firebase.firestore.ListenerRegistration
 import io.reactivex.Observer
-import io.reactivex.Single
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
-import vng.zalo.tdtai.zalo.managers.MessageManager
-import vng.zalo.tdtai.zalo.managers.SessionManager
-import vng.zalo.tdtai.zalo.model.RoomMember
-import vng.zalo.tdtai.zalo.model.message.Message
-import vng.zalo.tdtai.zalo.model.message.SeenMessage
-import vng.zalo.tdtai.zalo.model.message.TypingMessage
-import vng.zalo.tdtai.zalo.model.room.Room
-import vng.zalo.tdtai.zalo.model.room.RoomGroup
-import vng.zalo.tdtai.zalo.model.room.RoomItem
-import vng.zalo.tdtai.zalo.model.room.RoomPeer
-import vng.zalo.tdtai.zalo.repo.Database
-import vng.zalo.tdtai.zalo.utils.Constants
-import vng.zalo.tdtai.zalo.utils.TAG
-import vng.zalo.tdtai.zalo.utils.Utils
+import vng.zalo.tdtai.zalo.base.BaseViewModel
+import vng.zalo.tdtai.zalo.data_model.RoomMember
+import vng.zalo.tdtai.zalo.data_model.message.Message
+import vng.zalo.tdtai.zalo.data_model.message.SeenMessage
+import vng.zalo.tdtai.zalo.data_model.message.TypingMessage
+import vng.zalo.tdtai.zalo.data_model.room.Room
+import vng.zalo.tdtai.zalo.data_model.room.RoomGroup
+import vng.zalo.tdtai.zalo.data_model.room.RoomItem
+import vng.zalo.tdtai.zalo.data_model.room.RoomPeer
+import vng.zalo.tdtai.zalo.util.Constants
+import vng.zalo.tdtai.zalo.util.TAG
 import javax.inject.Inject
 
 
-class ChatViewModel @Inject constructor(
-        intent: Intent,
-        private val database: Database,
-        private val sessionManager: SessionManager,
-        private val messageManager: MessageManager,
-        private val utils: Utils
-) : ViewModel() {
-    private var listenerRegistrations = ArrayList<ListenerRegistration>()
+class ChatViewModel @Inject constructor(intent: Intent) : BaseViewModel() {
+//    private var listenerRegistrations = ArrayList<ListenerRegistration>()
     private var messagesListenerRegistration: ListenerRegistration? = null
 
     val livePeerLastOnlineTime = MutableLiveData(Constants.TIMESTAMP_EPOCH)
@@ -63,7 +50,7 @@ class ChatViewModel @Inject constructor(
                     avatarUrl = intent.getStringExtra(Constants.ROOM_AVATAR),
                     id = intent.getStringExtra(Constants.ROOM_ID),
                     name = intent.getStringExtra(Constants.ROOM_NAME),
-                    phone = phone
+                    peerId = phone
             )
         } else {
             RoomGroup(
@@ -92,12 +79,12 @@ class ChatViewModel @Inject constructor(
         //observe to set unseenMsgNum = 0 when new message comes and user is in RoomActivity
         listenerRegistrations.add(
                 database.addUserRoomChangeListener(
-                        userPhone = sessionManager.curUser!!.phone!!,
+                        userId = sessionManager.curUser!!.id!!,
                         roomId = room.id!!
                 ) { documentSnapshot ->
                     if (documentSnapshot.getLong(RoomItem.FIELD_UNSEEN_MSG_NUM)!! > 0) {
                         database.updateUserRoom(
-                                userPhone = sessionManager.curUser!!.phone!!,
+                                userId = sessionManager.curUser!!.id!!,
                                 roomId = room.id!!,
                                 fieldsAndValues = mapOf(
                                         RoomItem.FIELD_UNSEEN_MSG_NUM to 0
@@ -120,15 +107,15 @@ class ChatViewModel @Inject constructor(
 
             val diffTypingMembers = utils.getTwoListDiffElement(liveTypingMembers.value!!, newTypingMembers)
 
-            if (diffTypingMembers.size == 1 && diffTypingMembers[0].phone == sessionManager.curUser!!.phone) {
+            if (diffTypingMembers.size == 1 && diffTypingMembers[0].userId == sessionManager.curUser!!.id) {
                 liveTypingMembers.value!!.apply { clear(); addAll(newTypingMembers) }
             } else {
                 liveTypingMembers.value = ArrayList(newTypingMembers)
             }
 
             //seen members
-            val newSeenPhones = ((documentSnapshot.get(Room.FIELD_SEEN_MEMBERS_PHONE)
-                    ?: ArrayList<String>()) as List<String>).toMutableList().filter { it != sessionManager.curUser!!.phone }.asReversed()
+            val newSeenPhones = ((documentSnapshot.get(Room.FIELD_SEEN_MEMBERS_ID)
+                    ?: ArrayList<String>()) as List<String>).toMutableList().filter { it != sessionManager.curUser!!.id }.asReversed()
 
             liveSeenPhones.value = newSeenPhones
 
@@ -139,7 +126,7 @@ class ChatViewModel @Inject constructor(
 
         //observe room online state
         if (room is RoomPeer) {
-            listenerRegistrations.add(database.addUserLastOnlineTimeListener(room.phone!!) { lastOnlineTime ->
+            listenerRegistrations.add(database.addUserLastOnlineTimeListener(room.peerId!!) { lastOnlineTime ->
                 if (lastOnlineTime != Constants.TIMESTAMP_EPOCH) {
                     livePeerLastOnlineTime.value = lastOnlineTime
                 }
@@ -190,12 +177,12 @@ class ChatViewModel @Inject constructor(
 
     @SuppressLint("CheckResult")
     private fun submitMessages(messages: List<Message>) {
-        Single.fromCallable<HashMap<String, Message>> {
+        backgroundWorkManager.single({
             val messageMap = HashMap<String, Message>()
 
             //todo
             messages.forEach {
-                val senderAvatarUrl = room.memberMap?.get(it.senderPhone)?.avatarUrl
+                val senderAvatarUrl = room.memberMap?.get(it.senderId)?.avatarUrl
                 val newMessage = if (it.senderAvatarUrl != senderAvatarUrl) {
                     it.clone().apply { this.senderAvatarUrl = senderAvatarUrl }
                 } else {
@@ -212,14 +199,41 @@ class ChatViewModel @Inject constructor(
             }
 
             messageMap
-        }.subscribeOn(Schedulers.computation())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({ messageMap ->
-                    lastMessageMap = messageMap
-                    updateLiveMessageMap()
-                }, {
-                    it.printStackTrace()
-                })
+        }, compositeDisposable,
+                {messageMap->
+            lastMessageMap = messageMap
+            updateLiveMessageMap()
+        })
+//        Single.fromCallable {
+//            val messageMap = HashMap<String, Message>()
+//
+//            //todo
+//            messages.forEach {
+//                val senderAvatarUrl = room.memberMap?.get(it.senderId)?.avatarUrl
+//                val newMessage = if (it.senderAvatarUrl != senderAvatarUrl) {
+//                    it.clone().apply { this.senderAvatarUrl = senderAvatarUrl }
+//                } else {
+//                    it
+//                }
+//
+//                messageMap[it.id!!] = newMessage
+//            }
+//
+//            liveMessageMap.value!!.values.filter {
+//                !messageMap.containsKey(it.id!!) && !it.isSent
+//            }.forEach {
+//                messageMap[it.id!!] = it
+//            }
+//
+//            messageMap
+//        }.subscribeOn(Schedulers.computation())
+//                .observeOn(AndroidSchedulers.mainThread())
+//                .subscribe({ messageMap ->
+//                    lastMessageMap = messageMap
+//                    updateLiveMessageMap()
+//                }, {
+//                    it.printStackTrace()
+//                })
     }
 
     private fun updateLiveMessageMap() {
@@ -259,13 +273,13 @@ class ChatViewModel @Inject constructor(
     }
 
     fun addCurUserToCurRoomTypingMembers() {
-        if (liveTypingMembers.value!!.all { it.phone != sessionManager.curUser!!.phone }) {
+        if (liveTypingMembers.value!!.all { it.userId != sessionManager.curUser!!.id }) {
             database.addCurUserToRoomTypings(room.id!!)
         }
     }
 
     fun removeCurUserFromCurRoomTypingMembers() {
-        if (liveTypingMembers.value!!.any { it.phone == sessionManager.curUser!!.phone }) {
+        if (liveTypingMembers.value!!.any { it.userId == sessionManager.curUser!!.id }) {
             database.removeCurUserFromRoomTypings(room.id!!)
         }
     }
@@ -276,11 +290,11 @@ class ChatViewModel @Inject constructor(
 
     fun getCurTypingMessages(): List<Message> {
         val typingMessages = ArrayList<Message>()
-        liveTypingMembers.value!!.map { it.phone }.filter { it != sessionManager.curUser!!.phone }.reversed().forEach {
+        liveTypingMembers.value!!.map { it.userId }.filter { it != sessionManager.curUser!!.id }.reversed().forEach {
             typingMessages.add(TypingMessage(
                     id = it,
                     createdTime = System.currentTimeMillis(),
-                    senderPhone = it,
+                    senderId = it,
                     senderAvatarUrl = room.memberMap?.get(it)?.avatarUrl
             ))
         }
@@ -295,13 +309,13 @@ class ChatViewModel @Inject constructor(
         )
     }
 
-    override fun onCleared() {
-        removeAllListeners()
-    }
+//    override fun onCleared() {
+//        removeAllListeners()
+//    }
 
-    fun removeAllListeners() {
-        listenerRegistrations.forEach { it.remove() }
-    }
+//    fun removeAllListeners() {
+//        listenerRegistrations.forEach { it.remove() }
+//    }
 
     fun getNameFromPhone(phone: String): String {
         return room.memberMap?.get(phone)?.name ?: phone

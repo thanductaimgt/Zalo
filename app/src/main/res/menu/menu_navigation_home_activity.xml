@@ -12,13 +12,18 @@
         android:title="@string/label_chat_tab" />
 
     <item
+        android:id="@+id/navigation_watch"
+        android:icon="@drawable/watch"
+        android:title="@string/label_watch_tab" />
+
+    <item
         android:id="@+id/navigation_more"
-        android:icon="@drawable/more"
-        android:title="@string/label_more_tab" />
+        android:icon="@drawable/profile"
+        android:title="@string/label_profile" />
 
     <item
         android:id="@+id/navigation_test"
-        android:icon="@drawable/zalo_desktop"
+        android:icon="@drawable/test"
         android:title="test" />
 
 </menu>

@@ -24,4 +24,11 @@
         <attr name="spanCount" />
         <attr name="aspectRatio" format="string" />
     </declare-styleable>
+
+    <declare-styleable name="MediaGridView">
+        <attr name="mgv_type">
+            <enum name="uniform" value="0"/>
+            <enum name="facebook" value="1"/>
+        </attr>
+    </declare-styleable>
 </resources>

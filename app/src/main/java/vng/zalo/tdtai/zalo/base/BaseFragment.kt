@@ -4,7 +4,10 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
+import android.widget.FrameLayout
 import androidx.lifecycle.ViewModelProvider
 import dagger.android.support.DaggerFragment
 import vng.zalo.tdtai.zalo.R
@@ -63,20 +66,55 @@ abstract class BaseFragment : DaggerFragment(), BaseOnEventListener, BaseView {
     lateinit var alertDialog: AlertDialog
 
     @Inject
+    lateinit var zaloFragmentManager: ZaloFragmentManager
+
+    @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
 
+    @Inject lateinit var playbackManager: PlaybackManager
+
     var isOnTop: Boolean = false
+
+    lateinit var parent: BaseView
+    lateinit var parentZaloFragmentManager: ZaloFragmentManager
+
+    // call only when added using ZaloFragmentManager
+    fun init(parent: BaseView) {
+        isOnTop = true
+        this.parent = parent
+        initParentFM()
+    }
+
+    private fun initParentFM() {
+        this.parentZaloFragmentManager = if (parent is BaseActivity) {
+            (parent as BaseActivity).zaloFragmentManager
+        } else {
+            (parent as BaseFragment).zaloFragmentManager
+        }
+    }
+
+    protected var isStatusBarHiddenWhenInit = false
+    final override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        isStatusBarHiddenWhenInit = activity().isStatusBarHidden
+        val rootView = createView(inflater, container)
+        return FrameLayout(requireContext()).apply {
+            layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
+            id = View.generateViewId()
+            addView(rootView)
+        }
+    }
+
+    abstract fun createView(inflater: LayoutInflater, container: ViewGroup?): View
 
     final override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         if (isOnTop) {
             bringToFront()
+        } else {
+            parent = (parentFragment as BaseFragment?) ?: activity()
+            initParentFM()
         }
+        zaloFragmentManager.init(view, childFragmentManager, this)
         initAll()
-    }
-
-    // return true if back event has been handled
-    open fun onBackPressed(): Boolean {
-        return false
     }
 
     private fun bringToFront() {
@@ -98,7 +136,25 @@ abstract class BaseFragment : DaggerFragment(), BaseOnEventListener, BaseView {
         return TAG
     }
 
-    fun activity():BaseActivity{
+    fun activity(): BaseActivity {
         return requireActivity() as BaseActivity
+    }
+
+    // true if back handled, do not override this
+    fun onBackPressed(): Boolean {
+        return zaloFragmentManager.popTopFragment() || onBackPressedCustomized()
+    }
+
+    open fun onBackPressedCustomized(): Boolean {
+        return false
+    }
+
+    override fun onDestroy() {
+        if (isStatusBarHiddenWhenInit) {
+            activity().hideStatusBar()
+        } else {
+            activity().showStatusBar()
+        }
+        super.onDestroy()
     }
 }

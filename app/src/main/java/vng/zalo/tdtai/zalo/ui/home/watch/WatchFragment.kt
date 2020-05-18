@@ -1,6 +1,5 @@
 package vng.zalo.tdtai.zalo.ui.home.watch
 
-import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -11,7 +10,6 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
-import com.google.android.exoplayer2.SimpleExoPlayer
 import kotlinx.android.synthetic.main.activity_home.*
 import kotlinx.android.synthetic.main.fragment_watch.*
 import kotlinx.android.synthetic.main.fragment_watch.viewPager
@@ -31,17 +29,13 @@ class WatchFragment : BaseFragment() {
     lateinit var watchAdapter: WatchAdapter
 
     @Inject
-    lateinit var exoPlayer: SimpleExoPlayer
-
-    @Inject
     lateinit var homeActivity: HomeActivity
 
     var isPaused = false
 
     private var lastItem: Int? = null
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
+    override fun createView(inflater: LayoutInflater, container: ViewGroup?): View {
         return inflater.inflate(R.layout.fragment_watch, container, false)
     }
 
@@ -100,20 +94,20 @@ class WatchFragment : BaseFragment() {
                         }
 
                         Log.d(TAG, "${viewPager.currentItem}, ${watchAdapter.itemCount}")
-                        if (viewPager.currentItem == watchAdapter.itemCount - 1) {
+                        if (viewModel.shouldLoadMoreWatches() && viewPager.currentItem > watchAdapter.itemCount - 3) {
                             viewModel.loadMoreWatches()
                         }
 
                         lastItem = viewPager.currentItem
                     }
 
-                    enableDisableHomeViewPager(state == ViewPager2.SCROLL_STATE_IDLE)
+                    homeActivity.setViewPagerScrollable(state == ViewPager2.SCROLL_STATE_IDLE)
                 }
             })
         }
 
         swipeRefresh.setOnRefreshListener {
-            viewModel.loadWatches()
+            viewModel.refreshRecentWatches()
         }
 
         fullscreenImgView.setImageResource(if (sharedPrefsManager.isWatchTabFullScreen()) {
@@ -135,22 +129,15 @@ class WatchFragment : BaseFragment() {
                 }
             }
         })
-
-        application.liveShouldReleaseVideoFocus.observe(viewLifecycleOwner, Observer {
-            Log.d(TAG, "liveShouldReleaseVideoFocus: $it")
-            if (it) {
-                releaseCurrentFocus()
-            }
-        })
-    }
-
-    fun enableDisableHomeViewPager(enable: Boolean) {
-        homeActivity.viewPager.isUserInputEnabled = enable
     }
 
     fun getCurrentItemView(): View? {
         val recyclerView = viewPager[0] as RecyclerView
         return recyclerView.findViewHolderForAdapterPosition(viewPager.currentItem)?.itemView
+    }
+
+    fun getCurrentItem(): Int {
+        return viewPager.currentItem
     }
 
     override fun onClick(view: View) {
@@ -175,7 +162,7 @@ class WatchFragment : BaseFragment() {
             R.id.musicNameTextView -> showMusic()
             R.id.shareImgView -> share()
             R.id.commentImgView -> comment()
-            R.id.emojiImgView -> emoji()
+            R.id.reactImgView -> emoji()
             R.id.watchOwnerAvatarImgView -> avatar()
             R.id.nameTextView -> avatar()
         }
@@ -197,5 +184,11 @@ class WatchFragment : BaseFragment() {
 
     }
 
-    private fun avatar() {}
+    private fun avatar() {
+        isPaused = true
+        getCurrentItemView()?.let { watchAdapter.onWatchPause(it) }
+        playbackManager.pause()
+        val watch = watchAdapter.currentList[getCurrentItem()]
+        activity().zaloFragmentManager.addProfileFragment(watch.ownerId!!)
+    }
 }

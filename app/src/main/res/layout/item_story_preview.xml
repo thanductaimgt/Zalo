@@ -7,37 +7,17 @@
     android:layout_height="wrap_content"
     android:padding="8dp">
 
-    <FrameLayout
-        android:id="@+id/circleLayout"
+    <de.hdodenhof.circleimageview.CircleImageView
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:id="@+id/borderView"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toBottomOf="@id/watchOwnerAvatarImgView"
-        app:layout_constraintEnd_toEndOf="@id/watchOwnerAvatarImgView"
-        app:layout_constraintStart_toStartOf="@id/watchOwnerAvatarImgView"
-        app:layout_constraintTop_toTopOf="@id/watchOwnerAvatarImgView">
-
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/borderView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:src="@android:color/white"
-            app:civ_border_color="@color/storyBorderColor"
-            app:civ_border_width="2dp" />
-
-        <ProgressBar
-            android:id="@+id/progressBar"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginStart="-14dp"
-            android:layout_marginTop="-14dp"
-            android:layout_marginEnd="-14dp"
-            android:layout_marginBottom="-14dp"
-            android:indeterminate="true"
-            android:indeterminateDrawable="@drawable/progress_bar"
-            android:progressDrawable="@drawable/progress_bar"
-            android:visibility="gone"
-            tools:visibility="visible" />
-    </FrameLayout>
+        app:layout_constraintDimensionRatio="1:1"
+        android:src="@android:color/white"
+        app:civ_border_color="@color/storyBorderColor"
+        app:civ_border_width="2dp" />
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/watchOwnerAvatarImgView"
@@ -45,29 +25,28 @@
         android:layout_height="0dp"
         android:padding="4dp"
         app:layout_constraintDimensionRatio="1:1"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="@id/borderView"
+        app:layout_constraintStart_toStartOf="@id/borderView"
+        app:layout_constraintTop_toTopOf="@id/borderView"
+        app:layout_constraintBottom_toBottomOf="@id/borderView"
         tools:src="@drawable/official_account" />
 
     <com.airbnb.lottie.LottieAnimationView
-        app:lottie_autoPlay="true"
-        android:visibility="gone"
-        app:lottie_loop="true"
-        app:lottie_enableMergePathsForKitKatAndAbove="true"
-        app:lottie_renderMode="software"
-        app:lottie_rawRes="@raw/loading"
-        app:layout_constraintTop_toTopOf="@id/watchOwnerAvatarImgView"
-        app:layout_constraintBottom_toBottomOf="@id/watchOwnerAvatarImgView"
-        app:layout_constraintStart_toStartOf="@id/watchOwnerAvatarImgView"
-        app:layout_constraintEnd_toEndOf="@id/watchOwnerAvatarImgView"
         android:id="@+id/loadingAnimView"
         android:layout_width="0dp"
-        android:layout_height="0dp"/>
+        android:layout_height="0dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@id/watchOwnerAvatarImgView"
+        app:layout_constraintEnd_toEndOf="@id/watchOwnerAvatarImgView"
+        app:layout_constraintStart_toStartOf="@id/watchOwnerAvatarImgView"
+        app:layout_constraintTop_toTopOf="@id/watchOwnerAvatarImgView"
+        app:lottie_autoPlay="true"
+        app:lottie_enableMergePathsForKitKatAndAbove="true"
+        app:lottie_loop="true"
+        app:lottie_rawRes="@raw/loading"
+        app:lottie_renderMode="software" />
 
     <com.makeramen.roundedimageview.RoundedImageView
-        tools:visibility="visible"
-        android:visibility="gone"
         android:id="@+id/addedForegroundView"
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -75,12 +54,14 @@
         android:background="@color/blackTransparentStrong"
         android:padding="12dp"
         android:src="@drawable/sent"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="@id/watchOwnerAvatarImgView"
         app:layout_constraintEnd_toEndOf="@id/watchOwnerAvatarImgView"
         app:layout_constraintStart_toStartOf="@id/watchOwnerAvatarImgView"
         app:layout_constraintTop_toTopOf="@id/watchOwnerAvatarImgView"
         app:riv_mutate_background="true"
-        app:riv_oval="true" />
+        app:riv_oval="true"
+        tools:visibility="visible" />
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/addIcon"

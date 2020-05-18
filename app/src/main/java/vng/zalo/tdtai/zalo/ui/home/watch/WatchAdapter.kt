@@ -9,19 +9,14 @@ import android.view.ViewGroup
 import android.view.animation.Animation
 import android.view.animation.LinearInterpolator
 import android.widget.ImageView
-import com.google.android.exoplayer2.ExoPlayer
-import com.google.android.exoplayer2.Player
-import com.google.android.exoplayer2.SimpleExoPlayer
-import com.google.android.exoplayer2.source.LoopingMediaSource
-import com.google.android.exoplayer2.source.MediaSourceFactory
 import com.google.android.exoplayer2.ui.AspectRatioFrameLayout
 import com.squareup.picasso.Picasso
-import kotlinx.android.synthetic.main.fragment_watch.*
 import kotlinx.android.synthetic.main.item_watch.view.*
 import vng.zalo.tdtai.zalo.R
 import vng.zalo.tdtai.zalo.base.BaseListAdapter
 import vng.zalo.tdtai.zalo.base.BindableViewHolder
 import vng.zalo.tdtai.zalo.data_model.post.Watch
+import vng.zalo.tdtai.zalo.manager.PlaybackManager
 import vng.zalo.tdtai.zalo.manager.ResourceManager
 import vng.zalo.tdtai.zalo.manager.SharedPrefsManager
 import vng.zalo.tdtai.zalo.util.TAG
@@ -36,8 +31,7 @@ class WatchAdapter @Inject constructor(
         private val resourceManager: ResourceManager,
         private val sharedPrefsManager: SharedPrefsManager,
         private val utils: Utils,
-        private val mediaSourceFactory: MediaSourceFactory,
-        private val exoPlayer: SimpleExoPlayer,
+        private val playbackManager: PlaybackManager,
         diffCallback: WatchDiffCallback
 ) : BaseListAdapter<Watch, WatchAdapter.WatchViewHolder>(diffCallback) {
     private val objectAnimator = ObjectAnimator().apply {
@@ -47,18 +41,11 @@ class WatchAdapter @Inject constructor(
         interpolator = LinearInterpolator()
     }
 
-    private val playerEventListener = PlayerEventListener()
-
-    init {
-        exoPlayer.addListener(playerEventListener)
-    }
-
-    var isPreparing = false
     private var isAnimatorStarted = false
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): WatchViewHolder {
         return WatchViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_watch, parent, false)).apply {
-            bindOneTime()
+            bindListeners()
         }
     }
 
@@ -86,7 +73,7 @@ class WatchAdapter @Inject constructor(
     fun onWatchResume(itemView: View) {
         Log.d(TAG, "resume")
         itemView.apply {
-            exoPlayer.playWhenReady = true
+            playbackManager.play()
             playPauseImgView.visibility = View.GONE
             previewImgView.visibility = View.GONE
             musicNameTextView.isSelected = true
@@ -102,7 +89,7 @@ class WatchAdapter @Inject constructor(
     fun onWatchPause(itemView: View, displayPauseIcon: Boolean = true) {
         Log.d(TAG, "pause")
         itemView.apply {
-            exoPlayer.playWhenReady = false
+            playbackManager.pause()
             if (displayPauseIcon) {
                 playPauseImgView.visibility = View.VISIBLE
             }
@@ -111,21 +98,23 @@ class WatchAdapter @Inject constructor(
         }
     }
 
+    private val onReady = {
+        watchFragment.getCurrentItemView()?.let {
+            onWatchResume(it)
+        }
+    }
+    private val onLostFocus = {
+        watchFragment.getCurrentItemView()?.let{onWatchNotFocused(it)}
+    }
+
     fun onWatchFocused(itemView: View) {
         Log.d(TAG, "focus")
         itemView.apply {
             objectAnimator.target = musicOwnerAvatarImgView
             objectAnimator.start()
 
-            isPreparing = true
-
-            val mediaSource = LoopingMediaSource(
-                    mediaSourceFactory.createMediaSource(utils.getUri(
-                            currentList[watchFragment.viewPager.currentItem].videoUrl!!
-                    ))
-            )
-            exoPlayer.prepare(mediaSource)
-            playerView.player = exoPlayer
+            playbackManager.prepare(currentList[watchFragment.getCurrentItem()].videoMedia!!.uri!!, true, onReady, onLostFocus)
+            playerView.player = playbackManager.exoPlayer
         }
 
         watchFragment.isPaused = false
@@ -144,14 +133,14 @@ class WatchAdapter @Inject constructor(
     }
 
     inner class WatchViewHolder(itemView: View) : BindableViewHolder(itemView) {
-        fun bindOneTime() {
+        fun bindListeners() {
             itemView.apply {
                 musicIcon.setOnClickListener(watchFragment)
                 musicOwnerAvatarImgView.setOnClickListener(watchFragment)
                 musicNameTextView.setOnClickListener(watchFragment)
                 shareImgView.setOnClickListener(watchFragment)
                 commentImgView.setOnClickListener(watchFragment)
-                emojiImgView.setOnClickListener(watchFragment)
+                reactImgView.setOnClickListener(watchFragment)
                 watchOwnerAvatarImgView.setOnClickListener(watchFragment)
                 nameTextView.setOnClickListener(watchFragment)
 
@@ -182,9 +171,9 @@ class WatchAdapter @Inject constructor(
                 bindFullscreen()
                 bindVideoThumb(watch)
 
-                shareNumTextView.text = utils.getMetricFormat(watch.shareNumCount)
+                shareCountTextView.text = utils.getMetricFormat(watch.shareCount)
                 reactCountTextView.text = utils.getMetricFormat(watch.reactCount)
-                commentNumTextView.text = utils.getMetricFormat(watch.commentCount)
+                commentCountTextView.text = utils.getMetricFormat(watch.commentCount)
 
                 nameTextView.text = String.format("@ %s", watch.ownerName)
 //                musicNameTextView.text = watch.musicName
@@ -213,25 +202,13 @@ class WatchAdapter @Inject constructor(
 
         private fun bindVideoThumb(watch: Watch) {
             itemView.apply {
-                resourceManager.getVideoThumbUri(watch.videoUrl!!) { uri ->
+                resourceManager.getVideoThumbUri(watch.videoMedia!!.uri!!) { uri ->
                     Picasso.get().smartLoad(uri, resourceManager, previewImgView) {
                         it.fit().centerInside()
                     }
                 }
 
                 previewImgView.visibility = View.VISIBLE
-            }
-        }
-    }
-
-    private inner class PlayerEventListener : Player.EventListener {
-        override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
-            Log.d(TAG, "onPlayerStateChanged")
-            if (isPreparing && playbackState == ExoPlayer.STATE_READY) {
-                watchFragment.getCurrentItemView()?.let {
-                    onWatchResume(it)
-                }
-                isPreparing = false
             }
         }
     }

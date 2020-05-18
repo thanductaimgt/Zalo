@@ -33,8 +33,6 @@ class ZaloApplication : DaggerApplication(), CameraXConfig.Provider {
     @Inject
     lateinit var permissionManager: PermissionManager
 
-    val liveShouldReleaseVideoFocus = MutableLiveData(false)
-
     override fun getCameraXConfig(): CameraXConfig {
         return Camera2Config.defaultConfig()
     }

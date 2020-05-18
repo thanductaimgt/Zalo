@@ -84,6 +84,7 @@
     <string name="label_add_video">Thêm video</string>
     <string name="label_camera">Camera</string>
     <string name="label_discard_post">Bỏ bài viết ?</string>
+    <string name="label_done">Xong</string>
 
     <string-array name="sort_group_options">
         <item>Hoạt động cuối</item>
@@ -154,6 +155,7 @@
     <string name="description_story_marked">Đã thêm vào tin nổi bật</string>
     <string name="description_story_unmarked">Đã xóa khỏi tin nổi bật</string>
     <string name="description_discard_post">Nếu quay lại bây giờ thay đổi của bạn sẽ không được lưu lại</string>
+    <string name="description_post_created">Đã đăng bài viết</string>
 
 
     <string name="hint_phone_number">Số điện thoại</string>

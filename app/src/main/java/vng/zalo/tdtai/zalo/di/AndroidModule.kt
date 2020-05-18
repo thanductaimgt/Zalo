@@ -21,6 +21,7 @@ import vng.zalo.tdtai.zalo.ui.intro.IntroActivity
 import vng.zalo.tdtai.zalo.ui.login.LoginActivity
 import vng.zalo.tdtai.zalo.ui.media.MediaFragment
 import vng.zalo.tdtai.zalo.ui.media.MediaModule
+import vng.zalo.tdtai.zalo.ui.post_detail.PostDetailFragment
 import vng.zalo.tdtai.zalo.ui.profile.ProfileFragment
 import vng.zalo.tdtai.zalo.ui.profile.ProfileModule
 import vng.zalo.tdtai.zalo.ui.share.ShareActivity
@@ -81,4 +82,7 @@ interface AndroidModule {
 
     @ContributesAndroidInjector(modules = [EditMediaModule::class])
     fun createStoryFragment(): EditMediaFragment
+
+    @ContributesAndroidInjector
+    fun postDetailFragment(): PostDetailFragment
 }

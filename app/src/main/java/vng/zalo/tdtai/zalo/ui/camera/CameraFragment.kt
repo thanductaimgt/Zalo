@@ -2,7 +2,6 @@ package vng.zalo.tdtai.zalo.ui.camera
 
 import android.annotation.SuppressLint
 import android.content.Intent
-import android.os.Bundle
 import android.os.Looper
 import android.util.Log
 import android.util.Size
@@ -20,9 +19,10 @@ import com.google.common.util.concurrent.ListenableFuture
 import kotlinx.android.synthetic.main.bottom_sheet_choose_gallery.view.*
 import kotlinx.android.synthetic.main.fragment_camera.*
 import vng.zalo.tdtai.zalo.R
-import vng.zalo.tdtai.zalo.base.BaseActivity
 import vng.zalo.tdtai.zalo.base.BaseFragment
+import vng.zalo.tdtai.zalo.base.BaseView
 import vng.zalo.tdtai.zalo.manager.ExternalIntentManager
+import vng.zalo.tdtai.zalo.ui.edit_media.EditMediaFragment
 import vng.zalo.tdtai.zalo.util.Constants
 import vng.zalo.tdtai.zalo.util.TAG
 import vng.zalo.tdtai.zalo.util.setOnDoubleClickListener
@@ -39,10 +39,12 @@ class CameraFragment : BaseFragment() {
 
     var isCameraBinding = false
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
+    private var type = EditMediaFragment.TYPE_CREATE_STORY
+
+    override fun createView(inflater: LayoutInflater, container: ViewGroup?): View {
         if (isOnTop) {
             activity().hideStatusBar()
+            type = EditMediaFragment.TYPE_PRODUCE_RESULT
         }
         return inflater.inflate(R.layout.fragment_camera, container, false)
     }
@@ -76,7 +78,7 @@ class CameraFragment : BaseFragment() {
     }
 
     private fun initBottomSheet() {
-        bottomSheetDialog = BottomSheetDialog(activity()).apply {
+        bottomSheetDialog = BottomSheetDialog(requireContext()).apply {
             // Fix BottomSheetDialog not showing after getting hidden when the user drags it down
             setOnShowListener { dialogInterface ->
                 val bottomSheetDialog = dialogInterface as BottomSheetDialog
@@ -138,7 +140,7 @@ class CameraFragment : BaseFragment() {
     override fun onClick(view: View) {
         when (view.id) {
             R.id.cancelImgView -> {
-                activity().onFragmentResult(BaseActivity.FRAGMENT_CAMERA, null)
+                parent.onFragmentResult(BaseView.FRAGMENT_CAMERA, null)
             }
             R.id.captureImgView -> {
                 imageCapture.takePicture(HandlerExecutor(Looper.getMainLooper()),
@@ -147,7 +149,7 @@ class CameraFragment : BaseFragment() {
                             override fun onCaptureSuccess(imageProxy: ImageProxy) {
                                 val ratio = rootView.width / rootView.height.toFloat()
                                 val bitmap = utils.rotateImage(imageProxy.toBitmap(), imageProxy.imageInfo.rotationDegrees, isCameraFront, ratio)
-                                activity().addEditMediaFragment(bitmap)
+                                parentZaloFragmentManager.addEditMediaFragment(bitmap, type)
                                 super.onCaptureSuccess(imageProxy)
                             }
 
@@ -183,20 +185,26 @@ class CameraFragment : BaseFragment() {
             when (requestCode) {
                 Constants.CHOOSE_IMAGE_REQUEST -> {
                     val bitmap = resourceManager.getImageBitmap(uri.toString())
-                    activity().addEditMediaFragment(bitmap)
+                    parentZaloFragmentManager.addEditMediaFragment(bitmap, type)
                 }
                 Constants.CHOOSE_VIDEO_REQUEST -> {
-                    activity().addEditMediaFragment(uri.toString())
+                    parentZaloFragmentManager.addEditMediaFragment(uri.toString(), type)
                 }
             }
         }
         bottomSheetDialog.dismiss()
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        if (isOnTop) {
-            activity().showStatusBar()
+    override fun onFragmentResult(fragmentType: Int, result: Any?) {
+        when (fragmentType) {
+            BaseView.FRAGMENT_EDIT_MEDIA -> {
+                when (result) {
+                    EditMediaFragment.RESULT_STORY_CREATED -> {
+                        zaloFragmentManager.removeEditMediaFragment()
+                        parent.onFragmentResult(BaseView.FRAGMENT_CAMERA, null)
+                    }
+                }
+            }
         }
     }
 }

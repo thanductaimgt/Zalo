@@ -5,24 +5,20 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.google.android.exoplayer2.ExoPlayer
-import com.google.android.exoplayer2.Player
-import com.google.android.exoplayer2.SimpleExoPlayer
-import com.google.android.exoplayer2.source.LoopingMediaSource
-import com.google.android.exoplayer2.source.MediaSourceFactory
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.item_story_base.view.*
 import kotlinx.android.synthetic.main.item_story_other.view.*
 import kotlinx.android.synthetic.main.item_story_self.view.*
 import vng.zalo.tdtai.zalo.R
-import vng.zalo.tdtai.zalo.base.BindableViewHolder
 import vng.zalo.tdtai.zalo.base.BaseListAdapter
-import vng.zalo.tdtai.zalo.manager.ResourceManager
-import vng.zalo.tdtai.zalo.manager.SessionManager
+import vng.zalo.tdtai.zalo.base.BindableViewHolder
 import vng.zalo.tdtai.zalo.data_model.story.ImageStory
 import vng.zalo.tdtai.zalo.data_model.story.Story
 import vng.zalo.tdtai.zalo.data_model.story.StoryGroup
 import vng.zalo.tdtai.zalo.data_model.story.VideoStory
+import vng.zalo.tdtai.zalo.manager.PlaybackManager
+import vng.zalo.tdtai.zalo.manager.ResourceManager
+import vng.zalo.tdtai.zalo.manager.SessionManager
 import vng.zalo.tdtai.zalo.util.*
 import vng.zalo.tdtai.zalo.widget.StoriesProgressView
 import javax.inject.Inject
@@ -32,17 +28,9 @@ class StoryGroupAdapter @Inject constructor(
         private val resourceManager: ResourceManager,
         private val utils: Utils,
         private val sessionManager: SessionManager,
-        val exoPlayer: SimpleExoPlayer,
-        private val mediaSourceFactory: MediaSourceFactory,
+        private val playbackManager: PlaybackManager,
         diffCallback: StoryGroupDiffCallback
 ) : BaseListAdapter<StoryGroup, StoryGroupAdapter.StoryGroupViewHolder>(diffCallback) {
-    var isPreparing = false
-    private val playerEventListener = PlayerEventListener()
-
-    init {
-        exoPlayer.addListener(playerEventListener)
-    }
-
     override fun onViewDetachedFromWindow(holder: StoryGroupViewHolder) {
         Log.d(TAG, "detach")
         onStoryGroupNotFocused(holder.itemView)
@@ -151,7 +139,7 @@ class StoryGroupAdapter @Inject constructor(
                 imageView.setImageDrawable(null)
                 musicNameTextView.isSelected = false
                 playerView.player = null
-                exoPlayer.playWhenReady = false
+                playbackManager.pause()
 
                 imageView.visibility = View.VISIBLE
             }
@@ -190,9 +178,11 @@ class StoryGroupAdapter @Inject constructor(
                     if (isHold) {
                         storyFragment.pauseCurrentItem()
                         hideAllViews()
+                        storyFragment.setEnableViewPager(false)
                     } else {
                         storyFragment.resumeCurrentItem()
                         showAllViews()
+                        storyFragment.setEnableViewPager(true)
                     }
                 }
 
@@ -201,7 +191,6 @@ class StoryGroupAdapter @Inject constructor(
 
                 storiesProgressView.setStoriesListener(object : StoriesProgressView.StoriesListener {
                     override fun onNext() {
-                        Log.d(TAG, "onNext")
                         nextStory()
                     }
 
@@ -214,6 +203,9 @@ class StoryGroupAdapter @Inject constructor(
                         storyFragment.nextStoryGroup()
                     }
                 })
+
+                avatarImgView.setOnClickListener(storyFragment)
+                nameTextView.setOnClickListener(storyFragment)
             }
         }
 
@@ -282,7 +274,7 @@ class StoryGroupAdapter @Inject constructor(
 
             itemView.apply {
                 cameraImgView.setOnClickListener(storyFragment)
-                emojiImgView.setOnClickListener(storyFragment)
+                reactImgView.setOnClickListener(storyFragment)
             }
         }
 
@@ -329,7 +321,7 @@ class StoryGroupAdapter @Inject constructor(
     private fun onVideoResume(itemView: View) {
         Log.d(TAG, "onVideoResume")
         itemView.apply {
-            exoPlayer.playWhenReady = true
+            playbackManager.play()
             imageView.visibility = View.INVISIBLE
         }
     }
@@ -351,14 +343,15 @@ class StoryGroupAdapter @Inject constructor(
     private fun onVideoPause(itemView: View) {
         Log.d(TAG, "onVideoPause")
         itemView.apply {
-            exoPlayer.playWhenReady = false
+            playbackManager.pause()
         }
     }
 
     fun onStoryGroupFocused(itemView: View, groupPosition: Int) {
         Log.d(TAG, "onStoryGroupFocused")
 
-        exoPlayer.playWhenReady = false
+        itemView.storiesProgressView.pause()
+        playbackManager.pause()
         when (val curStory = getStory(groupPosition)) {
             is VideoStory -> onVideoFocus(itemView, curStory)
             is ImageStory -> {
@@ -367,18 +360,18 @@ class StoryGroupAdapter @Inject constructor(
         }
     }
 
+    private val onReady = {
+        storyFragment.resumeCurrentItem()
+    }
+    private val onLostFocus = {
+        storyFragment.getCurrentItemView()?.let { onStoryGroupNotFocused(it) }
+    }
+
     private fun onVideoFocus(itemView: View, videoStory: VideoStory) {
         Log.d(TAG, "onVideoFocus")
         itemView.apply {
-            isPreparing = true
-
-            val mediaSource = LoopingMediaSource(
-                    mediaSourceFactory.createMediaSource(utils.getUri(
-                            videoStory.videoUrl!!
-                    ))
-            )
-            exoPlayer.prepare(mediaSource)
-            playerView.player = exoPlayer
+            playbackManager.prepare(videoStory.videoUrl!!, true, onReady, onLostFocus)
+            playerView.player = playbackManager.exoPlayer
         }
     }
 
@@ -393,16 +386,6 @@ class StoryGroupAdapter @Inject constructor(
             imageView.visibility = View.VISIBLE
 
             storiesProgressView.destroy()
-        }
-    }
-
-    private inner class PlayerEventListener : Player.EventListener {
-        override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
-            Log.d(TAG, "onPlayerStateChanged")
-            if (isPreparing && playbackState == ExoPlayer.STATE_READY) {
-                storyFragment.resumeCurrentItem()
-                isPreparing = false
-            }
         }
     }
 

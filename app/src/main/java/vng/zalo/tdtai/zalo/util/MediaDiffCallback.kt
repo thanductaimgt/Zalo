@@ -5,7 +5,7 @@ import androidx.recyclerview.widget.DiffUtil
 import vng.zalo.tdtai.zalo.data_model.media.Media
 import javax.inject.Inject
 
-class ResourceDiffCallback @Inject constructor() : DiffUtil.ItemCallback<Media>() {
+class MediaDiffCallback @Inject constructor() : DiffUtil.ItemCallback<Media>() {
     override fun areItemsTheSame(oldItem: Media, newItem: Media): Boolean {
         return oldItem.uri == newItem.uri
     }

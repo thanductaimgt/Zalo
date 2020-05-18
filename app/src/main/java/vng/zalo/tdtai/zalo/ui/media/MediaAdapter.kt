@@ -4,45 +4,35 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.google.android.exoplayer2.ExoPlayer
-import com.google.android.exoplayer2.Player
-import com.google.android.exoplayer2.SimpleExoPlayer
-import com.google.android.exoplayer2.source.LoopingMediaSource
-import com.google.android.exoplayer2.source.MediaSourceFactory
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.fragment_media.*
 import kotlinx.android.synthetic.main.item_media_image.view.*
 import kotlinx.android.synthetic.main.item_media_video.view.*
 import vng.zalo.tdtai.zalo.R
-import vng.zalo.tdtai.zalo.base.BindableViewHolder
 import vng.zalo.tdtai.zalo.base.BaseListAdapter
-import vng.zalo.tdtai.zalo.manager.ResourceManager
-import vng.zalo.tdtai.zalo.data_model.message.ImageMessage
+import vng.zalo.tdtai.zalo.base.BindableViewHolder
+import vng.zalo.tdtai.zalo.data_model.media.ImageMedia
+import vng.zalo.tdtai.zalo.data_model.media.Media
+import vng.zalo.tdtai.zalo.data_model.media.VideoMedia
 import vng.zalo.tdtai.zalo.data_model.message.Message
-import vng.zalo.tdtai.zalo.data_model.message.VideoMessage
-import vng.zalo.tdtai.zalo.util.MessageDiffCallback
+import vng.zalo.tdtai.zalo.manager.PlaybackManager
+import vng.zalo.tdtai.zalo.manager.ResourceManager
+import vng.zalo.tdtai.zalo.util.MediaDiffCallback
 import vng.zalo.tdtai.zalo.util.TAG
-import vng.zalo.tdtai.zalo.util.Utils
 import vng.zalo.tdtai.zalo.util.smartLoad
 import javax.inject.Inject
 
 class MediaAdapter @Inject constructor(
         private val mediaFragment: MediaFragment,
         private val resourceManager: ResourceManager,
-        private val utils: Utils,
-        val exoPlayer: SimpleExoPlayer,
-        private val mediaSourceFactory: MediaSourceFactory,
-        diffCallback: MessageDiffCallback
-) : BaseListAdapter<Message, BindableViewHolder>(diffCallback) {
-    var isPreparing = false
-    private val playerEventListener = PlayerEventListener()
-
-    init {
-        exoPlayer.addListener(playerEventListener)
-    }
-
+        private val playbackManager: PlaybackManager,
+        diffCallback: MediaDiffCallback
+) : BaseListAdapter<Media, BindableViewHolder>(diffCallback) {
     override fun getItemViewType(position: Int): Int {
-        return currentList[position].type!!
+        return when(currentList[position]){
+            is ImageMedia -> Media.TYPE_IMAGE
+            else -> Media.TYPE_VIDEO
+        }
     }
 
     override fun onViewDetachedFromWindow(holder: BindableViewHolder) {
@@ -52,7 +42,7 @@ class MediaAdapter @Inject constructor(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BindableViewHolder {
         return when (viewType) {
-            Message.TYPE_IMAGE -> ImageViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_media_image, parent, false).apply {
+            Media.TYPE_IMAGE -> ImageViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_media_image, parent, false).apply {
                 photoView.setOnClickListener(mediaFragment)
             })
             else -> VideoViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_media_video, parent, false).apply {
@@ -69,8 +59,8 @@ class MediaAdapter @Inject constructor(
 
     inner class ImageViewHolder(itemView: View) : BindableViewHolder(itemView) {
         override fun bind(position: Int) {
-            val imageMessage = currentList[position] as ImageMessage
-            Picasso.get().smartLoad(imageMessage.url, resourceManager, itemView.photoView){
+            val imageMessage = currentList[position] as ImageMedia
+            Picasso.get().smartLoad(imageMessage.uri, resourceManager, itemView.photoView){
                 it.fit().centerInside()
             }
         }
@@ -78,9 +68,9 @@ class MediaAdapter @Inject constructor(
 
     inner class VideoViewHolder(itemView: View) : BindableViewHolder(itemView) {
         override fun bind(position: Int) {
-            val videoMessage = currentList[position] as VideoMessage
+            val videoMessage = currentList[position] as VideoMedia
             itemView.apply {
-                resourceManager.getVideoThumbUri(videoMessage.url) { uri ->
+                resourceManager.getVideoThumbUri(videoMessage.uri!!) { uri ->
                     Picasso.get().smartLoad(uri, resourceManager, previewImgView){
                         it.fit().centerInside()
                     }
@@ -97,7 +87,7 @@ class MediaAdapter @Inject constructor(
         Log.d(TAG, "resume")
         itemView.playerView?.let{
             itemView.apply {
-                exoPlayer.playWhenReady = true
+                playbackManager.play()
                 progressBar.visibility = View.GONE
 //            playPauseImgView.visibility = View.GONE
                 previewImgView.visibility = View.GONE
@@ -109,7 +99,7 @@ class MediaAdapter @Inject constructor(
         itemView.playerView?.let {
             Log.d(TAG, "pause")
             itemView.apply {
-                exoPlayer.playWhenReady = false
+                playbackManager.pause()
 //            if (displayPauseIcon) {
 //                playPauseImgView.visibility = View.VISIBLE
 //            }
@@ -117,26 +107,27 @@ class MediaAdapter @Inject constructor(
         }
     }
 
+    private val onReady = {
+        mediaFragment.getCurrentItemView()?.let {
+            onMediaResume(it)
+        }
+    }
+    private val onLostFocus = {
+        mediaFragment.getCurrentItemView()?.let { onMediaNotFocused(it) }
+    }
+
     fun onMediaFocused(itemView: View) {
         itemView.playerView?.let {
             Log.d(TAG, "focus")
             itemView.apply {
                 progressBar.postDelayed({
-                    if(isPreparing){
+                    if(playbackManager.isPreparing){
                         progressBar.visibility = View.VISIBLE
                     }
                 },1000)
 
-                isPreparing = true
-//                exoPlayer.addListener(playerEventListener)
-
-                val mediaSource = LoopingMediaSource(
-                        mediaSourceFactory.createMediaSource(utils.getUri(
-                                (currentList[mediaFragment.viewPager.currentItem] as VideoMessage).url
-                        ))
-                )
-                exoPlayer.prepare(mediaSource)
-                playerView.player = exoPlayer
+                playbackManager.prepare((currentList[mediaFragment.viewPager.currentItem] as VideoMedia).uri!!,true, onReady, onLostFocus)
+                playerView.player = playbackManager.exoPlayer
             }
         }
     }
@@ -150,18 +141,6 @@ class MediaAdapter @Inject constructor(
                 previewImgView.visibility = View.VISIBLE
                 progressBar.visibility = View.GONE
 //            playPauseImgView.visibility = View.GONE
-            }
-        }
-    }
-
-    private inner class PlayerEventListener : Player.EventListener {
-        override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
-            Log.d(TAG, "onPlayerStateChanged")
-            if (isPreparing && playbackState == ExoPlayer.STATE_READY) {
-                mediaFragment.getCurrentItemView()?.let {
-                    onMediaResume(it)
-                }
-                isPreparing = false
             }
         }
     }

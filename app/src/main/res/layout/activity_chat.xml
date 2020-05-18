@@ -172,13 +172,13 @@
                 android:inputType="text"
                 android:nextFocusLeft="@id/msgEditText"
                 android:nextFocusUp="@id/msgEditText"
-                app:layout_constraintBottom_toBottomOf="@id/emojiImgView"
-                app:layout_constraintLeft_toRightOf="@id/emojiImgView"
+                app:layout_constraintBottom_toBottomOf="@id/reactImgView"
+                app:layout_constraintLeft_toRightOf="@id/reactImgView"
                 app:layout_constraintRight_toLeftOf="@id/uploadFileImgView"
-                app:layout_constraintTop_toTopOf="@id/emojiImgView" />
+                app:layout_constraintTop_toTopOf="@id/reactImgView" />
 
             <ImageView
-                android:id="@+id/emojiImgView"
+                android:id="@+id/reactImgView"
                 android:layout_width="48dp"
                 android:layout_height="0dp"
                 android:background="?attr/selectableItemBackground"
@@ -201,9 +201,9 @@
                 android:paddingRight="6dp"
                 android:paddingBottom="12dp"
                 android:src="@drawable/video3"
-                app:layout_constraintBottom_toBottomOf="@id/emojiImgView"
+                app:layout_constraintBottom_toBottomOf="@id/reactImgView"
                 app:layout_constraintEnd_toStartOf="@id/sendMsgImgView"
-                app:layout_constraintTop_toTopOf="@id/emojiImgView" />
+                app:layout_constraintTop_toTopOf="@id/reactImgView" />
 
             <ImageView
                 android:id="@+id/uploadImageImgView"
@@ -216,9 +216,9 @@
                 android:paddingRight="6dp"
                 android:paddingBottom="12dp"
                 android:src="@drawable/photo"
-                app:layout_constraintBottom_toBottomOf="@id/emojiImgView"
+                app:layout_constraintBottom_toBottomOf="@id/reactImgView"
                 app:layout_constraintEnd_toStartOf="@id/uploadVideoImgView"
-                app:layout_constraintTop_toTopOf="@id/emojiImgView" />
+                app:layout_constraintTop_toTopOf="@id/reactImgView" />
 
             <ImageView
                 android:id="@+id/sendMsgImgView"
@@ -230,9 +230,9 @@
                 android:src="@drawable/send_telegram"
                 android:visibility="gone"
                 app:layout_constraintDimensionRatio="W,1:1"
-                app:layout_constraintBottom_toBottomOf="@id/emojiImgView"
+                app:layout_constraintBottom_toBottomOf="@id/reactImgView"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@id/emojiImgView"
+                app:layout_constraintTop_toTopOf="@id/reactImgView"
                 tools:visibility="visible" />
 
             <ImageView
@@ -246,9 +246,9 @@
                 android:paddingRight="6dp"
                 android:paddingBottom="12dp"
                 android:src="@drawable/mic"
-                app:layout_constraintBottom_toBottomOf="@id/emojiImgView"
+                app:layout_constraintBottom_toBottomOf="@id/reactImgView"
                 app:layout_constraintRight_toLeftOf="@id/uploadImageImgView"
-                app:layout_constraintTop_toTopOf="@id/emojiImgView" />
+                app:layout_constraintTop_toTopOf="@id/reactImgView" />
 
             <ImageView
                 android:id="@+id/uploadFileImgView"
@@ -261,9 +261,9 @@
                 android:paddingRight="4dp"
                 android:paddingBottom="14dp"
                 android:src="@drawable/attach_file"
-                app:layout_constraintBottom_toBottomOf="@id/emojiImgView"
+                app:layout_constraintBottom_toBottomOf="@id/reactImgView"
                 app:layout_constraintRight_toLeftOf="@id/uploadVoiceImgView"
-                app:layout_constraintTop_toTopOf="@id/emojiImgView" />
+                app:layout_constraintTop_toTopOf="@id/reactImgView" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>
 

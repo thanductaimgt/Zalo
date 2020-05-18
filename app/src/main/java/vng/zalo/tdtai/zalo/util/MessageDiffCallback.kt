@@ -3,7 +3,7 @@ package vng.zalo.tdtai.zalo.util
 import android.annotation.SuppressLint
 import androidx.recyclerview.widget.DiffUtil
 import vng.zalo.tdtai.zalo.data_model.message.Message
-import vng.zalo.tdtai.zalo.data_model.message.ResourceMessage
+import vng.zalo.tdtai.zalo.data_model.message.MediaMessage
 import vng.zalo.tdtai.zalo.data_model.message.SeenMessage
 import javax.inject.Inject
 
@@ -28,7 +28,7 @@ class MessageDiffCallback @Inject constructor() : DiffUtil.ItemCallback<Message>
             if (oldItem.senderAvatarUrl != newItem.senderAvatarUrl) {
                 res.add(Message.PAYLOAD_AVATAR)
             }
-            if (oldItem is ResourceMessage && oldItem.uploadProgress != (newItem as ResourceMessage).uploadProgress) {
+            if (oldItem is MediaMessage && oldItem.uploadProgress != (newItem as MediaMessage).uploadProgress) {
                 res.add(Message.PAYLOAD_UPLOAD_PROGRESS)
             }
             if (oldItem.isSent != newItem.isSent) {

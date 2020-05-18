@@ -42,6 +42,8 @@ import java.util.*
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlin.collections.HashMap
+import kotlin.math.max
+import kotlin.math.min
 
 @Singleton
 class Utils @Inject constructor(
@@ -129,10 +131,6 @@ class Utils @Inject constructor(
     fun pxToDp(valueInPx: Number): Float {
         return (valueInPx.toFloat() / (application.resources.displayMetrics.densityDpi / DisplayMetrics.DENSITY_DEFAULT))
     }
-
-//    fun parseFileName(fileUri: String): String {
-//        return fileUri.substring(fileUri.lastIndexOf('/') + 1)
-//    }
 
     fun hideKeyboard(view: View) {
         val imm = application.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
@@ -347,12 +345,27 @@ class Utils @Inject constructor(
         }
         return Bitmap.createBitmap(img, startX, startY, width, height, matrix, true)
     }
+
+    fun getAdjustedRatio(ratio: String): String {
+        val size = getSize(ratio)
+        val floatRatio = size.width / size.height.toFloat()
+        val adjustedRatio = min(max(floatRatio, MIN_RATIO), MAX_RATIO)
+        return "${(adjustedRatio * 10).toInt()}:10"
+    }
+
+    companion object {
+        const val MIN_RATIO = 0.8f
+        const val MAX_RATIO = 2f
+    }
 }
 
 // extension functions
 
 val <T> T?.TAG: String
-    get() = T::class.java.simpleName
+    get() {
+        return T.javaClass.let { it.enclosingClass?.name ?: it.name }
+//        return T::class.java.simpleName
+    }
 
 private fun Picasso.loadCompat(url: String?, resourceManager: ResourceManager): RequestCreator {
     val doCache: Boolean
@@ -504,6 +517,6 @@ fun View.setOnDoubleClickListener(callback: () -> Unit) {
     })
 }
 
-fun Disposable.addTo(compositeDisposable: CompositeDisposable?){
+fun Disposable.addTo(compositeDisposable: CompositeDisposable?) {
     compositeDisposable?.add(this)
 }

@@ -5,12 +5,16 @@ import android.view.View
 import android.view.ViewGroup
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.item_diary.view.*
+import kotlinx.android.synthetic.main.part_post_actions.view.*
 import vng.zalo.tdtai.zalo.R
 import vng.zalo.tdtai.zalo.base.BindableViewHolder
 import vng.zalo.tdtai.zalo.base.BaseListAdapter
+import vng.zalo.tdtai.zalo.common.MediaPreviewAdapter
 import vng.zalo.tdtai.zalo.data_model.post.Diary
+import vng.zalo.tdtai.zalo.manager.PlaybackManager
 import vng.zalo.tdtai.zalo.manager.ResourceManager
 import vng.zalo.tdtai.zalo.util.DiaryDiffCallback
+import vng.zalo.tdtai.zalo.util.MediaDiffCallback
 import vng.zalo.tdtai.zalo.util.Utils
 import vng.zalo.tdtai.zalo.util.smartLoad
 import javax.inject.Inject
@@ -20,8 +24,11 @@ class DiaryAdapter @Inject constructor(
         private val clickListener: View.OnClickListener,
         private val resourceManager: ResourceManager,
         private val utils: Utils,
+        private val playbackManager: PlaybackManager,
         diffCallback: DiaryDiffCallback
 ) : BaseListAdapter<Diary, DiaryAdapter.DiaryViewHolder>(diffCallback) {
+    private val diffCallback = MediaDiffCallback()
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DiaryViewHolder {
         val holder = DiaryViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_diary, parent, false))
         return holder.apply { bindOnClick() }
@@ -37,16 +44,15 @@ class DiaryAdapter @Inject constructor(
 
             bindOwner(diary)
             bindText(diary)
-            bindImages(diary)
-            bindVideos(diary)
+            bindMedias(diary)
             bindMetrics(diary)
         }
 
         private fun bindMetrics(diary: Diary) {
             itemView.apply {
-                shareNumTextView.text = utils.getMetricFormat(diary.shareNumCount)
+                shareCountTextView.text = utils.getMetricFormat(diary.shareCount)
                 reactCountTextView.text = utils.getMetricFormat(diary.reactCount)
-                commentNumTextView.text = utils.getMetricFormat(diary.commentCount)
+                commentCountTextView.text = utils.getMetricFormat(diary.commentCount)
             }
         }
 
@@ -56,7 +62,7 @@ class DiaryAdapter @Inject constructor(
                     it.fit().centerCrop()
                 }
 
-                timeTextView.text = utils.getTimeDiffFormat(diary.createdTime)
+                timeTextView.text = utils.getTimeDiffFormat(diary.createdTime!!)
                 nameTextView.text = diary.ownerName
             }
         }
@@ -72,26 +78,16 @@ class DiaryAdapter @Inject constructor(
             }
         }
 
-        private fun bindImages(diary: Diary) {
+        private fun bindMedias(diary: Diary) {
             itemView.apply {
-                imageView.visibility = diary.imagesUrl.firstOrNull()?.let { imageUrl ->
-                    Picasso.get().smartLoad(imageUrl, resourceManager, imageView) {
-                        it.fit().centerCrop()
-                    }
-
-                    View.VISIBLE
-                } ?: View.GONE
+                val adapter = MediaPreviewAdapter(clickListener, resourceManager, utils, playbackManager, diffCallback)
+                mediaGridView.adapter = adapter
+                adapter.submitListLimit(diary.medias)
             }
-        }
-
-        private fun bindVideos(diary: Diary) {
-
         }
 
         fun bindOnClick() {
             itemView.apply {
-                imageView.setOnClickListener(clickListener)
-                playerView.setOnClickListener(clickListener)
                 avatarImgView.setOnClickListener(clickListener)
                 nameTextView.setOnClickListener(clickListener)
                 moreImgView.setOnClickListener(clickListener)

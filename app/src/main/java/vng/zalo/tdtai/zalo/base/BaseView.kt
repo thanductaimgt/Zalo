@@ -9,7 +9,7 @@ import androidx.core.view.*
 
 
 interface BaseView {
-    fun initAll(){
+    fun initAll() {
         onBindViews()
         onViewsBound()
     }
@@ -22,14 +22,16 @@ interface BaseView {
 
     fun onActivityResult(requestCode: Int, intent: Intent?) {}
 
-    fun makeRoomForStatusBar(context: Context, targetView: View, @MakeRoomType makeRoomType:Int = MAKE_ROOM_TYPE_PADDING) {
-        var statusBarHeight:Int
+    fun onFragmentResult(fragmentType: Int, result: Any?) {}
+
+    fun makeRoomForStatusBar(context: Context, targetView: View, @MakeRoomType makeRoomType: Int = MAKE_ROOM_TYPE_PADDING) {
+        var statusBarHeight: Int
         val resourceId: Int = context.resources.getIdentifier("status_bar_height", "dimen", "android")
         if (resourceId > 0) {
             statusBarHeight = context.resources.getDimensionPixelSize(resourceId)
 
             makeRoomForStatusBarInternal(targetView, statusBarHeight, makeRoomType)
-        }else{
+        } else {
             var isInvoked = false
 
             ViewCompat.setOnApplyWindowInsetsListener(targetView) { _, insets ->
@@ -51,11 +53,12 @@ interface BaseView {
 //        rootView.updatePadding(top = statusBarHeight)
     }
 
-    private fun makeRoomForStatusBarInternal(targetView: View, statusBarHeight:Int, @MakeRoomType makeRoomType:Int = MAKE_ROOM_TYPE_PADDING){
-        if(makeRoomType == MAKE_ROOM_TYPE_PADDING){
+    private fun makeRoomForStatusBarInternal(targetView: View, statusBarHeight: Int, @MakeRoomType makeRoomType: Int = MAKE_ROOM_TYPE_PADDING) {
+        if (makeRoomType == MAKE_ROOM_TYPE_PADDING) {
             targetView.updatePadding(top = targetView.paddingTop + statusBarHeight)
-        }else{
-            targetView.updateLayoutParams {this as ViewGroup.MarginLayoutParams
+        } else {
+            targetView.updateLayoutParams {
+                this as ViewGroup.MarginLayoutParams
                 updateMargins(top = targetView.marginTop + statusBarHeight)
             }
         }
@@ -65,8 +68,12 @@ interface BaseView {
     @Retention(AnnotationRetention.SOURCE)
     annotation class MakeRoomType
 
-    companion object{
+    companion object {
         const val MAKE_ROOM_TYPE_PADDING = 0
         const val MAKE_ROOM_TYPE_MARGIN = 1
+
+        const val FRAGMENT_EDIT_MEDIA = 0
+        const val FRAGMENT_CAMERA = 1
+        const val FRAGMENT_PROFILE= 2
     }
 }

@@ -1,6 +1,5 @@
 package vng.zalo.tdtai.zalo.ui.story
 
-import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,7 +12,6 @@ import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.exoplayer2.ExoPlayer
-import com.google.android.exoplayer2.SimpleExoPlayer
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import kotlinx.android.synthetic.main.bottom_add_highlight_story.*
@@ -21,7 +19,6 @@ import kotlinx.android.synthetic.main.bottom_add_highlight_story.view.*
 import kotlinx.android.synthetic.main.fragment_story.*
 import kotlinx.android.synthetic.main.item_story_base.view.*
 import vng.zalo.tdtai.zalo.R
-import vng.zalo.tdtai.zalo.base.BaseActivity
 import vng.zalo.tdtai.zalo.base.BaseFragment
 import vng.zalo.tdtai.zalo.common.StoryPreviewAdapter
 import vng.zalo.tdtai.zalo.data_model.story.ImageStory
@@ -34,7 +31,6 @@ import vng.zalo.tdtai.zalo.widget.CubeOutTransformer
 import javax.inject.Inject
 
 class StoryFragment(
-        private val activity: BaseActivity,
         val curStoryGroup: StoryGroup,
         val storyGroups: List<StoryGroup>
 ) : BaseFragment() {
@@ -47,9 +43,6 @@ class StoryFragment(
     @Inject
     lateinit var createStoryGroupDialog: CreateStoryGroupDialog
 
-    @Inject
-    lateinit var exoPlayer: SimpleExoPlayer
-
     private val viewModel: StoryViewModel by viewModels { viewModelFactory }
 
     private lateinit var bottomSheetDialog: BottomSheetDialog
@@ -57,9 +50,8 @@ class StoryFragment(
 
     private var lastPosition: Int? = null
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        super.onCreateView(inflater, container, savedInstanceState)
-        activity.hideStatusBar()
+    override fun createView(inflater: LayoutInflater, container: ViewGroup?): View {
+        activity().hideStatusBar()
         return layoutInflater.inflate(R.layout.fragment_story, container, false)
     }
 
@@ -160,7 +152,7 @@ class StoryFragment(
     }
 
     private fun startOrResumeCurrentWatch() {
-        if (!storyGroupAdapter.isPreparing && exoPlayer.playbackState == ExoPlayer.STATE_READY) {
+        if (!playbackManager.isPreparing && playbackManager.exoPlayer.playbackState == ExoPlayer.STATE_READY) {
             resumeCurrentItem()
         } else {
             focusCurrentItem()
@@ -183,13 +175,12 @@ class StoryFragment(
 
     override fun onDestroy() {
         super.onDestroy()
-        exoPlayer.stop(true)
-        activity.showStatusBar()
+        playbackManager.exoPlayer.stop(true)
     }
 
     override fun onClick(view: View) {
         when (view.id) {
-            R.id.closeImgView -> activity.removeStoryFragment()
+            R.id.closeImgView -> parentZaloFragmentManager.removeStoryFragment()
             R.id.cancelTextView -> {
                 bottomSheetDialog.dismiss()
             }
@@ -228,7 +219,16 @@ class StoryFragment(
                     }
                 }
             }
+            R.id.avatarImgView -> openProfile()
+            R.id.nameTextView -> openProfile()
         }
+    }
+
+    private fun openProfile() {
+        val storyGroup = storyGroupAdapter.currentList[viewPager.currentItem]
+
+        pauseCurrentItem()
+        zaloFragmentManager.addProfileFragment(storyGroup.ownerId!!)
     }
 
     fun nextStoryGroup() {
@@ -236,7 +236,7 @@ class StoryFragment(
         if (curGroupPosition < storyGroupAdapter.itemCount - 1) {
             viewPager.animatePagerTransition(true)
         } else {
-            activity.removeStoryFragment()
+            parentZaloFragmentManager.removeStoryFragment()
         }
     }
 
@@ -341,6 +341,14 @@ class StoryFragment(
         getCurrentItemView()?.let {
             storyGroupAdapter.onStoryGroupFocused(it, getCurrentItemPosition())
         }
+    }
+
+    override fun onFragmentResult(fragmentType: Int, result: Any?) {
+        resumeCurrentItem()
+    }
+
+    fun setEnableViewPager(isEnabled: Boolean) {
+        viewPager.isUserInputEnabled = isEnabled
     }
 
 //    override fun getInstanceTag(): String {

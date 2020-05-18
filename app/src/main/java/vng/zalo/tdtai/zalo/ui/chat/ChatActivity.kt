@@ -34,10 +34,13 @@ import vng.zalo.tdtai.zalo.base.BaseActivity
 import vng.zalo.tdtai.zalo.base.BaseView
 import vng.zalo.tdtai.zalo.base.BindableViewHolder
 import vng.zalo.tdtai.zalo.base.KeyboardHeightObserver
-import vng.zalo.tdtai.zalo.manager.ExternalIntentManager
+import vng.zalo.tdtai.zalo.data_model.media.ImageMedia
+import vng.zalo.tdtai.zalo.data_model.media.Media
+import vng.zalo.tdtai.zalo.data_model.media.VideoMedia
 import vng.zalo.tdtai.zalo.data_model.message.*
 import vng.zalo.tdtai.zalo.data_model.room.Room
 import vng.zalo.tdtai.zalo.data_model.room.RoomPeer
+import vng.zalo.tdtai.zalo.manager.ExternalIntentManager
 import vng.zalo.tdtai.zalo.ui.chat.emoji.EmojiFragment
 import vng.zalo.tdtai.zalo.util.*
 import java.io.FileNotFoundException
@@ -117,7 +120,7 @@ class ChatActivity : BaseActivity(), KeyboardHeightObserver {
         moreImgView.setOnClickListener(this)
         msgEditText.setOnClickListener(this)
         sendMsgImgView.setOnClickListener(this)
-        emojiImgView.setOnClickListener(this)
+        reactImgView.setOnClickListener(this)
         uploadFileImgView.setOnClickListener(this)
         uploadImageImgView.setOnClickListener(this)
         uploadVideoImgView.setOnClickListener(this)
@@ -190,7 +193,7 @@ class ChatActivity : BaseActivity(), KeyboardHeightObserver {
                 this@ChatActivity.chatRecyclerView.forEach {
                     val holder = this@ChatActivity.chatRecyclerView.getChildViewHolder(it)
                     if (holder is ChatAdapter.MessageViewHolder) {
-                        chatAdapter.exoPlayer.playWhenReady = true
+                        playbackManager.play()
 
                         holder.itemView.stickerAnimView.resumeAnimation()
                     }
@@ -372,7 +375,7 @@ class ChatActivity : BaseActivity(), KeyboardHeightObserver {
                     msgEditText.setText("")
                 }
             }
-            R.id.emojiImgView -> {
+            R.id.reactImgView -> {
                 if (isKeyboardOn) {
                     utils.hideKeyboard(rootView)
                 }
@@ -424,17 +427,21 @@ class ChatActivity : BaseActivity(), KeyboardHeightObserver {
                     imageLocalUriString = it
                 }
             }
-            R.id.imageView -> {
+            R.id.imageView, R.id.videoMessageLayout -> {
                 val position = chatRecyclerView.getChildAdapterPosition(view.parent as View)
-                val message = chatAdapter.currentList[position] as ResourceMessage
+                val message = chatAdapter.currentList[position] as MediaMessage
 
-                addMediaFragment(message, getSurroundMessages(message))
-            }
-            R.id.videoMessageLayout -> {
-                val position = chatRecyclerView.getChildAdapterPosition(view.parent as View)
-                val message = chatAdapter.currentList[position] as ResourceMessage
-
-                addMediaFragment(message, getSurroundMessages(message))
+                val media = if (message is ImageMessage) ImageMedia(message.url, message.ratio) else VideoMedia(message.url, message.ratio)
+                val medias = arrayListOf<Media>().apply {
+                    addAll(getSurroundMessages(message).map {
+                        if (it is ImageMessage) {
+                            ImageMedia(message.url, message.ratio)
+                        } else {
+                            VideoMedia(message.url, message.ratio)
+                        }
+                    })
+                }
+                zaloFragmentManager.addMediaFragment(media, medias)
             }
             R.id.uploadFileImgView -> {
                 externalIntentManager.dispatchChooserIntent(this, Constants.CHOOSE_FILE_REQUEST, ExternalIntentManager.CHOOSER_TYPE_FILE, true)
@@ -565,7 +572,7 @@ class ChatActivity : BaseActivity(), KeyboardHeightObserver {
 
     private fun showEmojiFragment() {
         if (emojiFragment == null) {
-            emojiFragment = addFragment(EmojiFragment(), false, frameLayout.id) as EmojiFragment
+            emojiFragment = zaloFragmentManager.addFragment(EmojiFragment(), false, frameLayout.id) as EmojiFragment
         }
         showEmojiLayout()
     }
@@ -578,16 +585,11 @@ class ChatActivity : BaseActivity(), KeyboardHeightObserver {
         frameLayout.visibility = View.GONE
     }
 
-    override fun onBackPressedCustomized(): Boolean {
-        return if (!super.onBackPressedCustomized()) {
-            if (isEmojiFragmentOn) {
-                hideEmojiFragment()
-                true
-            } else {
-                false
-            }
+    override fun onBackPressedCustomized() {
+        if (isEmojiFragmentOn) {
+            hideEmojiFragment()
         } else {
-            true
+            super.onBackPressedCustomized()
         }
     }
 
@@ -657,7 +659,7 @@ class ChatActivity : BaseActivity(), KeyboardHeightObserver {
         //get surrounding messages
         @Suppress("UNCHECKED_CAST")
         return viewModel.liveMessageMap.value!!.values
-                .filterIsInstance<ResourceMessage>()
+                .filterIsInstance<MediaMessage>()
                 .sortedByDescending { it.createdTime }
                 .toMutableList() as ArrayList<Message>
     }

@@ -4,19 +4,16 @@ import android.animation.ObjectAnimator
 import android.os.Handler
 import android.view.MenuItem
 import android.widget.Toast
-import androidx.activity.viewModels
+import androidx.lifecycle.MutableLiveData
 import androidx.viewpager2.widget.ViewPager2
 import kotlinx.android.synthetic.main.activity_home.*
 import vng.zalo.tdtai.zalo.R
 import vng.zalo.tdtai.zalo.base.BaseActivity
-import vng.zalo.tdtai.zalo.data_model.media.Media
 import vng.zalo.tdtai.zalo.ui.camera.CameraFragment
 import javax.inject.Inject
 
 
 class HomeActivity : BaseActivity() {
-    private val viewModel: HomeViewModel by viewModels { viewModelFactory }
-
     @Inject
     lateinit var pagerAdapter: HomeAdapter
 
@@ -24,7 +21,9 @@ class HomeActivity : BaseActivity() {
 
     private lateinit var bottomNavigationAnimator: ObjectAnimator
 
-    var cameraFragment: CameraFragment?=null
+    val liveSelectedPageListener = MutableLiveData<Int>()
+
+    var cameraFragment: CameraFragment? = null
 
     override fun onBindViews() {
         requestFullScreen()
@@ -72,7 +71,11 @@ class HomeActivity : BaseActivity() {
                 R.id.navigation_more -> 4
                 else -> 5
             }
-            viewPager.setCurrentItem(position, false)
+            if(viewPager.currentItem == position){
+                liveSelectedPageListener.value = position
+            }else{
+                viewPager.setCurrentItem(position, false)
+            }
             false
         }
 
@@ -118,52 +121,39 @@ class HomeActivity : BaseActivity() {
         viewPager.currentItem = 1
     }
 
+    fun navigateProfile() {
+        viewPager.currentItem = 4
+    }
+
     fun openCamera() {
         viewPager.currentItem = 0
     }
 
     override fun onFragmentResult(fragmentType: Int, result: Any?) {
-        when (fragmentType) {
-            FRAGMENT_EDIT_MEDIA -> {
-                viewModel.createStory(result as Media) { isSuccess ->
-                    processingDialog.dismiss()
-
-                    Toast.makeText(this, getString(
-                            if (isSuccess) {
-                                removeEditMediaFragment()
-                                navigateHome()
-
-                                R.string.description_story_created
-                            } else {
-                                R.string.label_error_occurred
-                            }
-                    ), Toast.LENGTH_SHORT).show()
-
-                    resourceManager.deleteFileOrFolder(result.uri)
-                }
-            }
-            FRAGMENT_CAMERA -> navigateHome()
-        }
+        zaloFragmentManager.removeEditMediaFragment()
+        navigateHome()
     }
 
     private var doubleBackToExitPressedOnce = false
-    override fun onBackPressedCustomized(): Boolean {
-        if (!super.onBackPressedCustomized()) {
-            when {
-                viewPager.currentItem == 0 -> {
-                    navigateHome()
-                }
-                doubleBackToExitPressedOnce -> {
-                    return false
-                }
-                else -> {
-                    this.doubleBackToExitPressedOnce = true
-                    Toast.makeText(this, getString(R.string.description_back_again_to_exit), Toast.LENGTH_SHORT).show()
 
-                    Handler().postDelayed({ doubleBackToExitPressedOnce = false }, 2000)
-                }
+    override fun onBackPressedCustomized() {
+        when {
+            viewPager.currentItem != 1 -> {
+                navigateHome()
+            }
+            doubleBackToExitPressedOnce -> {
+                super.onBackPressedCustomized()
+            }
+            else -> {
+                this.doubleBackToExitPressedOnce = true
+                Toast.makeText(this, getString(R.string.description_back_again_to_exit), Toast.LENGTH_SHORT).show()
+
+                Handler().postDelayed({ doubleBackToExitPressedOnce = false }, 2000)
             }
         }
-        return true
+    }
+
+    fun setViewPagerScrollable(isScrollable: Boolean) {
+        viewPager.isUserInputEnabled = isScrollable
     }
 }

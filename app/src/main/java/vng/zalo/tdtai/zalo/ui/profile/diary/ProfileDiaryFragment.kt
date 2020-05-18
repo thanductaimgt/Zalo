@@ -1,6 +1,5 @@
 package vng.zalo.tdtai.zalo.ui.profile.diary
 
-import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,9 +11,12 @@ import kotlinx.android.synthetic.main.fragment_profile.*
 import kotlinx.android.synthetic.main.fragment_profile_diary.*
 import vng.zalo.tdtai.zalo.R
 import vng.zalo.tdtai.zalo.base.BaseFragment
+import vng.zalo.tdtai.zalo.common.MediaPreviewAdapter
+import vng.zalo.tdtai.zalo.data_model.media.VideoMedia
 import vng.zalo.tdtai.zalo.ui.home.diary.DiaryAdapter
 import vng.zalo.tdtai.zalo.ui.profile.ProfileFragment
 import vng.zalo.tdtai.zalo.ui.profile.ProfileViewModel
+import vng.zalo.tdtai.zalo.widget.MediaGridView
 import javax.inject.Inject
 
 class ProfileDiaryFragment: BaseFragment() {
@@ -25,8 +27,7 @@ class ProfileDiaryFragment: BaseFragment() {
     @Inject
     lateinit var adapter: DiaryAdapter
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
+    override fun createView(inflater: LayoutInflater, container: ViewGroup?): View {
         return inflater.inflate(R.layout.fragment_profile_diary, container, false)
     }
 
@@ -65,12 +66,28 @@ class ProfileDiaryFragment: BaseFragment() {
             R.id.nameTextView->{
                 addProfileFragment(view)
             }
+            R.id.rootItemView -> {
+                val mediaGridView = view.parent as MediaGridView
+                val diaryPosition = recyclerView.getChildAdapterPosition(mediaGridView.parent as View)
+                val diary = adapter.currentList[diaryPosition]
+                if (mediaGridView.adapter!!.itemCount > 1) {
+                    parentZaloFragmentManager.addPostDetailFragment(diary, diaryPosition)
+                } else {
+                    val position = mediaGridView.getChildAdapterPosition(view)
+                    val media = (mediaGridView.adapter as MediaPreviewAdapter).currentList[position]
+                    if (media is VideoMedia) {
+                        (mediaGridView.findViewHolderForAdapterPosition(position) as MediaPreviewAdapter.VideoMediaPreviewHolder).playVideo(media)
+                    } else {
+                        parentZaloFragmentManager.addMediaFragment(diary.medias[0], diary.medias)
+                    }
+                }
+            }
         }
     }
 
     private fun addProfileFragment(view: View){
         val position = recyclerView.getChildAdapterPosition(view.parent as  View)
         val post = adapter.currentList[position]
-        activity().addProfileFragment(post.ownerId!!)
+        (parentFragment!! as BaseFragment).zaloFragmentManager.addProfileFragment(post.ownerId!!)
     }
 }

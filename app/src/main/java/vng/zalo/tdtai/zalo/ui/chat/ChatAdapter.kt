@@ -9,7 +9,6 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.airbnb.lottie.LottieCompositionFactory
 import com.airbnb.lottie.LottieDrawable
-import com.google.android.exoplayer2.SimpleExoPlayer
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_chat.*
 import kotlinx.android.synthetic.main.item_message_receive.view.*
@@ -43,7 +42,6 @@ class ChatAdapter @Inject constructor(
         private val sessionManager: SessionManager,
         private val utils: Utils,
         private val resourceManager: ResourceManager,
-        val exoPlayer: SimpleExoPlayer,
         diffCallback: MessageDiffCallback
 ) : BaseListAdapter<Message, BindableViewHolder>(diffCallback) {
     private val roomEnterTime = System.currentTimeMillis()
@@ -111,7 +109,7 @@ class ChatAdapter @Inject constructor(
                                 }
                             }
                         }
-                        Message.PAYLOAD_UPLOAD_PROGRESS -> (holder as SendViewHolder).bindUploadProgress(curMessage as ResourceMessage)
+                        Message.PAYLOAD_UPLOAD_PROGRESS -> (holder as SendViewHolder).bindUploadProgress(curMessage as MediaMessage)
                         Message.PAYLOAD_SEND_STATUS -> (holder as SendViewHolder).bindSendStatus(curMessage, nextMessage)
                     }
                 }
@@ -427,7 +425,7 @@ class ChatAdapter @Inject constructor(
             bindDate(curMessage, prevMessage)
             bindTime(curMessage, nextMessage)
             bindPadding(curMessage, prevMessage)
-            if (curMessage is ResourceMessage) {
+            if (curMessage is MediaMessage) {
                 bindUploadProgress(curMessage)
             }
 
@@ -437,22 +435,22 @@ class ChatAdapter @Inject constructor(
             }
         }
 
-        fun bindUploadProgress(resourceMessage: ResourceMessage) {
+        fun bindUploadProgress(mediaMessage: MediaMessage) {
             itemView.apply {
-                val uploadProgressBar = when (resourceMessage.type) {
+                val uploadProgressBar = when (mediaMessage.type) {
                     Message.TYPE_IMAGE -> uploadImageProgressBar
                     Message.TYPE_VIDEO -> uploadVideoProgressBar
                     else -> uploadFileProgressBar
                 }
-                if (resourceMessage.uploadProgress == null) {
+                if (mediaMessage.uploadProgress == null) {
                     uploadProgressBar!!.visibility = View.GONE
-                    if (resourceMessage.type == Message.TYPE_FILE) {
+                    if (mediaMessage.type == Message.TYPE_FILE) {
                         itemView.downloadFileImgView.visibility = View.VISIBLE
                     }
                 } else {
-                    uploadProgressBar!!.progress = resourceMessage.uploadProgress!!
+                    uploadProgressBar!!.progress = mediaMessage.uploadProgress!!
                     uploadProgressBar.visibility = View.VISIBLE
-                    if (resourceMessage.type == Message.TYPE_FILE) {
+                    if (mediaMessage.type == Message.TYPE_FILE) {
                         itemView.downloadFileImgView.visibility = View.GONE
                     }
                 }

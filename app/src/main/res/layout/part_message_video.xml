@@ -21,7 +21,7 @@
     <TextView
         android:paddingHorizontal="6dp"
         android:paddingVertical="1dp"
-        android:layout_margin="6dp"
+        android:layout_margin="2dp"
         android:id="@+id/videoDurationTV"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

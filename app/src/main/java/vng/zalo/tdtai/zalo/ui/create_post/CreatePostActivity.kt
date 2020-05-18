@@ -2,7 +2,6 @@ package vng.zalo.tdtai.zalo.ui.create_post
 
 import android.content.Intent
 import android.view.View
-import android.view.ViewGroup
 import android.widget.ScrollView
 import android.widget.Toast
 import androidx.activity.viewModels
@@ -12,16 +11,15 @@ import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_create_post.*
 import vng.zalo.tdtai.zalo.R
 import vng.zalo.tdtai.zalo.base.BaseActivity
-import vng.zalo.tdtai.zalo.base.NotScrollableLinearLayoutManager
+import vng.zalo.tdtai.zalo.base.BaseView
 import vng.zalo.tdtai.zalo.common.MediaPreviewAdapter
-import vng.zalo.tdtai.zalo.data_model.media.ImageMedia
 import vng.zalo.tdtai.zalo.data_model.media.Media
 import vng.zalo.tdtai.zalo.data_model.media.VideoMedia
+import vng.zalo.tdtai.zalo.data_model.post.Post
 import vng.zalo.tdtai.zalo.manager.ExternalIntentManager
 import vng.zalo.tdtai.zalo.util.Constants
 import vng.zalo.tdtai.zalo.util.TAG
 import vng.zalo.tdtai.zalo.util.smartLoad
-import vng.zalo.tdtai.zalo.widget.SpannedGridLayoutManager
 import javax.inject.Inject
 
 class CreatePostActivity : BaseActivity() {
@@ -29,9 +27,6 @@ class CreatePostActivity : BaseActivity() {
 
     @Inject
     lateinit var mediaPreviewAdapter: MediaPreviewAdapter
-
-    private lateinit var gridLayoutManager: SpannedGridLayoutManager
-    private lateinit var linearLayoutManager: NotScrollableLinearLayoutManager
 
     override fun onBindViews() {
         setContentView(R.layout.activity_create_post)
@@ -46,42 +41,7 @@ class CreatePostActivity : BaseActivity() {
             checkEnablePostButton()
         }
 
-        recyclerView.adapter = mediaPreviewAdapter
-        gridLayoutManager = object :SpannedGridLayoutManager(
-                SpannedGridLayoutManager.GridSpanLookup { position ->
-                    val spanCount = when (mediaPreviewAdapter.itemCount) {
-                        1 -> 6
-                        2 -> return@GridSpanLookup SpannedGridLayoutManager.SpanInfo(3, 6)
-                        3 -> {
-                            when (position) {
-                                0 -> return@GridSpanLookup SpannedGridLayoutManager.SpanInfo(4, 6)
-                                else -> return@GridSpanLookup SpannedGridLayoutManager.SpanInfo(2, 3)
-                            }
-                        }
-                        4 -> {
-                            when (position) {
-                                0 -> return@GridSpanLookup SpannedGridLayoutManager.SpanInfo(4, 6)
-                                else -> 2
-                            }
-                        }
-                        else -> {
-                            when {
-                                position < 2 -> 3
-                                else -> 2
-                            }
-                        }
-                    }
-                    return@GridSpanLookup SpannedGridLayoutManager.SpanInfo(spanCount, spanCount)
-                },
-                6,
-                1f
-        ){
-            override fun canScrollVertically(): Boolean {
-                return false
-            }
-        }
-
-        linearLayoutManager = NotScrollableLinearLayoutManager(this)
+        mediaGridView.adapter = mediaPreviewAdapter
 
         imageImgView.setOnClickListener(this)
         videoImgView.setOnClickListener(this)
@@ -92,40 +52,15 @@ class CreatePostActivity : BaseActivity() {
 
     override fun onViewsBound() {
         viewModel.liveDiary.observe(this, Observer { diary ->
-            var resources = ArrayList<Media>().apply {
-                addAll(diary.imagesUrl.map { ImageMedia(it) })
-                addAll(diary.videosUrl.map { VideoMedia(it) })
-            }
-
-            val lastMoreCount = mediaPreviewAdapter.moreCount
-            if (resources.size > 5) {
-                mediaPreviewAdapter.moreCount = resources.size - 4
-                resources = resources.take(5).toMutableList() as ArrayList<Media>
-            } else {
-                mediaPreviewAdapter.moreCount = 0
-            }
-            recyclerView.layoutManager = if (resources.size == 1) {
-                recyclerView.post {
-                    recyclerView.layoutParams = recyclerView.layoutParams.apply {
-                        height = recyclerView.width
-                    }
-                }
-                linearLayoutManager
-            } else {
-                recyclerView.post {
-                    recyclerView.layoutParams = recyclerView.layoutParams.apply {
-                        height = ViewGroup.LayoutParams.WRAP_CONTENT
-                    }
-                }
-                gridLayoutManager
-            }
-            val moreCountDiff = mediaPreviewAdapter.moreCount != lastMoreCount
-            val shouldScrollToBottom = mediaPreviewAdapter.itemCount < resources.size
-            mediaPreviewAdapter.submitList(resources) {
+            val oldMoreCount = mediaPreviewAdapter.moreCount
+            val oldSize = mediaPreviewAdapter.itemCount
+            mediaPreviewAdapter.submitListLimit(diary.medias) {
                 checkEnablePostButton()
-                if (shouldScrollToBottom) {
+                if (oldSize < mediaPreviewAdapter.itemCount) {
                     scrollView.fullScroll(ScrollView.FOCUS_DOWN)
                 }
+
+                val moreCountDiff = mediaPreviewAdapter.moreCount != oldMoreCount
                 if (moreCountDiff) {
                     mediaPreviewAdapter.notifyItemRangeChanged(0, mediaPreviewAdapter.itemCount, arrayListOf(Media.PAYLOAD_DISPLAY_MORE))
                 }
@@ -134,7 +69,7 @@ class CreatePostActivity : BaseActivity() {
     }
 
     private fun checkEnablePostButton() {
-        postButton.isEnabled = !((editText.text == null || editText.text!!.toString() == "") && viewModel.liveDiary.value!!.imagesUrl.isEmpty() && viewModel.liveDiary.value!!.videosUrl.isEmpty())
+        postButton.isEnabled = !((editText.text == null || editText.text!!.toString() == "") && viewModel.liveDiary.value!!.medias.isEmpty())
     }
 
     override fun onClick(view: View) {
@@ -146,53 +81,73 @@ class CreatePostActivity : BaseActivity() {
                 externalIntentManager.dispatchChooserIntent(this, Constants.CHOOSE_VIDEO_REQUEST, ExternalIntentManager.CHOOSER_TYPE_VIDEO, true)
             }
             R.id.cameraImgView -> {
-                addCameraFragment()
+                zaloFragmentManager.addCameraFragment()
             }
             R.id.backImgView -> {
                 onBackPressed()
             }
             R.id.postButton -> {
-                Toast.makeText(this, "not implemented", Toast.LENGTH_SHORT).show()
-//                viewModel.createPost()
+                processingDialog.show(supportFragmentManager)
+
+                viewModel.liveDiary.value!!.apply {
+                    text = editText.text.toString()
+                    createdTime = System.currentTimeMillis()
+                    type = if (medias.any { it is VideoMedia }) Post.TYPE_WATCH else Post.TYPE_DIARY
+                }
+                viewModel.createDiary { isSuccess ->
+                    Toast.makeText(this,
+                            getString(
+                                    if (isSuccess) {
+                                        finish()
+                                        R.string.description_post_created
+                                    } else {
+                                        R.string.label_error_occurred
+                                    }
+                            )
+                            , Toast.LENGTH_SHORT).show()
+                    processingDialog.dismiss()
+                }
             }
             R.id.rootItemView -> {
-                val position = recyclerView.getChildAdapterPosition(view)
-                val resource = mediaPreviewAdapter.currentList[position]
+                val position = mediaGridView.getChildAdapterPosition(view)
+                val media = mediaPreviewAdapter.currentList[position]
 
                 viewModel.liveDiary.value = viewModel.liveDiary.value!!.apply {
-                    imagesUrl = imagesUrl.toMutableList().apply { remove(resource.uri) }
-                    videosUrl = videosUrl.toMutableList().apply { remove(resource.uri) }
+                    medias.remove(media)
                 }
             }
         }
     }
 
-    override fun onBackPressedCustomized(): Boolean {
-        if (!super.onBackPressedCustomized()) {
-            alertDialog.show(supportFragmentManager,
-                    title = getString(R.string.label_discard_post),
-                    description = getString(R.string.description_discard_post),
-                    button1Text = getString(R.string.label_keep),
-                    button2Text = getString(R.string.label_discard),
-                    button2Action = {
-                        finish()
-                    }
-            )
-        }
-        return true
-    }
+//    override fun onBackPressedCustomized() {
+//        alertDialog.show(supportFragmentManager,
+//                title = getString(R.string.label_discard_post),
+//                description = getString(R.string.description_discard_post),
+//                button1Text = getString(R.string.label_keep),
+//                button2Text = getString(R.string.label_discard),
+//                button2Action = {
+//                    finish()
+//                }
+//        )
+//    }
 
     override fun onActivityResult(requestCode: Int, intent: Intent?) {
         utils.assertNotNull(intent, TAG, "CHOOSE_IMAGES_REQUEST.intent") { intentNotNull ->
             val localUris = utils.getLocalUris(intentNotNull)
 
-            viewModel.liveDiary.value = viewModel.liveDiary.value!!.apply {
-                when (requestCode) {
-                    Constants.CHOOSE_IMAGE_REQUEST -> {
-                        imagesUrl = imagesUrl.toMutableList().apply { addAll(localUris) }
+            when (requestCode) {
+                Constants.CHOOSE_IMAGE_REQUEST -> {
+                    viewModel.createMedias(localUris, Media.TYPE_IMAGE) {
+                        viewModel.liveDiary.value = viewModel.liveDiary.value!!.apply {
+                            medias.addAll(it)
+                        }
                     }
-                    else -> {
-                        videosUrl = videosUrl.toMutableList().apply { addAll(localUris) }
+                }
+                Constants.CHOOSE_VIDEO_REQUEST -> {
+                    viewModel.createMedias(localUris, Media.TYPE_VIDEO) {
+                        viewModel.liveDiary.value = viewModel.liveDiary.value!!.apply {
+                            medias.addAll(it)
+                        }
                     }
                 }
             }
@@ -201,20 +156,16 @@ class CreatePostActivity : BaseActivity() {
 
     override fun onFragmentResult(fragmentType: Int, result: Any?) {
         when (fragmentType) {
-            FRAGMENT_EDIT_MEDIA -> {
-                processingDialog.dismiss()
-                removeCameraFragment()
-                removeEditMediaFragment()
+            BaseView.FRAGMENT_EDIT_MEDIA -> {
+                zaloFragmentManager.removeCameraFragment()
+                zaloFragmentManager.removeEditMediaFragment()
 
                 viewModel.liveDiary.value = viewModel.liveDiary.value!!.apply {
-                    when (result) {
-                        is ImageMedia -> imagesUrl = imagesUrl.toMutableList().apply { add(result.uri) }
-                        is VideoMedia -> videosUrl = videosUrl.toMutableList().apply { add(result.uri) }
-                    }
+                    medias.add(result as Media)
                 }
             }
-            FRAGMENT_CAMERA -> {
-                removeCameraFragment()
+            BaseView.FRAGMENT_CAMERA -> {
+                zaloFragmentManager.removeCameraFragment()
             }
         }
     }

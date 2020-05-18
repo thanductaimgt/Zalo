@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:paddingVertical="4dp"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+    <ImageView
+        android:id="@+id/reactImgView"
+        android:layout_width="38dp"
+        android:layout_height="0dp"
+        android:layout_marginEnd="4dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:padding="8dp"
+        android:src="@drawable/heart"
+        app:layout_constraintDimensionRatio="1:1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/commentImgView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginEnd="8dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:padding="8dp"
+        android:src="@drawable/comment"
+        app:layout_constraintBottom_toBottomOf="@id/reactImgView"
+        app:layout_constraintDimensionRatio="W,1:1"
+        app:layout_constraintEnd_toStartOf="@id/reactCountTextView"
+        app:layout_constraintTop_toTopOf="@id/reactImgView" />
+
+    <ImageView
+        android:id="@+id/shareImgView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginEnd="8dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:padding="8dp"
+        android:src="@drawable/share2"
+        app:layout_constraintBottom_toBottomOf="@id/reactImgView"
+        app:layout_constraintDimensionRatio="W,1:1"
+        app:layout_constraintEnd_toStartOf="@id/commentCountTextView"
+        app:layout_constraintTop_toTopOf="@id/reactImgView" />
+
+    <TextView
+        android:id="@+id/shareCountTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/round_gray_bg"
+        app:layout_constraintBottom_toBottomOf="@id/shareImgView"
+        app:layout_constraintEnd_toStartOf="@id/shareImgView"
+        app:layout_constraintTop_toTopOf="@id/shareImgView"
+        tools:text="1.1k" />
+
+    <TextView
+        android:id="@+id/commentCountTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/round_gray_bg"
+        app:layout_constraintBottom_toBottomOf="@id/shareImgView"
+        app:layout_constraintEnd_toStartOf="@id/commentImgView"
+        app:layout_constraintTop_toTopOf="@id/shareImgView"
+        tools:text="1.1k" />
+
+    <TextView
+        android:id="@+id/reactCountTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/round_gray_bg"
+        app:layout_constraintBottom_toBottomOf="@id/shareImgView"
+        app:layout_constraintEnd_toStartOf="@id/reactImgView"
+        app:layout_constraintTop_toTopOf="@id/shareImgView"
+        tools:text="1.1k" />
+</androidx.constraintlayout.widget.ConstraintLayout>

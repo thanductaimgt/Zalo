@@ -5,7 +5,6 @@ import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.ImageFormat
 import android.os.Build
-import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -14,9 +13,6 @@ import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
-import com.google.android.exoplayer2.SimpleExoPlayer
-import com.google.android.exoplayer2.source.LoopingMediaSource
-import com.google.android.exoplayer2.source.MediaSourceFactory
 import com.google.firebase.ml.vision.FirebaseVision
 import com.google.firebase.ml.vision.common.FirebaseVisionImage
 import com.google.firebase.ml.vision.common.FirebaseVisionImageMetadata
@@ -24,72 +20,67 @@ import com.google.firebase.ml.vision.face.FirebaseVisionFace
 import com.google.firebase.ml.vision.face.FirebaseVisionFaceDetector
 import com.google.firebase.ml.vision.face.FirebaseVisionFaceDetectorOptions
 import com.squareup.picasso.Picasso
-import kotlinx.android.synthetic.main.fragment_create_story.*
+import kotlinx.android.synthetic.main.fragment_edit_media.*
 import vng.zalo.tdtai.zalo.R
-import vng.zalo.tdtai.zalo.base.BaseActivity
 import vng.zalo.tdtai.zalo.base.BaseFragment
-import vng.zalo.tdtai.zalo.data_model.media.ImageMedia
-import vng.zalo.tdtai.zalo.data_model.media.VideoMedia
+import vng.zalo.tdtai.zalo.base.BaseView
+import vng.zalo.tdtai.zalo.data_model.media.Media
 import vng.zalo.tdtai.zalo.util.TAG
 import vng.zalo.tdtai.zalo.util.smartLoad
 import vng.zalo.tdtai.zalo.widget.FaceView
-import javax.inject.Inject
 import kotlin.math.ceil
 import kotlin.math.min
 
 
-class EditMediaFragment() : BaseFragment() {
+class EditMediaFragment(private val type:Int) : BaseFragment() {
     private var bitmap: Bitmap? = null
-    private var videoUrl: String? = null
+    private var videoUri: String? = null
 
-    constructor(bitmap: Bitmap) : this() {
+    constructor(bitmap: Bitmap, type: Int) : this(type) {
         this.bitmap = bitmap
     }
 
-    constructor(videoUri: String) : this() {
-        this.videoUrl = videoUri
+    constructor(videoUri: String, type: Int) : this(type) {
+        this.videoUri = videoUri
     }
-
-    lateinit var activity: BaseActivity
 
     private val viewModel: EditMediaViewModel by viewModels { viewModelFactory }
 
-    @Inject
-    lateinit var exoPlayer: SimpleExoPlayer
-
-    @Inject
-    lateinit var mediaSourceFactory: MediaSourceFactory
-
-    private var isMuted = false
-    private var isPreparing = false
-    private var currentVolume = 0f
-
     private lateinit var detector: FirebaseVisionFaceDetector
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
-        activity = requireActivity() as BaseActivity
-        return inflater.inflate(R.layout.fragment_create_story, container, false)
+    override fun createView(inflater: LayoutInflater, container: ViewGroup?): View {
+        return inflater.inflate(R.layout.fragment_edit_media, container, false)
     }
 
     override fun onBindViews() {
-        Picasso.get().smartLoad(sessionManager.curUser!!.avatarUrl, resourceManager, avatarImgView) {
-            it.fit().centerCrop().error(R.drawable.default_peer_avatar)
+        when(type){
+            TYPE_CREATE_STORY -> {
+                Picasso.get().smartLoad(sessionManager.curUser!!.avatarUrl, resourceManager, avatarImgView) {
+                    it.fit().centerCrop().error(R.drawable.default_peer_avatar)
+                }
+
+                doneButton.visibility = View.GONE
+
+                sendImgView.setOnClickListener(this)
+                avatarImgView.setOnClickListener(this)
+                nameTextView.setOnClickListener(this)
+            }
+            TYPE_PRODUCE_RESULT->{
+                avatarImgView.visibility = View.GONE
+                nameTextView.visibility = View.GONE
+                sendImgView.visibility = View.GONE
+
+                doneButton.setOnClickListener(this)
+            }
         }
 
         if (bitmap != null) {
             initFaceDetector()
         } else {
-            isPreparing = true
-
-            val mediaSource = LoopingMediaSource(
-                    mediaSourceFactory.createMediaSource(utils.getUri(videoUrl!!))
-            )
-            exoPlayer.prepare(mediaSource)
-            exoPlayer.playWhenReady = true
-            currentVolume = exoPlayer.volume
-
-            playerView.player = exoPlayer
+            playbackManager.prepare(videoUri!!, true, onReady = {
+                playbackManager.play()
+            })
+            playerView.player = playbackManager.exoPlayer
 
             muteImgView.visibility = View.VISIBLE
             muteImgView.setOnClickListener(this)
@@ -97,11 +88,8 @@ class EditMediaFragment() : BaseFragment() {
 
         closeImgView.setOnClickListener(this)
         downloadImgView.setOnClickListener(this)
-        emojiImgView.setOnClickListener(this)
+        reactImgView.setOnClickListener(this)
         addTextImgView.setOnClickListener(this)
-        sendImgView.setOnClickListener(this)
-        avatarImgView.setOnClickListener(this)
-        nameTextView.setOnClickListener(this)
     }
 
     private fun initFaceDetector() {
@@ -315,49 +303,83 @@ class EditMediaFragment() : BaseFragment() {
 
     override fun onClick(view: View) {
         when (view.id) {
-            R.id.closeImgView -> onBackPressed()
+            R.id.closeImgView -> parentZaloFragmentManager.removeEditMediaFragment()
             R.id.muteImgView -> {
-                if (isMuted) {
+                if (playbackManager.isMuted()) {
                     muteImgView.setImageResource(R.drawable.external_speaker)
-                    exoPlayer.volume = currentVolume
+                    playbackManager.unMute()
                 } else {
                     muteImgView.setImageResource(R.drawable.muted_speaker)
-                    exoPlayer.volume = 0f
+                    playbackManager.mute()
                 }
-                isMuted = !isMuted
             }
-            R.id.avatarImgView -> produceResult()
-            R.id.nameTextView -> produceResult()
+            R.id.avatarImgView -> createStory()
+            R.id.nameTextView -> createStory()
+            R.id.doneButton -> produceResult()
+        }
+    }
+
+    private fun createStory() {
+        processingDialog.show(childFragmentManager)
+
+        val onDone = { isSuccess: Boolean ->
+            processingDialog.dismiss()
+
+            Toast.makeText(requireContext(), getString(
+                    if (isSuccess) {
+                        parent.onFragmentResult(BaseView.FRAGMENT_EDIT_MEDIA, RESULT_STORY_CREATED)
+
+                        R.string.description_story_created
+                    } else {
+                        R.string.label_error_occurred
+                    }
+            ), Toast.LENGTH_SHORT).show()
+        }
+
+        if (bitmap != null) {
+            viewModel.createStory(bitmap!!, onDone)
+        } else {
+            viewModel.createStory(videoUri!!, onDone)
         }
     }
 
     private fun produceResult() {
         processingDialog.show(childFragmentManager)
 
+        val onComplete = {media: Media ->
+            processingDialog.dismiss()
+            parent.onFragmentResult(BaseView.FRAGMENT_EDIT_MEDIA, media)
+        }
+
         if (bitmap != null) {
-            viewModel.saveImage(bitmap!!) { uri ->
-                activity().onFragmentResult(BaseActivity.FRAGMENT_EDIT_MEDIA, ImageMedia(uri))
-            }
+            viewModel.createMedia(bitmap!!, onComplete)
         } else {
-            activity().onFragmentResult(BaseActivity.FRAGMENT_EDIT_MEDIA, VideoMedia(videoUrl!!))
+            viewModel.createMedia(videoUri!!, onComplete)
         }
     }
 
-    override fun onBackPressed(): Boolean {
-        alertDialog.show(childFragmentManager,
-                title = getString(R.string.label_discard_image),
-                description = getString(R.string.description_discard_image),
-                button1Text = getString(R.string.label_keep),
-                button2Text = getString(R.string.label_discard),
-                button2Action = {
-                    activity.removeEditMediaFragment()
-                }
-        )
-        return true
-    }
+//    override fun onBackPressedCustomized(): Boolean {
+//        alertDialog.show(childFragmentManager,
+//                title = getString(R.string.label_discard_image),
+//                description = getString(R.string.description_discard_image),
+//                button1Text = getString(R.string.label_keep),
+//                button2Text = getString(R.string.label_discard),
+//                button2Action = {
+//                    zaloFragmentManager.removeEditMediaFragment()
+//                }
+//        )
+//        return true
+//    }
 
     override fun onDestroy() {
         super.onDestroy()
-        exoPlayer.playWhenReady = false
+        playbackManager.pause()
+    }
+
+    companion object {
+        const val RESULT_STORY_CREATED = "RESULT_STORY_CREATED"
+
+        const val TYPE_CREATE_STORY = 0
+        const val TYPE_PRODUCE_RESULT = 1
     }
 }

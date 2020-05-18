@@ -3,7 +3,6 @@ package vng.zalo.tdtai.zalo.base
 import android.os.Handler
 import android.view.MotionEvent
 import android.view.View
-import android.view.ViewConfiguration
 
 
 abstract class OnHoldListener : View.OnTouchListener {
@@ -11,28 +10,23 @@ abstract class OnHoldListener : View.OnTouchListener {
 
     private val handler = Handler()
     private var mLongPressed = Runnable {
-        onHoldStateChange(true)
         isPressed = true
     }
 
     override fun onTouch(v: View, event: MotionEvent): Boolean {
         return when (event.action) {
             MotionEvent.ACTION_DOWN -> {
-                handler.postDelayed(mLongPressed, ViewConfiguration.getLongPressTimeout().toLong())
+                onHoldStateChange(true)
+                handler.postDelayed(mLongPressed, 250)
                 true
             }
-            MotionEvent.ACTION_CANCEL -> {
-                handler.removeCallbacks(mLongPressed)
-                false
-            }
             MotionEvent.ACTION_UP -> {
-                if (isPressed) {
-                    onHoldStateChange(false)
-                    isPressed = false
-                } else {
+                onHoldStateChange(false)
+                if (!isPressed) {
                     handler.removeCallbacks(mLongPressed)
                     v.callOnClick()
                 }
+                isPressed = false
                 true
             }
             else -> {

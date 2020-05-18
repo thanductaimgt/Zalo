@@ -5,8 +5,8 @@ import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.multibindings.IntoMap
+import vng.zalo.tdtai.zalo.data_model.media.Media
 import vng.zalo.tdtai.zalo.di.ViewModelKey
-import vng.zalo.tdtai.zalo.data_model.message.Message
 
 @Module(includes = [MediaModule.ProvideModule::class])
 interface MediaModule {
@@ -18,8 +18,8 @@ interface MediaModule {
     @Module
     class ProvideModule{
         @Provides
-        fun provideMessages(mediaFragment: MediaFragment):ArrayList<Message>{
-            return mediaFragment.messages as ArrayList<Message>
+        fun provideMedias(mediaFragment: MediaFragment):ArrayList<Media>{
+            return mediaFragment.medias
         }
     }
 }

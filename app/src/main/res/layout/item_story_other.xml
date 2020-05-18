@@ -43,12 +43,12 @@
             android:paddingVertical="12dp"
             android:textColor="@android:color/white"
             android:textColorHint="@color/strongGray"
-            app:layout_constraintEnd_toStartOf="@id/emojiImgView"
+            app:layout_constraintEnd_toStartOf="@id/reactImgView"
             app:layout_constraintStart_toEndOf="@id/cameraImgView"
             app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
-            android:id="@+id/emojiImgView"
+            android:id="@+id/reactImgView"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:padding="8dp"

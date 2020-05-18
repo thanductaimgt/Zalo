@@ -99,6 +99,7 @@
                 tools:text="Tài Thân" />
 
             <com.autofit.et.lib.AutoFitEditText
+                android:autoLink="web"
                 android:id="@+id/editText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -111,16 +112,13 @@
                 android:textSize="@dimen/sizeTextLarge"
                 app:layout_constraintTop_toBottomOf="@id/avatarImgView" />
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:overScrollMode="never"
-                android:id="@+id/recyclerView"
+            <vng.zalo.tdtai.zalo.widget.MediaGridView
+                android:id="@+id/mediaGridView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                tools:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
                 app:layout_constraintTop_toBottomOf="@id/editText"
-                app:spanCount="3"
-                tools:itemCount="3"
-                tools:listitem="@layout/item_profile_media" />
+                tools:itemCount="5"
+                tools:listitem="@layout/item_media_video_preview" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
 

@@ -14,19 +14,17 @@ data class VideoMessage(
         override var url: String = "unknown",
         override var uploadProgress: Int? = null,
         override var size:Long=-1,
-        var ratio: String? = null,
+        override var ratio: String? = null,
         var duration: Int = 0//secs
-) : ResourceMessage(id, createdTime, senderId, senderAvatarUrl, TYPE_VIDEO, isSent, url, uploadProgress, size) {
+) : MediaMessage(id, createdTime, senderId, senderAvatarUrl, TYPE_VIDEO, isSent, url, uploadProgress, size, ratio) {
     override fun toMap(): HashMap<String, Any?> {
         return super.toMap().apply {
-            ratio?.let { put(FIELD_RATIO, it) }
             put(FIELD_DURATION, duration)
         }
     }
 
     override fun applyDoc(doc: DocumentSnapshot) {
         super.applyDoc(doc)
-        doc.getString(FIELD_RATIO)?.let { ratio = it }
         doc.getLong(FIELD_DURATION)?.let { duration = it.toInt() }
     }
 
@@ -35,7 +33,6 @@ data class VideoMessage(
     }
 
     companion object {
-        const val FIELD_RATIO = "ratio"
         const val FIELD_DURATION = "duration"
     }
 }

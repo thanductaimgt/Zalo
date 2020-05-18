@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/white">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appBarLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@null">
+
+        <com.google.android.material.appbar.CollapsingToolbarLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_scrollFlags="scroll|exitUntilCollapsed">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:id="@+id/backImgView"
+                    android:layout_width="0dp"
+                    android:layout_height="48dp"
+                    android:background="?attr/selectableItemBackground"
+                    android:padding="16dp"
+                    android:src="@drawable/left_arrow"
+                    app:layout_constraintDimensionRatio="W,1:1"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:tint="@android:color/black" />
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/avatarImgView"
+                    android:layout_width="40dp"
+                    android:layout_height="0dp"
+                    app:layout_constraintDimensionRatio="1:1"
+                    app:layout_constraintStart_toEndOf="@id/backImgView"
+                    app:layout_constraintTop_toTopOf="@id/backImgView"
+                    app:layout_constraintBottom_toBottomOf="@id/backImgView"
+                    app:layout_goneMarginBottom="8dp"
+                    tools:src="@drawable/official_account" />
+
+                <TextView
+                    android:id="@+id/nameTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:scrollHorizontally="true"
+                    android:textSize="@dimen/sizeTextBig"
+                    android:textStyle="bold"
+                    app:layout_constrainedWidth="true"
+                    app:layout_constraintBottom_toBottomOf="@id/avatarImgView"
+                    app:layout_constraintEnd_toStartOf="@id/dot"
+                    app:layout_constraintHorizontal_bias="0"
+                    app:layout_constraintHorizontal_chainStyle="packed"
+                    app:layout_constraintStart_toEndOf="@id/avatarImgView"
+                    app:layout_constraintTop_toTopOf="@id/avatarImgView"
+                    tools:text="Tai Thanasdsadasdsadsadsadsasdadsasdsdsdaasdsaasdasd" />
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/dot"
+                    android:layout_width="3dp"
+                    android:layout_height="0dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginBottom="3dp"
+                    android:src="@color/strongGray"
+                    app:layout_constraintBottom_toBottomOf="@id/timeTextView"
+                    app:layout_constraintDimensionRatio="1:1"
+                    app:layout_constraintEnd_toStartOf="@id/timeTextView"
+                    app:layout_constraintStart_toEndOf="@id/nameTextView" />
+
+                <TextView
+                    android:id="@+id/timeTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginBottom="1dp"
+                    android:textSize="@dimen/sizeTextSmall"
+                    app:layout_constraintBottom_toBottomOf="@id/nameTextView"
+                    app:layout_constraintEnd_toStartOf="@id/moreImgView"
+                    app:layout_constraintStart_toEndOf="@id/dot"
+                    tools:text="12 mins" />
+
+                <ImageView
+                    android:id="@+id/moreImgView"
+                    android:layout_width="30dp"
+                    android:layout_height="0dp"
+                    android:layout_marginEnd="4dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:padding="8dp"
+                    android:rotation="90"
+                    android:src="@drawable/more"
+                    app:layout_constraintBottom_toBottomOf="@id/avatarImgView"
+                    app:layout_constraintDimensionRatio="1:1"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@id/avatarImgView" />
+
+                <vng.zalo.tdtai.zalo.widget.ExpandableTextView
+                    android:id="@+id/descTextView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="12dp"
+                    android:autoLink="web"
+                    android:textSize="@dimen/sizeTextBig"
+                    android:autoSizeTextType="uniform"
+                    app:layout_constraintTop_toBottomOf="@id/backImgView"
+                    app:trimLength="300"
+                    tools:text="it's a beautiful day" />
+
+                <include
+                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"
+                    app:layout_constraintTop_toBottomOf="@id/descTextView"
+                    layout="@layout/part_post_actions"/>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </com.google.android.material.appbar.CollapsingToolbarLayout>
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:overScrollMode="never"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        android:id="@+id/recyclerView"
+        tools:listitem="@layout/item_post_media"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
+        />
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

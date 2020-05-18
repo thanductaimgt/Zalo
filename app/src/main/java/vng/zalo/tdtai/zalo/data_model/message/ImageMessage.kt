@@ -14,8 +14,8 @@ data class ImageMessage(
         override var url: String = "unknown",
         override var uploadProgress:Int?=null,
         override var size:Long=-1,
-        var ratio: String? = null
-) : ResourceMessage(id, createdTime, senderId, senderAvatarUrl, TYPE_IMAGE, isSent, url, uploadProgress, size) {
+        override var ratio: String? = null
+) : MediaMessage(id, createdTime, senderId, senderAvatarUrl, TYPE_IMAGE, isSent, url, uploadProgress, size, ratio) {
     override fun toMap(): HashMap<String, Any?> {
         return super.toMap().apply {
             ratio?.let { put(FIELD_RATIO, it)}

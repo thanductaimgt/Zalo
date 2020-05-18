@@ -6,12 +6,12 @@ import vng.zalo.tdtai.zalo.data_model.BaseDataModel
 import java.util.*
 
 abstract class Message(
-        open var id: String? = null,
-        open var createdTime: Long? = null,
-        open var senderId: String? = null,
-        open var senderAvatarUrl: String? = null,
-        open var type: Int? = null,
-        open var isSent: Boolean = false
+        open var id: String?,
+        open var createdTime: Long?,
+        open var senderId: String?,
+        open var senderAvatarUrl: String?,
+        open var type: Int?,
+        open var isSent: Boolean
 ) : BaseDataModel {
     override fun toMap(): HashMap<String, Any?> {
         return HashMap<String, Any?>().apply {

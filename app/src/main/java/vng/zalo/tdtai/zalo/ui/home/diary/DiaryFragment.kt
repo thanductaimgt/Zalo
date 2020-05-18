@@ -1,22 +1,28 @@
 package vng.zalo.tdtai.zalo.ui.home.diary
 
 import android.content.Intent
-import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.fragment_diary.*
+import kotlinx.android.synthetic.main.fragment_diary.view.*
 import kotlinx.android.synthetic.main.item_story_preview.view.*
 import vng.zalo.tdtai.zalo.R
 import vng.zalo.tdtai.zalo.base.BaseFragment
+import vng.zalo.tdtai.zalo.common.MediaPreviewAdapter
 import vng.zalo.tdtai.zalo.common.StoryPreviewAdapter
+import vng.zalo.tdtai.zalo.data_model.media.VideoMedia
 import vng.zalo.tdtai.zalo.data_model.story.StoryGroup
 import vng.zalo.tdtai.zalo.ui.create_post.CreatePostActivity
 import vng.zalo.tdtai.zalo.ui.home.HomeActivity
 import vng.zalo.tdtai.zalo.util.smartLoad
+import vng.zalo.tdtai.zalo.widget.AppBarStateChangeListener
+import vng.zalo.tdtai.zalo.widget.MediaGridView
 import javax.inject.Inject
 
 class DiaryFragment : BaseFragment() {
@@ -24,6 +30,7 @@ class DiaryFragment : BaseFragment() {
 
     @Inject
     lateinit var diaryAdapter: DiaryAdapter
+    lateinit var diaryLayoutManager: LinearLayoutManager
 
     @Inject
     lateinit var storyPreviewAdapter: StoryPreviewAdapter
@@ -31,20 +38,48 @@ class DiaryFragment : BaseFragment() {
     @Inject
     lateinit var homeActivity: HomeActivity
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
+    override fun createView(inflater: LayoutInflater, container: ViewGroup?): View {
         return inflater.inflate(R.layout.fragment_diary, container, false).apply {
-            makeRoomForStatusBar(requireActivity(), this)
+            makeRoomForStatusBar(requireActivity(), this.swipeRefresh)
         }
     }
 
     override fun onBindViews() {
-        postRecyclerView.adapter = diaryAdapter
+        diaryRecyclerView.adapter = diaryAdapter
+        diaryRecyclerView.setItemViewCacheSize(20)
+        diaryLayoutManager = diaryRecyclerView.layoutManager as LinearLayoutManager
+
         storyRecyclerView.adapter = storyPreviewAdapter
 
         Picasso.get().smartLoad(sessionManager.curUser!!.avatarUrl, resourceManager, avatarImgView2) {
             it.fit().centerCrop()
         }
+
+        appBarLayout.addOnOffsetChangedListener(object : AppBarStateChangeListener() {
+            override fun onStateChanged(state: State) {
+                when (state) {
+                    State.EXPANDED -> swipeRefresh.isEnabled = true
+                    else -> swipeRefresh.isEnabled = false
+                }
+            }
+        })
+
+        swipeRefresh.setOnRefreshListener {
+            refreshRecentDiaries()
+        }
+
+        diaryRecyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                homeActivity.setViewPagerScrollable(newState == RecyclerView.SCROLL_STATE_IDLE)
+            }
+
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                val lastVisiblePosition = (recyclerView.layoutManager as LinearLayoutManager).findLastVisibleItemPosition()
+                if (viewModel.shouldLoadMoreDiaries() && lastVisiblePosition > diaryAdapter.itemCount - 5) {
+                    viewModel.loadMoreDiaries()
+                }
+            }
+        })
 
         avatarImgView2.setOnClickListener(this)
         createPostTV.setOnClickListener(this)
@@ -53,7 +88,12 @@ class DiaryFragment : BaseFragment() {
 
     override fun onViewsBound() {
         viewModel.liveDiaries.observe(viewLifecycleOwner, Observer {
-            diaryAdapter.submitList(it)
+            val shouldScrollToTop = swipeRefresh.isRefreshing
+            diaryAdapter.submitList(it) {
+                if (shouldScrollToTop) {
+                    diaryLayoutManager.scrollToPositionWithOffset(0, 0)
+                }
+            }
         })
 
         var isFirstTime = true
@@ -78,6 +118,25 @@ class DiaryFragment : BaseFragment() {
                 viewModel.refreshRecentStoryGroup()
             }
         })
+
+        homeActivity.liveSelectedPageListener.observe(viewLifecycleOwner, Observer { position ->
+            if (position == 1) {
+                diaryRecyclerView.apply {
+                    val firstVisiblePosition = diaryLayoutManager.findFirstVisibleItemPosition()
+                    if (firstVisiblePosition < 10) {
+                        smoothScrollToPosition(0)
+                    } else {
+                        diaryLayoutManager.scrollToPositionWithOffset(0, 0)
+                    }
+                }
+            }
+        })
+    }
+
+    private fun refreshRecentDiaries() {
+        viewModel.refreshRecentDiaries {
+            swipeRefresh.isRefreshing = false
+        }
     }
 
     override fun onClick(view: View) {
@@ -89,11 +148,7 @@ class DiaryFragment : BaseFragment() {
                 if (storyGroup.id == StoryGroup.ID_CREATE_STORY) {
                     homeActivity.openCamera()
                 } else {
-                    view.apply {
-                        borderView.visibility = View.GONE
-                        progressBar.visibility = View.VISIBLE
-                        loadingAnimView.visibility = View.VISIBLE
-                    }
+                    view.loadingAnimView.visibility = View.VISIBLE
 
                     database.getStories(arrayListOf(storyGroup)) {
 //                        var loadedCount = 0
@@ -134,13 +189,9 @@ class DiaryFragment : BaseFragment() {
 //                                }
 //                            }
 //                        }
-                        homeActivity.addStoryFragment(storyGroup, viewModel.liveStoryGroups.value!!)
+                        homeActivity.zaloFragmentManager.addStoryFragment(storyGroup, viewModel.liveStoryGroups.value!!)
 
-                        view.apply {
-                            borderView.visibility = View.VISIBLE
-                            progressBar.visibility = View.GONE
-                            loadingAnimView.visibility = View.GONE
-                        }
+                        view.loadingAnimView.visibility = View.GONE
                     }
                 }
             }
@@ -149,7 +200,7 @@ class DiaryFragment : BaseFragment() {
                 addProfileFragment(view)
             }
             R.id.avatarImgView2 -> {
-                homeActivity.addProfileFragment(sessionManager.curUser!!.id!!)
+                homeActivity.navigateProfile()
             }
             R.id.nameTextView -> {
                 addProfileFragment(view)
@@ -157,18 +208,31 @@ class DiaryFragment : BaseFragment() {
             R.id.createPostTV -> {
                 startActivity(Intent(requireActivity(), CreatePostActivity::class.java))
             }
-            R.id.playerView -> {
+            R.id.rootItemView -> {
+                val mediaGridView = view.parent as MediaGridView
 
-            }
-            R.id.imageView -> {
+                val diaryPosition = diaryRecyclerView.getChildAdapterPosition(mediaGridView.parent as View)
+                val diary = diaryAdapter.currentList[diaryPosition]
 
+                val mediaPosition = mediaGridView.getChildAdapterPosition(view)
+                val media = (mediaGridView.adapter as MediaPreviewAdapter).currentList[mediaPosition]
+
+                if (mediaGridView.adapter!!.itemCount > 1) {
+                    parentZaloFragmentManager.addPostDetailFragment(diary, mediaPosition)
+                } else {
+                    if (media is VideoMedia) {
+                        (mediaGridView.findViewHolderForAdapterPosition(mediaPosition) as MediaPreviewAdapter.VideoMediaPreviewHolder).playVideo(media)
+                    } else {
+                        parentZaloFragmentManager.addMediaFragment(diary.medias[0], diary.medias)
+                    }
+                }
             }
         }
     }
 
     private fun addProfileFragment(view: View) {
-        val position = postRecyclerView.getChildAdapterPosition(view.parent as View)
+        val position = diaryRecyclerView.getChildAdapterPosition(view.parent as View)
         val post = diaryAdapter.currentList[position]
-        homeActivity.addProfileFragment(post.ownerId!!)
+        homeActivity.zaloFragmentManager.addProfileFragment(post.ownerId!!)
     }
 }

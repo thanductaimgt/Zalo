@@ -64,7 +64,7 @@ class MessageManager @Inject constructor(
 
             emitter.onNext(message)
 
-            if (message is ResourceMessage) {
+            if (message is MediaMessage) {
                 uploadResourceAndAddMessage(room, message, emitter)
             } else {
                 database.addNewMessageAndUpdateUsersRoom(
@@ -90,7 +90,7 @@ class MessageManager @Inject constructor(
         )
     }
 
-    private fun createResourceMessage(room: Room, content: String, createdTime: Long, messageType: Int): ResourceMessage {
+    private fun createResourceMessage(room: Room, content: String, createdTime: Long, messageType: Int): MediaMessage {
         @Suppress("NAME_SHADOWING")
         var messageType = messageType
 
@@ -215,7 +215,7 @@ class MessageManager @Inject constructor(
 
     private fun uploadResourceAndAddMessage(
             room: Room,
-            message: ResourceMessage,
+            message: MediaMessage,
             emitter: Emitter<Message>) {
 
         val fileStoragePath = storage.getMessageDataStoragePath(room.id!!, message)
@@ -232,11 +232,11 @@ class MessageManager @Inject constructor(
         storage.addFileAndGetDownloadUrl(message.url, fileStoragePath, fileType,
                 fileSize = message.size,
                 onProgressChange = {
-                    newMessage = (newMessage.clone() as ResourceMessage).apply { uploadProgress = it }
+                    newMessage = (newMessage.clone() as MediaMessage).apply { uploadProgress = it }
                     emitter.onNext(newMessage)
                 },
                 onComplete = { downloadUrl ->
-                    newMessage = (newMessage.clone() as ResourceMessage).apply {
+                    newMessage = (newMessage.clone() as MediaMessage).apply {
                         uploadProgress = null
 //                        url = downloadUrl
                     }
@@ -244,7 +244,7 @@ class MessageManager @Inject constructor(
 
                     val localResourceUri = newMessage.url
 
-                    newMessage = (newMessage.clone() as ResourceMessage).apply { url = downloadUrl }
+                    newMessage = (newMessage.clone() as MediaMessage).apply { url = downloadUrl }
                     database.addNewMessageAndUpdateUsersRoom(
                             curRoom = room,
                             newMessage = newMessage

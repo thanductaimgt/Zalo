@@ -1,9 +1,11 @@
 package vng.zalo.tdtai.zalo.manager
 
+import android.util.Log
 import io.reactivex.*
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
+import vng.zalo.tdtai.zalo.util.TAG
 import vng.zalo.tdtai.zalo.util.addTo
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -11,6 +13,7 @@ import javax.inject.Singleton
 @Singleton
 class BackgroundWorkManager @Inject constructor() {
     private val defaultOnError = { t: Throwable ->
+        Log.e(TAG, "Error from Zalo")
         t.printStackTrace()
     }
 

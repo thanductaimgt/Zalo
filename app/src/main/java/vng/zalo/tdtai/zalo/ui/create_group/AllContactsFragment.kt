@@ -1,6 +1,5 @@
 package vng.zalo.tdtai.zalo.ui.create_group
 
-import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,7 +17,7 @@ class AllContactsFragment : BaseFragment() {
 
     private lateinit var adapter: SelectRoomItemAdapter
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun createView(inflater: LayoutInflater, container: ViewGroup?): View {
         return inflater.inflate(R.layout.fragment_select_contacts, container, false)
     }
 

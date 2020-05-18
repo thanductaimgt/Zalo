@@ -1,11 +1,7 @@
 package vng.zalo.tdtai.zalo.ui.home
 
-import androidx.lifecycle.ViewModel
-import dagger.Binds
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
-import dagger.multibindings.IntoMap
-import vng.zalo.tdtai.zalo.di.ViewModelKey
 import vng.zalo.tdtai.zalo.ui.home.chat.ChatFragment
 import vng.zalo.tdtai.zalo.ui.home.chat.ChatFragmentModule
 import vng.zalo.tdtai.zalo.ui.home.diary.DiaryFragment
@@ -27,10 +23,5 @@ interface HomeModule {
 
     @ContributesAndroidInjector
     fun testFragment(): TestFragment
-
-    @Binds
-    @IntoMap
-    @ViewModelKey(HomeViewModel::class)
-    fun viewModel(viewModel: HomeViewModel):ViewModel
 }
 

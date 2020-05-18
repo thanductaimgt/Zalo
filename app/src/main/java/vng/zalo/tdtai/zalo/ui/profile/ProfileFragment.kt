@@ -1,6 +1,5 @@
 package vng.zalo.tdtai.zalo.ui.profile
 
-import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,8 +13,10 @@ import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.fragment_profile.*
+import kotlinx.android.synthetic.main.item_story_preview.view.*
 import vng.zalo.tdtai.zalo.R
 import vng.zalo.tdtai.zalo.base.BaseFragment
+import vng.zalo.tdtai.zalo.base.BaseView
 import vng.zalo.tdtai.zalo.common.StoryPreviewAdapter
 import vng.zalo.tdtai.zalo.data_model.story.StoryGroup
 import vng.zalo.tdtai.zalo.util.smartLoad
@@ -32,16 +33,17 @@ class ProfileFragment(
     @Inject
     lateinit var storyPreviewAdapter: StoryPreviewAdapter
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
+    override fun createView(inflater: LayoutInflater, container: ViewGroup?): View {
         // Inflate the layout for this fragment
+        activity().showStatusBar()
         return inflater.inflate(R.layout.fragment_profile, container, false).apply {
-            makeRoomForStatusBar(activity(), this)
+            makeRoomForStatusBar(requireContext(), this)
         }
     }
 
     override fun onBindViews() {
         viewPager.adapter = pagerAdapter
+        viewPager.offscreenPageLimit = 2
         TabLayoutMediator(tabLayout, viewPager,
                 TabLayoutMediator.TabConfigurationStrategy { tab: TabLayout.Tab, position: Int ->
                     tab.icon = ContextCompat.getDrawable(requireContext(),
@@ -66,6 +68,21 @@ class ProfileFragment(
             backImgView.visibility = View.GONE
             idTextView.updatePadding(left = nameTextView.paddingLeft + utils.dpToPx(16).toInt())
         }
+
+//        appBarLayout.addOnOffsetChangedListener(object : AppBarStateChangeListener() {
+//            override fun onStateChanged(state: State) {
+//                when (state) {
+//                    State.EXPANDED -> swipeRefresh.isEnabled = true
+//                    else -> swipeRefresh.isEnabled = false
+//                }
+//            }
+//        })
+//
+//        swipeRefresh.setOnRefreshListener {
+//            viewModel.refreshProfile {
+//                swipeRefresh.isRefreshing = false
+//            }
+//        }
 
         if (userId == sessionManager.curUser!!.id) {
             moreImgView.visibility = View.GONE
@@ -125,18 +142,28 @@ class ProfileFragment(
     override fun onClick(view: View) {
         when (view.id) {
             R.id.storyPreviewItemRoot -> {
+                view.loadingAnimView.visibility = View.VISIBLE
+
                 val position = storyGroupRecyclerView.getChildAdapterPosition(view)
                 val storyGroup = storyPreviewAdapter.currentList[position]
 
                 database.getStories(arrayListOf(storyGroup)) {
-                    activity().addStoryFragment(storyGroup, storyPreviewAdapter.currentList)
+                    parentZaloFragmentManager.addStoryFragment(storyGroup, storyPreviewAdapter.currentList)
+
+                    view.loadingAnimView.visibility = View.GONE
                 }
             }
             R.id.avatarImgView -> {
 //                (requireActivity() as BaseActivity).addMediaFragment(R.id.rootView, )
             }
-            R.id.backImgView -> activity().removeProfileFragment()
+            R.id.backImgView -> onBackPressedCustomized()
         }
+    }
+
+    override fun onBackPressedCustomized(): Boolean {
+        parentZaloFragmentManager.removeProfileFragment()
+        parent.onFragmentResult(BaseView.FRAGMENT_PROFILE, null)
+        return true
     }
 
 //    override fun getInstanceTag(): String {

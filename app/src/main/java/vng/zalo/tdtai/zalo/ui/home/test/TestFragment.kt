@@ -2,7 +2,6 @@ package vng.zalo.tdtai.zalo.ui.home.test
 
 import android.app.Activity
 import android.content.Intent
-import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,8 +12,7 @@ import vng.zalo.tdtai.zalo.base.BaseFragment
 import vng.zalo.tdtai.zalo.ui.login.LoginActivity
 
 class TestFragment : BaseFragment() {
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
+    override fun createView(inflater: LayoutInflater, container: ViewGroup?): View {
         return inflater.inflate(R.layout.fragment_test, container, false).apply {
             makeRoomForStatusBar(requireActivity(), this)
         }

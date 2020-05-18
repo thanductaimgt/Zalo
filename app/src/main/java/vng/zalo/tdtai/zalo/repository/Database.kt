@@ -5,13 +5,16 @@ import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.firestore.*
 import vng.zalo.tdtai.zalo.ZaloApplication
-import vng.zalo.tdtai.zalo.manager.SessionManager
 import vng.zalo.tdtai.zalo.data_model.*
 import vng.zalo.tdtai.zalo.data_model.message.CallMessage
 import vng.zalo.tdtai.zalo.data_model.message.Message
+import vng.zalo.tdtai.zalo.data_model.post.Diary
+import vng.zalo.tdtai.zalo.data_model.post.Post
+import vng.zalo.tdtai.zalo.data_model.post.Watch
 import vng.zalo.tdtai.zalo.data_model.room.*
 import vng.zalo.tdtai.zalo.data_model.story.Story
 import vng.zalo.tdtai.zalo.data_model.story.StoryGroup
+import vng.zalo.tdtai.zalo.manager.SessionManager
 import vng.zalo.tdtai.zalo.util.Constants
 import vng.zalo.tdtai.zalo.util.TAG
 import vng.zalo.tdtai.zalo.util.Utils
@@ -675,6 +678,21 @@ class Database @Inject constructor(
                 }
     }
 
+    fun getUsers(usersId: List<String>, callback: ((users: ArrayList<User>) -> Unit)) {
+        firebaseFirestore.collection(COLLECTION_USERS)
+                .whereInSafe(FieldPath.documentId(), usersId)
+                .get()
+                .addOnCompleteListener { task ->
+                    utils.assertTaskSuccessAndResultNotNull(task, TAG, "getUsers") { docs ->
+                        val users = arrayListOf<User>()
+                        docs.forEach {
+                            users.add(User.fromDoc(it))
+                        }
+                        callback(users)
+                    }
+                }
+    }
+
     fun getUserAvatarUrl(userId: String, callback: ((avatarUrl: String) -> Unit)? = null) {
         getUser(userId) { user ->
             user?.avatarUrl?.let {
@@ -892,6 +910,68 @@ class Database @Inject constructor(
                 .orderBy(StoryGroup.FIELD_CREATED_TIME)
     }
 
+    fun createPost(post: Post, callback: ((isSuccess: Boolean) -> Unit)? = null) {
+        if (post.id == null) {
+            post.id = getNewPostId()
+        }
+
+        firebaseFirestore.collection(COLLECTION_POSTS)
+                .document(post.id!!)
+                .set(post.toMap())
+                .addOnCompleteListener {
+                    callback?.invoke(it.isSuccessful)
+                }
+    }
+
+    fun getUsersRecentDiaries(usersId: List<String>, upperCreatedTimeLimit: Long?, numberLimit: Long, callback: ((diaries: ArrayList<Diary>) -> Unit)? = null) {
+        proceedGetDiaryQuery(
+                firebaseFirestore.collection(COLLECTION_POSTS)
+                        .whereInSafe(Post.FIELD_OWNER_ID, usersId),
+                upperCreatedTimeLimit, numberLimit, "getUsersRecentDiaries", callback
+        )
+    }
+
+    fun getUserRecentDiaries(userId: String, upperCreatedTimeLimit: Long?, numberLimit: Long, callback: ((diaries: ArrayList<Diary>) -> Unit)? = null) {
+        proceedGetDiaryQuery(
+                firebaseFirestore.collection(COLLECTION_POSTS)
+                        .whereEqualTo(Post.FIELD_OWNER_ID, userId),
+                upperCreatedTimeLimit, numberLimit, "getUserRecentDiaries", callback
+        )
+    }
+
+    private fun proceedGetDiaryQuery(query: Query, upperCreatedTimeLimit: Long?, numberLimit: Long, longMsgPrefix:String, callback: ((diaries: ArrayList<Diary>) -> Unit)? = null) {
+        query.let { if (upperCreatedTimeLimit != null) it.whereLessThan(Message.FIELD_CREATED_TIME, upperCreatedTimeLimit) else it }
+                .orderBy(Message.FIELD_CREATED_TIME, Query.Direction.DESCENDING)
+                .limit(numberLimit)
+                .get().addOnCompleteListener { task ->
+                    utils.assertTaskSuccessAndResultNotNull(task, TAG, longMsgPrefix) { querySnapshot ->
+                        val diaries = arrayListOf<Diary>()
+                        querySnapshot.forEach {
+                            diaries.add(Diary.fromDoc(it))
+                        }
+                        callback?.invoke(diaries)
+                    }
+                }
+    }
+
+    fun getUsersRecentWatches(usersId: List<String>, upperCreatedTimeLimit: Long?, numberLimit: Long, callback: ((diaries: ArrayList<Watch>) -> Unit)? = null) {
+        firebaseFirestore.collection(COLLECTION_POSTS)
+                .whereInSafe(Post.FIELD_OWNER_ID, usersId)
+                .let { if (upperCreatedTimeLimit != null) it.whereLessThan(Message.FIELD_CREATED_TIME, upperCreatedTimeLimit) else it }
+                .whereEqualTo(Post.FIELD_TYPE, Post.TYPE_WATCH)
+                .orderBy(Message.FIELD_CREATED_TIME, Query.Direction.DESCENDING)
+                .limit(numberLimit)
+                .get().addOnCompleteListener { task ->
+                    utils.assertTaskSuccessAndResultNotNull(task, TAG, "getUsersRecentWatches") { querySnapshot ->
+                        val watches = arrayListOf<Watch>()
+                        querySnapshot.forEach {
+                            watches.addAll(Watch.fromDoc(it))
+                        }
+                        callback?.invoke(watches)
+                    }
+                }
+    }
+
     fun getNewRoomId(): String {
         return firebaseFirestore
                 .collection(COLLECTION_ROOMS)
@@ -914,19 +994,17 @@ class Database @Inject constructor(
                 .document().id
     }
 
-    fun getNewPostId(): String {
-        return firebaseFirestore
-                .collection(COLLECTION_USERS)
-                .document(sessionManager.curUser!!.id!!)
-                .collection(COLLECTION_STORY_GROUPS)
-                .document().id
-    }
-
     private fun getNewStoryId(): String {
         return firebaseFirestore
                 .collection(COLLECTION_USERS)
                 .document(sessionManager.curUser!!.id!!)
                 .collection(COLLECTION_STORIES)
+                .document().id
+    }
+
+    fun getNewPostId(): String {
+        return firebaseFirestore
+                .collection(COLLECTION_POSTS)
                 .document().id
     }
 

@@ -12,6 +12,7 @@ import vng.zalo.tdtai.zalo.manager.BackgroundWorkManager
 import vng.zalo.tdtai.zalo.manager.ResourceManager
 import vng.zalo.tdtai.zalo.manager.SessionManager
 import vng.zalo.tdtai.zalo.data_model.message.Message
+import vng.zalo.tdtai.zalo.data_model.post.Post
 import vng.zalo.tdtai.zalo.data_model.room.Room
 import vng.zalo.tdtai.zalo.data_model.story.Story
 import vng.zalo.tdtai.zalo.util.Constants
@@ -64,7 +65,8 @@ class Storage @Inject constructor(
                 }
                 else -> utils.getInputStream(localPath)
             }
-        }, onSuccess = { inputStream ->
+        }, onSuccess =
+        { inputStream ->
             val fileStorageRef = firebaseStorage.reference.child(storagePath)
 
             fileStorageRef.putStream(inputStream)
@@ -87,7 +89,8 @@ class Storage @Inject constructor(
                             onComplete?.invoke(uri.toString())
                         }
                     }
-        })
+        }
+        )
     }
 
     private fun getScaledDownBitmap(bitmap: Bitmap): Bitmap {
@@ -136,17 +139,6 @@ class Storage @Inject constructor(
         }
     }
 
-//    fun generateNewStoragePath(context: Context, room: Room, localUriString: String, createdTime: Long):String{
-//        val extension = if (Utils.isContentUri(localUriString)) {
-//            val localUri = Uri.parse(localUriString)
-//            MimeTypeMap.getSingleton().getExtensionFromMimeType(context.contentResolver.getType(localUri))
-//        } else {
-//            Utils.getFileExtension(localUriString)
-//        }
-//
-//        return getMessageDataStoragePath(room.id!!,createdTime)
-//    }
-
     fun deleteRoomAvatarAndData(room: Room): List<Task<Void>> {
         val tasks = ArrayList<Task<Void>>()
         if (room.type == Room.TYPE_GROUP) {
@@ -180,6 +172,10 @@ class Storage @Inject constructor(
         return "$FOLDER_STORY_GROUPS/${sessionManager.curUser!!.id}/${storyGroupId}"
     }
 
+    fun getPostStoragePath(post: Post): String {
+        return "$FOLDER_POSTS/${post.ownerId}/${post.id}"
+    }
+
     companion object {
         private const val FOLDER_USER_AVATARS = "user_avatars"
         private const val FOLDER_ROOM_AVATARS = "room_avatars"
@@ -187,6 +183,7 @@ class Storage @Inject constructor(
         private const val FOLDER_STICKER_SETS = "sticker_sets"
         private const val FOLDER_STORIES = "stories"
         private const val FOLDER_STORY_GROUPS = "story_groups"
+        private const val FOLDER_POSTS = "posts"
 
         const val FILE_TYPE_IMAGE = 0
         const val FILE_TYPE_VIDEO = 1

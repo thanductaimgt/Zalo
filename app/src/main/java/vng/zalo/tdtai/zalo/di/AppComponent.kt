@@ -16,9 +16,6 @@ import javax.inject.Singleton
 interface AppComponent : AndroidInjector<ZaloApplication> {
     @Component.Factory
     interface Factory : AndroidInjector.Factory<ZaloApplication>
-//    {
-//        override fun create(@BindsInstance instance: ZaloApplication): AppComponent
-//    }
 
     fun inject(viewModel: BaseViewModel)
 }

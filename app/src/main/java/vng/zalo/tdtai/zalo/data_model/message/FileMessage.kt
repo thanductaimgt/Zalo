@@ -15,7 +15,7 @@ data class FileMessage(
         override var uploadProgress:Int?=null,
         override var size:Long=-1,
         var fileName: String? = null
-) : ResourceMessage(id, createdTime, senderId, senderAvatarUrl, TYPE_FILE, isSent, url, uploadProgress, size) {
+) : MediaMessage(id, createdTime, senderId, senderAvatarUrl, TYPE_FILE, isSent, url, uploadProgress, size, null) {
     override fun toMap(): HashMap<String, Any?> {
         return super.toMap().apply {
             fileName?.let { put(FIELD_FILE_NAME, it) }

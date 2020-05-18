@@ -2,11 +2,12 @@
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:background="@android:color/white"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@android:color/white">
 
     <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appBarLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@null">
@@ -221,10 +222,10 @@
                 app:layout_collapseMode="pin">
 
                 <ImageView
-                    android:background="?attr/selectableItemBackground"
                     android:id="@+id/backImgView"
                     android:layout_width="0dp"
                     android:layout_height="0dp"
+                    android:background="?attr/selectableItemBackground"
                     android:padding="16dp"
                     android:src="@drawable/left_arrow"
                     app:layout_constraintBottom_toBottomOf="parent"
@@ -249,10 +250,10 @@
                     tools:text="mintuyenn" />
 
                 <ImageView
-                    android:background="?attr/selectableItemBackgroundBorderless"
                     android:id="@+id/verifiedIcon"
                     android:layout_width="24dp"
                     android:layout_height="0dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
                     android:padding="6dp"
                     android:src="@drawable/verified"
                     app:layout_constraintDimensionRatio="1:1"
@@ -261,35 +262,35 @@
                     app:layout_constraintTop_toTopOf="@id/idTextView" />
 
                 <ImageView
-                    tools:visibility="visible"
-                    android:visibility="gone"
-                    android:background="?attr/selectableItemBackground"
                     android:id="@+id/moreImgView"
                     android:layout_width="0dp"
                     android:layout_height="0dp"
+                    android:background="?attr/selectableItemBackground"
                     android:padding="16dp"
                     android:rotation="90"
                     android:src="@drawable/more"
+                    android:visibility="gone"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintDimensionRatio="W,1:1"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:visibility="visible" />
 
                 <ImageView
-                    tools:visibility="visible"
-                    android:visibility="gone"
-                    android:background="?attr/selectableItemBackground"
                     android:id="@+id/settingsImgView"
                     android:layout_width="0dp"
                     android:layout_height="0dp"
+                    android:background="?attr/selectableItemBackground"
                     android:padding="14dp"
                     android:rotation="90"
-                    app:tint="@android:color/black"
                     android:src="@drawable/settings"
+                    android:visibility="gone"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintDimensionRatio="W,1:1"
                     app:layout_constraintEnd_toStartOf="@id/moreImgView"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:tint="@android:color/black"
+                    tools:visibility="visible" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
         </com.google.android.material.appbar.CollapsingToolbarLayout>
@@ -315,6 +316,7 @@
             app:layout_constraintTop_toBottomOf="@id/toolbar">
 
             <androidx.viewpager2.widget.ViewPager2
+                android:overScrollMode="never"
                 android:id="@+id/viewPager"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />

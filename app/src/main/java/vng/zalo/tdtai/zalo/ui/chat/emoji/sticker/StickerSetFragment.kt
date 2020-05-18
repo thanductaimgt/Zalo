@@ -1,6 +1,5 @@
 package vng.zalo.tdtai.zalo.ui.chat.emoji.sticker
 
-import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -19,8 +18,7 @@ class StickerSetFragment(val bucketName: String) : BaseFragment() {
 
     @Inject lateinit var adapter: StickerSetAdapter
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
+    override fun createView(inflater: LayoutInflater, container: ViewGroup?): View {
         return inflater.inflate(R.layout.fragment_sticker_set, container, false)
     }
 

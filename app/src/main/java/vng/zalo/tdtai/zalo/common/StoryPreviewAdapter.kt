@@ -63,6 +63,8 @@ class StoryPreviewAdapter @Inject constructor(
                     }
                 }
 
+                borderView.visibility = View.VISIBLE
+
                 when (storyGroup.id) {
                     StoryGroup.ID_RECENT_STORY_GROUP -> {
                         nameTextView.text = context.getString(R.string.description_recent_story)
@@ -79,7 +81,7 @@ class StoryPreviewAdapter @Inject constructor(
 
                         watchOwnerAvatarImgView.setImageResource(R.drawable.add2)
 
-                        circleLayout.visibility = View.GONE
+                        borderView.visibility = View.INVISIBLE
                     }
                     StoryGroup.ID_RECENT_STORIES -> {
                         nameTextView.text = if (storyGroup.ownerId == sessionManager.curUser!!.id) {

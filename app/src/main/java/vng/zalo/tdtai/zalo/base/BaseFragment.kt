@@ -88,14 +88,19 @@ abstract class BaseFragment : DaggerFragment(), BaseOnEventListener, BaseView {
     private fun initParentFM() {
         this.parentZaloFragmentManager = if (parent is BaseActivity) {
             (parent as BaseActivity).zaloFragmentManager
-        } else {
-            (parent as BaseFragment).zaloFragmentManager
+        } else if(parent is BaseFragment){
+            (parent as BaseFragment).fragmentManager()
+        }else{
+            (parent as BaseBottomSheetFragment).zaloFragmentManager
         }
     }
 
-    protected var isStatusBarHiddenWhenInit = false
+    private var isStatusBarHiddenWhenInit = false
+    private var systemUiVisibilityWhenInit:Int? = null
     final override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         isStatusBarHiddenWhenInit = activity().isStatusBarHidden
+        systemUiVisibilityWhenInit = activity().window.decorView.systemUiVisibility
+        activity().setStatusBarMode(true)
         val rootView = createView(inflater, container)
         return FrameLayout(requireContext()).apply {
             layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
@@ -110,10 +115,11 @@ abstract class BaseFragment : DaggerFragment(), BaseOnEventListener, BaseView {
         if (isOnTop) {
             bringToFront()
         } else {
-            parent = (parentFragment as BaseFragment?) ?: activity()
+            parent =  (parentFragment as BaseView?) ?: activity()
             initParentFM()
         }
-        zaloFragmentManager.init(view, childFragmentManager, this)
+        zaloFragmentManager.init(childFragmentManager, this)
+        zaloFragmentManager.setRootView(view)
         initAll()
     }
 
@@ -140,8 +146,16 @@ abstract class BaseFragment : DaggerFragment(), BaseOnEventListener, BaseView {
         return requireActivity() as BaseActivity
     }
 
+    fun fragmentManager():ZaloFragmentManager{
+        return if (isOnTop) {
+            zaloFragmentManager
+        } else {
+            parentZaloFragmentManager
+        }
+    }
+
     // true if back handled, do not override this
-    fun onBackPressed(): Boolean {
+    override fun onBackPressed(): Boolean {
         return zaloFragmentManager.popTopFragment() || onBackPressedCustomized()
     }
 
@@ -150,11 +164,14 @@ abstract class BaseFragment : DaggerFragment(), BaseOnEventListener, BaseView {
     }
 
     override fun onDestroy() {
+        activity().window.decorView.systemUiVisibility = systemUiVisibilityWhenInit!!
         if (isStatusBarHiddenWhenInit) {
             activity().hideStatusBar()
         } else {
             activity().showStatusBar()
         }
+        playbackManager.pause()
+//        playbackManager.exoPlayer.stop()
         super.onDestroy()
     }
 }

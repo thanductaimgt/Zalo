@@ -124,23 +124,27 @@ class Utils @Inject constructor(
         return bucketName.replace(Regex(" "), "_")
     }
 
-    fun dpToPx(valueInDp: Number): Float {
-        return (valueInDp.toFloat() * (application.resources.displayMetrics.densityDpi / DisplayMetrics.DENSITY_DEFAULT))
+    fun dpToPx(dp: Number): Int {
+        return (dp.toFloat() * (application.resources.displayMetrics.densityDpi / DisplayMetrics.DENSITY_DEFAULT.toFloat())).toInt()
     }
 
-    fun pxToDp(valueInPx: Number): Float {
-        return (valueInPx.toFloat() / (application.resources.displayMetrics.densityDpi / DisplayMetrics.DENSITY_DEFAULT))
+    fun pxToDp(px: Number): Int {
+        return (px.toFloat() / (application.resources.displayMetrics.densityDpi / DisplayMetrics.DENSITY_DEFAULT.toFloat())).toInt()
     }
 
     fun hideKeyboard(view: View) {
-        val imm = application.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        imm.hideSoftInputFromWindow(view.windowToken, 0)
-        view.clearFocus()
+        val imm = view.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        if (view.windowToken != null) {
+            imm.hideSoftInputFromWindow(view.windowToken, 0)
+        }
     }
 
     fun showKeyboard(view: View) {
-        val imm = application.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        imm.showSoftInput(view, InputMethodManager.SHOW_IMPLICIT)
+        view.post {
+            view.requestFocus()
+            val imm = view.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            imm.showSoftInput(view, InputMethodManager.SHOW_IMPLICIT)
+        }
     }
 
     fun getInputStream(localPath: String): InputStream {
@@ -350,7 +354,16 @@ class Utils @Inject constructor(
         val size = getSize(ratio)
         val floatRatio = size.width / size.height.toFloat()
         val adjustedRatio = min(max(floatRatio, MIN_RATIO), MAX_RATIO)
-        return "${(adjustedRatio * 10).toInt()}:10"
+        val newHeight: Int
+        val newWidth: Int
+        if (size.width > size.height) {
+            newHeight = size.height
+            newWidth = (newHeight * adjustedRatio).toInt()
+        } else {
+            newWidth = size.width
+            newHeight = (newWidth / adjustedRatio).toInt()
+        }
+        return "$newWidth:$newHeight"
     }
 
     companion object {

@@ -87,26 +87,14 @@ class CreatePostActivity : BaseActivity() {
                 onBackPressed()
             }
             R.id.postButton -> {
-                processingDialog.show(supportFragmentManager)
-
                 viewModel.liveDiary.value!!.apply {
                     text = editText.text.toString()
                     createdTime = System.currentTimeMillis()
-                    type = if (medias.any { it is VideoMedia }) Post.TYPE_WATCH else Post.TYPE_DIARY
                 }
-                viewModel.createDiary { isSuccess ->
-                    Toast.makeText(this,
-                            getString(
-                                    if (isSuccess) {
-                                        finish()
-                                        R.string.description_post_created
-                                    } else {
-                                        R.string.label_error_occurred
-                                    }
-                            )
-                            , Toast.LENGTH_SHORT).show()
-                    processingDialog.dismiss()
-                }
+
+                viewModel.createDiary()
+                Toast.makeText(this, getString(R.string.description_uploading_post), Toast.LENGTH_SHORT).show()
+                finish()
             }
             R.id.rootItemView -> {
                 val position = mediaGridView.getChildAdapterPosition(view)

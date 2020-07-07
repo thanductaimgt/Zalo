@@ -44,7 +44,6 @@
     <string name="label_day">ngày</string>
     <string name="label_continue">Tiếp tục</string>
     <string name="label_name">Tên</string>
-    <string name="label_like">Thích</string>
     <string name="label_reply">Trả lời</string>
     <string name="label_add_friend">Thêm bạn</string>
     <string name="label_add">Thêm</string>
@@ -85,6 +84,17 @@
     <string name="label_camera">Camera</string>
     <string name="label_discard_post">Bỏ bài viết ?</string>
     <string name="label_done">Xong</string>
+    <string name="label_upload_service">Dịch vụ upload</string>
+    <string name="label_follow">Theo dõi</string>
+    <string name="label_report_comment">Tìm hỗ trợ hoặc báo cáo bình luận</string>
+
+    <string name="label_like">Thích</string>
+    <string name="label_love">Thả tim</string>
+    <string name="label_haha">Haha</string>
+    <string name="label_care">Thương thương</string>
+    <string name="label_wow">Wow</string>
+    <string name="label_angry">Phẫn nộ</string>
+    <string name="label_sad">Buồn</string>
 
     <string-array name="sort_group_options">
         <item>Hoạt động cuối</item>
@@ -156,6 +166,14 @@
     <string name="description_story_unmarked">Đã xóa khỏi tin nổi bật</string>
     <string name="description_discard_post">Nếu quay lại bây giờ thay đổi của bạn sẽ không được lưu lại</string>
     <string name="description_post_created">Đã đăng bài viết</string>
+    <string name="description_view_replies">Xem %d câu trả lời</string>
+    <string name="description_uploading_post">Bài viết của bạn đang được tải lên</string>
+    <string name="description_upload_success">Đăng bài viết thành công</string>
+    <string name="description_upload_fail">Đã có lỗi xảy ra khi đăng bài viết của bạn</string>
+    <string name="description_react_people">Những người bày tỏ cảm xúc</string>
+    <string name="description_all">Tất cả</string>
+    <string name="description_react">Bày tỏ cảm xúc về bình luận này</string>
+    <string name="description_comment_deleted">Đã xóa bình luận</string>
 
 
     <string name="hint_phone_number">Số điện thoại</string>
@@ -165,4 +183,5 @@
     <string name="hint_full_name">Tên đầy đủ</string>
     <string name="hint_search_friends_messages">Tìm bạn bè, tin nhắn &#8230;</string>
     <string name="hint_create_post">Bạn đang nghĩ gì ?</string>
+    <string name="hint_comment">Viết bình luận&#8230;</string>
 </resources>

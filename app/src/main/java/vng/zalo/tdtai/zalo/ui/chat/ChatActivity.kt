@@ -32,7 +32,7 @@ import kotlinx.android.synthetic.main.part_message_sticker.view.*
 import vng.zalo.tdtai.zalo.R
 import vng.zalo.tdtai.zalo.base.BaseActivity
 import vng.zalo.tdtai.zalo.base.BaseView
-import vng.zalo.tdtai.zalo.base.BindableViewHolder
+import vng.zalo.tdtai.zalo.base.BaseViewHolder
 import vng.zalo.tdtai.zalo.base.KeyboardHeightObserver
 import vng.zalo.tdtai.zalo.data_model.media.ImageMedia
 import vng.zalo.tdtai.zalo.data_model.media.Media
@@ -87,6 +87,7 @@ class ChatActivity : BaseActivity(), KeyboardHeightObserver {
         }
 
     override fun onBindViews() {
+        setStatusBarMode(false)
         requestFullScreen()
         val rootView = layoutInflater.inflate(R.layout.activity_chat, null)
         makeRoomForStatusBar(this, rootView.toolbar, BaseView.MAKE_ROOM_TYPE_MARGIN)
@@ -193,7 +194,7 @@ class ChatActivity : BaseActivity(), KeyboardHeightObserver {
                 this@ChatActivity.chatRecyclerView.forEach {
                     val holder = this@ChatActivity.chatRecyclerView.getChildViewHolder(it)
                     if (holder is ChatAdapter.MessageViewHolder) {
-                        playbackManager.play()
+                        playbackManager.resume()
 
                         holder.itemView.stickerAnimView.resumeAnimation()
                     }
@@ -433,11 +434,11 @@ class ChatActivity : BaseActivity(), KeyboardHeightObserver {
 
                 val media = if (message is ImageMessage) ImageMedia(message.url, message.ratio) else VideoMedia(message.url, message.ratio)
                 val medias = arrayListOf<Media>().apply {
-                    addAll(getSurroundMessages(message).map {
+                    addAll(getSurroundMediaMessages(message).map {
                         if (it is ImageMessage) {
-                            ImageMedia(message.url, message.ratio)
+                            ImageMedia(it.url, it.ratio)
                         } else {
-                            VideoMedia(message.url, message.ratio)
+                            VideoMedia(it.url, it.ratio)
                         }
                     })
                 }
@@ -606,8 +607,8 @@ class ChatActivity : BaseActivity(), KeyboardHeightObserver {
         }
     }
 
-    private fun getViewHolder(position: Int): BindableViewHolder {
-        return chatRecyclerView.getChildViewHolder(chatRecyclerView[position]) as BindableViewHolder
+    private fun getViewHolder(position: Int): BaseViewHolder {
+        return chatRecyclerView.getChildViewHolder(chatRecyclerView[position]) as BaseViewHolder
     }
 
     private fun showMessageActionView(message: Message) {
@@ -655,13 +656,13 @@ class ChatActivity : BaseActivity(), KeyboardHeightObserver {
         lastPressedMessage = message
     }
 
-    private fun getSurroundMessages(curMessage: Message): List<Message> {
+    private fun getSurroundMediaMessages(curMessage: Message): List<MediaMessage> {
         //get surrounding messages
         @Suppress("UNCHECKED_CAST")
         return viewModel.liveMessageMap.value!!.values
                 .filterIsInstance<MediaMessage>()
                 .sortedByDescending { it.createdTime }
-                .toMutableList() as ArrayList<Message>
+                .toMutableList() as ArrayList<MediaMessage>
     }
 
     private var isKeyboardOn = false

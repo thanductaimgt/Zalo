@@ -1,12 +1,15 @@
 package vng.zalo.tdtai.zalo.ui.story
 
+import android.content.res.ColorStateList
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.Toast
 import androidx.annotation.IdRes
+import androidx.core.content.ContextCompat
 import androidx.core.view.get
+import androidx.core.widget.ImageViewCompat
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.RecyclerView
@@ -18,9 +21,11 @@ import kotlinx.android.synthetic.main.bottom_add_highlight_story.*
 import kotlinx.android.synthetic.main.bottom_add_highlight_story.view.*
 import kotlinx.android.synthetic.main.fragment_story.*
 import kotlinx.android.synthetic.main.item_story_base.view.*
+import kotlinx.android.synthetic.main.item_story_other.*
 import vng.zalo.tdtai.zalo.R
 import vng.zalo.tdtai.zalo.base.BaseFragment
-import vng.zalo.tdtai.zalo.common.StoryPreviewAdapter
+import vng.zalo.tdtai.zalo.common.StoryGroupPreviewAdapter
+import vng.zalo.tdtai.zalo.data_model.react.React
 import vng.zalo.tdtai.zalo.data_model.story.ImageStory
 import vng.zalo.tdtai.zalo.data_model.story.Story
 import vng.zalo.tdtai.zalo.data_model.story.StoryGroup
@@ -38,7 +43,7 @@ class StoryFragment(
     lateinit var storyGroupAdapter: StoryGroupAdapter
 
     @Inject
-    lateinit var storyPreviewAdapter: StoryPreviewAdapter
+    lateinit var storyGroupPreviewAdapter: StoryGroupPreviewAdapter
 
     @Inject
     lateinit var createStoryGroupDialog: CreateStoryGroupDialog
@@ -138,7 +143,7 @@ class StoryFragment(
 
             val rootView = layoutInflater.inflate(R.layout.bottom_add_highlight_story, null)
             rootView.cancelTextView.setOnClickListener(this@StoryFragment)
-            rootView.recyclerView.adapter = storyPreviewAdapter
+            rootView.recyclerView.adapter = storyGroupPreviewAdapter
 
             setContentView(rootView)
         }
@@ -173,11 +178,6 @@ class StoryFragment(
         return recyclerView.findViewHolderForAdapterPosition(viewPager.currentItem)?.itemView
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        playbackManager.exoPlayer.stop(true)
-    }
-
     override fun onClick(view: View) {
         when (view.id) {
             R.id.closeImgView -> parentZaloFragmentManager.removeStoryFragment()
@@ -188,11 +188,11 @@ class StoryFragment(
                 val curStoryGroup = storyGroupAdapter.currentList[viewPager.currentItem]
                 val story = curStoryGroup.stories!![curStoryGroup.curPosition]
 
-                storyPreviewAdapter.addedGroupsId = story.groupsId
-                storyPreviewAdapter.notifyItemRangeChanged(0, storyPreviewAdapter.itemCount, arrayListOf(StoryGroup.PAYLOAD_ADDED_STATE))
+                storyGroupPreviewAdapter.addedGroupsId = story.groupsId
+                storyGroupPreviewAdapter.notifyItemRangeChanged(0, storyGroupPreviewAdapter.itemCount, arrayListOf(StoryGroup.PAYLOAD_ADDED_STATE))
 
                 viewModel.getAllMyStoryGroups {
-                    storyPreviewAdapter.submitList(it.toMutableList().apply {
+                    storyGroupPreviewAdapter.submitList(it.toMutableList().apply {
                         add(0, StoryGroup(id = StoryGroup.ID_CREATE_STORY_GROUP))
                     })
                 }
@@ -205,7 +205,7 @@ class StoryFragment(
                 val curStoryGroup = storyGroupAdapter.currentList[viewPager.currentItem]
                 val story = curStoryGroup.stories!![curStoryGroup.curPosition]
 
-                val targetStoryGroup = storyPreviewAdapter.currentList[position] as StoryGroup
+                val targetStoryGroup = storyGroupPreviewAdapter.currentList[position] as StoryGroup
 
                 if (targetStoryGroup.id == StoryGroup.ID_CREATE_STORY_GROUP) {
                     createStoryGroupDialog.show(childFragmentManager, story)
@@ -221,14 +221,57 @@ class StoryFragment(
             }
             R.id.avatarImgView -> openProfile()
             R.id.nameTextView -> openProfile()
+            R.id.viewIcon -> showStoryDetail()
+            R.id.reactIcon -> showStoryDetail()
+            R.id.reactImgView->{
+                val storyGroup = storyGroupAdapter.currentList[getCurrentItemPosition()]
+                val story = storyGroup.stories!![storyGroup.curPosition]
+
+                val reactedType = React.TYPE_LOVE
+
+                val curUser = sessionManager.curUser!!
+                if (story.reacts[curUser.id] == null) {
+                    database.reactStory(story, storyGroup.ownerId!!, reactedType)
+                    story.apply {
+                        reacts[curUser.id!!] = React(
+                                ownerId = curUser.id,
+                                ownerName = curUser.name,
+                                ownerAvatarUrl = curUser.avatarUrl,
+                                type = reactedType,
+                                createdTime = System.currentTimeMillis()
+                        )
+                        reactCount++
+                    }
+
+                    reactImgView.setImageResource(R.drawable.heart2)
+                    val redTint = ContextCompat.getColor(requireContext(), R.color.missedCall)
+                    ImageViewCompat.setImageTintList(reactImgView, ColorStateList.valueOf(redTint))
+                } else {
+                    database.unReactStory(story, storyGroup.ownerId!!)
+                    story.reacts.remove(curUser.id!!)
+                    story.reactCount--
+
+                    reactImgView.setImageResource(R.drawable.heart)
+                    ImageViewCompat.setImageTintList(reactImgView, null)
+                }
+                msgEditText.setText(story.reactCount.toString())
+//                reactCountTextView.text = post.reactCount.toString()
+            }
         }
     }
 
-    private fun openProfile() {
-        val storyGroup = storyGroupAdapter.currentList[viewPager.currentItem]
+    private fun showStoryDetail() {
+        val storyGroup = storyGroupAdapter.currentList[getCurrentItemPosition()]
 
         pauseCurrentItem()
-        zaloFragmentManager.addProfileFragment(storyGroup.ownerId!!)
+        fragmentManager().addStoryDetailFragment(storyGroup)
+    }
+
+    private fun openProfile() {
+        val storyGroup = storyGroupAdapter.currentList[getCurrentItemPosition()]
+
+        pauseCurrentItem()
+        fragmentManager().addProfileFragment(storyGroup.ownerId!!)
     }
 
     fun nextStoryGroup() {

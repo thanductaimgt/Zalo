@@ -1,6 +1,7 @@
 package vng.zalo.tdtai.zalo.data_model.post
 
 import com.google.firebase.firestore.DocumentSnapshot
+import vng.zalo.tdtai.zalo.data_model.react.React
 import vng.zalo.tdtai.zalo.data_model.media.VideoMedia
 
 data class Watch(
@@ -13,13 +14,14 @@ data class Watch(
         override var reactCount: Int = 0,
         override var commentCount: Int = 0,
         override var shareCount: Int = 0,
+        override var reacts: HashMap<String, React> = hashMapOf(),
         var videoMedia: VideoMedia?=null
 //        var musicName:String?=null,
 //        var musicUrl:String?=null,
 //        var musicOwnerAvatarUrl:String?=null
 //        var ratio:String?=null
 ): Post(
-    id, createdTime, ownerId, ownerName, ownerAvatarUrl, text, reactCount, commentCount, shareCount, TYPE_WATCH
+    id, createdTime, ownerId, ownerName, ownerAvatarUrl, text, reactCount, commentCount, shareCount, reacts, TYPE_WATCH
 ) {
 //    override fun toMap(): HashMap<String, Any?> {
 //        return super.toMap().apply {

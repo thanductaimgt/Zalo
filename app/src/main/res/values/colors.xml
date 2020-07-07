@@ -26,6 +26,9 @@
     <color name="missedCall">#e72c2c</color>
     <color name="lightTextStrongGray">#666a70</color>
     <color name="storyBorderColor">#6a45d9</color>
+    <color name="yellow">#F69B30</color>
+    <color name="orange">#E04300</color>
+    <color name="blue">#0062DF</color>
 
     <!--<color name="progress_primary">#fff</color>-->
     <color name="progress_primary">@color/white</color>

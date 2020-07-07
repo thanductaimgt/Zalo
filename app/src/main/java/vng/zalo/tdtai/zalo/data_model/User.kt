@@ -46,6 +46,8 @@ data class User(
         const val FIELD_LAST_STORY_CREATED_TIME = "lastStoryCreatedTime"
         const val FIELD_FIREBASE_MESSAGING_TOKEN = "firebaseToken"
 
+        const val PAYLOAD_FOLLOW = 0
+
         fun fromDoc(doc:DocumentSnapshot):User{
             return User().apply { applyDoc(doc) }
         }

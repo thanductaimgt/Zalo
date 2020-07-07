@@ -2,6 +2,7 @@ package vng.zalo.tdtai.zalo.data_model.story
 
 import com.google.firebase.firestore.DocumentSnapshot
 import vng.zalo.tdtai.zalo.data_model.BaseDataModel
+import vng.zalo.tdtai.zalo.data_model.react.React
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -14,8 +15,9 @@ abstract class Story(
         open var type: Int? = null,
         open var viewCount: Int = 0,
         open var reactCount: Int = 0,
-        open var groupsId: List<String> = ArrayList()
-): BaseDataModel {
+        open var groupsId: List<String> = ArrayList(),
+        open var reacts: HashMap<String, React>
+) : BaseDataModel {
     override fun toMap(): HashMap<String, Any?> {
         return HashMap<String, Any?>().apply {
             createdTime?.let { put(FIELD_CREATED_TIME, it) }
@@ -26,6 +28,7 @@ abstract class Story(
             put(FIELD_VIEW_COUNT, viewCount)
             put(FIELD_REACT_COUNT, reactCount)
             put(FIELD_GROUPS_ID, groupsId)
+            put(FIELD_REACTS, reacts)
         }
     }
 
@@ -46,6 +49,14 @@ abstract class Story(
         doc.getLong(FIELD_VIEW_COUNT)?.let { viewCount = it.toInt() }
         doc.getLong(FIELD_REACT_COUNT)?.let { reactCount = it.toInt() }
         doc.get(FIELD_GROUPS_ID)?.let { groupsId = it as List<String> }
+        doc.get(FIELD_REACTS)?.let {
+            reacts = (it as HashMap<String, Long?>).mapValues { entry->
+                React(
+                        ownerId = entry.key,
+                        type = if (entry.value != null) entry.value!!.toInt() else React.TYPE_LOVE
+                )
+            } as HashMap<String, React>
+        }
     }
 
     companion object {
@@ -66,6 +77,7 @@ abstract class Story(
         const val FIELD_VIEW_COUNT = "viewCount"
         const val FIELD_REACT_COUNT = "reactCount"
         const val FIELD_GROUPS_ID = "groupsId"
+        const val FIELD_REACTS = "reacts"
 
         fun fromDoc(doc: DocumentSnapshot): Story {
             return when (doc.getLong(FIELD_TYPE)?.toInt()) {

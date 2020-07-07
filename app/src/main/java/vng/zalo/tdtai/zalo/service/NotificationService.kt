@@ -1,20 +1,15 @@
 package vng.zalo.tdtai.zalo.service
 
-import android.app.NotificationChannel
-import android.app.NotificationManager
 import android.app.PendingIntent
-import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
-import android.os.Build
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import android.util.SparseArray
 import android.view.View
 import android.widget.Toast
-import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.app.Person
@@ -27,12 +22,12 @@ import com.squareup.picasso.Picasso
 import com.squareup.picasso.Target
 import vng.zalo.tdtai.zalo.R
 import vng.zalo.tdtai.zalo.ZaloApplication
-import vng.zalo.tdtai.zalo.manager.ResourceManager
-import vng.zalo.tdtai.zalo.manager.SessionManager
 import vng.zalo.tdtai.zalo.data_model.ChatNotification
 import vng.zalo.tdtai.zalo.data_model.room.Room
 import vng.zalo.tdtai.zalo.data_model.room.RoomItem
 import vng.zalo.tdtai.zalo.data_model.room.RoomItemPeer
+import vng.zalo.tdtai.zalo.manager.ResourceManager
+import vng.zalo.tdtai.zalo.manager.SessionManager
 import vng.zalo.tdtai.zalo.repository.Database
 import vng.zalo.tdtai.zalo.ui.chat.ChatActivity
 import vng.zalo.tdtai.zalo.util.Constants
@@ -57,17 +52,10 @@ class AlwaysRunningNotificationService @Inject constructor(
 ) : NotificationService {
     private var lastRoomItemMap: HashMap<String, RoomItem>? = null
     private val listenerRegistrations = ArrayList<ListenerRegistration>()
-    private var notificationManager: NotificationManager
     private var doListening = false
     private val notificationMap = SparseArray<ChatNotification>()
 
     private var listeningThread: Thread? = null
-
-    init {
-        initNotificationChannels()
-
-        notificationManager = application.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-    }
 
     override fun start() {
         Log.d(TAG, "onLogin")
@@ -133,12 +121,6 @@ class AlwaysRunningNotificationService @Inject constructor(
         }
     }
 
-    private fun initNotificationChannels() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            initChatNotificationChannel()
-        }
-    }
-
     private fun startListenForNewMessages() {
         val userRoomsListener = database.addUserRoomsListener(
                 userId = sessionManager.curUser!!.id!!
@@ -163,18 +145,6 @@ class AlwaysRunningNotificationService @Inject constructor(
             lastRoomItemMap = map
         }
         listenerRegistrations.add(userRoomsListener)
-    }
-
-    @RequiresApi(Build.VERSION_CODES.O)
-    private fun initChatNotificationChannel() {
-        val chan = NotificationChannel(
-                Constants.CHAT_NOTIFY_CHANNEL_ID,
-                Constants.CHAT_NOTIFY_CHANNEL_NAME, NotificationManager.IMPORTANCE_HIGH
-        )
-        chan.lightColor = application.getColor(R.color.lightPrimary)
-        chan.lockscreenVisibility = NotificationCompat.VISIBILITY_PUBLIC
-        val service = application.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        service.createNotificationChannel(chan)
     }
 
     private fun pushChatNotification(roomItem: RoomItem) {

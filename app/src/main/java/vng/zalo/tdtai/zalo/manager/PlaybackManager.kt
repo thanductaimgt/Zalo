@@ -22,13 +22,24 @@ class PlaybackManager @Inject constructor(
 ) {
     private val mediaSourceFactory: MediaSourceFactory = createMediaSourceFactory(application)
     var isPreparing = false
+    var lastPlaybackState: Int? = null
     private val playerEventListener = object : Player.EventListener {
         override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
-            if (isPreparing && playbackState == ExoPlayer.STATE_READY) {
-                onReady?.invoke()
-                isPreparing = false
-            }else if(!isPreparing && playbackState == ExoPlayer.STATE_ENDED){
-                onEnded?.invoke()
+//            if (isPreparing && playbackState == ExoPlayer.STATE_READY) {
+//                onReady?.invoke()
+//                isPreparing = false
+//            }else if(!isPreparing && playbackState == ExoPlayer.STATE_ENDED){
+//                onEnded?.invoke()
+//            }
+            if (playbackState != lastPlaybackState) {
+                when (playbackState) {
+                    ExoPlayer.STATE_READY -> {
+                        onReady?.invoke()
+                        isPreparing = false
+                    }
+                    ExoPlayer.STATE_ENDED -> onEnded?.invoke()
+                }
+                lastPlaybackState = playbackState
             }
         }
     }
@@ -55,12 +66,16 @@ class PlaybackManager @Inject constructor(
         )
     }
 
-    fun prepare(uri: String, doLooping: Boolean, onReady: () -> Any?, onLostFocus: (() -> Any?)?=null, onEnded: (() -> Any?)?=null) {
+    fun prepare(uri: String, doLooping: Boolean, onReady: () -> Any?, onLostFocus: (() -> Any?)? = null, onEnded: (() -> Any?)? = null) {
         pause()
 
         try {
             this.onLostFocus?.invoke()
+        } catch (t: Throwable) {
+            t.printStackTrace()
+        }
 
+        try {
             var mediaSource = mediaSourceFactory.createMediaSource(utils.getUri(uri))
             if (doLooping) {
                 mediaSource = LoopingMediaSource(mediaSource)
@@ -73,11 +88,12 @@ class PlaybackManager @Inject constructor(
             isPreparing = true
             exoPlayer.prepare(mediaSource)
         } catch (t: Throwable) {
+            t.printStackTrace()
             isPreparing = false
         }
     }
 
-    fun play() {
+    fun resume() {
         exoPlayer.playWhenReady = true
     }
 
@@ -98,7 +114,7 @@ class PlaybackManager @Inject constructor(
         }
     }
 
-    fun isMuted():Boolean{
+    fun isMuted(): Boolean {
         return exoPlayer.volume == 0f
     }
 }

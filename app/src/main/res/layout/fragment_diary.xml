@@ -1,162 +1,167 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.swiperefreshlayout.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/swipeRefresh"
-    android:clipToPadding="false"
+    android:id="@+id/coordinatorLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <androidx.coordinatorlayout.widget.CoordinatorLayout
-        android:id="@+id/coordinatorLayout"
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appBarLayout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content"
+        android:background="@null">
 
-        <com.google.android.material.appbar.AppBarLayout
-            android:id="@+id/appBarLayout"
+        <com.google.android.material.appbar.CollapsingToolbarLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@null">
+            android:minHeight="@dimen/size_action_bar_height"
+            app:layout_scrollFlags="scroll|exitUntilCollapsed">
 
-            <com.google.android.material.appbar.CollapsingToolbarLayout
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:minHeight="@dimen/size_action_bar_height"
-                app:layout_scrollFlags="scroll|exitUntilCollapsed">
+                android:layout_height="160dp"
+                android:layout_marginTop="@dimen/size_action_bar_height">
 
-                <androidx.constraintlayout.widget.ConstraintLayout
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/avatarImgView2"
+                    android:layout_width="48dp"
+                    android:layout_height="0dp"
+                    android:layout_margin="8dp"
+                    app:layout_constraintDimensionRatio="1:1"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:src="@drawable/official_account" />
+
+                <TextView
+                    android:id="@+id/createPostTV"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="8dp"
+                    android:background="@drawable/round_gray_bg"
+                    android:paddingHorizontal="16dp"
+                    android:paddingVertical="8dp"
+                    android:text="@string/hint_create_post"
+                    android:textColor="@color/lightTextGray"
+                    android:textSize="@dimen/sizeTextBig"
+                    app:layout_constraintBottom_toBottomOf="@id/avatarImgView2"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/avatarImgView2"
+                    app:layout_constraintTop_toTopOf="@id/avatarImgView2" />
+
+                <vng.zalo.tdtai.zalo.util.NestedScrollableHost
+                    android:id="@+id/storyLayout"
                     android:layout_width="match_parent"
-                    android:layout_height="160dp"
-                    android:layout_marginTop="@dimen/size_action_bar_height">
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    app:layout_constraintTop_toBottomOf="@id/avatarImgView2">
 
-                    <de.hdodenhof.circleimageview.CircleImageView
-                        android:id="@+id/avatarImgView2"
-                        android:layout_width="48dp"
-                        android:layout_height="0dp"
-                        android:layout_margin="8dp"
-                        app:layout_constraintDimensionRatio="1:1"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        tools:src="@drawable/official_account" />
-
-                    <TextView
-                        android:id="@+id/createPostTV"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginHorizontal="8dp"
-                        android:background="@drawable/round_gray_bg"
-                        android:paddingHorizontal="16dp"
-                        android:paddingVertical="8dp"
-                        android:text="@string/hint_create_post"
-                        android:textColor="@color/lightTextGray"
-                        android:textSize="@dimen/sizeTextBig"
-                        app:layout_constraintBottom_toBottomOf="@id/avatarImgView2"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toEndOf="@id/avatarImgView2"
-                        app:layout_constraintTop_toTopOf="@id/avatarImgView2" />
-
-                    <vng.zalo.tdtai.zalo.util.NestedScrollableHost
-                        android:id="@+id/storyLayout"
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/storyRecyclerView"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        app:layout_constraintTop_toBottomOf="@id/avatarImgView2">
+                        android:background="@android:color/white"
+                        android:orientation="horizontal"
+                        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                        tools:listitem="@layout/item_story_group_preview" />
+                </vng.zalo.tdtai.zalo.util.NestedScrollableHost>
 
-                        <androidx.recyclerview.widget.RecyclerView
-                            android:id="@+id/storyRecyclerView"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:background="@android:color/white"
-                            android:orientation="horizontal"
-                            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                            tools:listitem="@layout/item_story_preview" />
-                    </vng.zalo.tdtai.zalo.util.NestedScrollableHost>
-                </androidx.constraintlayout.widget.ConstraintLayout>
+                <com.airbnb.lottie.LottieAnimationView
+                    android:id="@+id/loadingAnimView"
+                    android:layout_width="56dp"
+                    android:layout_height="56dp"
+                    android:layout_marginTop="24dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/createPostTV"
+                    app:lottie_autoPlay="true"
+                    app:lottie_loop="true"
+                    app:lottie_rawRes="@raw/loading" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/size_action_bar_height"
-                    android:background="@android:color/white"
-                    android:clickable="true"
-                    app:layout_collapseMode="pin">
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/size_action_bar_height"
+                android:background="@android:color/white"
+                android:clickable="true"
+                app:layout_collapseMode="pin">
 
-                    <ImageView
-                        android:id="@+id/cameraImgView"
-                        android:layout_width="0dp"
-                        android:layout_height="0dp"
-                        android:layout_marginStart="8dp"
-                        android:src="@drawable/camera"
-                        app:layout_constraintBottom_toBottomOf="@id/appNameTV"
-                        app:layout_constraintDimensionRatio="W,1:1"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="@id/appNameTV" />
+                <ImageView
+                    android:id="@+id/cameraImgView"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_marginStart="8dp"
+                    android:src="@drawable/camera"
+                    app:layout_constraintBottom_toBottomOf="@id/appNameTV"
+                    app:layout_constraintDimensionRatio="W,1:1"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="@id/appNameTV" />
 
-                    <TextView
-                        android:id="@+id/appNameTV"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="8dp"
-                        android:text="@string/label_app_name"
-                        android:textColor="@color/lightPrimary"
-                        android:textSize="@dimen/sizeTextEnormous"
-                        android:textStyle="bold"
-                        android:typeface="serif"
-                        app:layout_constraintStart_toEndOf="@id/cameraImgView"
-                        app:layout_constraintTop_toTopOf="parent" />
+                <TextView
+                    android:id="@+id/appNameTV"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:text="@string/label_app_name"
+                    android:textColor="@color/lightPrimary"
+                    android:textSize="@dimen/sizeTextEnormous"
+                    android:textStyle="bold"
+                    android:typeface="serif"
+                    app:layout_constraintStart_toEndOf="@id/cameraImgView"
+                    app:layout_constraintTop_toTopOf="parent" />
 
-                    <ImageView
-                        android:id="@+id/notiImgView"
-                        android:layout_width="40dp"
-                        android:layout_height="0dp"
-                        android:layout_marginEnd="4dp"
-                        android:contentDescription="@string/description_notification"
-                        android:padding="6dp"
-                        android:src="@drawable/notification"
-                        app:layout_constraintDimensionRatio="1:1"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="@id/appNameTV" />
+                <ImageView
+                    android:id="@+id/notiImgView"
+                    android:layout_width="40dp"
+                    android:layout_height="0dp"
+                    android:layout_marginEnd="4dp"
+                    android:contentDescription="@string/description_notification"
+                    android:padding="6dp"
+                    android:src="@drawable/notification"
+                    app:layout_constraintDimensionRatio="1:1"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@id/appNameTV" />
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="6dp"
-                        android:background="@android:drawable/ic_notification_overlay"
-                        android:padding="2dp"
-                        android:textColor="@color/whiteText"
-                        android:textSize="@dimen/sizeTextSmall"
-                        android:textStyle="bold"
-                        android:visibility="gone"
-                        app:layout_constraintDimensionRatio="1:1"
-                        app:layout_constraintEnd_toEndOf="@id/notiImgView"
-                        app:layout_constraintTop_toTopOf="@id/notiImgView"
-                        tools:text="50+"
-                        tools:visibility="visible" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="6dp"
+                    android:background="@android:drawable/ic_notification_overlay"
+                    android:padding="2dp"
+                    android:textColor="@color/whiteText"
+                    android:textSize="@dimen/sizeTextSmall"
+                    android:textStyle="bold"
+                    android:visibility="gone"
+                    app:layout_constraintDimensionRatio="1:1"
+                    app:layout_constraintEnd_toEndOf="@id/notiImgView"
+                    app:layout_constraintTop_toTopOf="@id/notiImgView"
+                    tools:text="50+"
+                    tools:visibility="visible" />
 
-                    <ImageView
-                        android:id="@+id/searchImgView"
-                        android:layout_width="40dp"
-                        android:layout_height="0dp"
-                        android:layout_marginEnd="4dp"
-                        android:contentDescription="@string/hint_search"
-                        android:padding="6dp"
-                        android:src="@drawable/search2"
-                        app:layout_constraintDimensionRatio="1:1"
-                        app:layout_constraintEnd_toStartOf="@id/notiImgView"
-                        app:layout_constraintTop_toTopOf="@id/notiImgView" />
+                <ImageView
+                    android:id="@+id/searchImgView"
+                    android:layout_width="40dp"
+                    android:layout_height="0dp"
+                    android:layout_marginEnd="4dp"
+                    android:contentDescription="@string/hint_search"
+                    android:padding="6dp"
+                    android:src="@drawable/search2"
+                    app:layout_constraintDimensionRatio="1:1"
+                    app:layout_constraintEnd_toStartOf="@id/notiImgView"
+                    app:layout_constraintTop_toTopOf="@id/notiImgView" />
 
-                </androidx.constraintlayout.widget.ConstraintLayout>
-            </com.google.android.material.appbar.CollapsingToolbarLayout>
-        </com.google.android.material.appbar.AppBarLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </com.google.android.material.appbar.CollapsingToolbarLayout>
+    </com.google.android.material.appbar.AppBarLayout>
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/diaryRecyclerView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:overScrollMode="never"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
-            tools:listitem="@layout/item_diary"
-            android:paddingBottom="100dp"
-            android:clipToPadding="false"/>
-    </androidx.coordinatorlayout.widget.CoordinatorLayout>
-</androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+    <vng.zalo.tdtai.zalo.widget.BaseRecyclerView
+        android:id="@+id/diaryRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clipToPadding="false"
+        android:overScrollMode="never"
+        android:paddingBottom="100dp"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
+        tools:listitem="@layout/item_diary" />
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

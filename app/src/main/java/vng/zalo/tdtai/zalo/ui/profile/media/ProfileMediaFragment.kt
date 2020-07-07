@@ -10,6 +10,7 @@ import vng.zalo.tdtai.zalo.R
 import vng.zalo.tdtai.zalo.base.BaseFragment
 import vng.zalo.tdtai.zalo.common.MediaPreviewAdapter
 import vng.zalo.tdtai.zalo.data_model.media.Media
+import vng.zalo.tdtai.zalo.ui.home.HomeActivity
 import vng.zalo.tdtai.zalo.ui.profile.ProfileFragment
 import vng.zalo.tdtai.zalo.ui.profile.ProfileViewModel
 import vng.zalo.tdtai.zalo.util.MediaDiffCallback
@@ -28,9 +29,7 @@ class ProfileMediaFragment : BaseFragment() {
     }
 
     override fun onBindViews() {
-        mediaPreviewAdapter = MediaPreviewAdapter(this, resourceManager, utils, playbackManager, MediaDiffCallback()).apply {
-            showPlayIcon = false
-        }
+        mediaPreviewAdapter = MediaPreviewAdapter(this, resourceManager, utils, playbackManager, MediaDiffCallback())
         mediaGridView.adapter = mediaPreviewAdapter
     }
 
@@ -44,6 +43,15 @@ class ProfileMediaFragment : BaseFragment() {
 
             mediaPreviewAdapter.submitList(resources)
         })
+
+        if(activity() is HomeActivity) {
+            val homeActivity = activity() as HomeActivity
+            homeActivity.liveSelectedPageListener.observe(viewLifecycleOwner, Observer { position ->
+                if (position == 4) {
+                    mediaGridView.smoothScrollToPosition(0)
+                }
+            })
+        }
     }
 
     override fun onClick(view: View) {

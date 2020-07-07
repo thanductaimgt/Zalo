@@ -55,7 +55,7 @@
             android:paddingVertical="8dp"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_constraintTop_toBottomOf="@id/line1"
-            tools:listitem="@layout/item_story_preview" />
+            tools:listitem="@layout/item_story_group_preview" />
 
         <View
             android:id="@+id/line2"

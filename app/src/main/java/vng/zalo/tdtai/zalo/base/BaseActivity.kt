@@ -81,9 +81,10 @@ abstract class BaseActivity : DaggerAppCompatActivity(), BaseOnEventListener, Ba
         super.onCreate(savedInstanceState)
         window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN)
 
+        zaloFragmentManager.init(supportFragmentManager, this)
         onBindViews()
         val rootView = findViewById<ViewGroup>(android.R.id.content).getChildAt(0)
-        zaloFragmentManager.init(rootView, supportFragmentManager, this)
+        zaloFragmentManager.setRootView(rootView)
         onViewsBound()
     }
 
@@ -112,18 +113,21 @@ abstract class BaseActivity : DaggerAppCompatActivity(), BaseOnEventListener, Ba
 //    }
 
     protected fun requestFullScreen() {
+//        window.addFlags(Window.FEATURE_ACTION_BAR_OVERLAY)
         window.decorView.systemUiVisibility = window.decorView.systemUiVisibility or View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
     }
 
     var isStatusBarHidden = false
 
     fun showStatusBar() {
-        window.clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
+        window.decorView.systemUiVisibility = window.decorView.systemUiVisibility and View.SYSTEM_UI_FLAG_FULLSCREEN.inv()
+//        window.clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
         isStatusBarHidden = false
     }
 
     fun hideStatusBar() {
-        window.addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
+        window.decorView.systemUiVisibility = window.decorView.systemUiVisibility or View.SYSTEM_UI_FLAG_FULLSCREEN
+//        window.addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
         isStatusBarHidden = true
     }
 
@@ -145,14 +149,14 @@ abstract class BaseActivity : DaggerAppCompatActivity(), BaseOnEventListener, Ba
         }
     }
 
-    final override fun onBackPressed() {
+    override fun onBackPressed() {
         if(!zaloFragmentManager.popTopFragment()){
             onBackPressedCustomized()
         }
     }
 
     open fun onBackPressedCustomized() {
-        super.onBackPressed()
+        super<DaggerAppCompatActivity>.onBackPressed()
     }
 
     final override fun onActivityResult(requestCode: Int, resultCode: Int, intent: Intent?) {

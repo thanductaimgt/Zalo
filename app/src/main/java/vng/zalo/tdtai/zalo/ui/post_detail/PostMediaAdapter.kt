@@ -9,7 +9,7 @@ import kotlinx.android.synthetic.main.item_post_media.view.*
 import kotlinx.android.synthetic.main.part_post_actions.view.*
 import vng.zalo.tdtai.zalo.R
 import vng.zalo.tdtai.zalo.base.BaseListAdapter
-import vng.zalo.tdtai.zalo.base.BindableViewHolder
+import vng.zalo.tdtai.zalo.base.BaseViewHolder
 import vng.zalo.tdtai.zalo.data_model.media.ImageMedia
 import vng.zalo.tdtai.zalo.data_model.media.Media
 import vng.zalo.tdtai.zalo.data_model.media.VideoMedia
@@ -35,7 +35,7 @@ class PostMediaAdapter @Inject constructor(
         holder.bind(position)
     }
 
-    inner class MediaViewHolder(itemView: View) : BindableViewHolder(itemView) {
+    inner class MediaViewHolder(itemView: View) : BaseViewHolder(itemView) {
         override fun bind(position: Int) {
             val media = currentList[position]
 
@@ -94,6 +94,12 @@ class PostMediaAdapter @Inject constructor(
                 commentImgView.setOnClickListener(postDetailFragment)
                 shareImgView.setOnClickListener(postDetailFragment)
             }
+        }
+    }
+
+    override fun onViewRecycled(holder: MediaViewHolder) {
+        holder.itemView.apply {
+            imageView.setImageDrawable(null)
         }
     }
 }

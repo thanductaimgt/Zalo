@@ -88,6 +88,10 @@ class CameraFragment : BaseFragment() {
                 }
             }
 
+            setOnDismissListener{
+                activity().hideStatusBar()
+            }
+
             val rootView = layoutInflater.inflate(R.layout.bottom_sheet_choose_gallery, null)
             rootView.uploadImageTV.setOnClickListener(this@CameraFragment)
             rootView.uploadVideoTV.setOnClickListener(this@CameraFragment)
@@ -199,8 +203,8 @@ class CameraFragment : BaseFragment() {
         when (fragmentType) {
             BaseView.FRAGMENT_EDIT_MEDIA -> {
                 when (result) {
-                    EditMediaFragment.RESULT_STORY_CREATED -> {
-                        zaloFragmentManager.removeEditMediaFragment()
+                    EditMediaFragment.RESULT_CREATE_STORY_SUCCESS -> {
+                        fragmentManager().removeEditMediaFragment()
                         parent.onFragmentResult(BaseView.FRAGMENT_CAMERA, null)
                     }
                 }

@@ -45,7 +45,8 @@ class PermissionManager @Inject constructor(
                 Manifest.permission.WAKE_LOCK,
                 Manifest.permission.MODIFY_AUDIO_SETTINGS,
                 Manifest.permission.RECEIVE_BOOT_COMPLETED,
-                Manifest.permission.CAMERA
+                Manifest.permission.CAMERA,
+                Manifest.permission.FOREGROUND_SERVICE
         )
 
         const val PERMISSIONS_REQUEST = 1234

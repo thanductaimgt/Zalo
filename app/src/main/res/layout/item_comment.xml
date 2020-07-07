@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:paddingBottom="2dp"
+    android:id="@+id/rootItemView"
+    android:layout_height="wrap_content">
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/avatarImgView"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_margin="8dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:src="@drawable/official_account" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/contentLayout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="8dp"
+        android:background="@drawable/round_gray_bg"
+        android:paddingHorizontal="16dp"
+        android:paddingVertical="4dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/avatarImgView"
+        app:layout_constraintTop_toTopOf="@id/avatarImgView">
+
+        <TextView
+            android:id="@+id/nameTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textStyle="bold"
+            app:layout_constrainedWidth="true"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="Nhu Van Chien" />
+
+        <vng.zalo.tdtai.zalo.widget.ExpandableTextView
+            app:trimLength="150"
+            android:id="@+id/descTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/nameTextView"
+            tools:text="hahahahahahahaahaha" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <com.makeramen.roundedimageview.RoundedImageView
+        android:layout_marginEnd="36dp"
+        app:layout_constraintWidth_min="@dimen/minMediaMessageWidth"
+        android:id="@+id/imageView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="2dp"
+        app:layout_constrainedWidth="true"
+        app:layout_constraintEnd_toEndOf="@id/contentLayout"
+        app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintStart_toStartOf="@id/contentLayout"
+        app:layout_constraintTop_toBottomOf="@id/contentLayout"
+        app:riv_corner_radius="@dimen/sizeRoundCornerRadiusLayout"
+        tools:background="@android:color/black"
+        tools:layout_constraintDimensionRatio="H,2:1"
+        tools:riv_mutate_background="true"
+        tools:src="@drawable/zalo" />
+
+    <ImageView
+        tools:visibility="visible"
+        android:visibility="gone"
+        android:id="@+id/playIcon"
+        android:src="@drawable/ic_play_arrow_black_24dp"
+        app:layout_constraintEnd_toEndOf="@id/imageView"
+        app:layout_constraintStart_toStartOf="@id/imageView"
+        app:layout_constraintBottom_toBottomOf="@id/imageView"
+        app:layout_constraintTop_toTopOf="@id/imageView"
+        app:layout_constraintDimensionRatio="1:1"
+        android:layout_width="50dp"
+        android:layout_height="0dp"/>
+
+    <TextView
+        android:id="@+id/timeTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="2dp"
+        android:textColor="@color/lightTextGray"
+        app:layout_constraintStart_toStartOf="@id/contentLayout"
+        app:layout_constraintTop_toBottomOf="@id/imageView"
+        tools:text="1 hour" />
+
+    <TextView
+        android:id="@+id/reactTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:text="@string/label_love"
+        android:textStyle="bold"
+        app:layout_constraintStart_toEndOf="@id/timeTextView"
+        app:layout_constraintTop_toTopOf="@id/timeTextView" />
+
+    <TextView
+        android:id="@+id/replyTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:text="@string/label_reply"
+        android:textStyle="bold"
+        app:layout_constraintStart_toEndOf="@id/reactTextView"
+        app:layout_constraintTop_toTopOf="@id/timeTextView" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_marginEnd="8dp"
+        android:id="@+id/reactLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/shape_round_corners_stroke_thin"
+        android:paddingStart="2dp"
+        android:paddingEnd="6dp"
+        android:clipChildren="false"
+        app:layout_constraintBottom_toTopOf="@id/imageView"
+        app:layout_constraintEnd_toEndOf="@id/contentLayout"
+        app:layout_constraintTop_toBottomOf="@id/contentLayout">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            app:civ_border_color="@android:color/white"
+            app:civ_border_width="2dp"
+            android:id="@+id/reactIcon3"
+            android:layout_marginEnd="2dp"
+            android:layout_width="20dp"
+            android:layout_height="0dp"
+            app:layout_constraintDimensionRatio="W,1:1"
+            tools:src="@drawable/ic_love"
+            app:layout_constraintEnd_toStartOf="@id/reactCountTextView"
+            app:layout_constraintTop_toTopOf="@id/reactCountTextView"
+            app:layout_constraintBottom_toBottomOf="@id/reactCountTextView" />
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            app:civ_border_color="@android:color/white"
+            app:civ_border_width="2dp"
+            android:id="@+id/reactIcon2"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintDimensionRatio="W,1:1"
+            tools:src="@drawable/ic_love"
+            android:layout_marginEnd="14dp"
+            app:layout_constraintEnd_toEndOf="@id/reactIcon3"
+            app:layout_constraintTop_toTopOf="@id/reactIcon3"
+            app:layout_constraintBottom_toBottomOf="@id/reactIcon3" />
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            app:civ_border_color="@android:color/white"
+            app:civ_border_width="2dp"
+            android:id="@+id/reactIcon1"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintDimensionRatio="W,1:1"
+            tools:src="@drawable/ic_love"
+            android:layout_marginEnd="14dp"
+            app:layout_constraintEnd_toEndOf="@id/reactIcon2"
+            app:layout_constraintTop_toTopOf="@id/reactIcon3"
+            app:layout_constraintBottom_toBottomOf="@id/reactIcon3"/>
+
+        <TextView
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:id="@+id/reactCountTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/sizeTextSmall"
+            app:layout_constraintEnd_toEndOf="parent"
+            tools:text="16" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <TextView
+        android:id="@+id/viewReplyTextView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="2dp"
+        android:background="?attr/selectableItemBackground"
+        android:paddingVertical="4dp"
+        android:paddingStart="16dp"
+        android:paddingEnd="8dp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@id/contentLayout"
+        app:layout_constraintTop_toBottomOf="@id/timeTextView"
+        tools:text="@string/description_view_replies" />
+</androidx.constraintlayout.widget.ConstraintLayout>

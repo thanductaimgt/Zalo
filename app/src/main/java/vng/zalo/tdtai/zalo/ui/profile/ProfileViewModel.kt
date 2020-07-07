@@ -15,6 +15,7 @@ class ProfileViewModel @Inject constructor(private val userId: String) : BaseVie
     val liveUser = MutableLiveData<User>()
     val liveDiaries = MutableLiveData<ArrayList<Diary>>(ArrayList())
     val liveStoryGroups: MutableLiveData<List<StoryGroup>> = MutableLiveData(ArrayList())
+    val liveSuggestedUsers: MutableLiveData<ArrayList<User>> = MutableLiveData(ArrayList())
 
     val liveSelectedDiary = MutableLiveData<Post>()
 
@@ -58,6 +59,11 @@ class ProfileViewModel @Inject constructor(private val userId: String) : BaseVie
 
         database.getUserRecentDiaries(userId, System.currentTimeMillis(), 15) { diaries ->
             updateLiveDiaries(diaries)
+        }
+
+        val suggestedUsersId = arrayListOf("0123456789", "0111111111", "0987654321").apply { remove(sessionManager.curUser!!.id) }
+        database.getUsers(suggestedUsersId){ users->
+            liveSuggestedUsers.value = users
         }
     }
 }

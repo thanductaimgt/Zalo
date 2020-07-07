@@ -1,13 +1,13 @@
 package vng.zalo.tdtai.zalo.ui.story
 
-import android.view.View
 import androidx.lifecycle.ViewModel
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.multibindings.IntoMap
-import vng.zalo.tdtai.zalo.di.ViewModelKey
+import vng.zalo.tdtai.zalo.base.BaseOnEventListener
 import vng.zalo.tdtai.zalo.data_model.story.StoryGroup
+import vng.zalo.tdtai.zalo.di.ViewModelKey
 
 @Module(includes = [StoryModule.ProvideModule::class])
 interface StoryModule {
@@ -17,7 +17,7 @@ interface StoryModule {
     fun bindViewModel(viewModel: StoryViewModel): ViewModel
 
     @Binds
-    fun clickListener(storyFragment: StoryFragment): View.OnClickListener
+    fun eventListener(storyFragment: StoryFragment): BaseOnEventListener
 
     @Module
     class ProvideModule{

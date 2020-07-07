@@ -7,18 +7,21 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.updatePadding
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.squareup.picasso.Picasso
+import kotlinx.android.synthetic.main.activity_home.*
 import kotlinx.android.synthetic.main.fragment_profile.*
-import kotlinx.android.synthetic.main.item_story_preview.view.*
+import kotlinx.android.synthetic.main.fragment_profile.viewPager
+import kotlinx.android.synthetic.main.item_story_group_preview.view.*
 import vng.zalo.tdtai.zalo.R
 import vng.zalo.tdtai.zalo.base.BaseFragment
 import vng.zalo.tdtai.zalo.base.BaseView
-import vng.zalo.tdtai.zalo.common.StoryPreviewAdapter
+import vng.zalo.tdtai.zalo.common.StoryGroupPreviewAdapter
+import vng.zalo.tdtai.zalo.data_model.User
+import vng.zalo.tdtai.zalo.data_model.media.ImageMedia
 import vng.zalo.tdtai.zalo.data_model.story.StoryGroup
+import vng.zalo.tdtai.zalo.ui.home.HomeActivity
 import vng.zalo.tdtai.zalo.util.smartLoad
 import javax.inject.Inject
 
@@ -31,7 +34,10 @@ class ProfileFragment(
     lateinit var pagerAdapter: ProfilePagerAdapter
 
     @Inject
-    lateinit var storyPreviewAdapter: StoryPreviewAdapter
+    lateinit var storyGroupPreviewAdapter: StoryGroupPreviewAdapter
+
+    @Inject
+    lateinit var suggestUserAdapter: SuggestUserAdapter
 
     override fun createView(inflater: LayoutInflater, container: ViewGroup?): View {
         // Inflate the layout for this fragment
@@ -52,37 +58,19 @@ class ProfileFragment(
                                 else -> R.drawable.grid
                             }
                     )
-                    /*tab.text = "OBJECT " + (position + 1)*/
                 }
         ).attach()
 
-        storyGroupRecyclerView.apply {
-            adapter = storyPreviewAdapter
-            layoutManager = LinearLayoutManager(requireContext(), RecyclerView.HORIZONTAL, false)
-        }
+        storyGroupRecyclerView.adapter = storyGroupPreviewAdapter
+        suggestedUsersRecyclerView.adapter = suggestUserAdapter
 
         if (isOnTop) {
             backImgView.visibility = View.VISIBLE
             backImgView.setOnClickListener(this)
         } else {
             backImgView.visibility = View.GONE
-            idTextView.updatePadding(left = nameTextView.paddingLeft + utils.dpToPx(16).toInt())
+            idTextView.updatePadding(left = nameTextView.paddingLeft + utils.dpToPx(16))
         }
-
-//        appBarLayout.addOnOffsetChangedListener(object : AppBarStateChangeListener() {
-//            override fun onStateChanged(state: State) {
-//                when (state) {
-//                    State.EXPANDED -> swipeRefresh.isEnabled = true
-//                    else -> swipeRefresh.isEnabled = false
-//                }
-//            }
-//        })
-//
-//        swipeRefresh.setOnRefreshListener {
-//            viewModel.refreshProfile {
-//                swipeRefresh.isRefreshing = false
-//            }
-//        }
 
         if (userId == sessionManager.curUser!!.id) {
             moreImgView.visibility = View.GONE
@@ -94,6 +82,7 @@ class ProfileFragment(
         }
 
         avatarImgView.setOnClickListener(this)
+        showSuggestImgView.setOnClickListener(this)
     }
 
     override fun onViewsBound() {
@@ -117,7 +106,7 @@ class ProfileFragment(
             val recentStoryGroup = storyGroups.firstOrNull { it.id == StoryGroup.ID_RECENT_STORY_GROUP }
 
             if (recentStoryGroup == null && viewModel.liveIsAnyStory.value == true) {
-                storyPreviewAdapter.submitList(storyGroups.toMutableList().apply {
+                storyGroupPreviewAdapter.submitList(storyGroups.toMutableList().apply {
                     viewModel.liveUser.value?.let { user ->
                         add(0, StoryGroup(
                                 id = StoryGroup.ID_RECENT_STORY_GROUP,
@@ -128,7 +117,7 @@ class ProfileFragment(
                     }
                 })
             } else {
-                storyPreviewAdapter.submitList(storyGroups)
+                storyGroupPreviewAdapter.submitList(storyGroups)
             }
         })
 
@@ -137,6 +126,48 @@ class ProfileFragment(
                 viewModel.liveStoryGroups.value = viewModel.liveStoryGroups.value
             }
         })
+
+        viewModel.liveSuggestedUsers.observe(viewLifecycleOwner, Observer { users ->
+            suggestUserAdapter.submitList(users)
+        })
+
+        if (activity() is HomeActivity) {
+            val homeActivity = activity() as HomeActivity
+            homeActivity.liveSelectedPageListener.observe(viewLifecycleOwner, Observer { position ->
+                if (position == 4) {
+                    appBarLayout.setExpanded(true)
+                }
+            })
+
+            homeActivity.liveIsRefreshing.observe(viewLifecycleOwner, Observer {
+                if (it && homeActivity.viewPager.currentItem == 4) {
+                    viewModel.refreshProfile {
+                        homeActivity.swipeRefresh.isRefreshing = false
+                    }
+                }
+            })
+        }
+    }
+
+    private fun showSuggestedUsersLayout() {
+        suggestedUsersLayout.visibility = View.VISIBLE
+        showSuggestImgView.rotation = 90f
+    }
+
+    private fun hideSuggestedUsersLayout() {
+        suggestedUsersLayout.visibility = View.GONE
+        showSuggestImgView.rotation = -90f
+    }
+
+    private fun isSuggestedUsersLayoutShown(): Boolean {
+        return suggestedUsersLayout.visibility == View.VISIBLE
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (activity() is HomeActivity) {
+            (activity() as HomeActivity).swipeRefresh.isEnabled = false
+        }
     }
 
     override fun onClick(view: View) {
@@ -145,25 +176,53 @@ class ProfileFragment(
                 view.loadingAnimView.visibility = View.VISIBLE
 
                 val position = storyGroupRecyclerView.getChildAdapterPosition(view)
-                val storyGroup = storyPreviewAdapter.currentList[position]
+                val storyGroup = storyGroupPreviewAdapter.currentList[position]
 
                 database.getStories(arrayListOf(storyGroup)) {
-                    parentZaloFragmentManager.addStoryFragment(storyGroup, storyPreviewAdapter.currentList)
+                    parentZaloFragmentManager.addStoryFragment(storyGroup, storyGroupPreviewAdapter.currentList)
 
                     view.loadingAnimView.visibility = View.GONE
                 }
             }
             R.id.avatarImgView -> {
-//                (requireActivity() as BaseActivity).addMediaFragment(R.id.rootView, )
+                val media = ImageMedia(viewModel.liveUser.value!!.avatarUrl)
+                fragmentManager().addMediaFragment(media, arrayListOf(media))
             }
-            R.id.backImgView -> onBackPressedCustomized()
+            R.id.backImgView -> parent.onBackPressed()
+            R.id.showSuggestImgView -> {
+                if (isSuggestedUsersLayoutShown()) {
+                    hideSuggestedUsersLayout()
+                } else {
+                    showSuggestedUsersLayout()
+                }
+            }
+            R.id.rootUserItemView -> {
+                val position = suggestedUsersRecyclerView.getChildAdapterPosition(view)
+                val user = suggestUserAdapter.currentList[position]
+                fragmentManager().addProfileFragment(user.id!!)
+            }
+            R.id.followTextView -> {
+                val position = suggestedUsersRecyclerView.getChildAdapterPosition(view.parent.parent as View)
+                val user = suggestUserAdapter.currentList[position]
+                if (suggestUserAdapter.followingUserIds.contains(user.id)) {
+                    suggestUserAdapter.followingUserIds.remove(user.id)
+                } else {
+                    suggestUserAdapter.followingUserIds.add(user.id!!)
+                }
+                suggestUserAdapter.notifyItemChanged(position, arrayListOf(User.PAYLOAD_FOLLOW))
+            }
+            R.id.closeImgView -> {
+                val position = suggestedUsersRecyclerView.getChildAdapterPosition(view.parent.parent as View)
+                val user = suggestUserAdapter.currentList[position]
+                viewModel.liveSuggestedUsers.value!!.remove(user)
+                suggestUserAdapter.submitList(viewModel.liveSuggestedUsers.value)
+            }
         }
     }
 
     override fun onBackPressedCustomized(): Boolean {
-        parentZaloFragmentManager.removeProfileFragment()
         parent.onFragmentResult(BaseView.FRAGMENT_PROFILE, null)
-        return true
+        return false
     }
 
 //    override fun getInstanceTag(): String {

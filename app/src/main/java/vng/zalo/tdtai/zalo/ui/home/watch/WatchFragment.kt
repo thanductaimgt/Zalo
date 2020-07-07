@@ -48,9 +48,10 @@ class WatchFragment : BaseFragment() {
                 startOrResumeCurrentWatch()
             }
         }
+        homeActivity.swipeRefresh.isEnabled = true
     }
 
-    private fun startOrResumeCurrentWatch() {
+    fun startOrResumeCurrentWatch() {
         getCurrentItemView()?.let {
             if (it.playerView.player != null) {
                 watchAdapter.onWatchResume(it)
@@ -106,27 +107,42 @@ class WatchFragment : BaseFragment() {
             })
         }
 
-        swipeRefresh.setOnRefreshListener {
-            viewModel.refreshRecentWatches()
-        }
-
         fullscreenImgView.setImageResource(if (sharedPrefsManager.isWatchTabFullScreen()) {
             R.drawable.ic_fullscreen_exit_black_24dp
         } else {
             R.drawable.ic_fullscreen_black_24dp
         })
+
         fullscreenImgView.setOnClickListener(this)
     }
 
     override fun onViewsBound() {
         viewModel.liveWatches.observe(viewLifecycleOwner, Observer {
             watchAdapter.submitList(it) {
-                if (swipeRefresh.isRefreshing) {
+                if (homeActivity.swipeRefresh.isRefreshing) {
                     getCurrentItemView()?.let { itemView ->
                         watchAdapter.onWatchFocused(itemView)
                     }
-                    swipeRefresh.isRefreshing = false
+                    homeActivity.swipeRefresh.isRefreshing = false
                 }
+            }
+        })
+
+        homeActivity.liveSelectedPageListener.observe(viewLifecycleOwner, Observer { position ->
+            if (position == 3) {
+                viewPager.apply {
+                    if (currentItem < 10) {
+                        currentItem = 0
+                    } else {
+                        setCurrentItem(0, false)
+                    }
+                }
+            }
+        })
+
+        homeActivity.liveIsRefreshing.observe(viewLifecycleOwner, Observer {
+            if(it && homeActivity.viewPager.currentItem == 3){
+                viewModel.refreshRecentWatches()
             }
         })
     }
@@ -189,6 +205,6 @@ class WatchFragment : BaseFragment() {
         getCurrentItemView()?.let { watchAdapter.onWatchPause(it) }
         playbackManager.pause()
         val watch = watchAdapter.currentList[getCurrentItem()]
-        activity().zaloFragmentManager.addProfileFragment(watch.ownerId!!)
+        parentZaloFragmentManager.addProfileFragment(watch.ownerId!!)
     }
 }

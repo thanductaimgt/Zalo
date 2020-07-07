@@ -28,8 +28,10 @@ object Constants {
 
     const val FILE_PREFIX = "ZaloFile_"
 
-    const val CHAT_NOTIFY_CHANNEL_ID = "0"
-    const val CHAT_NOTIFY_CHANNEL_NAME = "Chat Notification Channel"
+    const val CHAT_NOTIFY_CHANNEL_ID = "CHAT"
+    const val CHAT_NOTIFY_CHANNEL_NAME = "Chat"
+    const val UPLOAD_NOTIFY_CHANNEL_ID = "UPLOAD"
+    const val UPLOAD_NOTIFY_CHANNEL_NAME = "Upload"
 
     const val SHOW_KEYBOARD = "SHOW_KEYBOARD"
 
@@ -48,7 +50,7 @@ object Constants {
     const val IMAGE_COMPRESS_QUALITY = 75
 
     const val DEFAULT_KEYBOARD_SIZE_DP = 320
-    const val DEFAULT_STORY_LIVE_TIME = ONE_DAY_IN_MILLISECOND
+    const val DEFAULT_STORY_LIVE_TIME:Long = 365L * ONE_DAY_IN_MILLISECOND
 
     val TIMESTAMP_EPOCH = Date(0).time
 

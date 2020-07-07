@@ -8,13 +8,14 @@ import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
-import vng.zalo.tdtai.zalo.manager.BackgroundWorkManager
-import vng.zalo.tdtai.zalo.manager.ResourceManager
-import vng.zalo.tdtai.zalo.manager.SessionManager
+import vng.zalo.tdtai.zalo.data_model.Comment
 import vng.zalo.tdtai.zalo.data_model.message.Message
 import vng.zalo.tdtai.zalo.data_model.post.Post
 import vng.zalo.tdtai.zalo.data_model.room.Room
 import vng.zalo.tdtai.zalo.data_model.story.Story
+import vng.zalo.tdtai.zalo.manager.BackgroundWorkManager
+import vng.zalo.tdtai.zalo.manager.ResourceManager
+import vng.zalo.tdtai.zalo.manager.SessionManager
 import vng.zalo.tdtai.zalo.util.Constants
 import vng.zalo.tdtai.zalo.util.TAG
 import vng.zalo.tdtai.zalo.util.Utils
@@ -63,8 +64,22 @@ class Storage @Inject constructor(
 
                     ByteArrayInputStream(bitmapData)
                 }
-                else -> utils.getInputStream(localPath)
+                else -> {
+                    if(resourceSize<=0){
+                        resourceSize = resourceManager.getFileSize(localPath)
+                    }
+
+                    utils.getInputStream(localPath)
+                }
             }
+
+//            //test
+//            for (i in 0 until 10) {
+//                if (resourceSize != 0L) {
+//                    onProgressChange?.invoke(i * 10)
+//                }
+//                Thread.sleep(1000)
+//            }
         }, onSuccess =
         { inputStream ->
             val fileStorageRef = firebaseStorage.reference.child(storagePath)
@@ -89,8 +104,10 @@ class Storage @Inject constructor(
                             onComplete?.invoke(uri.toString())
                         }
                     }
-        }
-        )
+
+//            //test
+//            onComplete?.invoke(localPath)
+        })
     }
 
     private fun getScaledDownBitmap(bitmap: Bitmap): Bitmap {
@@ -152,6 +169,14 @@ class Storage @Inject constructor(
         return tasks
     }
 
+    fun deletePostData(post: Post) {
+        getReference(getPostStoragePath(post)).delete()
+    }
+
+    fun deleteCommentData(post: Post, comment: Comment) {
+        getReference(getCommentStoragePath(post, comment)).delete()
+    }
+
     fun getRoomAvatarStoragePath(roomId: String): String {
         return "${FOLDER_ROOM_AVATARS}/$roomId"
     }
@@ -161,11 +186,11 @@ class Storage @Inject constructor(
     }
 
     fun getMessageDataStoragePath(roomId: String, message: Message): String {
-        return "${getRoomDataStoragePath(roomId)}/file_${message.createdTime!!}"
+        return "${getRoomDataStoragePath(roomId)}/file_${message.id!!}"
     }
 
     fun getStoryStoragePath(story: Story): String {
-        return "$FOLDER_STORIES/${sessionManager.curUser!!.id}/${story.createdTime}"
+        return "$FOLDER_STORIES/${sessionManager.curUser!!.id}/${story.id}"
     }
 
     fun getStoryGroupAvatarStoragePath(storyGroupId: String): String {
@@ -176,6 +201,10 @@ class Storage @Inject constructor(
         return "$FOLDER_POSTS/${post.ownerId}/${post.id}"
     }
 
+    fun getCommentStoragePath(post: Post, comment: Comment): String {
+        return "$FOLDER_POSTS/${post.ownerId}/${post.id}/$FOLDER_COMMENTS/${comment.id}"
+    }
+
     companion object {
         private const val FOLDER_USER_AVATARS = "user_avatars"
         private const val FOLDER_ROOM_AVATARS = "room_avatars"
@@ -184,6 +213,7 @@ class Storage @Inject constructor(
         private const val FOLDER_STORIES = "stories"
         private const val FOLDER_STORY_GROUPS = "story_groups"
         private const val FOLDER_POSTS = "posts"
+        private const val FOLDER_COMMENTS = "comments"
 
         const val FILE_TYPE_IMAGE = 0
         const val FILE_TYPE_VIDEO = 1

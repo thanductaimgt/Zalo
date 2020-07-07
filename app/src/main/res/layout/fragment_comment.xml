@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/rootView"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/shape_round_corners_top">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/headerLayout"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/size_action_bar_height"
+        android:background="?attr/selectableItemBackground"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/reactIcon"
+            android:layout_width="30dp"
+            android:layout_height="0dp"
+            android:layout_margin="8dp"
+            android:padding="6dp"
+            android:src="@drawable/heart2"
+            app:layout_constraintDimensionRatio="1:1"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:tint="@color/missedCall" />
+
+        <TextView
+            android:id="@+id/reactCountTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:textSize="@dimen/sizeTextBig"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@id/reactIcon"
+            app:layout_constraintStart_toEndOf="@id/reactIcon"
+            app:layout_constraintTop_toTopOf="@id/reactIcon"
+            tools:text="145" />
+
+        <ImageView
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:padding="8dp"
+            android:rotation="180"
+            android:src="@drawable/left_arrow"
+            app:layout_constraintBottom_toBottomOf="@id/reactIcon"
+            app:layout_constraintDimensionRatio="W,1:1"
+            app:layout_constraintStart_toEndOf="@id/reactCountTextView"
+            app:layout_constraintTop_toTopOf="@id/reactIcon"
+            app:tint="@android:color/black" />
+
+        <ImageView
+            android:id="@+id/closeImgView"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginEnd="6dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:padding="8dp"
+            android:src="@drawable/cancel"
+            app:layout_constraintBottom_toBottomOf="@id/reactIcon"
+            app:layout_constraintDimensionRatio="W,1:1"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/reactIcon"
+            app:tint="@android:color/black" />
+
+        <ImageView
+            android:id="@+id/reactImgView"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginEnd="2dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:padding="6dp"
+            android:src="@drawable/heart"
+            app:layout_constraintBottom_toBottomOf="@id/closeImgView"
+            app:layout_constraintDimensionRatio="W,1:1"
+            app:layout_constraintEnd_toStartOf="@id/closeImgView"
+            app:layout_constraintTop_toTopOf="@id/closeImgView" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <View
+        android:id="@+id/line1"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/lightWeakGray"
+        app:layout_constraintTop_toBottomOf="@id/headerLayout" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:clipToPadding="false"
+        android:paddingBottom="32dp"
+        android:id="@+id/recyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_constraintBottom_toTopOf="@id/line2"
+        app:layout_constraintTop_toBottomOf="@id/line1"
+        tools:listitem="@layout/item_comment" />
+
+    <include
+        layout="@layout/part_footer_comment_fragment"/>
+</androidx.constraintlayout.widget.ConstraintLayout>

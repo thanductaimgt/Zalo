@@ -13,6 +13,7 @@
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 
     <uses-feature android:name="android.hardware.sip.voip" />
     <uses-feature
@@ -29,8 +30,17 @@
         android:theme="@style/AppTheme.Light"
         android:windowSoftInputMode="adjustResize"
         tools:replace="android:allowBackup,android:label">
-        <activity android:name=".ui.create_post.CreatePostActivity"
+        <service
+            android:name=".service.UploadService"
+            android:exported="false"/>
+
+        <activity
+            android:name=".base.EmptyActivity"
+            android:theme="@style/AppTheme.Light.NoActionBar.LightStatusBar.Transparent" />
+        <activity
+            android:name=".ui.create_post.CreatePostActivity"
             android:theme="@style/AppTheme.Light.NoActionBar.LightStatusBar" />
+
         <meta-data
             android:name="com.google.firebase.ml.vision.DEPENDENCIES"
             android:value="face" /> <!-- To use multiple models: android:value="face,model2,model3" -->

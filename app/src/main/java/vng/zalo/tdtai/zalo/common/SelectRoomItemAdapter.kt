@@ -8,7 +8,7 @@ import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.item_select_contact.view.*
 import vng.zalo.tdtai.zalo.R
 import vng.zalo.tdtai.zalo.base.BaseListAdapter
-import vng.zalo.tdtai.zalo.base.BindableViewHolder
+import vng.zalo.tdtai.zalo.base.BaseViewHolder
 import vng.zalo.tdtai.zalo.data_model.room.RoomItem
 import vng.zalo.tdtai.zalo.manager.ResourceManager
 import vng.zalo.tdtai.zalo.util.RoomItemDiffCallback
@@ -39,7 +39,7 @@ class SelectRoomItemAdapter(
         holder.bind(position)
     }
 
-    inner class AllContactsViewHolder(itemView: View) : BindableViewHolder(itemView) {
+    inner class AllContactsViewHolder(itemView: View) : BaseViewHolder(itemView) {
 
         override fun bind(position: Int) {
             itemView.apply {

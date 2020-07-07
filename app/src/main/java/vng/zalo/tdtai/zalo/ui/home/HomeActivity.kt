@@ -5,11 +5,15 @@ import android.os.Handler
 import android.view.MenuItem
 import android.widget.Toast
 import androidx.lifecycle.MutableLiveData
+import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import kotlinx.android.synthetic.main.activity_home.*
 import vng.zalo.tdtai.zalo.R
 import vng.zalo.tdtai.zalo.base.BaseActivity
+import vng.zalo.tdtai.zalo.base.BaseView
 import vng.zalo.tdtai.zalo.ui.camera.CameraFragment
+import vng.zalo.tdtai.zalo.ui.edit_media.EditMediaFragment
+import vng.zalo.tdtai.zalo.widget.AppBarStateChangeListener
 import javax.inject.Inject
 
 
@@ -24,6 +28,21 @@ class HomeActivity : BaseActivity() {
     val liveSelectedPageListener = MutableLiveData<Int>()
 
     var cameraFragment: CameraFragment? = null
+
+    var liveIsRefreshing = MutableLiveData(false)
+
+    private var lastSwipeRefreshIsEnabled: Boolean = true
+    private var lastViewPagerPos = 0
+
+    inner class AppBarStateListener(private val recyclerView: RecyclerView) : AppBarStateChangeListener() {
+        override fun onStateChanged(state: State) {
+            adjustSwipeRefresh(this, recyclerView)
+        }
+    }
+
+    fun adjustSwipeRefresh(appBarStateListener: AppBarStateListener, recyclerView: RecyclerView) {
+        swipeRefresh.isEnabled = !recyclerView.canScrollVertically(-1) && appBarStateListener.curState == AppBarStateChangeListener.State.EXPANDED
+    }
 
     override fun onBindViews() {
         requestFullScreen()
@@ -59,6 +78,21 @@ class HomeActivity : BaseActivity() {
                         showOrHideStatusBar(position)
                     }
                 }
+
+                override fun onPageScrollStateChanged(state: Int) {
+                    when (state) {
+                        ViewPager2.SCROLL_STATE_IDLE -> {
+                            if (lastViewPagerPos == viewPager.currentItem) {
+                                swipeRefresh.isEnabled = lastSwipeRefreshIsEnabled
+                            }
+                        }
+                        ViewPager2.SCROLL_STATE_DRAGGING -> {
+                            lastSwipeRefreshIsEnabled = swipeRefresh.isEnabled
+                            lastViewPagerPos = viewPager.currentItem
+                            swipeRefresh.isEnabled = false
+                        }
+                    }
+                }
             })
             offscreenPageLimit = 5
         }
@@ -71,9 +105,9 @@ class HomeActivity : BaseActivity() {
                 R.id.navigation_more -> 4
                 else -> 5
             }
-            if(viewPager.currentItem == position){
+            if (viewPager.currentItem == position) {
                 liveSelectedPageListener.value = position
-            }else{
+            } else {
                 viewPager.setCurrentItem(position, false)
             }
             false
@@ -84,6 +118,10 @@ class HomeActivity : BaseActivity() {
             setPropertyName("translationY")
             setFloatValues(0f, resources.getDimension(R.dimen.sizeBottomNavigationHeight))
             duration = 250
+        }
+
+        swipeRefresh.setOnRefreshListener {
+            liveIsRefreshing.value = true
         }
     }
 
@@ -130,8 +168,17 @@ class HomeActivity : BaseActivity() {
     }
 
     override fun onFragmentResult(fragmentType: Int, result: Any?) {
-        zaloFragmentManager.removeEditMediaFragment()
-        navigateHome()
+        when (fragmentType) {
+            BaseView.FRAGMENT_CAMERA -> navigateHome()
+            BaseView.FRAGMENT_EDIT_MEDIA -> {
+                when (result) {
+                    EditMediaFragment.RESULT_CREATE_STORY_SUCCESS -> {
+                        zaloFragmentManager.removeEditMediaFragment()
+                        navigateHome()
+                    }
+                }
+            }
+        }
     }
 
     private var doubleBackToExitPressedOnce = false

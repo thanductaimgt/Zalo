@@ -1,9 +1,12 @@
 package vng.zalo.tdtai.zalo.ui.post_detail
 
+import android.content.res.ColorStateList
 import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
+import androidx.core.widget.ImageViewCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.fragment_post_detail.*
@@ -12,6 +15,7 @@ import vng.zalo.tdtai.zalo.R
 import vng.zalo.tdtai.zalo.base.BaseFragment
 import vng.zalo.tdtai.zalo.base.BaseView
 import vng.zalo.tdtai.zalo.data_model.post.Diary
+import vng.zalo.tdtai.zalo.data_model.react.React
 import vng.zalo.tdtai.zalo.util.smartLoad
 import javax.inject.Inject
 
@@ -52,16 +56,38 @@ class PostDetailFragment(
             descTextView.text = diary.text
             descTextView.visibility = View.VISIBLE
         }
-        reactCountTextView.text = utils.getMetricFormat(diary.reactCount)
-        commentCountTextView.text = utils.getMetricFormat(diary.reactCount)
-        shareCountTextView.text = utils.getMetricFormat(diary.reactCount)
+
+        updateMetrics()
 
         backImgView.setOnClickListener(this)
         moreImgView.setOnClickListener(this)
         avatarImgView.setOnClickListener(this)
         nameTextView.setOnClickListener(this)
 
-        reactImgView.setOnClickListener(this)
+        reactImgView.setOnClickListener{
+            val reactedType = React.TYPE_LOVE
+
+            val curUser = sessionManager.curUser!!
+            if (diary.reacts[curUser.id] == null) {
+                database.reactPost(diary, reactedType)
+                diary.apply {
+                    reacts[curUser.id!!] = React(
+                            ownerId = curUser.id,
+                            ownerName = curUser.name,
+                            ownerAvatarUrl = curUser.avatarUrl,
+                            type = reactedType,
+                            createdTime = System.currentTimeMillis()
+                    )
+                    reactCount++
+                }
+            } else {
+                database.unReactPost(diary)
+                diary.reacts.remove(curUser.id!!)
+                diary.reactCount--
+            }
+            updateMetrics()
+        }
+
         reactCountTextView.setOnClickListener(this)
         commentImgView.setOnClickListener(this)
         commentCountTextView.setOnClickListener(this)
@@ -69,6 +95,20 @@ class PostDetailFragment(
         shareCountTextView.setOnClickListener(this)
     }
 
+    private fun updateMetrics(){
+        reactCountTextView.text = utils.getMetricFormat(diary.reactCount)
+        commentCountTextView.text = utils.getMetricFormat(diary.commentCount)
+        shareCountTextView.text = utils.getMetricFormat(diary.shareCount)
+
+        if (diary.reacts[sessionManager.curUser!!.id!!] != null) {
+            reactImgView.setImageResource(R.drawable.heart2)
+            val redTint = ContextCompat.getColor(requireContext(), R.color.missedCall)
+            ImageViewCompat.setImageTintList(reactImgView, ColorStateList.valueOf(redTint))
+        } else {
+            reactImgView.setImageResource(R.drawable.heart)
+            ImageViewCompat.setImageTintList(reactImgView, null)
+        }
+    }
 //    override fun onViewsBound() {
 //        viewModel.liveUser.observe(viewLifecycleOwner, Observer { user ->
 //            Picasso.get().smartLoad(user.avatarUrl, resourceManager, avatarImgView) {
@@ -115,25 +155,60 @@ class PostDetailFragment(
     override fun onClick(view: View) {
         when (view.id) {
             R.id.backImgView -> {
-                parentZaloFragmentManager.removePostDetailFragment()
+                parent.onBackPressed()
             }
             R.id.moreImgView -> {
             }
             R.id.avatarImgView, R.id.nameTextView -> {
-                zaloFragmentManager.addProfileFragment(diary.ownerId!!)
+                fragmentManager().addProfileFragment(diary.ownerId!!)
             }
             R.id.imageView -> {
                 val position = recyclerView.getChildAdapterPosition(view.parent as View)
                 val media = postMediaAdapter.currentList[position]
-                zaloFragmentManager.addMediaFragment(media, diary.medias)
+                fragmentManager().addMediaFragment(media, diary.medias)
+            }
+            R.id.commentImgView->{
+                fragmentManager().addCommentFragment(diary)
+                fragmentManager().commentFragment!!.addDismissListener {
+                    updateMetrics()
+                }
+            }
+            R.id.reactImgView->{
+//                val reactedType = React.TYPE_HEART
+//
+//                val curUser = sessionManager.curUser!!
+//                if (diary.reacts[curUser.id] == null) {
+//                    database.reactPost(post, reactedType)
+//                    post.apply {
+//                        reacts[curUser.id!!] = React(
+//                                ownerId = curUser.id,
+//                                ownerName = curUser.name,
+//                                ownerAvatarUrl = curUser.avatarUrl,
+//                                type = reactedType,
+//                                createdTime = System.currentTimeMillis()
+//                        )
+//                        reactCount++
+//                    }
+//
+//                    reactImgView.setImageResource(R.drawable.heart2)
+//                    val redTint = ContextCompat.getColor(requireContext(), R.color.missedCall)
+//                    ImageViewCompat.setImageTintList(reactImgView, ColorStateList.valueOf(redTint))
+//                } else {
+//                    database.unReactPost(post)
+//                    post.reacts.remove(curUser.id!!)
+//                    post.reactCount--
+//
+//                    reactImgView.setImageResource(R.drawable.heart)
+//                    ImageViewCompat.setImageTintList(reactImgView, null)
+//                }
+//                reactCountTextView.text = post.reactCount.toString()
             }
         }
     }
 
     override fun onBackPressedCustomized(): Boolean {
-        parentZaloFragmentManager.removeProfileFragment()
         parent.onFragmentResult(BaseView.FRAGMENT_PROFILE, null)
-        return true
+        return false
     }
 
 //    override fun getInstanceTag(): String {

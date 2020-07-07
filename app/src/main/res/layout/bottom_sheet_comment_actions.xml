@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/shape_round_corners_top"
+    android:paddingBottom="16dp">
+
+    <ImageView
+        android:id="@+id/likeImgView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="6dp"
+        android:layout_marginTop="16dp"
+        android:src="@drawable/ic_like"
+        app:layout_constraintDimensionRatio="H,1:1"
+        app:layout_constraintEnd_toStartOf="@id/loveImgView"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/loveImgView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginHorizontal="6dp"
+        android:src="@drawable/ic_love"
+        app:layout_constraintDimensionRatio="H,1:1"
+        app:layout_constraintEnd_toStartOf="@id/careImgView"
+        app:layout_constraintStart_toEndOf="@id/likeImgView"
+        app:layout_constraintTop_toTopOf="@id/likeImgView" />
+
+    <ImageView
+        android:id="@+id/careImgView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginHorizontal="6dp"
+        android:src="@drawable/ic_care"
+        app:layout_constraintDimensionRatio="H,1:1"
+        app:layout_constraintEnd_toStartOf="@id/hahaImgView"
+        app:layout_constraintStart_toEndOf="@id/loveImgView"
+        app:layout_constraintTop_toTopOf="@id/likeImgView" />
+
+    <ImageView
+        android:id="@+id/hahaImgView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginHorizontal="6dp"
+        android:src="@drawable/ic_haha"
+        app:layout_constraintDimensionRatio="H,1:1"
+        app:layout_constraintEnd_toStartOf="@id/wowImgView"
+        app:layout_constraintStart_toEndOf="@id/careImgView"
+        app:layout_constraintTop_toTopOf="@id/likeImgView" />
+
+    <ImageView
+        android:id="@+id/wowImgView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginHorizontal="6dp"
+        android:src="@drawable/ic_wow"
+        app:layout_constraintDimensionRatio="H,1:1"
+        app:layout_constraintEnd_toStartOf="@id/sadImgView"
+        app:layout_constraintStart_toEndOf="@id/hahaImgView"
+        app:layout_constraintTop_toTopOf="@id/likeImgView" />
+
+    <ImageView
+        android:id="@+id/sadImgView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginHorizontal="6dp"
+        android:src="@drawable/ic_sad"
+        app:layout_constraintDimensionRatio="H,1:1"
+        app:layout_constraintEnd_toStartOf="@id/angryImgView"
+        app:layout_constraintStart_toEndOf="@id/wowImgView"
+        app:layout_constraintTop_toTopOf="@id/likeImgView" />
+
+    <ImageView
+        android:layout_marginEnd="16dp"
+        android:id="@+id/angryImgView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="6dp"
+        android:src="@drawable/ic_angry"
+        app:layout_constraintDimensionRatio="H,1:1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/sadImgView"
+        app:layout_constraintTop_toTopOf="@id/likeImgView" />
+
+    <TextView
+        android:id="@+id/reactDescTextView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="6dp"
+        android:layout_marginTop="16dp"
+        android:text="@string/description_react"
+        android:textAlignment="center"
+        android:textColor="@color/lightTextGray"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/likeImgView" />
+
+    <TextView
+        android:id="@+id/replyTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:background="?attr/selectableItemBackground"
+        android:paddingVertical="10dp"
+        android:paddingStart="48dp"
+        android:text="@string/label_reply"
+        android:textSize="@dimen/sizeTextBig"
+        app:layout_constraintTop_toBottomOf="@id/reactDescTextView" />
+
+    <ImageView
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:padding="4dp"
+        android:src="@drawable/reply"
+        app:layout_constraintBottom_toBottomOf="@id/replyTextView"
+        app:layout_constraintDimensionRatio="W,1:1"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/replyTextView" />
+
+    <TextView
+        android:id="@+id/copyTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/selectableItemBackground"
+        android:paddingVertical="10dp"
+        android:paddingStart="48dp"
+        android:text="@string/label_copy"
+        android:textSize="@dimen/sizeTextBig"
+        app:layout_constraintTop_toBottomOf="@id/replyTextView" />
+
+    <ImageView
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:padding="4dp"
+        android:src="@drawable/copy"
+        app:layout_constraintBottom_toBottomOf="@id/copyTextView"
+        app:layout_constraintDimensionRatio="W,1:1"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/copyTextView" />
+
+    <TextView
+        android:id="@+id/deleteTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/selectableItemBackground"
+        android:paddingVertical="10dp"
+        android:paddingStart="48dp"
+        android:text="@string/label_delete"
+        android:textSize="@dimen/sizeTextBig"
+        app:layout_constraintTop_toBottomOf="@id/copyTextView" />
+
+    <ImageView
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:padding="4dp"
+        android:src="@drawable/delete"
+        app:layout_constraintBottom_toBottomOf="@id/deleteTextView"
+        app:layout_constraintDimensionRatio="W,1:1"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/deleteTextView" />
+
+    <TextView
+        android:id="@+id/reportTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/selectableItemBackground"
+        android:paddingVertical="10dp"
+        android:paddingStart="48dp"
+        android:text="@string/label_report_comment"
+        android:textSize="@dimen/sizeTextBig"
+        app:layout_constraintTop_toBottomOf="@id/deleteTextView" />
+
+    <ImageView
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:padding="4dp"
+        android:src="@drawable/detail"
+        app:layout_constraintBottom_toBottomOf="@id/reportTextView"
+        app:layout_constraintDimensionRatio="W,1:1"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/reportTextView" />
+</androidx.constraintlayout.widget.ConstraintLayout>

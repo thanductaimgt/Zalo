@@ -1,5 +1,8 @@
 package vng.zalo.tdtai.zalo.data_model.media
 
+import android.os.Parcel
+import android.os.Parcelable
+
 abstract class Media(
         open var uri: String?,
         open var ratio: String?,
@@ -7,7 +10,7 @@ abstract class Media(
         open var reactCount: Int,
         open var commentCount: Int,
         open var shareCount: Int
-) {
+) : Parcelable {
     open fun toMap(): HashMap<String, Any?> {
         return hashMapOf<String, Any?>().apply {
             put(FIELD_URL, uri)
@@ -30,7 +33,20 @@ abstract class Media(
         map[FIELD_SHARE_COUNT]?.let { shareCount = (it as Long).toInt() }
     }
 
-    companion object {
+    override fun writeToParcel(parcel: Parcel, flags: Int) {
+        parcel.writeString(uri)
+        parcel.writeString(ratio)
+        parcel.writeString(description)
+        parcel.writeInt(reactCount)
+        parcel.writeInt(commentCount)
+        parcel.writeInt(shareCount)
+    }
+
+    override fun describeContents(): Int {
+        return 0
+    }
+
+    companion object CREATOR : Parcelable.Creator<Media> {
         const val PAYLOAD_DISPLAY_MORE = 0
         const val PAYLOAD_RATIO = 2
         const val PAYLOAD_PREVIEW = 1
@@ -54,6 +70,17 @@ abstract class Media(
                 TYPE_IMAGE -> ImageMedia()
                 else -> VideoMedia()
             }.apply { applyMap(any) }
+        }
+
+        override fun createFromParcel(parcel: Parcel): Media {
+            return when (parcel.readInt()) {
+                TYPE_IMAGE -> ImageMedia(parcel)
+                else -> VideoMedia(parcel)
+            }
+        }
+
+        override fun newArray(size: Int): Array<ImageMedia?> {
+            return arrayOfNulls(size)
         }
     }
 }

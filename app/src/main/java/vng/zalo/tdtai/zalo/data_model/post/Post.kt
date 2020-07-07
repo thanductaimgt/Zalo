@@ -2,6 +2,7 @@ package vng.zalo.tdtai.zalo.data_model.post
 
 import com.google.firebase.firestore.DocumentSnapshot
 import vng.zalo.tdtai.zalo.data_model.BaseDataModel
+import vng.zalo.tdtai.zalo.data_model.react.React
 
 abstract class Post(
         open var id: String?,
@@ -13,6 +14,7 @@ abstract class Post(
         open var reactCount: Int,
         open var commentCount: Int,
         open var shareCount: Int,
+        open var reacts: HashMap<String, React>,
         var type: Int
 ) : BaseDataModel {
     override fun toMap(): HashMap<String, Any?> {
@@ -23,21 +25,10 @@ abstract class Post(
             put(FIELD_COMMENT_COUNT, commentCount)
             put(FIELD_SHARE_COUNT, shareCount)
             put(FIELD_TEXT, text)
+            put(FIELD_REACTS, reacts)
             put(FIELD_TYPE, type)
         }
     }
-
-//    fun clone():Message{
-//        return when(type){
-//            TYPE_IMAGE->(this as ImageMessage).copy()
-//            TYPE_STICKER->(this as StickerMessage).copy()
-//            TYPE_FILE->(this as FileMessage).copy()
-//            TYPE_VIDEO->(this as VideoMessage).copy()
-//            TYPE_TYPING->(this as TypingMessage).copy()
-//            TYPE_CALL->(this as CallMessage).copy()
-//            else->(this as TextMessage).copy()
-//        }
-//    }
 
     override fun applyDoc(doc: DocumentSnapshot) {
         id = doc.id
@@ -48,14 +39,18 @@ abstract class Post(
         doc.getLong(FIELD_COMMENT_COUNT)?.let { commentCount = it.toInt() }
         doc.getLong(FIELD_SHARE_COUNT)?.let { shareCount = it.toInt() }
         doc.getLong(FIELD_TYPE)?.let { type = it.toInt() }
+        doc.get(FIELD_REACTS)?.let {
+            reacts = (it as HashMap<String, Long?>).mapValues { entry->
+                React(
+                        ownerId = entry.key,
+                        type = if (entry.value != null) entry.value!!.toInt() else React.TYPE_LOVE
+                )
+            } as HashMap<String, React>
+        }
     }
 
     companion object {
-//        const val PAYLOAD_TIME = 0
-//        const val PAYLOAD_AVATAR = 2
-//        const val PAYLOAD_UPLOAD_PROGRESS = 3
-//        const val PAYLOAD_SEND_STATUS = 4
-//        const val PAYLOAD_SEEN = 5
+        const val PAYLOAD_METRICS = 0
 
         const val TYPE_DIARY = 0
         const val TYPE_WATCH = 1
@@ -67,6 +62,7 @@ abstract class Post(
         const val FIELD_COMMENT_COUNT = "commentCount"
         const val FIELD_SHARE_COUNT = "shareCount"
         const val FIELD_TYPE = "type"
+        const val FIELD_REACTS = "reacts"
 
         fun fromDoc(doc: DocumentSnapshot): Post {
             return when (doc.getLong(FIELD_TYPE)?.toInt()) {

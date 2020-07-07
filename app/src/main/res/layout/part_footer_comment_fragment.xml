@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:parentTag="androidx.constraintlayout.widget.ConstraintLayout">
+
+    <View
+        android:id="@+id/line2"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/lightWeakGray"
+        app:layout_constraintBottom_toTopOf="@id/footerLayout" />
+
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/loadingAnimView"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@id/footerLayout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:lottie_autoPlay="true"
+        app:lottie_loop="true"
+        app:lottie_rawRes="@raw/loading" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/footerLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <com.makeramen.roundedimageview.RoundedImageView
+            android:id="@+id/mediaPreviewImgView"
+            android:layout_width="100dp"
+            android:layout_height="0dp"
+            android:layout_marginStart="8dp"
+            android:paddingTop="10dp"
+            android:paddingEnd="10dp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toTopOf="@id/uploadImageImgView"
+            app:layout_constraintStart_toStartOf="parent"
+            app:riv_corner_radius="@dimen/sizeRoundCornerRadiusLayout"
+            tools:layout_constraintDimensionRatio="H,3:2"
+            tools:riv_mutate_background="true"
+            tools:scaleType="centerCrop"
+            tools:src="@android:color/black"
+            tools:visibility="visible" />
+
+        <ImageView
+            tools:visibility="visible"
+            android:visibility="gone"
+            android:id="@+id/playIcon"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="10dp"
+            android:src="@drawable/ic_play_arrow_black_24dp"
+            app:layout_constraintEnd_toEndOf="@id/mediaPreviewImgView"
+            app:layout_constraintStart_toStartOf="@id/mediaPreviewImgView"
+            app:layout_constraintBottom_toBottomOf="@id/mediaPreviewImgView"
+            app:layout_constraintTop_toTopOf="@id/mediaPreviewImgView"
+            app:layout_constraintDimensionRatio="1:1"
+            android:layout_width="32dp"
+            android:layout_height="0dp"/>
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/discardMediaImgView"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:src="@drawable/ic_close_small_round"
+            android:visibility="gone"
+            app:civ_border_width="1px"
+            android:layout_margin="4dp"
+            app:layout_constraintEnd_toEndOf="@id/mediaPreviewImgView"
+            app:layout_constraintTop_toTopOf="@id/mediaPreviewImgView"
+            tools:visibility="visible" />
+
+        <EditText
+            android:id="@+id/editText"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="@null"
+            android:hint="@string/hint_comment"
+            android:imeOptions="actionSend"
+            android:inputType="text"
+            android:nextFocusLeft="@id/msgEditText"
+            android:nextFocusUp="@id/msgEditText"
+            android:paddingStart="8dp"
+            app:layout_constraintBottom_toBottomOf="@id/uploadImageImgView"
+            app:layout_constraintEnd_toStartOf="@id/uploadImageImgView"
+            app:layout_constraintStart_toEndOf="@id/emojiImgView"
+            app:layout_constraintTop_toTopOf="@id/uploadImageImgView" />
+
+        <ImageView
+            android:id="@+id/emojiImgView"
+            android:layout_width="48dp"
+            android:layout_height="0dp"
+            android:background="?attr/selectableItemBackground"
+            android:contentDescription="@string/description_emoji_icon"
+            android:padding="4dp"
+            android:src="@drawable/ic_emoji"
+            app:layout_constraintBottom_toBottomOf="@id/uploadImageImgView"
+            app:layout_constraintDimensionRatio="h,1:1"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="@id/uploadImageImgView"
+            app:tint="@color/blackText" />
+
+        <ImageView
+            android:id="@+id/uploadVideoImgView"
+            android:layout_width="40dp"
+            android:layout_height="0dp"
+            android:background="?attr/selectableItemBackground"
+            android:contentDescription="@string/description_attach_picture_icon"
+            android:paddingLeft="6dp"
+            android:paddingTop="12dp"
+            android:paddingRight="6dp"
+            android:paddingBottom="12dp"
+            android:src="@drawable/video3"
+            app:layout_constraintBottom_toBottomOf="@id/uploadImageImgView"
+            app:layout_constraintEnd_toStartOf="@id/sendImgView"
+            app:layout_constraintTop_toTopOf="@id/uploadImageImgView" />
+
+        <ImageView
+            android:id="@+id/uploadImageImgView"
+            android:layout_width="40dp"
+            android:layout_height="48dp"
+            android:background="?attr/selectableItemBackground"
+            android:contentDescription="@string/description_attach_picture_icon"
+            android:paddingLeft="6dp"
+            android:paddingTop="12dp"
+            android:paddingRight="6dp"
+            android:paddingBottom="12dp"
+            android:src="@drawable/photo"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/uploadVideoImgView" />
+
+        <ImageView
+            android:id="@+id/sendImgView"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="?attr/selectableItemBackground"
+            android:contentDescription="@string/description_send"
+            android:padding="6dp"
+            android:src="@drawable/send_telegram"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@id/uploadImageImgView"
+            app:layout_constraintDimensionRatio="W,1:1"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/uploadImageImgView"
+            tools:visibility="visible" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</merge>

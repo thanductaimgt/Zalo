@@ -18,7 +18,7 @@ abstract class OnHoldListener : View.OnTouchListener {
             MotionEvent.ACTION_DOWN -> {
                 onHoldStateChange(true)
                 handler.postDelayed(mLongPressed, 250)
-                true
+                false
             }
             MotionEvent.ACTION_UP -> {
                 onHoldStateChange(false)

@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.item_small_user_icon.view.*
 import vng.zalo.tdtai.zalo.R
-import vng.zalo.tdtai.zalo.base.BindableViewHolder
+import vng.zalo.tdtai.zalo.base.BaseViewHolder
 import vng.zalo.tdtai.zalo.base.BaseListAdapter
 import vng.zalo.tdtai.zalo.manager.ResourceManager
 import vng.zalo.tdtai.zalo.data_model.RoomMember
@@ -25,7 +25,7 @@ class RoomMemberAdapter(
         holder.bind(position)
     }
 
-    inner class UserIconViewHolder(itemView: View) : BindableViewHolder(itemView) {
+    inner class UserIconViewHolder(itemView: View) : BaseViewHolder(itemView) {
         override fun bind(position: Int) {
             Picasso.get().smartLoad(currentList[position].avatarUrl, resourceManager, itemView.userIconImgView) {
                 it.placeholder(R.drawable.default_peer_avatar)

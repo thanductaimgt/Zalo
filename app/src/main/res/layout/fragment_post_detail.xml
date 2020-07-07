@@ -13,34 +13,65 @@
         android:background="@null">
 
         <com.google.android.material.appbar.CollapsingToolbarLayout
+            android:minHeight="@dimen/size_action_bar_height"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:layout_scrollFlags="scroll|exitUntilCollapsed">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/size_action_bar_height">
+
+                <vng.zalo.tdtai.zalo.widget.ExpandableTextView
+                    android:id="@+id/descTextView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="12dp"
+                    android:autoLink="web"
+                    android:autoSizeTextType="uniform"
+                    android:textSize="@dimen/sizeTextBig"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:trimLength="300"
+                    tools:text="it's a beautiful day" />
+
+                <include
+                    layout="@layout/part_post_actions"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constrainedWidth="true"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/descTextView" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:background="@android:color/white"
+                app:layout_collapseMode="pin"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/size_action_bar_height">
 
                 <ImageView
                     android:id="@+id/backImgView"
                     android:layout_width="0dp"
-                    android:layout_height="48dp"
+                    android:layout_height="match_parent"
                     android:background="?attr/selectableItemBackground"
                     android:padding="16dp"
                     android:src="@drawable/left_arrow"
                     app:layout_constraintDimensionRatio="W,1:1"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
                     app:tint="@android:color/black" />
 
                 <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/avatarImgView"
                     android:layout_width="40dp"
                     android:layout_height="0dp"
+                    app:layout_constraintBottom_toBottomOf="@id/backImgView"
                     app:layout_constraintDimensionRatio="1:1"
                     app:layout_constraintStart_toEndOf="@id/backImgView"
                     app:layout_constraintTop_toTopOf="@id/backImgView"
-                    app:layout_constraintBottom_toBottomOf="@id/backImgView"
                     app:layout_goneMarginBottom="8dp"
                     tools:src="@drawable/official_account" />
 
@@ -100,38 +131,17 @@
                     app:layout_constraintDimensionRatio="1:1"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="@id/avatarImgView" />
-
-                <vng.zalo.tdtai.zalo.widget.ExpandableTextView
-                    android:id="@+id/descTextView"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="12dp"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginEnd="12dp"
-                    android:autoLink="web"
-                    android:textSize="@dimen/sizeTextBig"
-                    android:autoSizeTextType="uniform"
-                    app:layout_constraintTop_toBottomOf="@id/backImgView"
-                    app:trimLength="300"
-                    tools:text="it's a beautiful day" />
-
-                <include
-                    android:layout_height="wrap_content"
-                    android:layout_width="match_parent"
-                    app:layout_constraintTop_toBottomOf="@id/descTextView"
-                    layout="@layout/part_post_actions"/>
             </androidx.constraintlayout.widget.ConstraintLayout>
         </com.google.android.material.appbar.CollapsingToolbarLayout>
     </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.recyclerview.widget.RecyclerView
-        android:overScrollMode="never"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         android:id="@+id/recyclerView"
-        tools:listitem="@layout/item_post_media"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
+        android:overScrollMode="never"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
-        />
+        tools:listitem="@layout/item_post_media" />
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

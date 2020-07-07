@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/storyPreviewItemRoot"
+    android:layout_width="80dp"
+    android:layout_height="wrap_content"
+    android:padding="8dp">
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:id="@+id/borderView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintDimensionRatio="1:1"
+        android:src="@android:color/white"
+        app:civ_border_color="@color/storyBorderColor"
+        app:civ_border_width="2dp" />
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/watchOwnerAvatarImgView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:padding="4dp"
+        app:layout_constraintDimensionRatio="1:1"
+        app:layout_constraintEnd_toEndOf="@id/borderView"
+        app:layout_constraintStart_toStartOf="@id/borderView"
+        app:layout_constraintTop_toTopOf="@id/borderView"
+        app:layout_constraintBottom_toBottomOf="@id/borderView"
+        tools:src="@drawable/official_account" />
+
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/loadingAnimView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@id/watchOwnerAvatarImgView"
+        app:layout_constraintEnd_toEndOf="@id/watchOwnerAvatarImgView"
+        app:layout_constraintStart_toStartOf="@id/watchOwnerAvatarImgView"
+        app:layout_constraintTop_toTopOf="@id/watchOwnerAvatarImgView"
+        app:lottie_autoPlay="true"
+        app:lottie_enableMergePathsForKitKatAndAbove="true"
+        app:lottie_loop="true"
+        app:lottie_rawRes="@raw/loading"
+        app:lottie_renderMode="software" />
+
+    <com.makeramen.roundedimageview.RoundedImageView
+        android:id="@+id/addedForegroundView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_margin="4dp"
+        android:background="@color/blackTransparentStrong"
+        android:padding="12dp"
+        android:src="@drawable/sent"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@id/watchOwnerAvatarImgView"
+        app:layout_constraintEnd_toEndOf="@id/watchOwnerAvatarImgView"
+        app:layout_constraintStart_toStartOf="@id/watchOwnerAvatarImgView"
+        app:layout_constraintTop_toTopOf="@id/watchOwnerAvatarImgView"
+        app:riv_mutate_background="true"
+        app:riv_oval="true"
+        tools:visibility="visible" />
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/addIcon"
+        android:layout_width="24dp"
+        android:layout_height="0dp"
+        android:src="@drawable/add"
+        android:visibility="gone"
+        app:civ_border_color="@android:color/white"
+        app:civ_border_width="2dp"
+        app:civ_circle_background_color="@android:color/white"
+        app:layout_constraintBottom_toBottomOf="@id/watchOwnerAvatarImgView"
+        app:layout_constraintDimensionRatio="1:1"
+        app:layout_constraintEnd_toEndOf="@id/watchOwnerAvatarImgView"
+        tools:visibility="visible" />
+
+    <TextView
+        android:id="@+id/nameTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:scrollHorizontally="true"
+        android:textSize="@dimen/sizeTextSmall"
+        app:layout_constrainedWidth="true"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/watchOwnerAvatarImgView"
+        tools:text="Tin của bạn" />
+</androidx.constraintlayout.widget.ConstraintLayout>

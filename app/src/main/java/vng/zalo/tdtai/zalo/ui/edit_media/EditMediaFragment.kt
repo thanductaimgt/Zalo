@@ -78,7 +78,7 @@ class EditMediaFragment(private val type:Int) : BaseFragment() {
             initFaceDetector()
         } else {
             playbackManager.prepare(videoUri!!, true, onReady = {
-                playbackManager.play()
+                playbackManager.resume()
             })
             playerView.player = playbackManager.exoPlayer
 
@@ -293,11 +293,11 @@ class EditMediaFragment(private val type:Int) : BaseFragment() {
     private fun getFaceView(): FaceView {
         return FaceView(requireContext()).apply {
             closeButtonDrawable = ContextCompat.getDrawable(requireContext(), R.drawable.ic_close_small_round)
-            closeButtonSize = utils.dpToPx(35).toInt()
-            borderWidth = utils.dpToPx(3)
-            borderCornerRadius = utils.dpToPx(16)
+            closeButtonSize = utils.dpToPx(35)
+            borderWidth = utils.dpToPx(3).toFloat()
+            borderCornerRadius = utils.dpToPx(16).toFloat()
             borderColor = Color.WHITE
-            clickAnimSize = utils.dpToPx(60).toInt()
+            clickAnimSize = utils.dpToPx(60)
         }
     }
 
@@ -327,7 +327,7 @@ class EditMediaFragment(private val type:Int) : BaseFragment() {
 
             Toast.makeText(requireContext(), getString(
                     if (isSuccess) {
-                        parent.onFragmentResult(BaseView.FRAGMENT_EDIT_MEDIA, RESULT_STORY_CREATED)
+                        parent.onFragmentResult(BaseView.FRAGMENT_EDIT_MEDIA, RESULT_CREATE_STORY_SUCCESS)
 
                         R.string.description_story_created
                     } else {
@@ -377,7 +377,7 @@ class EditMediaFragment(private val type:Int) : BaseFragment() {
     }
 
     companion object {
-        const val RESULT_STORY_CREATED = "RESULT_STORY_CREATED"
+        const val RESULT_CREATE_STORY_SUCCESS = "RESULT_CREATE_STORY_SUCCESS"
 
         const val TYPE_CREATE_STORY = 0
         const val TYPE_PRODUCE_RESULT = 1

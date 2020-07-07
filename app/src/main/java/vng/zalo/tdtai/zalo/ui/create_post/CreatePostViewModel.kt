@@ -1,58 +1,29 @@
 package vng.zalo.tdtai.zalo.ui.create_post
 
+import android.content.Intent
 import android.media.MediaMetadataRetriever
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import vng.zalo.tdtai.zalo.base.BaseViewModel
 import vng.zalo.tdtai.zalo.data_model.media.ImageMedia
 import vng.zalo.tdtai.zalo.data_model.media.Media
 import vng.zalo.tdtai.zalo.data_model.media.VideoMedia
 import vng.zalo.tdtai.zalo.data_model.post.Diary
-import vng.zalo.tdtai.zalo.repository.Storage
-import vng.zalo.tdtai.zalo.util.TAG
+import vng.zalo.tdtai.zalo.service.UploadService
 import javax.inject.Inject
 
 class CreatePostViewModel @Inject constructor() : BaseViewModel() {
     val liveDiary = MutableLiveData(Diary(
             id = database.getNewPostId(),
-            ownerId = sessionManager.curUser!!.id
+            ownerId = sessionManager.curUser!!.id,
+            ownerName = sessionManager.curUser!!.name,
+            ownerAvatarUrl = sessionManager.curUser!!.avatarUrl
     ))
 
-    fun createDiary(callback: (isSuccess: Boolean) -> Unit) {
-        val storagePath = storage.getPostStoragePath(liveDiary.value!!)
-
-        var uploadCount = 0
-        var uploadedCount = 0
-        val totalCount = liveDiary.value!!.medias.size
-        val checkAllUploadCompletedAndCreateDiary = {
-            if (uploadCount == totalCount) {
-                if (uploadedCount == uploadCount) {
-                    database.createPost(liveDiary.value!!, callback)
-                } else {
-                    Log.d(TAG, "uploadCount: $uploadCount, uploadedCount: $uploadedCount, totalCount: $totalCount")
-                }
-            } else {
-                callback(false)
-            }
-        }
-
-        if (liveDiary.value!!.medias.isNotEmpty()) {
-            liveDiary.value!!.medias.forEachIndexed { index, media ->
-                storage.addFileAndGetDownloadUrl(
-                        localPath = media.uri!!,
-                        storagePath = "$storagePath/$index",
-                        fileType = if (media is ImageMedia) Storage.FILE_TYPE_IMAGE else Storage.FILE_TYPE_VIDEO,
-                        onComplete = { url ->
-                            liveDiary.value!!.medias[index].uri = url
-                            uploadedCount++
-                            checkAllUploadCompletedAndCreateDiary()
-                        }
-                )
-                uploadCount++
-            }
-        } else {
-            checkAllUploadCompletedAndCreateDiary()
-        }
+    fun createDiary() {
+        application.startService(Intent(application, UploadService::class.java).apply {
+            action = UploadService.ACTION_CREATE
+            putExtra(UploadService.KEY_DIARY, liveDiary.value!!)
+        })
     }
 
     fun createMedias(uris: List<String>, mediaType: Int, callback: (medias: ArrayList<Media>) -> Unit) {

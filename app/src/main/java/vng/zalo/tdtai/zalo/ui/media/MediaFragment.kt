@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.exoplayer2.ExoPlayer
 import kotlinx.android.synthetic.main.fragment_media.*
+import kotlinx.android.synthetic.main.fragment_media.view.*
 import vng.zalo.tdtai.zalo.R
 import vng.zalo.tdtai.zalo.base.BaseFragment
 import vng.zalo.tdtai.zalo.data_model.media.Media
@@ -26,7 +27,10 @@ class MediaFragment(
 
     override fun createView(inflater: LayoutInflater, container: ViewGroup?): View {
         activity().hideStatusBar()
-        return layoutInflater.inflate(R.layout.fragment_media, container, false)
+        activity().setStatusBarMode(false)
+        return layoutInflater.inflate(R.layout.fragment_media, container, false).apply {
+            makeRoomForStatusBar(requireContext(), headerLayout)
+        }
     }
 
     override fun onBindViews() {
@@ -135,7 +139,8 @@ class MediaFragment(
                 toggleTitleVisibility()
             }
             R.id.backImgView -> {
-                parentZaloFragmentManager.removeMediaFragment()
+                parent.onBackPressed()
+//                parentZaloFragmentManager.removeMediaFragment()
             }
             R.id.downloadImgView -> {
             }
@@ -145,21 +150,16 @@ class MediaFragment(
     }
 
     private fun toggleTitleVisibility() {
-        if (zoomTitleLayout.visibility == View.VISIBLE) {
-            zoomTitleLayout.visibility = View.GONE
+        if (headerLayout.visibility == View.VISIBLE) {
+            headerLayout.visibility = View.GONE
         } else {
-            zoomTitleLayout.visibility = View.VISIBLE
+            headerLayout.visibility = View.VISIBLE
         }
     }
 
     fun getCurrentItemView(): View? {
         val recyclerView = viewPager[0] as RecyclerView
         return recyclerView.findViewHolderForAdapterPosition(viewPager.currentItem)?.itemView
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        playbackManager.exoPlayer.stop(true)
     }
 
 //    override fun getInstanceTag(): String {

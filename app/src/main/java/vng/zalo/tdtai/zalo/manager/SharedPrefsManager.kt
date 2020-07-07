@@ -78,7 +78,7 @@ class SharedPrefsManager @Inject constructor(
     }
 
     fun getKeyboardSize(): Int {
-        return getSharedPrefs().getInt(FIELD_KEYBOARD_SIZE, utils.dpToPx(Constants.DEFAULT_KEYBOARD_SIZE_DP).toInt())
+        return getSharedPrefs().getInt(FIELD_KEYBOARD_SIZE, utils.dpToPx(Constants.DEFAULT_KEYBOARD_SIZE_DP))
     }
 
     fun setKeyboardSize(sizeInPx: Int) {
@@ -118,6 +118,16 @@ class SharedPrefsManager @Inject constructor(
                 .apply()
     }
 
+    fun isNotificationChannelsInit():Boolean{
+        return getSharedPrefs().getBoolean(IS_NOTIFICATION_CHANNELS_INIT, false)
+    }
+
+    fun setNotificationChannelsInit(isInit:Boolean){
+        getSharedPrefsEditor()
+                .putBoolean(IS_NOTIFICATION_CHANNELS_INIT, isInit)
+                .apply()
+    }
+
     companion object {
         private const val APP_SHARE_PREFERENCES_NAME = "AppSharePreferences"
         private const val VIDEO_THUMB_SHARE_PREFERENCES_NAME = "VideoThumbSharePreferences"
@@ -129,5 +139,6 @@ class SharedPrefsManager @Inject constructor(
         private const val FIREBASE_MESSAGING_TOKEN = "FIREBASE_MESSAGING_TOKEN"
         private const val IS_CAMERA_FRONT = "IS_CAMERA_FRONT"
         private const val IS_WATCH_TAB_FULLSCREEN = "IS_WATCH_TAB_FULLSCREEN"
+        private const val IS_NOTIFICATION_CHANNELS_INIT = "IS_NOTIFICATION_CHANNELS_INIT"
     }
 }

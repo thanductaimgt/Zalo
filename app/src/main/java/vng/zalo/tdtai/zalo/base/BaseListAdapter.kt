@@ -2,9 +2,8 @@ package vng.zalo.tdtai.zalo.base
 
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
-import androidx.recyclerview.widget.RecyclerView
 
-abstract class BaseListAdapter<T, VH : RecyclerView.ViewHolder?>(diffCallback: DiffUtil.ItemCallback<T>) : ListAdapter<T, VH>(diffCallback) {
+abstract class BaseListAdapter<T, VH : BaseViewHolder>(diffCallback: DiffUtil.ItemCallback<T>) : ListAdapter<T, VH>(diffCallback) {
     override fun submitList(list: List<T>?) {
         submitList(list, null)
     }
@@ -26,4 +25,8 @@ abstract class BaseListAdapter<T, VH : RecyclerView.ViewHolder?>(diffCallback: D
     }
 
     open fun onBindViewHolder(holder: VH, position: Int, payloads: ArrayList<*>){}
+
+    override fun onBindViewHolder(holder: VH, position: Int) {
+        holder.bind(position)
+    }
 }

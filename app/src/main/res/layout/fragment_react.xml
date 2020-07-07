@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/rootView"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/shape_round_corners_top">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/headerLayout"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/size_action_bar_height"
+        android:background="?attr/selectableItemBackground"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:id="@+id/searchIcon"
+            android:layout_width="30dp"
+            android:layout_height="0dp"
+            android:layout_margin="8dp"
+            android:padding="6dp"
+            android:src="@drawable/search"
+            app:layout_constraintDimensionRatio="1:1"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:tint="@android:color/black" />
+
+        <TextView
+            android:id="@+id/reactCountTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:textSize="@dimen/sizeTextBig"
+            app:layout_constraintBottom_toBottomOf="@id/searchIcon"
+            app:layout_constraintStart_toEndOf="@id/backImgView"
+            app:layout_constraintTop_toTopOf="@id/searchIcon"
+            android:text="@string/description_react_people" />
+
+        <ImageView
+            android:id="@+id/backImgView"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:padding="18dp"
+            android:src="@drawable/left_arrow"
+            app:layout_constraintBottom_toBottomOf="@id/searchIcon"
+            app:layout_constraintDimensionRatio="W,1:1"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/searchIcon"
+            app:tint="@android:color/black" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <View
+        android:id="@+id/line1"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/lightWeakGray"
+        app:layout_constraintTop_toBottomOf="@id/headerLayout" />
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardView"
+        app:layout_constraintTop_toBottomOf="@id/line1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <com.google.android.material.tabs.TabLayout
+            app:tabMode="scrollable"
+            android:id="@+id/tabLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+    </androidx.cardview.widget.CardView>
+
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/viewPager"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/cardView" />
+</androidx.constraintlayout.widget.ConstraintLayout>

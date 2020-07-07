@@ -17,11 +17,22 @@ class ChatFragmentViewModel @Inject constructor() : BaseViewModel() {
 
     private var lastOnlineTimeListenerRegistration: ListenerRegistration? = null
     private var roomsTypingListenerRegistration: ListenerRegistration? = null
+    private var userRoomsListener: ListenerRegistration? = null
 
     init {
-        val userRoomsListener = database.addUserRoomsListener(
+        addUserRoomsListener()
+    }
+
+    private fun addUserRoomsListener(callback: (() -> Unit)? = null) {
+        var isCallbackInvoked = false
+
+        userRoomsListener = database.addUserRoomsListener(
                 userId = sessionManager.curUser!!.id!!
         ) { roomItems ->
+            if (!isCallbackInvoked) {
+                callback?.invoke()
+                isCallbackInvoked = true
+            }
             @Suppress("NAME_SHADOWING")
             val roomItems = roomItems.sortedByDescending { it.lastMsgTime }
             updateNewRoomItems(roomItems)
@@ -61,8 +72,12 @@ class ChatFragmentViewModel @Inject constructor() : BaseViewModel() {
             lastOnlineTimeListenerRegistration?.let { listenerRegistrations.add(it) }
             roomsTypingListenerRegistration?.let { listenerRegistrations.add(it) }
         }
+        listenerRegistrations.add(userRoomsListener!!)
+    }
 
-        listenerRegistrations.add(userRoomsListener)
+    fun refreshUserRoomsListener(callback: (() -> Unit)? = null) {
+        listenerRegistrations.remove(userRoomsListener)
+        addUserRoomsListener(callback)
     }
 
     private fun updateOnlineTime() {

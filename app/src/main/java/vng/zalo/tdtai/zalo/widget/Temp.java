@@ -93,11 +93,11 @@ public class Temp {
     private FaceView getFaceView() {
         FaceView faceView = new FaceView(context);
         faceView.setCloseButtonDrawable(ContextCompat.getDrawable(context, R.drawable.ic_close_small_round));
-        faceView.setCloseButtonSize((int) utils.dpToPx(35));
+        faceView.setCloseButtonSize(utils.dpToPx(35));
         faceView.setBorderWidth(utils.dpToPx(3));
         faceView.setBorderCornerRadius(utils.dpToPx(16));
         faceView.setBorderColor(Color.WHITE);
-        faceView.setClickAnimSize((int) utils.dpToPx(60));
+        faceView.setClickAnimSize(utils.dpToPx(60));
         return faceView;
     }
 

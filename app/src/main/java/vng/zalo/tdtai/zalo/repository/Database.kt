@@ -325,6 +325,7 @@ class Database @Inject constructor(
                         }
                     }
         } else {
+            callback?.invoke(hashMapOf())
             null
         }
     }
@@ -548,6 +549,7 @@ class Database @Inject constructor(
                         }
                     }
         } else {
+            callback(hashMapOf())
             null
         }
     }
@@ -679,18 +681,22 @@ class Database @Inject constructor(
     }
 
     fun getUsers(usersId: List<String>, callback: ((users: ArrayList<User>) -> Unit)) {
-        firebaseFirestore.collection(COLLECTION_USERS)
-                .whereInSafe(FieldPath.documentId(), usersId)
-                .get()
-                .addOnCompleteListener { task ->
-                    utils.assertTaskSuccessAndResultNotNull(task, TAG, "getUsers") { docs ->
-                        val users = arrayListOf<User>()
-                        docs.forEach {
-                            users.add(User.fromDoc(it))
+        if (usersId.isEmpty()) {
+            callback(arrayListOf())
+        } else {
+            firebaseFirestore.collection(COLLECTION_USERS)
+                    .whereInSafe(FieldPath.documentId(), usersId.distinct())
+                    .get()
+                    .addOnCompleteListener { task ->
+                        utils.assertTaskSuccessAndResultNotNull(task, TAG, "getUsers") { docs ->
+                            val users = arrayListOf<User>()
+                            docs.forEach {
+                                users.add(User.fromDoc(it))
+                            }
+                            callback(users)
                         }
-                        callback(users)
                     }
-                }
+        }
     }
 
     fun getUserAvatarUrl(userId: String, callback: ((avatarUrl: String) -> Unit)? = null) {
@@ -831,20 +837,24 @@ class Database @Inject constructor(
     }
 
     fun getUsersRecentStoryGroup(usersId: List<String>, callback: (storyGroups: List<StoryGroup>) -> Unit) {
-        firebaseFirestore.collection(COLLECTION_USERS)
-                .whereInSafe(FieldPath.documentId(), usersId)
-                .get()
-                .addOnCompleteListener { task ->
-                    utils.assertTaskSuccessAndResultNotNull(task, TAG, "getStoryGroups") { querySnapshot: QuerySnapshot ->
-                        val storyGroups = querySnapshot.documents
-                                .filter {
-                                    val lastStoryCreatedTime = it.getLong(User.FIELD_LAST_STORY_CREATED_TIME)
-                                    lastStoryCreatedTime != null && lastStoryCreatedTime > System.currentTimeMillis() - Constants.DEFAULT_STORY_LIVE_TIME
-                                }
-                                .map { StoryGroup.fromUserDoc(it) }
-                        callback(storyGroups)
+        if (usersId.isEmpty()) {
+            callback(arrayListOf())
+        } else {
+            firebaseFirestore.collection(COLLECTION_USERS)
+                    .whereInSafe(FieldPath.documentId(), usersId)
+                    .get()
+                    .addOnCompleteListener { task ->
+                        utils.assertTaskSuccessAndResultNotNull(task, TAG, "getStoryGroups") { querySnapshot: QuerySnapshot ->
+                            val storyGroups = querySnapshot.documents
+                                    .filter {
+                                        val lastStoryCreatedTime = it.getLong(User.FIELD_LAST_STORY_CREATED_TIME)
+                                        lastStoryCreatedTime != null && lastStoryCreatedTime > System.currentTimeMillis() - Constants.DEFAULT_STORY_LIVE_TIME
+                                    }
+                                    .map { StoryGroup.fromUserDoc(it) }
+                            callback(storyGroups)
+                        }
                     }
-                }
+        }
     }
 
     fun getStories(storyGroupsWithoutStories: List<StoryGroup>, callback: (storyGroupsWithStories: List<StoryGroup>) -> Unit) {
@@ -924,11 +934,15 @@ class Database @Inject constructor(
     }
 
     fun getUsersRecentDiaries(usersId: List<String>, upperCreatedTimeLimit: Long?, numberLimit: Long, callback: ((diaries: ArrayList<Diary>) -> Unit)? = null) {
-        proceedGetDiaryQuery(
-                firebaseFirestore.collection(COLLECTION_POSTS)
-                        .whereInSafe(Post.FIELD_OWNER_ID, usersId),
-                upperCreatedTimeLimit, numberLimit, "getUsersRecentDiaries", callback
-        )
+        if (usersId.isEmpty()) {
+            callback?.invoke(arrayListOf())
+        } else {
+            proceedGetDiaryQuery(
+                    firebaseFirestore.collection(COLLECTION_POSTS)
+                            .whereInSafe(Post.FIELD_OWNER_ID, usersId),
+                    upperCreatedTimeLimit, numberLimit, "getUsersRecentDiaries", callback
+            )
+        }
     }
 
     fun getUserRecentDiaries(userId: String, upperCreatedTimeLimit: Long?, numberLimit: Long, callback: ((diaries: ArrayList<Diary>) -> Unit)? = null) {
@@ -939,7 +953,7 @@ class Database @Inject constructor(
         )
     }
 
-    private fun proceedGetDiaryQuery(query: Query, upperCreatedTimeLimit: Long?, numberLimit: Long, longMsgPrefix:String, callback: ((diaries: ArrayList<Diary>) -> Unit)? = null) {
+    private fun proceedGetDiaryQuery(query: Query, upperCreatedTimeLimit: Long?, numberLimit: Long, longMsgPrefix: String, callback: ((diaries: ArrayList<Diary>) -> Unit)? = null) {
         query.let { if (upperCreatedTimeLimit != null) it.whereLessThan(Message.FIELD_CREATED_TIME, upperCreatedTimeLimit) else it }
                 .orderBy(Message.FIELD_CREATED_TIME, Query.Direction.DESCENDING)
                 .limit(numberLimit)
@@ -955,20 +969,322 @@ class Database @Inject constructor(
     }
 
     fun getUsersRecentWatches(usersId: List<String>, upperCreatedTimeLimit: Long?, numberLimit: Long, callback: ((diaries: ArrayList<Watch>) -> Unit)? = null) {
-        firebaseFirestore.collection(COLLECTION_POSTS)
-                .whereInSafe(Post.FIELD_OWNER_ID, usersId)
-                .let { if (upperCreatedTimeLimit != null) it.whereLessThan(Message.FIELD_CREATED_TIME, upperCreatedTimeLimit) else it }
-                .whereEqualTo(Post.FIELD_TYPE, Post.TYPE_WATCH)
-                .orderBy(Message.FIELD_CREATED_TIME, Query.Direction.DESCENDING)
+        if (usersId.isEmpty()) {
+            callback?.invoke(arrayListOf())
+        } else {
+            firebaseFirestore.collection(COLLECTION_POSTS)
+                    .whereInSafe(Post.FIELD_OWNER_ID, usersId)
+                    .let { if (upperCreatedTimeLimit != null) it.whereLessThan(Post.FIELD_CREATED_TIME, upperCreatedTimeLimit) else it }
+                    .whereEqualTo(Post.FIELD_TYPE, Post.TYPE_WATCH)
+                    .orderBy(Post.FIELD_CREATED_TIME, Query.Direction.DESCENDING)
+                    .limit(numberLimit)
+                    .get().addOnCompleteListener { task ->
+                        utils.assertTaskSuccessAndResultNotNull(task, TAG, "getUsersRecentWatches") { querySnapshot ->
+                            val watches = arrayListOf<Watch>()
+                            querySnapshot.forEach {
+                                watches.addAll(Watch.fromDoc(it))
+                            }
+                            callback?.invoke(watches)
+                        }
+                    }
+        }
+    }
+
+    private fun getCommentReference(postId: String, replyToId: String? = null):CollectionReference{
+        return firebaseFirestore.collection(COLLECTION_POSTS)
+                .document(postId)
+                .collection(COLLECTION_COMMENTS)
+                .let {
+                    if (replyToId != null)
+                        it.document(replyToId)
+                                .collection(COLLECTION_REPLIES)
+                    else it
+                }
+    }
+
+    fun getComments(postId: String, replyToId: String? = null, boundValue: Any? = null, numberLimit: Long,
+                    orderBy:String = Comment.FIELD_CREATED_TIME, orderDirection: Query.Direction = Query.Direction.ASCENDING,
+                    callback: ((comments: ArrayList<Comment>) -> Unit)? = null) {
+        getCommentReference(postId, replyToId)
+                .let { if (boundValue != null){
+                    if(orderDirection == Query.Direction.ASCENDING){
+                        it.whereGreaterThan(orderBy, boundValue)
+                    }else {
+                        it.whereLessThan(orderBy, boundValue)
+                    }
+                } else it }
+                .orderBy(orderBy, orderDirection)
                 .limit(numberLimit)
                 .get().addOnCompleteListener { task ->
-                    utils.assertTaskSuccessAndResultNotNull(task, TAG, "getUsersRecentWatches") { querySnapshot ->
-                        val watches = arrayListOf<Watch>()
-                        querySnapshot.forEach {
-                            watches.addAll(Watch.fromDoc(it))
-                        }
-                        callback?.invoke(watches)
+                    utils.assertTaskSuccessAndResultNotNull(task, TAG, "getComments of post $postId") { querySnapshot ->
+                        val comments = querySnapshot.map {
+                            Comment.fromDoc(it).apply {
+                                this.postId = postId
+                                this.replyToId = replyToId
+                            }
+                        } as ArrayList
+                        callback?.invoke(comments)
                     }
+                }
+    }
+
+    fun addNewCommentsListener(postId: String, replyToId: String? = null, boundValue: Any?=null,
+                               orderBy:String = Comment.FIELD_CREATED_TIME, orderDirection: Query.Direction = Query.Direction.ASCENDING,
+                               callback: (comments: ArrayList<Comment>) -> Unit): ListenerRegistration {
+        return getCommentReference(postId, replyToId)
+                .let { if (boundValue != null){
+                    it.whereGreaterThan(orderBy, boundValue)
+                } else it }
+                .orderBy(orderBy, orderDirection)
+                .addSnapshotListener { querySnapshot, _ ->
+                    utils.assertNotNull(querySnapshot, TAG, "addCommentsListener") { querySnapshotNotNull ->
+                        val comments = querySnapshotNotNull.map {
+                            Comment.fromDoc(it).apply {
+                                this.postId = postId
+                                this.replyToId = replyToId
+                            }
+                        } as ArrayList
+                        callback(comments)
+                    }
+                }
+    }
+
+    fun addComment(comment: Comment, callback: ((isSuccess: Boolean) -> Unit)? = null) {
+        if (comment.id == null) {
+            comment.id = getNewCommentId(comment.postId!!)
+        }
+
+        var docRef = firebaseFirestore.collection(COLLECTION_POSTS)
+                .document(comment.postId!!)
+
+        firebaseFirestore.batch().apply {
+            if (comment.replyToId != null) {
+                docRef = docRef.collection(COLLECTION_COMMENTS)
+                        .document(comment.replyToId!!)
+
+                set(
+                        docRef
+                                .collection(COLLECTION_REPLIES)
+                                .document(comment.id!!),
+                        comment.toMap()
+                )
+
+                update(
+                        docRef,
+                        mapOf(
+                                Comment.FIELD_REPLY_COUNT to FieldValue.increment(1)
+                        )
+                )
+            }else{
+                set(
+                        docRef
+                                .collection(COLLECTION_COMMENTS)
+                                .document(comment.id!!),
+                        comment.toMap()
+                )
+
+                update(
+                        docRef,
+                        mapOf(
+                                Post.FIELD_COMMENT_COUNT to FieldValue.increment(1)
+                        )
+                )
+            }
+
+            commit().addOnCompleteListener {
+                callback?.invoke(it.isSuccessful)
+            }
+        }
+    }
+
+    fun deleteComment(comment: Comment, callback: ((isSuccess: Boolean) -> Unit)? = null) {
+        var docRef = firebaseFirestore.collection(COLLECTION_POSTS)
+                .document(comment.postId!!)
+
+        firebaseFirestore.batch().apply {
+            if (comment.replyToId != null) {
+                docRef = docRef.collection(COLLECTION_COMMENTS)
+                        .document(comment.replyToId!!)
+
+                delete(
+                        docRef
+                                .collection(COLLECTION_REPLIES)
+                                .document(comment.id!!)
+                )
+
+                update(
+                        docRef,
+                        mapOf(
+                                Comment.FIELD_REPLY_COUNT to FieldValue.increment(-1)
+                        )
+                )
+            }else{
+                delete(
+                        docRef
+                                .collection(COLLECTION_COMMENTS)
+                                .document(comment.id!!)
+                )
+
+                update(
+                        docRef,
+                        mapOf(
+                                Post.FIELD_COMMENT_COUNT to FieldValue.increment(-1)
+                        )
+                )
+            }
+
+            commit().addOnCompleteListener {
+                callback?.invoke(it.isSuccessful)
+            }
+        }
+    }
+
+    fun reactComment(comment: Comment, reactType: Int) {
+        firebaseFirestore.batch().apply {
+            set(
+                    firebaseFirestore.collection(COLLECTION_POSTS)
+                            .document(comment.postId!!)
+                            .collection(COLLECTION_COMMENTS)
+                            .let {
+                                if (comment.replyToId != null)
+                                    it.document(comment.replyToId!!)
+                                            .collection(COLLECTION_REPLIES)
+                                else it
+                            }
+                            .document(comment.id!!),
+                    mapOf(
+                            Comment.FIELD_REACT_COUNT to FieldValue.increment(1),
+                            Comment.FIELD_REACTS to mapOf(
+                                    sessionManager.curUser!!.id!! to reactType
+                            )
+                    ),
+                    SetOptions.merge()
+            )
+
+            commit().addOnCompleteListener {
+                utils.assertTaskSuccess(it, TAG, "reactComment")
+            }
+        }
+    }
+
+    fun reactPost(post: Post, reactType: Int) {
+        firebaseFirestore.batch().apply {
+            set(
+                    firebaseFirestore.collection(COLLECTION_POSTS)
+                            .document(post.id!!),
+                    mapOf(
+                            Post.FIELD_REACT_COUNT to FieldValue.increment(1),
+                            Post.FIELD_REACTS to mapOf(
+                                    sessionManager.curUser!!.id!! to reactType
+                            )
+                    ),
+                    SetOptions.merge()
+            )
+
+            commit().addOnCompleteListener {
+                utils.assertTaskSuccess(it, TAG, "reactPost")
+            }
+        }
+    }
+
+    fun reactStory(story: Story, ownerId: String, reactType: Int) {
+        firebaseFirestore.batch().apply {
+            set(
+                    firebaseFirestore.collection(COLLECTION_USERS)
+                            .document(ownerId)
+                            .collection(COLLECTION_STORIES)
+                            .document(story.id!!),
+                    mapOf(
+                            Post.FIELD_REACT_COUNT to FieldValue.increment(1),
+                            Post.FIELD_REACTS to mapOf(
+                                    sessionManager.curUser!!.id!! to reactType
+                            )
+                    ),
+                    SetOptions.merge()
+            )
+
+            commit().addOnCompleteListener {
+                utils.assertTaskSuccess(it, TAG, "reactStory")
+            }
+        }
+    }
+
+    fun unReactComment(comment: Comment) {
+        firebaseFirestore.batch().apply {
+            set(
+                    firebaseFirestore.collection(COLLECTION_POSTS)
+                            .document(comment.postId!!)
+                            .collection(COLLECTION_COMMENTS)
+                            .let {
+                                if (comment.replyToId != null)
+                                    it.document(comment.replyToId!!)
+                                            .collection(COLLECTION_REPLIES)
+                                else it
+                            }
+                            .document(comment.id!!),
+                    mapOf(
+                            Comment.FIELD_REACT_COUNT to FieldValue.increment(-1),
+                            Comment.FIELD_REACTS to mapOf(
+                                    sessionManager.curUser!!.id!! to FieldValue.delete()
+                            )
+                    ),
+                    SetOptions.merge()
+            )
+
+            commit().addOnCompleteListener {
+                utils.assertTaskSuccess(it, TAG, "unReactComment")
+            }
+        }
+    }
+
+    fun unReactPost(post: Post) {
+        firebaseFirestore.batch().apply {
+            set(
+                    firebaseFirestore.collection(COLLECTION_POSTS)
+                            .document(post.id!!),
+                    mapOf(
+                            Post.FIELD_REACT_COUNT to FieldValue.increment(-1),
+                            Post.FIELD_REACTS to mapOf(
+                                    sessionManager.curUser!!.id!! to FieldValue.delete()
+                            )
+                    ),
+                    SetOptions.merge()
+            )
+
+            commit().addOnCompleteListener {
+                utils.assertTaskSuccess(it, TAG, "unReactPost")
+            }
+        }
+    }
+
+    fun unReactStory(story: Story, ownerId: String) {
+        firebaseFirestore.batch().apply {
+            set(
+                    firebaseFirestore.collection(COLLECTION_USERS)
+                            .document(ownerId)
+                            .collection(COLLECTION_STORIES)
+                            .document(story.id!!),
+                    mapOf(
+                            Post.FIELD_REACT_COUNT to FieldValue.increment(-1),
+                            Post.FIELD_REACTS to mapOf(
+                                    sessionManager.curUser!!.id!! to FieldValue.delete()
+                            )
+                    ),
+                    SetOptions.merge()
+            )
+
+            commit().addOnCompleteListener {
+                utils.assertTaskSuccess(it, TAG, "unReactStory")
+            }
+        }
+    }
+
+    fun deletePost(post: Post, callback: ((isSuccess: Boolean) -> Unit)? = null) {
+        firebaseFirestore.collection(COLLECTION_POSTS)
+                .document(post.id!!)
+                .delete()
+                .addOnCompleteListener {
+                    callback?.invoke(it.isSuccessful)
                 }
     }
 
@@ -1008,6 +1324,14 @@ class Database @Inject constructor(
                 .document().id
     }
 
+    fun getNewCommentId(postId: String): String {
+        return firebaseFirestore
+                .collection(COLLECTION_POSTS)
+                .document(postId)
+                .collection(COLLECTION_COMMENTS)
+                .document().id
+    }
+
     companion object {
         private const val COLLECTION_USERS = "users"
         private const val COLLECTION_ROOMS = "rooms"
@@ -1016,6 +1340,9 @@ class Database @Inject constructor(
 
         private const val COLLECTION_STORY_GROUPS = "story_groups"
         private const val COLLECTION_STORIES = "stories"
+        private const val COLLECTION_COMMENTS = "comments"
+        private const val COLLECTION_REPLIES = "replies"
+        private const val COLLECTION_REACTS = "reacts"
 
         private const val COLLECTION_MEMBERS = "members"
         private const val COLLECTION_STICKER_SETS = "sticker_sets"

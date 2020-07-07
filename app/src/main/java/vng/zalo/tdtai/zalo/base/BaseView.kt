@@ -24,6 +24,10 @@ interface BaseView {
 
     fun onFragmentResult(fragmentType: Int, result: Any?) {}
 
+    fun onBackPressed(): Any? {
+        return null
+    }
+
     fun makeRoomForStatusBar(context: Context, targetView: View, @MakeRoomType makeRoomType: Int = MAKE_ROOM_TYPE_PADDING) {
         var statusBarHeight: Int
         val resourceId: Int = context.resources.getIdentifier("status_bar_height", "dimen", "android")
@@ -72,8 +76,12 @@ interface BaseView {
         const val MAKE_ROOM_TYPE_PADDING = 0
         const val MAKE_ROOM_TYPE_MARGIN = 1
 
+        const val FRAGMENT_ANY = -1
         const val FRAGMENT_EDIT_MEDIA = 0
         const val FRAGMENT_CAMERA = 1
         const val FRAGMENT_PROFILE= 2
+        const val FRAGMENT_MEDIA= 3
+        const val FRAGMENT_POST_DETAIL= 4
+        const val FRAGMENT_STORY_DETAIL= 5
     }
 }

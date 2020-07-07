@@ -4,10 +4,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.squareup.picasso.Picasso
-import kotlinx.android.synthetic.main.item_story_preview.view.*
+import kotlinx.android.synthetic.main.item_story_group_preview.view.*
 import vng.zalo.tdtai.zalo.R
 import vng.zalo.tdtai.zalo.base.BaseListAdapter
-import vng.zalo.tdtai.zalo.base.BindableViewHolder
+import vng.zalo.tdtai.zalo.base.BaseOnEventListener
+import vng.zalo.tdtai.zalo.base.BaseViewHolder
 import vng.zalo.tdtai.zalo.data_model.story.StoryGroup
 import vng.zalo.tdtai.zalo.manager.ResourceManager
 import vng.zalo.tdtai.zalo.manager.SessionManager
@@ -15,16 +16,16 @@ import vng.zalo.tdtai.zalo.util.StoryGroupDiffCallback
 import vng.zalo.tdtai.zalo.util.smartLoad
 import javax.inject.Inject
 
-class StoryPreviewAdapter @Inject constructor(
-        private val clickListener: View.OnClickListener,
+class StoryGroupPreviewAdapter @Inject constructor(
+        private val eventListener: BaseOnEventListener,
         private val resourceManager: ResourceManager,
         private val sessionManager: SessionManager,
         diffCallback: StoryGroupDiffCallback
-) : BaseListAdapter<StoryGroup, StoryPreviewAdapter.StoryViewHolder>(diffCallback) {
+) : BaseListAdapter<StoryGroup, StoryGroupPreviewAdapter.StoryViewHolder>(diffCallback) {
     var addedGroupsId: List<String> = ArrayList()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): StoryViewHolder {
-        val holder = StoryViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_story_preview, parent, false))
+        val holder = StoryViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_story_group_preview, parent, false))
         return holder.apply { bindOnClick() }
     }
 
@@ -46,7 +47,7 @@ class StoryPreviewAdapter @Inject constructor(
         }
     }
 
-    inner class StoryViewHolder(itemView: View) : BindableViewHolder(itemView) {
+    inner class StoryViewHolder(itemView: View) : BaseViewHolder(itemView) {
         override fun bind(position: Int) {
             val storyGroup = currentList[position]
 
@@ -118,7 +119,7 @@ class StoryPreviewAdapter @Inject constructor(
         }
 
         fun bindOnClick() {
-            itemView.setOnClickListener(clickListener)
+            itemView.setOnClickListener(eventListener)
         }
     }
 }

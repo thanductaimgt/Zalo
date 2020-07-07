@@ -11,7 +11,7 @@ import kotlinx.android.synthetic.main.item_story_other.view.*
 import kotlinx.android.synthetic.main.item_story_self.view.*
 import vng.zalo.tdtai.zalo.R
 import vng.zalo.tdtai.zalo.base.BaseListAdapter
-import vng.zalo.tdtai.zalo.base.BindableViewHolder
+import vng.zalo.tdtai.zalo.base.BaseViewHolder
 import vng.zalo.tdtai.zalo.data_model.story.ImageStory
 import vng.zalo.tdtai.zalo.data_model.story.Story
 import vng.zalo.tdtai.zalo.data_model.story.StoryGroup
@@ -55,7 +55,7 @@ class StoryGroupAdapter @Inject constructor(
         holder.bind(position)
     }
 
-    abstract inner class StoryGroupViewHolder(itemView: View) : BindableViewHolder(itemView) {
+    abstract inner class StoryGroupViewHolder(itemView: View) : BaseViewHolder(itemView) {
         override fun bind(position: Int) {
             val storyGroup = currentList[position]
             itemView.apply {
@@ -320,10 +320,7 @@ class StoryGroupAdapter @Inject constructor(
 
     private fun onVideoResume(itemView: View) {
         Log.d(TAG, "onVideoResume")
-        itemView.apply {
-            playbackManager.play()
-            imageView.visibility = View.INVISIBLE
-        }
+        playbackManager.resume()
     }
 
     fun onStoryGroupPause(itemView: View, groupPosition: Int) {
@@ -360,9 +357,6 @@ class StoryGroupAdapter @Inject constructor(
         }
     }
 
-    private val onReady = {
-        storyFragment.resumeCurrentItem()
-    }
     private val onLostFocus = {
         storyFragment.getCurrentItemView()?.let { onStoryGroupNotFocused(it) }
     }
@@ -370,7 +364,13 @@ class StoryGroupAdapter @Inject constructor(
     private fun onVideoFocus(itemView: View, videoStory: VideoStory) {
         Log.d(TAG, "onVideoFocus")
         itemView.apply {
-            playbackManager.prepare(videoStory.videoUrl!!, true, onReady, onLostFocus)
+            playbackManager.prepare(
+                    videoStory.videoUrl!!
+                    , true,
+                    onReady = {
+                        imageView.visibility = View.INVISIBLE
+                        storyFragment.resumeCurrentItem()
+                    }, onLostFocus = onLostFocus)
             playerView.player = playbackManager.exoPlayer
         }
     }

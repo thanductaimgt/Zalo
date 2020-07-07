@@ -2,7 +2,9 @@ package vng.zalo.tdtai.zalo.di
 
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
+import vng.zalo.tdtai.zalo.base.EmptyActivity
 import vng.zalo.tdtai.zalo.service.MessagingService
+import vng.zalo.tdtai.zalo.service.UploadService
 import vng.zalo.tdtai.zalo.ui.SplashActivity
 import vng.zalo.tdtai.zalo.ui.call.CallActivity
 import vng.zalo.tdtai.zalo.ui.call.CallModule
@@ -17,6 +19,8 @@ import vng.zalo.tdtai.zalo.ui.edit_media.EditMediaModule
 import vng.zalo.tdtai.zalo.ui.home.HomeActivity
 import vng.zalo.tdtai.zalo.ui.home.HomeModule
 import vng.zalo.tdtai.zalo.ui.camera.CameraFragment
+import vng.zalo.tdtai.zalo.ui.comment.CommentFragment
+import vng.zalo.tdtai.zalo.ui.comment.CommentModule
 import vng.zalo.tdtai.zalo.ui.intro.IntroActivity
 import vng.zalo.tdtai.zalo.ui.login.LoginActivity
 import vng.zalo.tdtai.zalo.ui.media.MediaFragment
@@ -28,6 +32,8 @@ import vng.zalo.tdtai.zalo.ui.share.ShareActivity
 import vng.zalo.tdtai.zalo.ui.share.ShareModule
 import vng.zalo.tdtai.zalo.ui.story.StoryFragment
 import vng.zalo.tdtai.zalo.ui.story.StoryModule
+import vng.zalo.tdtai.zalo.ui.story.story_detail.StoryDetailFragment
+import vng.zalo.tdtai.zalo.ui.story.story_detail.StoryDetailModule
 
 
 @Module
@@ -61,10 +67,16 @@ interface AndroidModule {
     @ContributesAndroidInjector
     fun splashActivity(): SplashActivity
 
+    @ContributesAndroidInjector
+    fun emptyActivity(): EmptyActivity
+
     //service
 
     @ContributesAndroidInjector
     fun messagingService(): MessagingService
+
+    @ContributesAndroidInjector
+    fun uploadService(): UploadService
 
     //fragment
 
@@ -85,4 +97,10 @@ interface AndroidModule {
 
     @ContributesAndroidInjector
     fun postDetailFragment(): PostDetailFragment
+
+    @ContributesAndroidInjector(modules = [CommentModule::class])
+    fun commentFragment(): CommentFragment
+
+    @ContributesAndroidInjector(modules = [StoryDetailModule::class])
+    fun storyDetailFragment(): StoryDetailFragment
 }

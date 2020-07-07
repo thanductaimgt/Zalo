@@ -6,13 +6,15 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.Picasso
-import kotlinx.android.synthetic.main.item_media_video_preview.view.*
+import kotlinx.android.synthetic.main.item_media_video_playable_preview.view.*
 import kotlinx.android.synthetic.main.part_media_preview.view.*
+import kotlinx.android.synthetic.main.part_media_video_preview.view.*
 import vng.zalo.tdtai.zalo.R
 import vng.zalo.tdtai.zalo.base.BaseListAdapter
-import vng.zalo.tdtai.zalo.base.BindableViewHolder
-import vng.zalo.tdtai.zalo.data_model.media.ImageMedia
+import vng.zalo.tdtai.zalo.base.BaseOnEventListener
+import vng.zalo.tdtai.zalo.base.BaseViewHolder
 import vng.zalo.tdtai.zalo.data_model.media.Media
 import vng.zalo.tdtai.zalo.data_model.media.VideoMedia
 import vng.zalo.tdtai.zalo.manager.PlaybackManager
@@ -23,34 +25,32 @@ import vng.zalo.tdtai.zalo.util.smartLoad
 import javax.inject.Inject
 
 class MediaPreviewAdapter @Inject constructor(
-        private val clickListener: View.OnClickListener,
+        private val eventListener: BaseOnEventListener,
         private val resourceManager: ResourceManager,
         private val utils: Utils,
         private val playbackManager: PlaybackManager,
         diffCallback: MediaDiffCallback
 ) : BaseListAdapter<Media, MediaPreviewAdapter.MediaPreviewHolder>(diffCallback) {
     var moreCount = 0
-    var showPlayIcon = true
-
-    private val onReady = {
-        playbackManager.play()
-    }
-
-    private val onEnded = {
-
-    }
+    var doLooping = false
 
     override fun getItemViewType(position: Int): Int {
-        return when (currentList[position]) {
-            is ImageMedia -> Media.TYPE_IMAGE
-            else -> Media.TYPE_VIDEO
+        return if (currentList[position] is VideoMedia) {
+            if(itemCount == 1){
+                TYPE_VIDEO_PLAYABLE
+            }else{
+                TYPE_VIDEO_NOT_PLAYABLE
+            }
+        } else {
+            TYPE_IMAGE
         }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MediaPreviewHolder {
         return when (viewType) {
-            Media.TYPE_IMAGE -> ImageMediaPreviewHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_media_image_preview, parent, false))
-            else -> VideoMediaPreviewHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_media_video_preview, parent, false))
+            TYPE_IMAGE -> ImageMediaPreviewHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_media_image_preview, parent, false))
+            TYPE_VIDEO_NOT_PLAYABLE -> VideoMediaPreviewHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_media_video_preview, parent, false))
+            else -> VideoMediaPlayableHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_media_video_playable_preview, parent, false))
         }.apply { bindOneTime() }
     }
 
@@ -67,7 +67,7 @@ class MediaPreviewAdapter @Inject constructor(
         holder.bind(position)
     }
 
-    abstract inner class MediaPreviewHolder(itemView: View) : BindableViewHolder(itemView) {
+    abstract inner class MediaPreviewHolder(itemView: View) : BaseViewHolder(itemView) {
         override fun bind(position: Int) {
             bindRatio()
             itemView.imageView.visibility = View.VISIBLE
@@ -76,19 +76,15 @@ class MediaPreviewAdapter @Inject constructor(
 
         fun bindRatio() {
             itemView.apply {
-                imageView.post {
-                    imageView.layoutParams = imageView.layoutParams.apply {
-                        if (itemCount == 1) {
-                            val media = currentList[0]
+                imageView.layoutParams = imageView.layoutParams.apply {
+                    if (itemCount == 1) {
+                        val media = currentList[0]
 
-                            this as ConstraintLayout.LayoutParams
-                            dimensionRatio = utils.getAdjustedRatio(media.ratio!!)
-//                            val size = utils.getSize(imageMedia.ratio!!)
-//                            val floatRatio = size.width / size.height.toFloat()
-                            height = 0//(imageView.width / floatRatio).toInt()
-                        } else {
-                            height = ConstraintLayout.LayoutParams.MATCH_PARENT
-                        }
+                        this as ConstraintLayout.LayoutParams
+                        dimensionRatio = utils.getAdjustedRatio(media.ratio!!)
+                        height = 0
+                    } else {
+                        height = ConstraintLayout.LayoutParams.MATCH_PARENT
                     }
                 }
             }
@@ -99,22 +95,20 @@ class MediaPreviewAdapter @Inject constructor(
                 displayMoreTextView.visibility = if (moreCount > 0 && position == currentList.lastIndex) {
                     displayMoreTextView.text = "+$moreCount"
                     imageView.foreground = ColorDrawable(ContextCompat.getColor(context, R.color.blackTransparent))
-//                    videoDurationTV.visibility = View.GONE
                     View.VISIBLE
                 } else {
                     imageView.foreground = null
-//                    videoDurationTV.visibility = if (currentList[position] is VideoMedia) View.VISIBLE else View.GONE
                     View.GONE
                 }
             }
         }
 
         open fun bindOneTime() {
-            itemView.setOnClickListener(clickListener)
+            itemView.setOnClickListener(eventListener)
         }
     }
 
-    inner class VideoMediaPreviewHolder(itemView: View) : MediaPreviewHolder(itemView) {
+    open inner class VideoMediaPreviewHolder(itemView: View) : MediaPreviewHolder(itemView) {
         override fun bind(position: Int) {
             super.bind(position)
 
@@ -128,29 +122,57 @@ class MediaPreviewAdapter @Inject constructor(
                 }
 
                 videoDurationTV.text = utils.getVideoDurationFormat(videoMedia.duration)
-                if (showPlayIcon) {
-                    playImgView.visibility = View.VISIBLE
-                } else {
-                    playImgView.visibility = View.GONE
-                }
             }
         }
+    }
 
-        fun playVideo(videoMedia: VideoMedia) {
+    fun onLostFocus(holder:RecyclerView.ViewHolder){
+        if(holder is VideoMediaPlayableHolder){
+            playbackManager.pause()
+            holder.itemView.apply {
+                playImgView.visibility = View.VISIBLE
+                playerView.player = null
+                imageView.apply { visibility = View.VISIBLE }
+            }
+        }
+    }
+
+    fun onPause(holder:RecyclerView.ViewHolder){
+        if(holder is VideoMediaPlayableHolder){
+            holder.itemView.apply {
+                playImgView.visibility = View.VISIBLE
+                playbackManager.pause()
+            }
+        }
+    }
+
+    fun onResume(holder:RecyclerView.ViewHolder){
+        if(holder is VideoMediaPlayableHolder){
+            holder.itemView.apply {
+                playImgView.visibility = View.GONE
+            }
+            playbackManager.resume()
+        }
+    }
+
+    inner class VideoMediaPlayableHolder(itemView: View) : VideoMediaPreviewHolder(itemView) {
+        fun playResumeVideo(videoMedia: VideoMedia) {
+            val onLostFocusOrEnded = {
+                onLostFocus(this)
+            }
+
             itemView.apply {
                 playImgView.visibility = View.GONE
-                playbackManager.prepare(videoMedia.uri!!, false, onReady = {
-                    imageView.visibility = View.INVISIBLE
-                    playbackManager.play()
-                }, onLostFocus = {
-                    if (showPlayIcon) {
-                        playImgView.visibility = View.VISIBLE
-                    }
-                    playbackManager.pause()
-                    playerView.player = null
-                    imageView.apply { visibility = View.VISIBLE }
-                })
-                playerView.player = playbackManager.exoPlayer
+                if(playerView.player == null){
+                    playbackManager.prepare(videoMedia.uri!!, doLooping, onReady = {
+                        imageView.apply { visibility = View.INVISIBLE}
+                        onResume(this@VideoMediaPlayableHolder)
+                    }, onLostFocus = onLostFocusOrEnded,
+                            onEnded = onLostFocusOrEnded)
+                    playerView.player = playbackManager.exoPlayer
+                }else{
+                    onResume(this@VideoMediaPlayableHolder)
+                }
             }
         }
 
@@ -164,16 +186,14 @@ class MediaPreviewAdapter @Inject constructor(
         override fun bind(position: Int) {
             super.bind(position)
 
-            val imageMedia = currentList[position] as ImageMedia
+            val media = currentList[position]
             itemView.apply {
-                Picasso.get().smartLoad(imageMedia.uri, resourceManager, imageView) {
+                Picasso.get().smartLoad(media.uri, resourceManager, imageView) {
                     it.fit().centerCrop()
                 }
             }
         }
     }
-
-    private var curPosition = 0
 
 //    fun onFocused(recyclerView: RecyclerView) {
 //        Log.d(TAG, "focus")
@@ -251,5 +271,9 @@ class MediaPreviewAdapter @Inject constructor(
 
     companion object {
         const val LIMIT_NUM = 5
+
+        const val TYPE_IMAGE = 0
+        const val TYPE_VIDEO_NOT_PLAYABLE = 1
+        const val TYPE_VIDEO_PLAYABLE = 2
     }
 }

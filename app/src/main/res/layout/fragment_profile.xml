@@ -26,7 +26,7 @@
 
                 <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/avatarImgView"
-                    android:layout_width="80dp"
+                    android:layout_width="100dp"
                     android:layout_height="0dp"
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="8dp"
@@ -197,12 +197,34 @@
                     app:tint="@android:color/black" />
 
                 <vng.zalo.tdtai.zalo.util.NestedScrollableHost
+                    android:visibility="gone"
+                    tools:visibility="visible"
+                    android:id="@+id/suggestedUsersLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toBottomOf="@id/showSuggestImgView">
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:overScrollMode="never"
+                        android:id="@+id/suggestedUsersRecyclerView"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:clipToPadding="false"
+                        android:orientation="horizontal"
+                        android:paddingHorizontal="8dp"
+                        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                        tools:listitem="@layout/item_suggest_user" />
+                </vng.zalo.tdtai.zalo.util.NestedScrollableHost>
+
+                <vng.zalo.tdtai.zalo.util.NestedScrollableHost
                     android:id="@+id/storyLayout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:layout_constraintTop_toBottomOf="@id/followTextView">
+                    app:layout_constraintTop_toBottomOf="@id/suggestedUsersLayout">
 
                     <androidx.recyclerview.widget.RecyclerView
+                        android:overScrollMode="never"
                         android:id="@+id/storyGroupRecyclerView"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -211,7 +233,7 @@
                         android:orientation="horizontal"
                         android:paddingHorizontal="8dp"
                         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                        tools:listitem="@layout/item_story_preview" />
+                        tools:listitem="@layout/item_story_group_preview" />
                 </vng.zalo.tdtai.zalo.util.NestedScrollableHost>
             </androidx.constraintlayout.widget.ConstraintLayout>
 

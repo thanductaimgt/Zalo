@@ -25,7 +25,7 @@ import kotlinx.android.synthetic.main.part_message_time.view.*
 import kotlinx.android.synthetic.main.part_message_video.view.*
 import vng.zalo.tdtai.zalo.R
 import vng.zalo.tdtai.zalo.base.BaseListAdapter
-import vng.zalo.tdtai.zalo.base.BindableViewHolder
+import vng.zalo.tdtai.zalo.base.BaseViewHolder
 import vng.zalo.tdtai.zalo.data_model.message.*
 import vng.zalo.tdtai.zalo.manager.ResourceManager
 import vng.zalo.tdtai.zalo.manager.SessionManager
@@ -43,7 +43,7 @@ class ChatAdapter @Inject constructor(
         private val utils: Utils,
         private val resourceManager: ResourceManager,
         diffCallback: MessageDiffCallback
-) : BaseListAdapter<Message, BindableViewHolder>(diffCallback) {
+) : BaseListAdapter<Message, BaseViewHolder>(diffCallback) {
     private val roomEnterTime = System.currentTimeMillis()
 
     override fun getItemViewType(position: Int): Int {
@@ -54,7 +54,7 @@ class ChatAdapter @Inject constructor(
         }
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BindableViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseViewHolder {
         val holder = when (viewType) {
             VIEW_TYPE_SEND -> {
                 val v = LayoutInflater.from(parent.context).inflate(R.layout.item_message_send, parent, false)
@@ -84,12 +84,12 @@ class ChatAdapter @Inject constructor(
         }
     }
 
-    override fun onBindViewHolder(holder: BindableViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: BaseViewHolder, position: Int) {
         holder.bind(position)
     }
 
     override fun onBindViewHolder(
-            holder: BindableViewHolder,
+            holder: BaseViewHolder,
             position: Int,
             payloads: ArrayList<*>
     ) {
@@ -117,7 +117,7 @@ class ChatAdapter @Inject constructor(
         }
     }
 
-    override fun onViewRecycled(holder: BindableViewHolder) {
+    override fun onViewRecycled(holder: BaseViewHolder) {
         if (holder is MessageViewHolder) {
             holder.apply {
                 itemView.apply {
@@ -175,7 +175,7 @@ class ChatAdapter @Inject constructor(
 
     // view holder classes
 
-    abstract inner class MessageViewHolder(itemView: View) : BindableViewHolder(itemView) {
+    abstract inner class MessageViewHolder(itemView: View) : BaseViewHolder(itemView) {
         fun bindTime(curMessage: Message, nextMessage: Message?): Boolean {
             /* if one of these is true:
             - current curMessage is last curMessage
@@ -525,7 +525,7 @@ class ChatAdapter @Inject constructor(
         }
     }
 
-    inner class SeenViewHolder(itemView: View) : BindableViewHolder(itemView) {
+    inner class SeenViewHolder(itemView: View) : BaseViewHolder(itemView) {
         val adapter = RoomMemberAdapter(resourceManager, RoomMemberDiffCallback())
 
         override fun bind(position: Int) {

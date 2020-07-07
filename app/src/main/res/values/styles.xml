@@ -124,4 +124,13 @@
 <!--        <item name="android:width">40dp</item>-->
 <!--        <item name="android:height">40dp</item>-->
 <!--    </style>-->
+    <style name="AppTheme.Light.NoActionBar.LightStatusBar.Transparent" parent="AppTheme.Light.NoActionBar.LightStatusBar">
+        <item name="android:windowBackground">@null</item>
+    </style>
+
+    <style name="AppTheme.Light.DialogStyle" parent="Theme.MaterialComponents.Light.BottomSheetDialog">
+        <item name="android:windowIsFloating">false</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:windowSoftInputMode">adjustResize</item>
+    </style>
 </resources>

@@ -1,17 +1,17 @@
 package vng.zalo.tdtai.zalo.ui.create_group
 
-import android.view.View
 import androidx.lifecycle.ViewModel
 import dagger.Binds
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
 import dagger.multibindings.IntoMap
+import vng.zalo.tdtai.zalo.base.BaseOnEventListener
 import vng.zalo.tdtai.zalo.di.ViewModelKey
 
 @Module
 interface CreateGroupModule {
     @Binds
-    fun bindClickListener(activity: CreateGroupActivity):View.OnClickListener
+    fun eventListener(activity: CreateGroupActivity):BaseOnEventListener
 
     @ContributesAndroidInjector
     fun allContactsSubFragment(): AllContactsFragment

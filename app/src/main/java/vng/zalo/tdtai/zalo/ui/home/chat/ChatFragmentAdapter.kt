@@ -9,7 +9,8 @@ import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.item_room.view.*
 import vng.zalo.tdtai.zalo.R
 import vng.zalo.tdtai.zalo.base.BaseListAdapter
-import vng.zalo.tdtai.zalo.base.BindableViewHolder
+import vng.zalo.tdtai.zalo.base.BaseOnEventListener
+import vng.zalo.tdtai.zalo.base.BaseViewHolder
 import vng.zalo.tdtai.zalo.data_model.room.Room
 import vng.zalo.tdtai.zalo.data_model.room.RoomItem
 import vng.zalo.tdtai.zalo.data_model.room.RoomItemPeer
@@ -22,7 +23,7 @@ import vng.zalo.tdtai.zalo.util.smartLoad
 import javax.inject.Inject
 
 class ChatFragmentAdapter @Inject constructor(
-        private val clickListener: View.OnClickListener,
+        private val eventListener: BaseOnEventListener,
         private val sessionManager: SessionManager,
         private val resourceManager: ResourceManager,
         private val utils: Utils,
@@ -30,7 +31,7 @@ class ChatFragmentAdapter @Inject constructor(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RoomItemViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_room, parent, false)
-        view.setOnClickListener(clickListener)
+        view.setOnClickListener(eventListener)
         return RoomItemViewHolder(view)
     }
 
@@ -54,7 +55,7 @@ class ChatFragmentAdapter @Inject constructor(
         }
     }
 
-    inner class RoomItemViewHolder(itemView: View) : BindableViewHolder(itemView) {
+    inner class RoomItemViewHolder(itemView: View) : BaseViewHolder(itemView) {
         override fun bind(position: Int) {
             itemView.apply {
                 val roomItem = getItem(position)

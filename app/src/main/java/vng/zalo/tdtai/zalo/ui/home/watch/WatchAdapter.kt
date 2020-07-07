@@ -14,7 +14,7 @@ import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.item_watch.view.*
 import vng.zalo.tdtai.zalo.R
 import vng.zalo.tdtai.zalo.base.BaseListAdapter
-import vng.zalo.tdtai.zalo.base.BindableViewHolder
+import vng.zalo.tdtai.zalo.base.BaseViewHolder
 import vng.zalo.tdtai.zalo.data_model.post.Watch
 import vng.zalo.tdtai.zalo.manager.PlaybackManager
 import vng.zalo.tdtai.zalo.manager.ResourceManager
@@ -73,9 +73,7 @@ class WatchAdapter @Inject constructor(
     fun onWatchResume(itemView: View) {
         Log.d(TAG, "resume")
         itemView.apply {
-            playbackManager.play()
             playPauseImgView.visibility = View.GONE
-            previewImgView.visibility = View.GONE
             musicNameTextView.isSelected = true
             if (isAnimatorStarted) {
                 objectAnimator.resume()
@@ -84,6 +82,7 @@ class WatchAdapter @Inject constructor(
                 isAnimatorStarted = true
             }
         }
+        playbackManager.resume()
     }
 
     fun onWatchPause(itemView: View, displayPauseIcon: Boolean = true) {
@@ -98,11 +97,6 @@ class WatchAdapter @Inject constructor(
         }
     }
 
-    private val onReady = {
-        watchFragment.getCurrentItemView()?.let {
-            onWatchResume(it)
-        }
-    }
     private val onLostFocus = {
         watchFragment.getCurrentItemView()?.let{onWatchNotFocused(it)}
     }
@@ -113,7 +107,13 @@ class WatchAdapter @Inject constructor(
             objectAnimator.target = musicOwnerAvatarImgView
             objectAnimator.start()
 
-            playbackManager.prepare(currentList[watchFragment.getCurrentItem()].videoMedia!!.uri!!, true, onReady, onLostFocus)
+            playbackManager.prepare(
+                    currentList[watchFragment.getCurrentItem()].videoMedia!!.uri!!,
+                    true,
+                    onReady = {
+                        previewImgView.visibility = View.GONE
+                        onWatchResume(this)
+                    }, onLostFocus = onLostFocus)
             playerView.player = playbackManager.exoPlayer
         }
 
@@ -132,7 +132,7 @@ class WatchAdapter @Inject constructor(
         }
     }
 
-    inner class WatchViewHolder(itemView: View) : BindableViewHolder(itemView) {
+    inner class WatchViewHolder(itemView: View) : BaseViewHolder(itemView) {
         fun bindListeners() {
             itemView.apply {
                 musicIcon.setOnClickListener(watchFragment)
@@ -146,7 +146,8 @@ class WatchAdapter @Inject constructor(
 
                 playerView.videoSurfaceView?.setOnClickListener {
                     if (watchFragment.isPaused) {
-                        onWatchResume(this)
+//                        onWatchResume(this)
+                        watchFragment.startOrResumeCurrentWatch()
                     } else {
                         onWatchPause(this)
                     }

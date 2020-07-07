@@ -1,12 +1,12 @@
 package vng.zalo.tdtai.zalo.ui.profile
 
-import android.view.View
 import androidx.lifecycle.ViewModel
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.android.ContributesAndroidInjector
 import dagger.multibindings.IntoMap
+import vng.zalo.tdtai.zalo.base.BaseOnEventListener
 import vng.zalo.tdtai.zalo.di.ViewModelKey
 import vng.zalo.tdtai.zalo.ui.profile.diary.ProfileDiaryFragment
 import vng.zalo.tdtai.zalo.ui.profile.media.ProfileMediaFragment
@@ -20,7 +20,7 @@ interface ProfileModule {
     fun profileMediaFragment(): ProfileMediaFragment
 
     @Binds
-    fun bindClickListener(profileFragment: ProfileFragment): View.OnClickListener
+    fun eventListener(profileFragment: ProfileFragment): BaseOnEventListener
 
     @Binds
     @IntoMap

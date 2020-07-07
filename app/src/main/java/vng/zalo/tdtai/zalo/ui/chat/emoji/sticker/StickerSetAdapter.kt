@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.item_sticker.view.*
 import vng.zalo.tdtai.zalo.R
-import vng.zalo.tdtai.zalo.base.BindableViewHolder
+import vng.zalo.tdtai.zalo.base.BaseViewHolder
 import vng.zalo.tdtai.zalo.data_model.Sticker
 import javax.inject.Inject
 
@@ -29,7 +29,7 @@ class StickerSetAdapter @Inject constructor(
         return stickers.size
     }
 
-    inner class StickerSetViewHolder(itemView: View) : BindableViewHolder(itemView) {
+    inner class StickerSetViewHolder(itemView: View) : BaseViewHolder(itemView) {
         override fun bind(position: Int) {
             itemView.apply {
                 animView.setAnimationFromUrl(stickers[position].url)

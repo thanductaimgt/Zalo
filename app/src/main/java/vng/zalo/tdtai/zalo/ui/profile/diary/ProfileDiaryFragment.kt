@@ -13,46 +13,66 @@ import vng.zalo.tdtai.zalo.R
 import vng.zalo.tdtai.zalo.base.BaseFragment
 import vng.zalo.tdtai.zalo.common.MediaPreviewAdapter
 import vng.zalo.tdtai.zalo.data_model.media.VideoMedia
+import vng.zalo.tdtai.zalo.ui.home.HomeActivity
 import vng.zalo.tdtai.zalo.ui.home.diary.DiaryAdapter
 import vng.zalo.tdtai.zalo.ui.profile.ProfileFragment
 import vng.zalo.tdtai.zalo.ui.profile.ProfileViewModel
+import vng.zalo.tdtai.zalo.util.DiaryDiffCallback
 import vng.zalo.tdtai.zalo.widget.MediaGridView
 import javax.inject.Inject
 
-class ProfileDiaryFragment: BaseFragment() {
-    @Inject lateinit var profileFragment: ProfileFragment
+class ProfileDiaryFragment : BaseFragment() {
+    @Inject
+    lateinit var profileFragment: ProfileFragment
 
     private val viewModel: ProfileViewModel by viewModels({ profileFragment }, { viewModelFactory })
 
-    @Inject
-    lateinit var adapter: DiaryAdapter
+    private lateinit var diaryAdapter: DiaryAdapter
+    private lateinit var recyclerViewLayoutManager: LinearLayoutManager
 
     override fun createView(inflater: LayoutInflater, container: ViewGroup?): View {
         return inflater.inflate(R.layout.fragment_profile_diary, container, false)
     }
 
     override fun onBindViews() {
+        recyclerViewLayoutManager = LinearLayoutManager(requireContext())
+        diaryAdapter = DiaryAdapter(this, resourceManager, utils, playbackManager, sessionManager, DiaryDiffCallback())
         recyclerView.apply {
-            adapter = this@ProfileDiaryFragment.adapter
-            layoutManager = LinearLayoutManager(requireContext())
+            adapter = diaryAdapter
+            layoutManager = recyclerViewLayoutManager
         }
     }
 
     override fun onViewsBound() {
         viewModel.liveDiaries.observe(viewLifecycleOwner, Observer {
-            adapter.submitList(it)
+            diaryAdapter.submitList(it)
         })
 
         viewModel.liveSelectedDiary.observe(viewLifecycleOwner, Observer { post ->
-            val position = adapter.currentList.indexOfFirst { it.id == post.id }
+            val position = diaryAdapter.currentList.indexOfFirst { it.id == post.id }
             if (position != -1) {
-                (recyclerView.layoutManager as LinearLayoutManager).scrollToPositionWithOffset(position, 0)
-//                recyclerView.scrollToPosition(position)
+                recyclerViewLayoutManager.scrollToPositionWithOffset(position, 0)
                 profileFragment.viewPager.currentItem = 0
             } else {
                 Toast.makeText(requireContext(), "post not loaded", Toast.LENGTH_SHORT).show()
             }
         })
+
+        if (activity() is HomeActivity) {
+            val homeActivity = activity() as HomeActivity
+            homeActivity.liveSelectedPageListener.observe(viewLifecycleOwner, Observer { position ->
+                if (position == 4) {
+                    recyclerView.apply {
+                        val firstVisiblePosition = recyclerViewLayoutManager.findFirstVisibleItemPosition()
+                        if (firstVisiblePosition < 10) {
+                            smoothScrollToPosition(0)
+                        } else {
+                            recyclerViewLayoutManager.scrollToPositionWithOffset(0, 0)
+                        }
+                    }
+                }
+            })
+        }
     }
 
     override fun onClick(view: View) {
@@ -60,34 +80,45 @@ class ProfileDiaryFragment: BaseFragment() {
             R.id.imageView -> {
 //                homeActivity.addMediaFragment()
             }
-            R.id.avatarImgView->{
+            R.id.avatarImgView -> {
                 addProfileFragment(view)
             }
-            R.id.nameTextView->{
+            R.id.nameTextView -> {
                 addProfileFragment(view)
             }
             R.id.rootItemView -> {
                 val mediaGridView = view.parent as MediaGridView
+
                 val diaryPosition = recyclerView.getChildAdapterPosition(mediaGridView.parent as View)
-                val diary = adapter.currentList[diaryPosition]
+                val diary = diaryAdapter.currentList[diaryPosition]
+
+                val mediaPosition = mediaGridView.getChildAdapterPosition(view)
+                val media = (mediaGridView.adapter as MediaPreviewAdapter).currentList[mediaPosition]
+
                 if (mediaGridView.adapter!!.itemCount > 1) {
-                    parentZaloFragmentManager.addPostDetailFragment(diary, diaryPosition)
-                } else {
-                    val position = mediaGridView.getChildAdapterPosition(view)
-                    val media = (mediaGridView.adapter as MediaPreviewAdapter).currentList[position]
-                    if (media is VideoMedia) {
-                        (mediaGridView.findViewHolderForAdapterPosition(position) as MediaPreviewAdapter.VideoMediaPreviewHolder).playVideo(media)
+                    if (profileFragment.isOnTop) {
+                        parentZaloFragmentManager
                     } else {
-                        parentZaloFragmentManager.addMediaFragment(diary.medias[0], diary.medias)
+                        activity().zaloFragmentManager
+                    }.addPostDetailFragment(diary, mediaPosition)
+                } else {
+                    if (media is VideoMedia) {
+                        (mediaGridView.findViewHolderForAdapterPosition(mediaPosition) as MediaPreviewAdapter.VideoMediaPlayableHolder).playResumeVideo(media)
+                    } else {
+                        if (profileFragment.isOnTop) {
+                            parentZaloFragmentManager
+                        } else {
+                            activity().zaloFragmentManager
+                        }.addMediaFragment(diary.medias[0], diary.medias)
                     }
                 }
             }
         }
     }
 
-    private fun addProfileFragment(view: View){
-        val position = recyclerView.getChildAdapterPosition(view.parent as  View)
-        val post = adapter.currentList[position]
-        (parentFragment!! as BaseFragment).zaloFragmentManager.addProfileFragment(post.ownerId!!)
+    private fun addProfileFragment(view: View) {
+        val position = recyclerView.getChildAdapterPosition(view.parent as View)
+        val post = diaryAdapter.currentList[position]
+        profileFragment.fragmentManager().addProfileFragment(post.ownerId!!)
     }
 }

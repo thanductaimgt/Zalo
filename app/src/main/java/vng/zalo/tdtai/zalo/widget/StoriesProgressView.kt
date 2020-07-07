@@ -161,9 +161,9 @@ class StoriesProgressView : LinearLayout {
                     if (0 <= current - 1) {
                         val p: PausableProgressBar = progressBars[current - 1]
                         p.setMinWithoutCallback()
-                        progressBars[--current].startProgress()
+//                        progressBars[--current].startProgress()
                     } else {
-                        progressBars[current].startProgress()
+//                        progressBars[current].startProgress()
                     }
                     isReverseStart = false
                     return
@@ -171,7 +171,8 @@ class StoriesProgressView : LinearLayout {
                 val next = current + 1
                 if (next <= progressBars.size - 1) {
                     if (storiesListener != null) storiesListener!!.onNext()
-                    progressBars[next].startProgress()
+                    progressBars[current].setMaxWithoutCallback()
+//                    progressBars[next].startProgress()
                 } else if(!isComplete) {
                     isComplete = true
                     if (storiesListener != null) storiesListener!!.onComplete()

@@ -50,7 +50,7 @@ object Constants {
     const val IMAGE_COMPRESS_QUALITY = 75
 
     const val DEFAULT_KEYBOARD_SIZE_DP = 320
-    const val DEFAULT_STORY_LIVE_TIME:Long = 365L * ONE_DAY_IN_MILLISECOND
+    const val DEFAULT_STORY_LIVE_TIME:Long = 1L * ONE_DAY_IN_MILLISECOND
 
     val TIMESTAMP_EPOCH = Date(0).time
 

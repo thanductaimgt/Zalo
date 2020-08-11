@@ -14,8 +14,8 @@ import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_call.*
 import vng.zalo.tdtai.zalo.R
 import vng.zalo.tdtai.zalo.base.BaseActivity
-import vng.zalo.tdtai.zalo.manager.CallService
 import vng.zalo.tdtai.zalo.data_model.message.CallMessage
+import vng.zalo.tdtai.zalo.manager.CallService
 import vng.zalo.tdtai.zalo.util.Constants
 import vng.zalo.tdtai.zalo.util.smartLoad
 import kotlin.math.ceil
@@ -48,6 +48,20 @@ class CallActivity : BaseActivity() {
         }
     }
 
+    override fun initAll() {
+        try {
+            onBindViews()
+            onViewsBound()
+        } catch (e: Exception) {
+            alertDialog.show(supportFragmentManager,
+                    getString(R.string.label_error_occurred),
+                    "${getString(R.string.label_error)}: ${e.message}",
+                    button1Action = { finish() })
+
+            e.printStackTrace()
+        }
+    }
+
     @Suppress("DEPRECATION")
     override fun onBindViews() {
         // show activity if screen is locked or turn off
@@ -73,7 +87,7 @@ class CallActivity : BaseActivity() {
 
         if (viewModel.isCaller) {
             nameTextView.text = viewModel.liveRoom.value!!.getDisplayName(resourceManager)
-            Picasso.get().smartLoad(viewModel.liveRoom.value!!.avatarUrl, resourceManager, watchOwnerAvatarImgView){
+            Picasso.get().smartLoad(viewModel.liveRoom.value!!.avatarUrl, resourceManager, watchOwnerAvatarImgView) {
                 it.fit().centerCrop()
             }
         } else {
@@ -90,60 +104,51 @@ class CallActivity : BaseActivity() {
     }
 
     override fun onViewsBound() {
-        try {
-            viewModel.liveCallState.observe(this, Observer {
-                when (it) {
-                    STATE_ESTABLISHED -> {
-                        timeIcon.visibility = View.VISIBLE
-                        timeTextView.visibility = View.VISIBLE
-                        signalIcon.visibility = View.VISIBLE
-                        signalTextView.visibility = View.VISIBLE
+        viewModel.liveCallState.observe(this, Observer {
+            when (it) {
+                STATE_ESTABLISHED -> {
+                    timeIcon.visibility = View.VISIBLE
+                    timeTextView.visibility = View.VISIBLE
+                    signalIcon.visibility = View.VISIBLE
+                    signalTextView.visibility = View.VISIBLE
 
-                        statusTextView.visibility = View.GONE
+                    statusTextView.visibility = View.GONE
 
-                        speakerImgView.visibility = View.VISIBLE
-                        recorderImgView.visibility = View.VISIBLE
-                        answerImgView.visibility = View.GONE
+                    speakerImgView.visibility = View.VISIBLE
+                    recorderImgView.visibility = View.VISIBLE
+                    answerImgView.visibility = View.GONE
 
-                        handler.postDelayed(timerRunnable, 0)
-                    }
-                    STATE_CALLING -> statusTextView.text = getString(R.string.description_calling)
-                    STATE_RINGING_BACK -> statusTextView.text = getString(R.string.description_ringing)
-                    STATE_BUSY -> {
-                        statusTextView.text = getString(R.string.description_not_answer)
-                        cancelCallImgView.visibility = View.INVISIBLE
-                    }
-                    STATE_ENDED -> {
-                        signalIcon.visibility = View.GONE
-                        signalTextView.visibility = View.GONE
-
-                        speakerImgView.visibility = View.GONE
-                        recorderImgView.visibility = View.GONE
-                        cancelCallImgView.visibility = View.GONE
-                        answerImgView.visibility = View.GONE
-
-                        statusTextView.text = getString(R.string.description_call_ended)
-                        statusTextView.visibility = View.VISIBLE
-
-                        timeIcon.setImageResource(R.drawable.answer)
-                    }
+                    handler.postDelayed(timerRunnable, 0)
                 }
-            })
-
-            viewModel.liveRoom.observe(this, Observer {roomPeer->
-                nameTextView.text = roomPeer.getDisplayName(resourceManager)
-                Picasso.get().smartLoad(roomPeer.avatarUrl, resourceManager, watchOwnerAvatarImgView){
-                    it.fit().centerCrop()
+                STATE_CALLING -> statusTextView.text = getString(R.string.description_calling)
+                STATE_RINGING_BACK -> statusTextView.text = getString(R.string.description_ringing)
+                STATE_BUSY -> {
+                    statusTextView.text = getString(R.string.description_not_answer)
+                    cancelCallImgView.visibility = View.INVISIBLE
                 }
-            })
-        } catch (e: Exception) {
-            alertDialog.show(supportFragmentManager,
-                    getString(R.string.label_error_occurred),
-                    "${getString(R.string.label_error)}: ${e.message}",
-                    button1Action = { finish() })
+                STATE_ENDED -> {
+                    signalIcon.visibility = View.GONE
+                    signalTextView.visibility = View.GONE
 
-            e.printStackTrace()
-        }
+                    speakerImgView.visibility = View.GONE
+                    recorderImgView.visibility = View.GONE
+                    cancelCallImgView.visibility = View.GONE
+                    answerImgView.visibility = View.GONE
+
+                    statusTextView.text = getString(R.string.description_call_ended)
+                    statusTextView.visibility = View.VISIBLE
+
+                    timeIcon.setImageResource(R.drawable.answer)
+                }
+            }
+        })
+
+        viewModel.liveRoom.observe(this, Observer { roomPeer ->
+            nameTextView.text = roomPeer.getDisplayName(resourceManager)
+            Picasso.get().smartLoad(roomPeer.avatarUrl, resourceManager, watchOwnerAvatarImgView) {
+                it.fit().centerCrop()
+            }
+        })
 
         initAudioManager()
 
@@ -231,7 +236,7 @@ class CallActivity : BaseActivity() {
         }
     }
 
-    inner class AudioCallListener: CallService.AudioCallListener {
+    inner class AudioCallListener : CallService.AudioCallListener {
         override fun onCallEstablished() {
             viewModel.liveCallState.postValue(STATE_ESTABLISHED)
 

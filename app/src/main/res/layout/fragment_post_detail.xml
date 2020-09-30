@@ -23,7 +23,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/size_action_bar_height">
 
-                <vng.zalo.tdtai.zalo.widget.ExpandableTextView
+                <com.mgt.zalo.widget.ExpandableTextView
                     android:id="@+id/descTextView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

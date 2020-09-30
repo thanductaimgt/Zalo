@@ -49,7 +49,7 @@
                     app:layout_constraintStart_toEndOf="@id/avatarImgView2"
                     app:layout_constraintTop_toTopOf="@id/avatarImgView2" />
 
-                <vng.zalo.tdtai.zalo.util.NestedScrollableHost
+                <com.mgt.zalo.util.NestedScrollableHost
                     android:id="@+id/storyLayout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -64,7 +64,7 @@
                         android:orientation="horizontal"
                         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                         tools:listitem="@layout/item_story_group_preview" />
-                </vng.zalo.tdtai.zalo.util.NestedScrollableHost>
+                </com.mgt.zalo.util.NestedScrollableHost>
 
                 <com.airbnb.lottie.LottieAnimationView
                     android:id="@+id/loadingAnimView"
@@ -154,7 +154,7 @@
         </com.google.android.material.appbar.CollapsingToolbarLayout>
     </com.google.android.material.appbar.AppBarLayout>
 
-    <vng.zalo.tdtai.zalo.widget.BaseRecyclerView
+    <com.mgt.zalo.widget.BaseRecyclerView
         android:id="@+id/diaryRecyclerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

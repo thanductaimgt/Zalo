@@ -196,7 +196,7 @@
                     app:layout_constraintTop_toBottomOf="@id/followedByTextView"
                     app:tint="@android:color/black" />
 
-                <vng.zalo.tdtai.zalo.util.NestedScrollableHost
+                <com.mgt.zalo.util.NestedScrollableHost
                     android:visibility="gone"
                     tools:visibility="visible"
                     android:id="@+id/suggestedUsersLayout"
@@ -215,9 +215,9 @@
                         android:paddingHorizontal="8dp"
                         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                         tools:listitem="@layout/item_suggest_user" />
-                </vng.zalo.tdtai.zalo.util.NestedScrollableHost>
+                </com.mgt.zalo.util.NestedScrollableHost>
 
-                <vng.zalo.tdtai.zalo.util.NestedScrollableHost
+                <com.mgt.zalo.util.NestedScrollableHost
                     android:id="@+id/storyLayout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -234,7 +234,7 @@
                         android:paddingHorizontal="8dp"
                         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                         tools:listitem="@layout/item_story_group_preview" />
-                </vng.zalo.tdtai.zalo.util.NestedScrollableHost>
+                </com.mgt.zalo.util.NestedScrollableHost>
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <androidx.constraintlayout.widget.ConstraintLayout
@@ -330,7 +330,7 @@
             android:layout_height="@dimen/sizeBottomNavigationHeight"
             app:layout_constraintTop_toBottomOf="@id/storyLayout" />
 
-        <vng.zalo.tdtai.zalo.util.NestedScrollableHost
+        <com.mgt.zalo.util.NestedScrollableHost
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
@@ -342,6 +342,6 @@
                 android:id="@+id/viewPager"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
-        </vng.zalo.tdtai.zalo.util.NestedScrollableHost>
+        </com.mgt.zalo.util.NestedScrollableHost>
     </LinearLayout>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

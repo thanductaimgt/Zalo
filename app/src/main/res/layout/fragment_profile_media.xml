@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<vng.zalo.tdtai.zalo.widget.MediaGridView app:mgv_type="uniform"
+<com.mgt.zalo.widget.MediaGridView app:mgv_type="uniform"
     tools:itemCount="9"
     tools:listitem="@layout/item_media_video_preview"
     android:id="@+id/mediaGridView"

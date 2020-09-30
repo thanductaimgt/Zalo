@@ -42,7 +42,7 @@
             app:layout_constraintTop_toTopOf="parent"
             tools:text="Nhu Van Chien" />
 
-        <vng.zalo.tdtai.zalo.widget.ExpandableTextView
+        <com.mgt.zalo.widget.ExpandableTextView
             app:trimLength="150"
             android:id="@+id/descTextView"
             android:layout_width="match_parent"

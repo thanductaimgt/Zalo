@@ -75,7 +75,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@id/avatarImgView" />
 
-    <vng.zalo.tdtai.zalo.widget.ExpandableTextView
+    <com.mgt.zalo.widget.ExpandableTextView
         android:id="@+id/descTextView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -89,7 +89,7 @@
         app:trimLength="500"
         tools:text="it's a beautiful day" />
 
-    <vng.zalo.tdtai.zalo.widget.MediaGridView
+    <com.mgt.zalo.widget.MediaGridView
         android:id="@+id/mediaGridView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

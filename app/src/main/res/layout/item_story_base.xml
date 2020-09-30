@@ -55,7 +55,7 @@
         android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent">
 
-        <vng.zalo.tdtai.zalo.widget.StoriesProgressView
+        <com.mgt.zalo.widget.StoriesProgressView
             android:id="@+id/storiesProgressView"
             android:layout_width="match_parent"
             android:layout_height="20dp"

@@ -112,7 +112,7 @@
                 android:textSize="@dimen/sizeTextLarge"
                 app:layout_constraintTop_toBottomOf="@id/avatarImgView" />
 
-            <vng.zalo.tdtai.zalo.widget.MediaGridView
+            <com.mgt.zalo.widget.MediaGridView
                 android:id="@+id/mediaGridView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

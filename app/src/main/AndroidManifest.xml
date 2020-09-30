@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="vng.zalo.tdtai.zalo">
+    package="com.mgt.zalo">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.USE_SIP" />
@@ -21,7 +21,7 @@
         android:required="true" />
 
     <application
-        android:name=".ZaloApplication"
+        android:name="com.mgt.zalo.ZaloApplication"
         android:allowBackup="false"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/label_app_name"
@@ -31,21 +31,21 @@
         android:windowSoftInputMode="adjustResize"
         tools:replace="android:allowBackup,android:label">
         <service
-            android:name=".service.UploadService"
+            android:name="com.mgt.zalo.service.UploadService"
             android:exported="false"/>
 
         <activity
-            android:name=".base.EmptyActivity"
+            android:name="com.mgt.zalo.base.EmptyActivity"
             android:theme="@style/AppTheme.Light.NoActionBar.LightStatusBar.Transparent" />
         <activity
-            android:name=".ui.create_post.CreatePostActivity"
+            android:name="com.mgt.zalo.ui.create_post.CreatePostActivity"
             android:theme="@style/AppTheme.Light.NoActionBar.LightStatusBar" />
 
         <meta-data
             android:name="com.google.firebase.ml.vision.DEPENDENCIES"
             android:value="face" /> <!-- To use multiple models: android:value="face,model2,model3" -->
         <service
-            android:name=".service.MessagingService"
+            android:name="com.mgt.zalo.service.MessagingService"
             android:enabled="true"
             android:exported="false">
             <intent-filter>
@@ -54,7 +54,7 @@
         </service>
 
         <activity
-            android:name=".ui.share.ShareActivity"
+            android:name="com.mgt.zalo.ui.share.ShareActivity"
             android:launchMode="singleTop"
             android:theme="@style/AppTheme.Light.NoActionBar.LightStatusBar">
             <intent-filter>
@@ -68,7 +68,7 @@
         </activity>
 
         <receiver
-            android:name=".receiver.BootReceiver"
+            android:name="com.mgt.zalo.receiver.BootReceiver"
             android:enabled="true"
             android:exported="false">
             <intent-filter>
@@ -78,13 +78,13 @@
         </receiver>
 
         <activity
-            android:name=".ui.call.CallActivity"
+            android:name="com.mgt.zalo.ui.call.CallActivity"
             android:theme="@style/AppTheme.Light.NoActionBar" />
-        <activity android:name=".ui.register.RegisterActivity" />
+        <activity android:name="com.mgt.zalo.ui.register.RegisterActivity" />
 
         <provider
             android:name="androidx.core.content.FileProvider"
-            android:authorities="vng.zalo.tdtai.zalo.fileprovider"
+            android:authorities="com.mgt.zalo.fileprovider"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data
@@ -93,10 +93,10 @@
         </provider>
 
         <activity
-            android:name=".ui.create_group.CreateGroupActivity"
+            android:name="com.mgt.zalo.ui.create_group.CreateGroupActivity"
             android:theme="@style/AppTheme.Light.NoActionBar.LightStatusBar" />
         <activity
-            android:name=".ui.SplashActivity"
+            android:name="com.mgt.zalo.ui.SplashActivity"
             android:theme="@style/AppTheme.SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -106,17 +106,17 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ui.chat.ChatActivity"
+            android:name="com.mgt.zalo.ui.chat.ChatActivity"
             android:theme="@style/AppTheme.Light.NoActionBar" />
         <activity
-            android:name=".ui.home.HomeActivity"
+            android:name="com.mgt.zalo.ui.home.HomeActivity"
             android:theme="@style/AppTheme.Light.NoActionBar.LightStatusBar" />
         <activity
-            android:name=".ui.login.LoginActivity"
-            android:parentActivityName=".ui.intro.IntroActivity"
+            android:name="com.mgt.zalo.ui.login.LoginActivity"
+            android:parentActivityName="com.mgt.zalo.ui.intro.IntroActivity"
             android:theme="@style/AppTheme.Light.NoActionBar" />
         <activity
-            android:name=".ui.intro.IntroActivity"
+            android:name="com.mgt.zalo.ui.intro.IntroActivity"
             android:theme="@style/AppTheme.Light.NoActionBar.LightStatusBar" />
     </application>
 

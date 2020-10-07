@@ -1,5 +1,6 @@
 package com.mgt.zalo.ui.profile
 
+import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -25,9 +26,7 @@ import kotlinx.android.synthetic.main.fragment_profile.viewPager
 import kotlinx.android.synthetic.main.item_story_group_preview.view.*
 import javax.inject.Inject
 
-class ProfileFragment(
-        val userId: String
-) : BaseFragment() {
+class ProfileFragment: BaseFragment() {
     private val viewModel: ProfileViewModel by viewModels { viewModelFactory }
 
     @Inject
@@ -38,6 +37,12 @@ class ProfileFragment(
 
     @Inject
     lateinit var suggestUserAdapter: SuggestUserAdapter
+
+    lateinit var userId: String
+
+    override fun applyArguments(args: Bundle) {
+        userId = args.getString(ARG_1)!!
+    }
 
     override fun createView(inflater: LayoutInflater, container: ViewGroup?): View {
         // Inflate the layout for this fragment
@@ -179,7 +184,7 @@ class ProfileFragment(
                 val storyGroup = storyGroupPreviewAdapter.currentList[position]
 
                 database.getStories(arrayListOf(storyGroup)) {
-                    parentZaloFragmentManager.addStoryFragment(storyGroup, storyGroupPreviewAdapter.currentList)
+                    parentZaloFragmentManager.addStoryFragment(storyGroup, storyGroupPreviewAdapter.currentList as ArrayList)
 
                     view.loadingAnimView.visibility = View.GONE
                 }

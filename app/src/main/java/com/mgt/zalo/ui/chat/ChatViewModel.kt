@@ -205,36 +205,6 @@ class ChatViewModel @Inject constructor(intent: Intent) : BaseViewModel() {
             lastMessageMap = messageMap
             updateLiveMessageMap()
         })
-//        Single.fromCallable {
-//            val messageMap = HashMap<String, Message>()
-//
-//            //todo
-//            messages.forEach {
-//                val senderAvatarUrl = room.memberMap?.get(it.senderId)?.avatarUrl
-//                val newMessage = if (it.senderAvatarUrl != senderAvatarUrl) {
-//                    it.clone().apply { this.senderAvatarUrl = senderAvatarUrl }
-//                } else {
-//                    it
-//                }
-//
-//                messageMap[it.id!!] = newMessage
-//            }
-//
-//            liveMessageMap.value!!.values.filter {
-//                !messageMap.containsKey(it.id!!) && !it.isSent
-//            }.forEach {
-//                messageMap[it.id!!] = it
-//            }
-//
-//            messageMap
-//        }.subscribeOn(Schedulers.computation())
-//                .observeOn(AndroidSchedulers.mainThread())
-//                .subscribe({ messageMap ->
-//                    lastMessageMap = messageMap
-//                    updateLiveMessageMap()
-//                }, {
-//                    it.printStackTrace()
-//                })
     }
 
     private fun updateLiveMessageMap() {

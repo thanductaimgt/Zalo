@@ -32,15 +32,10 @@ class EmptyActivity : BaseActivity() {
         }
     }
 
-    private val checkFinishRunnable = Runnable {
-        if(supportFragmentManager.backStackEntryCount == 0){
+    override fun onBackPressed() {
+        if (!zaloFragmentManager.popTopFragmentExceptLast()) {
             finish()
         }
-    }
-
-    override fun onBackPressed() {
-        zaloFragmentManager.popTopFragmentExceptLast()
-//        rootView.post(checkFinishRunnable)
     }
 
     companion object{

@@ -1,5 +1,6 @@
 package com.mgt.zalo.ui.media
 
+import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,16 +15,21 @@ import kotlinx.android.synthetic.main.fragment_media.*
 import kotlinx.android.synthetic.main.fragment_media.view.*
 import javax.inject.Inject
 
-class MediaFragment(
-        private val curMedia: Media,
-        val medias: ArrayList<Media>
-) : BaseFragment() {
+class MediaFragment: BaseFragment() {
 //    private val viewModel: MediaViewModel by viewModels{ viewModelFactory }
 
     @Inject
     lateinit var mediaAdapter: MediaAdapter
 
     private var lastItem: Int? = null
+
+    private lateinit var curMedia: Media
+    lateinit var medias: ArrayList<Media>
+
+    override fun applyArguments(args: Bundle) {
+        curMedia = args.getParcelable(ARG_1)!!
+        medias = args.getParcelableArrayList(ARG_2)!!
+    }
 
     override fun createView(inflater: LayoutInflater, container: ViewGroup?): View {
         activity().hideStatusBar()

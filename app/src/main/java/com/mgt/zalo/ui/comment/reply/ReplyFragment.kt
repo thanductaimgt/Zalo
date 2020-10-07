@@ -1,6 +1,7 @@
 package com.mgt.zalo.ui.comment.reply
 
 import android.content.Intent
+import android.os.Bundle
 import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
@@ -33,13 +34,20 @@ import kotlinx.android.synthetic.main.part_footer_comment_fragment.*
 import kotlinx.android.synthetic.main.part_footer_comment_fragment.playIcon
 
 
-class ReplyFragment(val comment: Comment) : BaseFragment() {
+class ReplyFragment: BaseFragment() {
     private val viewModel: ReplyViewModel by viewModels { viewModelFactory }
 
     private lateinit var replyAdapter: CommentAdapter
 
-    var isReplying = false
-    var isCommentJustSentByMe = false
+    lateinit var comment: Comment
+    private var isReplying = false
+
+    private var isCommentJustSentByMe = false
+
+    override fun applyArguments(args: Bundle) {
+        comment = args.getParcelable(ARG_1)!!
+        isReplying = args.getBoolean(ARG_2)
+    }
 
     override fun createView(inflater: LayoutInflater, container: ViewGroup?): View {
         return inflater.inflate(R.layout.fragment_reply, container,

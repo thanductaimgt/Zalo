@@ -1,6 +1,7 @@
 package com.mgt.zalo.ui.post_detail
 
 import android.content.res.ColorStateList
+import android.os.Bundle
 import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
@@ -19,14 +20,18 @@ import kotlinx.android.synthetic.main.fragment_post_detail.*
 import kotlinx.android.synthetic.main.part_post_actions.*
 import javax.inject.Inject
 
-class PostDetailFragment(
-        val diary: Diary,
-        val position:Int?
-) : BaseFragment() {
-//    private val viewModel: PostDetailViewModel by viewModels { viewModelFactory }
+class PostDetailFragment : BaseFragment() {
+    //    private val viewModel: PostDetailViewModel by viewModels { viewModelFactory }
+    lateinit var diary: Diary
+    var position: Int? = null
 
     @Inject
     lateinit var postMediaAdapter: PostMediaAdapter
+
+    override fun applyArguments(args: Bundle) {
+        diary = args.getParcelable(ARG_1)!!
+        position = args.getInt(ARG_2)
+    }
 
     override fun createView(inflater: LayoutInflater, container: ViewGroup?): View {
         // Inflate the layout for this fragment
@@ -40,7 +45,7 @@ class PostDetailFragment(
         recyclerView.adapter = postMediaAdapter
         postMediaAdapter.submitList(diary.medias){
             position?.let {
-                (recyclerView.layoutManager as LinearLayoutManager).scrollToPositionWithOffset(position,0)
+                (recyclerView.layoutManager as LinearLayoutManager).scrollToPositionWithOffset(it, 0)
             }
         }
 

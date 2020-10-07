@@ -1,6 +1,7 @@
 package com.mgt.zalo.ui.story
 
 import android.content.res.ColorStateList
+import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -35,10 +36,7 @@ import kotlinx.android.synthetic.main.item_story_base.view.*
 import kotlinx.android.synthetic.main.item_story_other.*
 import javax.inject.Inject
 
-class StoryFragment(
-        val curStoryGroup: StoryGroup,
-        val storyGroups: List<StoryGroup>
-) : BaseFragment() {
+class StoryFragment: BaseFragment() {
     @Inject
     lateinit var storyGroupAdapter: StoryGroupAdapter
 
@@ -54,6 +52,14 @@ class StoryFragment(
     private var isBottomSheetShown = false
 
     private var lastPosition: Int? = null
+
+    lateinit var curStoryGroup: StoryGroup
+    lateinit var storyGroups: List<StoryGroup>
+
+    override fun applyArguments(args:Bundle) {
+        curStoryGroup = args.getParcelable(ARG_1)!!
+        storyGroups = args.getParcelableArrayList(ARG_2)!!
+    }
 
     override fun createView(inflater: LayoutInflater, container: ViewGroup?): View {
         activity().hideStatusBar()
@@ -393,7 +399,6 @@ class StoryFragment(
     fun setEnableViewPager(isEnabled: Boolean) {
         viewPager.isUserInputEnabled = isEnabled
     }
-
 //    override fun getInstanceTag(): String {
 //        return "${super.getInstanceTag()}${curStoryGroup.ownerId}${curStoryGroup.id}"
 //    }

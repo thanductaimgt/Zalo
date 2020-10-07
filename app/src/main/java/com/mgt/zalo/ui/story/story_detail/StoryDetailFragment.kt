@@ -2,6 +2,7 @@ package com.mgt.zalo.ui.story.story_detail
 
 import android.content.Context
 import android.graphics.Rect
+import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,9 +18,7 @@ import kotlinx.android.synthetic.main.fragment_story_detail.*
 import javax.inject.Inject
 import kotlin.math.abs
 
-class StoryDetailFragment(
-        val storyGroup: StoryGroup
-) : BaseFragment() {
+class StoryDetailFragment: BaseFragment() {
     @Inject
     lateinit var reactAdapter: ReactAdapter
 
@@ -27,6 +26,12 @@ class StoryDetailFragment(
     lateinit var storyPreviewAdapter: StoryPreviewAdapter
 
     private val viewModel: StoryDetailViewModel by viewModels { viewModelFactory }
+
+    lateinit var storyGroup: StoryGroup
+
+    override fun applyArguments(args: Bundle) {
+        storyGroup = args.getParcelable(ARG_1)!!
+    }
 
     override fun createView(inflater: LayoutInflater, container: ViewGroup?): View {
         activity().showStatusBar()

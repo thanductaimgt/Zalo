@@ -1,7 +1,11 @@
 package com.mgt.zalo.data_model.story
 
+import android.os.Parcel
+import android.os.Parcelable
 import com.google.firebase.firestore.DocumentSnapshot
+import com.mgt.zalo.data_model.BaseDataModel
 import com.mgt.zalo.data_model.User
+import com.mgt.zalo.data_model.media.Media
 import java.util.*
 
 data class StoryGroup(
@@ -13,11 +17,24 @@ data class StoryGroup(
         var ownerAvatarUrl: String? = null,
         var stories: List<Story>? = null,
         var curPosition: Int = 0,
-        var createdTime:Long?=null,
-        var storyCount:Int?=null
-) {
-    fun toMap(): HashMap<String, Any> {
-        return HashMap<String, Any>().apply {
+        var createdTime: Long? = null,
+        var storyCount: Int? = null
+) : BaseDataModel, Parcelable {
+    constructor(parcel: Parcel) : this(
+            parcel.readString(),
+            parcel.readString(),
+            parcel.readString(),
+            parcel.readString(),
+            parcel.readString(),
+            parcel.readString(),
+            parcel.readArrayList(Story::class.java.classLoader) as ArrayList<Story>?,
+            parcel.readInt(),
+            parcel.readValue(Long::class.java.classLoader) as? Long,
+            parcel.readValue(Int::class.java.classLoader) as? Int) {
+    }
+
+    override fun toMap(): HashMap<String, Any?> {
+        return HashMap<String, Any?>().apply {
             name?.let { put(FIELD_NAME, it) }
             avatarUrl?.let { put(FIELD_AVATAR_URL, it) }
             createdTime?.let { put(FIELD_CREATED_TIME, it) }
@@ -44,7 +61,23 @@ data class StoryGroup(
         storyGroupDoc.getLong(FIELD_STORY_COUNT)?.let { storyCount = it.toInt() }
     }
 
-    companion object {
+    override fun writeToParcel(parcel: Parcel, flags: Int) {
+        parcel.writeString(id)
+        parcel.writeString(name)
+        parcel.writeString(avatarUrl)
+        parcel.writeString(ownerId)
+        parcel.writeString(ownerName)
+        parcel.writeString(ownerAvatarUrl)
+        parcel.writeInt(curPosition)
+        parcel.writeValue(createdTime)
+        parcel.writeValue(storyCount)
+    }
+
+    override fun describeContents(): Int {
+        return 0
+    }
+
+    companion object CREATOR : Parcelable.Creator<StoryGroup> {
         const val PAYLOAD_NEW_STORY = 0
         const val PAYLOAD_ADDED_STATE = 1
 
@@ -64,6 +97,14 @@ data class StoryGroup(
 
         fun fromStoryGroupDoc(doc: DocumentSnapshot, user:User): StoryGroup {
             return StoryGroup().apply { applyStoryGroupDoc(doc, user) }
+        }
+
+        override fun createFromParcel(parcel: Parcel): StoryGroup {
+            return StoryGroup(parcel)
+        }
+
+        override fun newArray(size: Int): Array<StoryGroup?> {
+            return arrayOfNulls(size)
         }
     }
 }

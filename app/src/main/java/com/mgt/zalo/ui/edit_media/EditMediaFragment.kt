@@ -5,6 +5,7 @@ import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.ImageFormat
 import android.os.Build
+import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -30,21 +31,20 @@ import kotlin.math.ceil
 import kotlin.math.min
 
 
-class EditMediaFragment(private val type:Int) : BaseFragment() {
+class EditMediaFragment : BaseFragment() {
+    private var type:Int = TYPE_CREATE_STORY
     private var bitmap: Bitmap? = null
     private var videoUri: String? = null
-
-    constructor(bitmap: Bitmap, type: Int) : this(type) {
-        this.bitmap = bitmap
-    }
-
-    constructor(videoUri: String, type: Int) : this(type) {
-        this.videoUri = videoUri
-    }
 
     private val viewModel: EditMediaViewModel by viewModels { viewModelFactory }
 
     private lateinit var detector: FirebaseVisionFaceDetector
+
+    override fun applyArguments(args: Bundle) {
+        type = args.getInt(ARG_1)
+        bitmap = args.getParcelable(ARG_2)
+        videoUri = args.getString(ARG_3)
+    }
 
     override fun createView(inflater: LayoutInflater, container: ViewGroup?): View {
         return inflater.inflate(R.layout.fragment_edit_media, container, false)

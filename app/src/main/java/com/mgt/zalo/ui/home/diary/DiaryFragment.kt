@@ -221,7 +221,7 @@ class DiaryFragment : BaseFragment() {
 //                                }
 //                            }
 //                        }
-                        homeActivity.zaloFragmentManager.addStoryFragment(storyGroup, viewModel.liveStoryGroups.value!!)
+                        homeActivity.zaloFragmentManager.addStoryFragment(storyGroup, viewModel.liveStoryGroups.value!! as ArrayList)
 
                         view.loadingAnimView.visibility = View.GONE
                     }

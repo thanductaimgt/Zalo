@@ -1,7 +1,9 @@
 package com.mgt.zalo.ui.home
 
+import android.os.Bundle
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.adapter.FragmentStateAdapter
+import com.mgt.zalo.base.BaseFragment
 import com.mgt.zalo.manager.SessionManager
 import com.mgt.zalo.ui.camera.CameraFragment
 import com.mgt.zalo.ui.home.chat.ChatFragment
@@ -20,7 +22,11 @@ class HomeAdapter @Inject constructor(
             1 -> DiaryFragment()
             2 -> ChatFragment()
             3 -> WatchFragment()
-            4 -> ProfileFragment(sessionManager.curUser!!.id!!)
+            4 -> ProfileFragment().apply {
+                arguments = Bundle().apply {
+                    putString(BaseFragment.ARG_1, this@HomeAdapter.sessionManager.curUser!!.id!!)
+                }
+            }
             5 -> TestFragment()
             else -> CameraFragment().also { homeActivity.cameraFragment = it }
         }

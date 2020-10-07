@@ -1,6 +1,7 @@
 package com.mgt.zalo.manager
 
 import android.graphics.Bitmap
+import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup
@@ -8,6 +9,7 @@ import androidx.annotation.IdRes
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
+import com.mgt.zalo.ZaloApplication
 import com.mgt.zalo.base.BaseFragment
 import com.mgt.zalo.base.BaseView
 import com.mgt.zalo.data_model.Comment
@@ -29,10 +31,12 @@ import com.mgt.zalo.ui.story.story_detail.StoryDetailFragment
 import com.mgt.zalo.util.TAG
 import com.mgt.zalo.util.Utils
 import javax.inject.Inject
+import kotlin.reflect.KClass
 
 
 class ZaloFragmentManager @Inject constructor(
-        private val utils: Utils
+        private val utils: Utils,
+        private val application: ZaloApplication
 ) {
     private var rootView: View? = null
     private lateinit var fragmentManager: FragmentManager
@@ -50,8 +54,11 @@ class ZaloFragmentManager @Inject constructor(
         this.rootView = rootView
     }
 
-    fun addFragment(fragment: BaseFragment, addToBackStack: Boolean = true, @IdRes parentId: Int? = null): Fragment {
-        fragment.init(baseView)
+    fun<T:BaseFragment> addFragment(fragmentClass: KClass<T>, args: Bundle?, addToBackStack: Boolean = true, @IdRes parentId: Int? = null): T {
+        val fragment = (fragmentManager.fragmentFactory.instantiate(application.classLoader, fragmentClass.java.name) as T).apply {
+            arguments = args
+            init(baseView)
+        }
 
         rootView?.let { rootView ->
             val parentView = parentId?.let { rootView.findViewById<ViewGroup>(parentId) }
@@ -87,12 +94,11 @@ class ZaloFragmentManager @Inject constructor(
         }
     }
 
-    fun addStoryFragment(curStoryGroup: StoryGroup, storyGroups: List<StoryGroup>): StoryFragment {
-//        var fragment = supportFragmentManager.findFragmentByTag((null as StoryFragment?).TAG)
-//        if (fragment == null) {
-        val fragment = StoryFragment(curStoryGroup, storyGroups)
-        return addFragment(fragment) as StoryFragment
-//        }
+    fun addStoryFragment(curStoryGroup: StoryGroup, storyGroups: ArrayList<StoryGroup>): StoryFragment {
+        return addFragment(StoryFragment::class, Bundle().apply {
+            putParcelable(BaseFragment.ARG_1, curStoryGroup)
+            putParcelableArrayList(BaseFragment.ARG_2, storyGroups)
+        })
     }
 
     fun removeStoryFragment() {
@@ -100,19 +106,17 @@ class ZaloFragmentManager @Inject constructor(
     }
 
     fun addEditMediaFragment(bitmap: Bitmap, type: Int): EditMediaFragment {
-//        var fragment = supportFragmentManager.findFragmentByTag((null as CreateStoryFragment?).TAG)
-//        if (fragment == null) {
-        val fragment = EditMediaFragment(bitmap, type)
-        return addFragment(fragment) as EditMediaFragment
-//        }
+        return addFragment(EditMediaFragment::class, Bundle().apply {
+            putParcelable(BaseFragment.ARG_1, bitmap)
+            putInt(BaseFragment.ARG_2, type)
+        })
     }
 
     fun addEditMediaFragment(videoUri: String, type: Int): EditMediaFragment {
-//        var fragment = supportFragmentManager.findFragmentByTag((null as CreateStoryFragment?).TAG)
-//        if (fragment == null) {
-        val fragment = EditMediaFragment(videoUri, type)
-        return addFragment(fragment) as EditMediaFragment
-//        }
+        return addFragment(EditMediaFragment::class, Bundle().apply {
+            putString(BaseFragment.ARG_1, videoUri)
+            putInt(BaseFragment.ARG_3, type)
+        })
     }
 
     fun removeEditMediaFragment() {
@@ -120,11 +124,10 @@ class ZaloFragmentManager @Inject constructor(
     }
 
     fun addMediaFragment(media: Media, medias: ArrayList<Media>): MediaFragment {
-//        var fragment = supportFragmentManager.findFragmentByTag((null as MediaFragment?).TAG)
-//        if (fragment == null) {
-        val fragment = MediaFragment(media, medias)
-        return addFragment(fragment) as MediaFragment
-//        }
+        return addFragment(MediaFragment::class, Bundle().apply {
+            putParcelable(BaseFragment.ARG_1, media)
+            putParcelableArrayList(BaseFragment.ARG_2, medias)
+        })
     }
 
     fun removeMediaFragment() {
@@ -132,11 +135,9 @@ class ZaloFragmentManager @Inject constructor(
     }
 
     fun addProfileFragment(userId: String): ProfileFragment {
-//        var fragment = supportFragmentManager.findFragmentByTag((null as ProfileFragment?).TAG)
-//        if (fragment == null) {
-        val fragment = ProfileFragment(userId)
-        return addFragment(fragment) as ProfileFragment
-//        }
+        return addFragment(ProfileFragment::class, Bundle().apply {
+            putString(BaseFragment.ARG_1, userId)
+        })
     }
 
     fun removeProfileFragment() {
@@ -144,11 +145,7 @@ class ZaloFragmentManager @Inject constructor(
     }
 
     fun addCameraFragment(): CameraFragment {
-//        var fragment = supportFragmentManager.findFragmentByTag((null as CreateStoryFragment?).TAG)
-//        if (fragment == null) {
-        val fragment = CameraFragment()
-        return addFragment(fragment) as CameraFragment
-//        }
+        return addFragment(CameraFragment::class, Bundle())
     }
 
     fun removeCameraFragment() {
@@ -156,11 +153,10 @@ class ZaloFragmentManager @Inject constructor(
     }
 
     fun addPostDetailFragment(diary: Diary, position: Int? = null): PostDetailFragment {
-//        var fragment = supportFragmentManager.findFragmentByTag((null as CreateStoryFragment?).TAG)
-//        if (fragment == null) {
-        val fragment = PostDetailFragment(diary, position)
-        return addFragment(fragment) as PostDetailFragment
-//        }
+        return addFragment(PostDetailFragment::class, Bundle().apply {
+            putParcelable(BaseFragment.ARG_1, diary)
+            position?.let { putInt(BaseFragment.ARG_2, it) }
+        })
     }
 
     fun removePostDetailFragment() {
@@ -179,11 +175,9 @@ class ZaloFragmentManager @Inject constructor(
     }
 
     fun addReactFragment(reacts: HashMap<String, React>): ReactFragment {
-//        var fragment = supportFragmentManager.findFragmentByTag((null as CreateStoryFragment?).TAG)
-//        if (fragment == null) {
-        val fragment = ReactFragment(reacts)
-        return addFragment(fragment) as ReactFragment
-//        }
+        return addFragment(ReactFragment::class, Bundle().apply {
+            putSerializable(BaseFragment.ARG_1, reacts)
+        })
     }
 
     fun removeReactFragment() {
@@ -191,12 +185,10 @@ class ZaloFragmentManager @Inject constructor(
     }
 
     fun addReplyFragment(comment: Comment, isReplying:Boolean = false): ReplyFragment {
-//        var fragment = supportFragmentManager.findFragmentByTag((null as CreateStoryFragment?).TAG)
-//        if (fragment == null) {
-        val fragment = ReplyFragment(comment)
-        fragment.isReplying = isReplying
-        return addFragment(fragment) as ReplyFragment
-//        }
+        return addFragment(ReplyFragment::class, Bundle().apply {
+            putParcelable(BaseFragment.ARG_1, comment)
+            putBoolean(BaseFragment.ARG_2, isReplying)
+        })
     }
 
     fun removeReplyFragment() {
@@ -204,10 +196,9 @@ class ZaloFragmentManager @Inject constructor(
     }
 
     fun addStoryDetailFragment(storyGroup: StoryGroup): StoryDetailFragment {
-//        var fragment = supportFragmentManager.findFragmentByTag((null as CreateStoryFragment?).TAG)
-//        if (fragment == null) {
-        val fragment = StoryDetailFragment(storyGroup)
-        return addFragment(fragment) as StoryDetailFragment
+        return addFragment(StoryDetailFragment::class, Bundle().apply {
+            putParcelable(BaseFragment.ARG_1, storyGroup)
+        })
     }
 
     fun removeStoryDetailFragment() {

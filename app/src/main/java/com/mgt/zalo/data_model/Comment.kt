@@ -1,7 +1,10 @@
 package com.mgt.zalo.data_model
 
+import android.os.Parcel
+import android.os.Parcelable
 import com.google.firebase.firestore.DocumentSnapshot
 import com.mgt.zalo.data_model.media.Media
+import com.mgt.zalo.data_model.post.Diary
 import com.mgt.zalo.data_model.react.React
 
 data class Comment(
@@ -17,7 +20,22 @@ data class Comment(
         var media: Media? = null,
         var replyCount: Int = 0,
         var replyToId: String?=null // for reply
-) : BaseDataModel {
+) : BaseDataModel, Parcelable {
+    constructor(parcel: Parcel) : this(
+            parcel.readString(),
+            parcel.readString(),
+            parcel.readValue(Long::class.java.classLoader) as? Long,
+            parcel.readString(),
+            parcel.readString(),
+            parcel.readString(),
+            parcel.readString()!!,
+            parcel.readInt(),
+            parcel.readBundle()!!.let {it.getSerializable(KEY_REACTS) as HashMap<String, React>},
+            parcel.readParcelable(Media::class.java.classLoader),
+            parcel.readInt(),
+            parcel.readString()) {
+    }
+
     override fun toMap(): HashMap<String, Any?> {
         return HashMap<String, Any?>().apply {
             createdTime?.let { put(FIELD_CREATED_TIME, it) }
@@ -47,7 +65,33 @@ data class Comment(
         }
     }
 
-    companion object {
+    override fun writeToParcel(parcel: Parcel, flags: Int) {
+        parcel.writeString(id)
+        parcel.writeString(postId)
+        parcel.writeValue(createdTime)
+        parcel.writeString(ownerId)
+        parcel.writeString(ownerName)
+        parcel.writeString(ownerAvatarUrl)
+        parcel.writeString(text)
+        parcel.writeInt(reactCount)
+        parcel.writeParcelable(media, flags)
+        parcel.writeInt(replyCount)
+        parcel.writeString(replyToId)
+    }
+
+    override fun describeContents(): Int {
+        return 0
+    }
+
+    companion object CREATOR : Parcelable.Creator<Comment> {
+        override fun createFromParcel(parcel: Parcel): Comment {
+            return Comment(parcel)
+        }
+
+        override fun newArray(size: Int): Array<Comment?> {
+            return arrayOfNulls(size)
+        }
+
         const val FIELD_CREATED_TIME = "createdTime"
         const val FIELD_OWNER_ID = "ownerId"
         const val FIELD_TEXT = "description"
@@ -55,6 +99,8 @@ data class Comment(
         const val FIELD_MEDIA = "media"
         const val FIELD_REPLY_COUNT = "replyCount"
         const val FIELD_REACTS = "reacts"
+
+        const val KEY_REACTS = "reacts"
 
         const val PAYLOAD_METRICS = 0
 

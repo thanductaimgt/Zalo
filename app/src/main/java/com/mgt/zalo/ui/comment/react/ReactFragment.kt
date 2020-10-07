@@ -1,5 +1,6 @@
 package com.mgt.zalo.ui.comment.react
 
+import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,11 +17,17 @@ import kotlinx.android.synthetic.main.item_react_count.view.*
 import javax.inject.Inject
 
 
-class ReactFragment(val reacts: HashMap<String, React>) : BaseFragment() {
+class ReactFragment: BaseFragment() {
     private val viewModel: ReactViewModel by viewModels { viewModelFactory }
 
     @Inject
     lateinit var reactPagerAdapter: ReactPagerAdapter
+
+    lateinit var reacts: HashMap<String, React>
+
+    override fun applyArguments(args: Bundle) {
+        reacts = args.getSerializable(ARG_1)!! as HashMap<String, React>
+    }
 
     override fun createView(inflater: LayoutInflater, container: ViewGroup?): View {
         return inflater.inflate(R.layout.fragment_react, container,

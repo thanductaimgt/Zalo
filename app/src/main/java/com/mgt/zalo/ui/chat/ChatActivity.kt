@@ -575,7 +575,7 @@ class ChatActivity : BaseActivity(), KeyboardHeightObserver {
 
     private fun showEmojiFragment() {
         if (emojiFragment == null) {
-            emojiFragment = zaloFragmentManager.addFragment(EmojiFragment(), false, frameLayout.id) as EmojiFragment
+            emojiFragment = zaloFragmentManager.addFragment(EmojiFragment::class, null, false, frameLayout.id)
         }
         showEmojiLayout()
     }

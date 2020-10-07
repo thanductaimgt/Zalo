@@ -35,12 +35,12 @@ class PostMediaAdapter @Inject constructor(
         override fun bind(position: Int) {
             val media = currentList[position]
 
+            bindMetrics(media)
+            bindRatio(media)
             when (media) {
                 is ImageMedia -> bindImage(media)
                 is VideoMedia -> bindVideo(media)
             }
-            bindMetrics(media)
-            bindRatio(media)
         }
 
         private fun bindRatio(media: Media){

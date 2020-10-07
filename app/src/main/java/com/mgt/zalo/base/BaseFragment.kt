@@ -78,6 +78,7 @@ abstract class BaseFragment : DaggerFragment(), BaseOnEventListener, BaseView {
     lateinit var imageLoader: ImageLoader
 
     var isOnTop: Boolean = false
+    protected var isLight = true
 
     lateinit var parent: BaseView
     lateinit var parentZaloFragmentManager: ZaloFragmentManager
@@ -92,19 +93,26 @@ abstract class BaseFragment : DaggerFragment(), BaseOnEventListener, BaseView {
     private fun initParentFM() {
         this.parentZaloFragmentManager = if (parent is BaseActivity) {
             (parent as BaseActivity).zaloFragmentManager
-        } else if(parent is BaseFragment){
+        } else if (parent is BaseFragment) {
             (parent as BaseFragment).fragmentManager()
-        }else{
+        } else {
             (parent as BaseBottomSheetFragment).zaloFragmentManager
         }
     }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        arguments?.let { applyArguments(it) }
+    }
+
+    protected open fun applyArguments(args: Bundle) {}
+
     private var isStatusBarHiddenWhenInit = false
-    private var systemUiVisibilityWhenInit:Int? = null
+    private var systemUiVisibilityWhenInit: Int? = null
     final override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         isStatusBarHiddenWhenInit = activity().isStatusBarHidden
         systemUiVisibilityWhenInit = activity().window.decorView.systemUiVisibility
-        activity().setStatusBarMode(true)
+        activity().setStatusBarMode(isLight)
         val rootView = createView(inflater, container)
         return FrameLayout(requireContext()).apply {
             layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
@@ -177,5 +185,11 @@ abstract class BaseFragment : DaggerFragment(), BaseOnEventListener, BaseView {
         playbackManager.pause()
 //        playbackManager.exoPlayer.stop()
         super.onDestroy()
+    }
+
+    companion object {
+        const val ARG_1 = "ARG_1"
+        const val ARG_2 = "ARG_2"
+        const val ARG_3 = "ARG_3"
     }
 }

@@ -23,6 +23,10 @@ class EmojiFragment : BaseFragment() {
     @Inject
     lateinit var adapter: EmojiAdapter
 
+    init {
+        isLight = false
+    }
+
     override fun createView(inflater: LayoutInflater, container: ViewGroup?): View {
         return inflater.inflate(R.layout.fragment_emoji, container, false)
     }

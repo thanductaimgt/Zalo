@@ -7,12 +7,12 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
-import kotlinx.android.synthetic.main.fragment_react.*
-import kotlinx.android.synthetic.main.item_react_count.view.*
 import com.mgt.zalo.R
 import com.mgt.zalo.base.BaseFragment
 import com.mgt.zalo.data_model.react.React
 import com.mgt.zalo.data_model.react.ReactPage
+import kotlinx.android.synthetic.main.fragment_react.*
+import kotlinx.android.synthetic.main.item_react_count.view.*
 import javax.inject.Inject
 
 

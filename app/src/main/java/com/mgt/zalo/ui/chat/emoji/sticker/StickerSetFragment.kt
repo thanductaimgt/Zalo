@@ -6,11 +6,11 @@ import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.GridLayoutManager
-import kotlinx.android.synthetic.main.fragment_sticker_set.*
 import com.mgt.zalo.R
 import com.mgt.zalo.base.BaseFragment
 import com.mgt.zalo.data_model.message.Message
 import com.mgt.zalo.ui.chat.ChatActivity
+import kotlinx.android.synthetic.main.fragment_sticker_set.*
 import javax.inject.Inject
 
 class StickerSetFragment(val bucketName: String) : BaseFragment() {

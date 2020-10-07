@@ -10,7 +10,6 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import androidx.annotation.LayoutRes
 import androidx.lifecycle.ViewModelProvider
-import dagger.android.support.DaggerAppCompatActivity
 import com.mgt.zalo.ZaloApplication
 import com.mgt.zalo.common.AlertDialog
 import com.mgt.zalo.common.ProcessingDialog
@@ -18,8 +17,10 @@ import com.mgt.zalo.manager.*
 import com.mgt.zalo.repository.Database
 import com.mgt.zalo.repository.Storage
 import com.mgt.zalo.service.NotificationService
+import com.mgt.zalo.util.ImageLoader
 import com.mgt.zalo.util.TAG
 import com.mgt.zalo.util.Utils
+import dagger.android.support.DaggerAppCompatActivity
 import javax.inject.Inject
 
 
@@ -76,6 +77,9 @@ abstract class BaseActivity : DaggerAppCompatActivity(), BaseOnEventListener, Ba
     lateinit var backgroundWorkManager: BackgroundWorkManager
 
     @Inject lateinit var playbackManager: PlaybackManager
+
+    @Inject
+    lateinit var imageLoader: ImageLoader
 
     final override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

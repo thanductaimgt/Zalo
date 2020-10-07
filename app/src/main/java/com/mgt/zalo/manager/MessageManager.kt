@@ -3,11 +3,6 @@ package com.mgt.zalo.manager
 import android.media.MediaMetadataRetriever
 import android.provider.OpenableColumns
 import android.util.Log
-import io.reactivex.Emitter
-import io.reactivex.Observable
-import io.reactivex.Observer
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
 import com.mgt.zalo.ZaloApplication
 import com.mgt.zalo.data_model.message.*
 import com.mgt.zalo.data_model.room.Room
@@ -15,6 +10,11 @@ import com.mgt.zalo.repository.Database
 import com.mgt.zalo.repository.Storage
 import com.mgt.zalo.util.TAG
 import com.mgt.zalo.util.Utils
+import io.reactivex.Emitter
+import io.reactivex.Observable
+import io.reactivex.Observer
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import java.io.File
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -186,10 +186,10 @@ class MessageManager @Inject constructor(
     private fun createVideoMessage(room: Room, content: String, createdTime: Long): VideoMessage {
         val retriever = resourceManager.getMetadataRetriever(content)
 
-        var width = Integer.valueOf(retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_WIDTH))
-        var height = Integer.valueOf(retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_HEIGHT))
-        val duration = Integer.valueOf(retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)) / 1000
-        val rotation = Integer.valueOf(retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_ROTATION))
+        var width = Integer.valueOf(retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_WIDTH)!!)
+        var height = Integer.valueOf(retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_HEIGHT)!!)
+        val duration = Integer.valueOf(retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)!!) / 1000
+        val rotation = Integer.valueOf(retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_ROTATION)!!)
         if (rotation == 90 || rotation == 270) {
             val temp = width
             width = height

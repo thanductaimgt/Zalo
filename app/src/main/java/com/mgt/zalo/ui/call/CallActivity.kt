@@ -5,19 +5,18 @@ import android.content.Context
 import android.media.AudioManager
 import android.os.Build
 import android.os.Handler
+import android.os.Looper
 import android.view.View
 import android.view.WindowManager
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.lifecycle.Observer
-import com.squareup.picasso.Picasso
-import kotlinx.android.synthetic.main.activity_call.*
 import com.mgt.zalo.R
 import com.mgt.zalo.base.BaseActivity
 import com.mgt.zalo.data_model.message.CallMessage
 import com.mgt.zalo.manager.CallService
 import com.mgt.zalo.util.Constants
-import com.mgt.zalo.util.smartLoad
+import kotlinx.android.synthetic.main.activity_call.*
 import kotlin.math.ceil
 import kotlin.math.max
 import kotlin.math.min
@@ -34,7 +33,7 @@ class CallActivity : BaseActivity() {
     private var speakerMinVolume = 0
     private var externalSpeakerIncreaseVolume = 0
 
-    private val handler = Handler()
+    private val handler = Handler(Looper.getMainLooper())
     private var timerRunnable = object : Runnable {
         override fun run() {
             val millis = System.currentTimeMillis() - viewModel.startTime
@@ -87,7 +86,7 @@ class CallActivity : BaseActivity() {
 
         if (viewModel.isCaller) {
             nameTextView.text = viewModel.liveRoom.value!!.getDisplayName(resourceManager)
-            Picasso.get().smartLoad(viewModel.liveRoom.value!!.avatarUrl, resourceManager, watchOwnerAvatarImgView) {
+            imageLoader.load(viewModel.liveRoom.value!!.avatarUrl, watchOwnerAvatarImgView) {
                 it.fit().centerCrop()
             }
         } else {
@@ -145,7 +144,7 @@ class CallActivity : BaseActivity() {
 
         viewModel.liveRoom.observe(this, Observer { roomPeer ->
             nameTextView.text = roomPeer.getDisplayName(resourceManager)
-            Picasso.get().smartLoad(roomPeer.avatarUrl, resourceManager, watchOwnerAvatarImgView) {
+            imageLoader.load(roomPeer.avatarUrl, watchOwnerAvatarImgView) {
                 it.fit().centerCrop()
             }
         })

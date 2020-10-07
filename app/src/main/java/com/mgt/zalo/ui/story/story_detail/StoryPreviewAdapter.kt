@@ -3,22 +3,20 @@ package com.mgt.zalo.ui.story.story_detail
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.squareup.picasso.Picasso
-import kotlinx.android.synthetic.main.item_story_preview.view.*
 import com.mgt.zalo.R
 import com.mgt.zalo.base.BaseListAdapter
 import com.mgt.zalo.base.BaseViewHolder
 import com.mgt.zalo.data_model.story.ImageStory
 import com.mgt.zalo.data_model.story.Story
 import com.mgt.zalo.data_model.story.VideoStory
-import com.mgt.zalo.manager.ResourceManager
-import com.mgt.zalo.util.StoryDiffCallback
+import com.mgt.zalo.util.diff_callback.StoryDiffCallback
 import com.mgt.zalo.util.smartLoad
+import com.squareup.picasso.Picasso
+import kotlinx.android.synthetic.main.item_story_preview.view.*
 import javax.inject.Inject
 
 class StoryPreviewAdapter @Inject constructor(
         private val storyDetailFragment: StoryDetailFragment,
-        private val resourceManager: ResourceManager,
         diffCallback: StoryDiffCallback
 ) : BaseListAdapter<Story, StoryPreviewAdapter.StoryPreviewHolder>(diffCallback) {
 

@@ -2,12 +2,12 @@ package com.mgt.zalo.ui.share
 
 import android.content.Intent
 import androidx.lifecycle.ViewModel
+import com.mgt.zalo.base.BaseOnEventListener
+import com.mgt.zalo.di.ViewModelKey
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.multibindings.IntoMap
-import com.mgt.zalo.base.BaseOnEventListener
-import com.mgt.zalo.di.ViewModelKey
 
 @Module(includes = [ShareModule.ProvideModule::class])
 interface ShareModule {

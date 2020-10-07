@@ -3,21 +3,19 @@ package com.mgt.zalo.ui.story.story_detail
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.squareup.picasso.Picasso
-import kotlinx.android.synthetic.main.item_react.view.*
 import com.mgt.zalo.R
 import com.mgt.zalo.base.BaseListAdapter
 import com.mgt.zalo.base.BaseOnEventListener
 import com.mgt.zalo.base.BaseViewHolder
 import com.mgt.zalo.data_model.react.React
-import com.mgt.zalo.manager.ResourceManager
-import com.mgt.zalo.util.ReactDiffCallback
+import com.mgt.zalo.util.diff_callback.ReactDiffCallback
 import com.mgt.zalo.util.smartLoad
+import com.squareup.picasso.Picasso
+import kotlinx.android.synthetic.main.item_react.view.*
 import javax.inject.Inject
 
 class ReactAdapter @Inject constructor(
         private val eventListener: BaseOnEventListener,
-        private val resourceManager: ResourceManager,
         diffCallback: ReactDiffCallback
 ) : BaseListAdapter<React, ReactAdapter.ReactViewHolder>(diffCallback) {
 

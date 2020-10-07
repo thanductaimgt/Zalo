@@ -1,13 +1,13 @@
 package com.mgt.zalo.ui.story.story_detail
 
 import androidx.lifecycle.ViewModel
+import com.mgt.zalo.base.BaseOnEventListener
+import com.mgt.zalo.data_model.story.StoryGroup
+import com.mgt.zalo.di.ViewModelKey
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.multibindings.IntoMap
-import com.mgt.zalo.base.BaseOnEventListener
-import com.mgt.zalo.data_model.story.StoryGroup
-import com.mgt.zalo.di.ViewModelKey
 
 @Module(includes = [StoryDetailModule.ProvideModule::class])
 interface StoryDetailModule {

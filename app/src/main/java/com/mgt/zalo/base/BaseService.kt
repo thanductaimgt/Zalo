@@ -1,6 +1,5 @@
 package com.mgt.zalo.base
 
-import dagger.android.DaggerService
 import com.mgt.zalo.ZaloApplication
 import com.mgt.zalo.common.AlertDialog
 import com.mgt.zalo.common.ProcessingDialog
@@ -9,6 +8,7 @@ import com.mgt.zalo.repository.Database
 import com.mgt.zalo.repository.Storage
 import com.mgt.zalo.service.NotificationService
 import com.mgt.zalo.util.Utils
+import dagger.android.DaggerService
 import javax.inject.Inject
 
 abstract class BaseService :DaggerService(){

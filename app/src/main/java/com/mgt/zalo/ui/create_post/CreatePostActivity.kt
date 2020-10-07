@@ -7,8 +7,6 @@ import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.Observer
-import com.squareup.picasso.Picasso
-import kotlinx.android.synthetic.main.activity_create_post.*
 import com.mgt.zalo.R
 import com.mgt.zalo.base.BaseActivity
 import com.mgt.zalo.base.BaseView
@@ -17,7 +15,7 @@ import com.mgt.zalo.data_model.media.Media
 import com.mgt.zalo.manager.ExternalIntentManager
 import com.mgt.zalo.util.Constants
 import com.mgt.zalo.util.TAG
-import com.mgt.zalo.util.smartLoad
+import kotlinx.android.synthetic.main.activity_create_post.*
 import javax.inject.Inject
 
 class CreatePostActivity : BaseActivity() {
@@ -29,7 +27,7 @@ class CreatePostActivity : BaseActivity() {
     override fun onBindViews() {
         setContentView(R.layout.activity_create_post)
 
-        Picasso.get().smartLoad(sessionManager.curUser!!.avatarUrl, resourceManager, avatarImgView) {
+        imageLoader.load(sessionManager.curUser!!.avatarUrl, avatarImgView) {
             it.fit().centerCrop().error(R.drawable.default_peer_avatar)
         }
         nameTextView.text = sessionManager.curUser!!.name

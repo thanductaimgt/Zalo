@@ -4,23 +4,19 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.MutableLiveData
-import com.squareup.picasso.Picasso
-import kotlinx.android.synthetic.main.item_select_contact.view.*
 import com.mgt.zalo.R
 import com.mgt.zalo.base.BaseListAdapter
 import com.mgt.zalo.base.BaseViewHolder
 import com.mgt.zalo.data_model.room.RoomItem
-import com.mgt.zalo.manager.ResourceManager
-import com.mgt.zalo.util.RoomItemDiffCallback
-import com.mgt.zalo.util.Utils
+import com.mgt.zalo.util.diff_callback.RoomItemDiffCallback
 import com.mgt.zalo.util.smartLoad
+import com.squareup.picasso.Picasso
+import kotlinx.android.synthetic.main.item_select_contact.view.*
 
 class SelectRoomItemAdapter(
         diffCallback: RoomItemDiffCallback,
         private val shouldDisplayDesc: Boolean,
-        private val liveSelectedRoomItems: MutableLiveData<ArrayList<RoomItem>>,
-        private val utils: Utils,
-        private val resourceManager: ResourceManager
+        private val liveSelectedRoomItems: MutableLiveData<ArrayList<RoomItem>>
 ) : BaseListAdapter<RoomItem, SelectRoomItemAdapter.AllContactsViewHolder>(diffCallback) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AllContactsViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_select_contact, parent, false)

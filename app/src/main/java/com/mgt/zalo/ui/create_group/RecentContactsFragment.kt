@@ -6,11 +6,11 @@ import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
-import kotlinx.android.synthetic.main.fragment_select_contacts.*
 import com.mgt.zalo.R
 import com.mgt.zalo.base.BaseFragment
 import com.mgt.zalo.common.SelectRoomItemAdapter
-import com.mgt.zalo.util.RoomItemDiffCallback
+import com.mgt.zalo.util.diff_callback.RoomItemDiffCallback
+import kotlinx.android.synthetic.main.fragment_select_contacts.*
 
 class RecentContactsFragment : BaseFragment() {
     private val viewModel: CreateGroupViewModel by viewModels ({requireActivity()}, { viewModelFactory })
@@ -22,7 +22,7 @@ class RecentContactsFragment : BaseFragment() {
     }
 
     override fun onBindViews() {
-        adapter = SelectRoomItemAdapter(RoomItemDiffCallback(), true, viewModel.liveSelectedRoomItems, utils, resourceManager)
+        adapter = SelectRoomItemAdapter(RoomItemDiffCallback(), true, viewModel.liveSelectedRoomItems)
 
         recyclerView.apply {
             layoutManager = LinearLayoutManager(activity)

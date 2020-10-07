@@ -5,8 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
-import com.squareup.picasso.Picasso
-import kotlinx.android.synthetic.main.item_room.view.*
 import com.mgt.zalo.R
 import com.mgt.zalo.base.BaseListAdapter
 import com.mgt.zalo.base.BaseOnEventListener
@@ -14,19 +12,13 @@ import com.mgt.zalo.base.BaseViewHolder
 import com.mgt.zalo.data_model.room.Room
 import com.mgt.zalo.data_model.room.RoomItem
 import com.mgt.zalo.data_model.room.RoomItemPeer
-import com.mgt.zalo.manager.ResourceManager
-import com.mgt.zalo.manager.SessionManager
 import com.mgt.zalo.util.Constants
-import com.mgt.zalo.util.RoomItemDiffCallback
-import com.mgt.zalo.util.Utils
-import com.mgt.zalo.util.smartLoad
+import com.mgt.zalo.util.diff_callback.RoomItemDiffCallback
+import kotlinx.android.synthetic.main.item_room.view.*
 import javax.inject.Inject
 
 class ChatFragmentAdapter @Inject constructor(
         private val eventListener: BaseOnEventListener,
-        private val sessionManager: SessionManager,
-        private val resourceManager: ResourceManager,
-        private val utils: Utils,
         diffCallback: RoomItemDiffCallback) : BaseListAdapter<RoomItem, ChatFragmentAdapter.RoomItemViewHolder>(diffCallback) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RoomItemViewHolder {
@@ -62,8 +54,7 @@ class ChatFragmentAdapter @Inject constructor(
 
                 nameTextView.text = roomItem.getDisplayName(resourceManager)
 
-                Picasso.get()
-                        .smartLoad(roomItem.avatarUrl, resourceManager, watchOwnerAvatarImgView) {
+                imageLoader.load(roomItem.avatarUrl, watchOwnerAvatarImgView) {
                             it.placeholder(if (roomItem.roomType == Room.TYPE_PEER) R.drawable.default_peer_avatar else R.drawable.default_group_avatar)
                                     .fit()
                                     .centerCrop()
@@ -101,8 +92,7 @@ class ChatFragmentAdapter @Inject constructor(
                             if (roomItem.lastTypingMember!!.userId == sessionManager.curUser!!.id) {
                                 context.getString(R.string.label_me)
                             } else {
-                                Picasso.get()
-                                        .smartLoad(roomItem.lastTypingMember!!.avatarUrl, resourceManager, typingUserAvatarImgView) {
+                                imageLoader.load(roomItem.lastTypingMember!!.avatarUrl, typingUserAvatarImgView) {
                                             it.placeholder(R.drawable.default_peer_avatar)
                                                     .fit()
                                                     .centerCrop()

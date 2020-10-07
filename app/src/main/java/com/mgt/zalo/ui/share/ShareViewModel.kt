@@ -2,11 +2,11 @@ package com.mgt.zalo.ui.share
 
 import android.content.Intent
 import androidx.lifecycle.MutableLiveData
-import io.reactivex.Observer
-import io.reactivex.disposables.Disposable
 import com.mgt.zalo.base.BaseViewModel
 import com.mgt.zalo.data_model.message.Message
 import com.mgt.zalo.data_model.room.RoomItem
+import io.reactivex.Observer
+import io.reactivex.disposables.Disposable
 import javax.inject.Inject
 
 

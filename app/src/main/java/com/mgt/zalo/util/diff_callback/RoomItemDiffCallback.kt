@@ -1,4 +1,4 @@
-package com.mgt.zalo.util
+package com.mgt.zalo.util.diff_callback
 
 import android.util.Log
 import androidx.recyclerview.widget.DiffUtil
@@ -6,6 +6,7 @@ import com.mgt.zalo.data_model.room.Room
 import com.mgt.zalo.data_model.room.RoomItem
 import com.mgt.zalo.data_model.room.RoomItemGroup
 import com.mgt.zalo.data_model.room.RoomItemPeer
+import com.mgt.zalo.util.TAG
 import javax.inject.Inject
 
 class RoomItemDiffCallback @Inject constructor() : DiffUtil.ItemCallback<RoomItem>() {

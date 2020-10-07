@@ -1,13 +1,13 @@
 package com.mgt.zalo.ui.chat.emoji
 
 import androidx.lifecycle.ViewModel
+import com.mgt.zalo.di.ViewModelKey
+import com.mgt.zalo.ui.chat.emoji.sticker.StickerSetFragment
+import com.mgt.zalo.ui.chat.emoji.sticker.StickerSetModule
 import dagger.Binds
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
 import dagger.multibindings.IntoMap
-import com.mgt.zalo.di.ViewModelKey
-import com.mgt.zalo.ui.chat.emoji.sticker.StickerSetFragment
-import com.mgt.zalo.ui.chat.emoji.sticker.StickerSetModule
 
 @Module
 interface EmojiModule{

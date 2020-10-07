@@ -7,28 +7,22 @@ import android.view.ViewGroup
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
-import com.squareup.picasso.Picasso
-import kotlinx.android.synthetic.main.item_media_video_playable_preview.view.*
-import kotlinx.android.synthetic.main.part_media_preview.view.*
-import kotlinx.android.synthetic.main.part_media_video_preview.view.*
 import com.mgt.zalo.R
 import com.mgt.zalo.base.BaseListAdapter
 import com.mgt.zalo.base.BaseOnEventListener
 import com.mgt.zalo.base.BaseViewHolder
 import com.mgt.zalo.data_model.media.Media
 import com.mgt.zalo.data_model.media.VideoMedia
-import com.mgt.zalo.manager.PlaybackManager
-import com.mgt.zalo.manager.ResourceManager
-import com.mgt.zalo.util.MediaDiffCallback
-import com.mgt.zalo.util.Utils
+import com.mgt.zalo.util.diff_callback.MediaDiffCallback
 import com.mgt.zalo.util.smartLoad
+import com.squareup.picasso.Picasso
+import kotlinx.android.synthetic.main.item_media_video_playable_preview.view.*
+import kotlinx.android.synthetic.main.part_media_preview.view.*
+import kotlinx.android.synthetic.main.part_media_video_preview.view.*
 import javax.inject.Inject
 
 class MediaPreviewAdapter @Inject constructor(
         private val eventListener: BaseOnEventListener,
-        private val resourceManager: ResourceManager,
-        private val utils: Utils,
-        private val playbackManager: PlaybackManager,
         diffCallback: MediaDiffCallback
 ) : BaseListAdapter<Media, MediaPreviewAdapter.MediaPreviewHolder>(diffCallback) {
     var moreCount = 0

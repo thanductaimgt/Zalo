@@ -9,11 +9,11 @@ import androidx.core.view.get
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
-import kotlinx.android.synthetic.main.fragment_story_detail.*
 import com.mgt.zalo.R
 import com.mgt.zalo.base.BaseFragment
 import com.mgt.zalo.base.BaseView
 import com.mgt.zalo.data_model.story.StoryGroup
+import kotlinx.android.synthetic.main.fragment_story_detail.*
 import javax.inject.Inject
 import kotlin.math.abs
 

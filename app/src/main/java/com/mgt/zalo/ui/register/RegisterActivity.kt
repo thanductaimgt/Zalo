@@ -1,9 +1,9 @@
 package com.mgt.zalo.ui.register
 
 import android.view.View
-import kotlinx.android.synthetic.main.activity_register.*
 import com.mgt.zalo.R
 import com.mgt.zalo.base.BaseActivity
+import kotlinx.android.synthetic.main.activity_register.*
 
 class RegisterActivity : BaseActivity() {
     override fun onBindViews() {

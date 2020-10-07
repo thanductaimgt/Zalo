@@ -19,11 +19,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
-import com.squareup.picasso.Picasso
-import kotlinx.android.synthetic.main.bottom_sheet_comment_actions.*
-import kotlinx.android.synthetic.main.bottom_sheet_comment_actions.view.*
-import kotlinx.android.synthetic.main.fragment_comment.*
-import kotlinx.android.synthetic.main.part_footer_comment_fragment.*
 import com.mgt.zalo.R
 import com.mgt.zalo.base.BaseBottomSheetFragment
 import com.mgt.zalo.base.BaseOnEventListener
@@ -39,6 +34,11 @@ import com.mgt.zalo.manager.ExternalIntentManager
 import com.mgt.zalo.util.Constants
 import com.mgt.zalo.util.TAG
 import com.mgt.zalo.util.smartLoad
+import com.squareup.picasso.Picasso
+import kotlinx.android.synthetic.main.bottom_sheet_comment_actions.*
+import kotlinx.android.synthetic.main.bottom_sheet_comment_actions.view.*
+import kotlinx.android.synthetic.main.fragment_comment.*
+import kotlinx.android.synthetic.main.part_footer_comment_fragment.*
 import javax.inject.Inject
 
 
@@ -390,7 +390,7 @@ class CommentFragment : BaseBottomSheetFragment() {
                 }
                 is VideoMedia -> {
                     resourceManager.getVideoThumbUri(media.uri!!) { uri ->
-                        Picasso.get().smartLoad(uri, resourceManager, mediaPreviewImgView) {
+                        imageLoader.load(uri, mediaPreviewImgView) {
                             it.fit().centerCrop()
                         }
                     }

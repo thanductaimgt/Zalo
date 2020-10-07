@@ -9,13 +9,14 @@ import android.net.sip.SipManager
 import android.net.sip.SipProfile
 import android.net.sip.SipRegistrationListener
 import android.os.Handler
+import android.os.Looper
 import android.util.Log
-import dagger.Lazy
 import com.mgt.zalo.ZaloApplication
 import com.mgt.zalo.receiver.CallReceiver
 import com.mgt.zalo.ui.call.CallActivity
 import com.mgt.zalo.util.Constants
 import com.mgt.zalo.util.TAG
+import dagger.Lazy
 import javax.inject.Inject
 
 interface CallService {
@@ -165,7 +166,7 @@ class SipCallService @Inject constructor(
             })
         } catch (t: Throwable) {
             if (retryOnFail) {
-                Handler().postDelayed({
+                Handler(Looper.getMainLooper()).postDelayed({
                     openSip(pendingIntent)
                 }, 10000)
             }

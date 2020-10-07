@@ -11,12 +11,6 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.squareup.picasso.Picasso
-import kotlinx.android.synthetic.main.activity_home.*
-import kotlinx.android.synthetic.main.fragment_diary.*
-import kotlinx.android.synthetic.main.fragment_diary.view.*
-import kotlinx.android.synthetic.main.item_diary.view.*
-import kotlinx.android.synthetic.main.item_story_group_preview.view.loadingAnimView
 import com.mgt.zalo.R
 import com.mgt.zalo.base.BaseFragment
 import com.mgt.zalo.common.MediaPreviewAdapter
@@ -30,8 +24,12 @@ import com.mgt.zalo.data_model.story.StoryGroup
 import com.mgt.zalo.ui.create_post.CreatePostActivity
 import com.mgt.zalo.ui.home.HomeActivity
 import com.mgt.zalo.util.TAG
-import com.mgt.zalo.util.smartLoad
 import com.mgt.zalo.widget.MediaGridView
+import kotlinx.android.synthetic.main.activity_home.*
+import kotlinx.android.synthetic.main.fragment_diary.*
+import kotlinx.android.synthetic.main.fragment_diary.view.*
+import kotlinx.android.synthetic.main.item_diary.view.*
+import kotlinx.android.synthetic.main.item_story_group_preview.view.loadingAnimView
 import javax.inject.Inject
 
 
@@ -80,7 +78,7 @@ class DiaryFragment : BaseFragment() {
 
         storyRecyclerView.adapter = storyGroupPreviewAdapter
 
-        Picasso.get().smartLoad(sessionManager.curUser!!.avatarUrl, resourceManager, avatarImgView2) {
+        imageLoader.load(sessionManager.curUser!!.avatarUrl, avatarImgView2) {
             it.fit().centerCrop()
         }
 

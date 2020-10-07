@@ -9,6 +9,13 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.airbnb.lottie.LottieCompositionFactory
 import com.airbnb.lottie.LottieDrawable
+import com.mgt.zalo.R
+import com.mgt.zalo.base.BaseListAdapter
+import com.mgt.zalo.base.BaseViewHolder
+import com.mgt.zalo.data_model.message.*
+import com.mgt.zalo.util.diff_callback.MessageDiffCallback
+import com.mgt.zalo.util.diff_callback.RoomMemberDiffCallback
+import com.mgt.zalo.util.smartLoad
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_chat.*
 import kotlinx.android.synthetic.main.item_message_receive.view.*
@@ -23,25 +30,12 @@ import kotlinx.android.synthetic.main.part_message_sticker.view.*
 import kotlinx.android.synthetic.main.part_message_text.view.*
 import kotlinx.android.synthetic.main.part_message_time.view.*
 import kotlinx.android.synthetic.main.part_message_video.view.*
-import com.mgt.zalo.R
-import com.mgt.zalo.base.BaseListAdapter
-import com.mgt.zalo.base.BaseViewHolder
-import com.mgt.zalo.data_model.message.*
-import com.mgt.zalo.manager.ResourceManager
-import com.mgt.zalo.manager.SessionManager
-import com.mgt.zalo.util.MessageDiffCallback
-import com.mgt.zalo.util.RoomMemberDiffCallback
-import com.mgt.zalo.util.Utils
-import com.mgt.zalo.util.smartLoad
 import java.util.*
 import javax.inject.Inject
 
 
 class ChatAdapter @Inject constructor(
         private val chatActivity: ChatActivity,
-        private val sessionManager: SessionManager,
-        private val utils: Utils,
-        private val resourceManager: ResourceManager,
         diffCallback: MessageDiffCallback
 ) : BaseListAdapter<Message, BaseViewHolder>(diffCallback) {
     private val roomEnterTime = System.currentTimeMillis()
@@ -374,7 +368,7 @@ class ChatAdapter @Inject constructor(
                 setViewConstrainRatio(videoMessageLayout, videoMessage.ratio!!)
 
                 resourceManager.getVideoThumbUri(videoMessage.url) { uri ->
-                    Picasso.get().smartLoad(uri, resourceManager, videoThumbImgView) {
+                    imageLoader.load(uri, videoThumbImgView) {
                         it.fit()
                     }
                 }
@@ -515,8 +509,7 @@ class ChatAdapter @Inject constructor(
         private fun showAvatar(message: Message) {
             itemView.apply {
                 avatarLayout.visibility = View.VISIBLE
-                Picasso.get()
-                        .smartLoad(message.senderAvatarUrl, resourceManager, watchOwnerAvatarImgView) {
+                imageLoader.load(message.senderAvatarUrl, watchOwnerAvatarImgView) {
                             it.fit()
                                     .centerCrop()
                                     .placeholder(R.drawable.default_peer_avatar)
@@ -526,7 +519,7 @@ class ChatAdapter @Inject constructor(
     }
 
     inner class SeenViewHolder(itemView: View) : BaseViewHolder(itemView) {
-        val adapter = RoomMemberAdapter(resourceManager, RoomMemberDiffCallback())
+        val adapter = RoomMemberAdapter(RoomMemberDiffCallback())
 
         override fun bind(position: Int) {
             itemView.seenRecyclerView.adapter = adapter

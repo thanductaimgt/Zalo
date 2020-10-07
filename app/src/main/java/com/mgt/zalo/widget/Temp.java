@@ -14,11 +14,10 @@ import androidx.constraintlayout.widget.ConstraintSet;
 import androidx.core.content.ContextCompat;
 
 import com.google.firebase.ml.vision.face.FirebaseVisionFace;
-
-import java.util.List;
-
 import com.mgt.zalo.R;
 import com.mgt.zalo.util.Utils;
+
+import java.util.List;
 
 public class Temp {
     private ImageView imageView;

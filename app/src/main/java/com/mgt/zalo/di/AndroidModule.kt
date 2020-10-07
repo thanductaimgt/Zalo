@@ -1,15 +1,16 @@
 package com.mgt.zalo.di
 
-import dagger.Module
-import dagger.android.ContributesAndroidInjector
 import com.mgt.zalo.base.EmptyActivity
 import com.mgt.zalo.service.MessagingService
 import com.mgt.zalo.service.UploadService
 import com.mgt.zalo.ui.SplashActivity
 import com.mgt.zalo.ui.call.CallActivity
 import com.mgt.zalo.ui.call.CallModule
+import com.mgt.zalo.ui.camera.CameraFragment
 import com.mgt.zalo.ui.chat.ChatActivity
 import com.mgt.zalo.ui.chat.ChatModule
+import com.mgt.zalo.ui.comment.CommentFragment
+import com.mgt.zalo.ui.comment.CommentModule
 import com.mgt.zalo.ui.create_group.CreateGroupActivity
 import com.mgt.zalo.ui.create_group.CreateGroupModule
 import com.mgt.zalo.ui.create_post.CreatePostActivity
@@ -18,9 +19,6 @@ import com.mgt.zalo.ui.edit_media.EditMediaFragment
 import com.mgt.zalo.ui.edit_media.EditMediaModule
 import com.mgt.zalo.ui.home.HomeActivity
 import com.mgt.zalo.ui.home.HomeModule
-import com.mgt.zalo.ui.camera.CameraFragment
-import com.mgt.zalo.ui.comment.CommentFragment
-import com.mgt.zalo.ui.comment.CommentModule
 import com.mgt.zalo.ui.intro.IntroActivity
 import com.mgt.zalo.ui.login.LoginActivity
 import com.mgt.zalo.ui.media.MediaFragment
@@ -34,6 +32,8 @@ import com.mgt.zalo.ui.story.StoryFragment
 import com.mgt.zalo.ui.story.StoryModule
 import com.mgt.zalo.ui.story.story_detail.StoryDetailFragment
 import com.mgt.zalo.ui.story.story_detail.StoryDetailModule
+import dagger.Module
+import dagger.android.ContributesAndroidInjector
 
 
 @Module

@@ -223,7 +223,29 @@ class ZaloFragmentManager @Inject constructor(
             if (fragment is BaseFragment && !fragment.onBackPressed()) {
                 fragmentManager.popBackStack()
                 fragment.parent.onFragmentResult(BaseView.FRAGMENT_ANY, null)
-                rootView?.let{utils.hideKeyboard(it)}
+                rootView?.let { utils.hideKeyboard(it) }
+            }
+            true
+        } else {
+            false
+        }
+    }
+
+    // pop top fragment, except it's last fragment in stack and its fragment stack is empty
+    // return true if any fragment popped
+    fun popTopFragmentExceptLast(): Boolean {
+        return if (fragmentManager.backStackEntryCount > 0) {
+            val fragmentTag = fragmentManager.getBackStackEntryAt(fragmentManager.backStackEntryCount - 1).name
+            val fragment = fragmentManager.findFragmentByTag(fragmentTag)
+
+            if (fragment is BaseFragment && !fragment.onBackPressed()) {
+                if (fragmentManager.backStackEntryCount == 1) {
+                    return false
+                } else {
+                    fragmentManager.popBackStack()
+                    fragment.parent.onFragmentResult(BaseView.FRAGMENT_ANY, null)
+                    rootView?.let { utils.hideKeyboard(it) }
+                }
             }
             true
         } else {

@@ -5,11 +5,11 @@ import android.content.Intent
 import android.view.View
 import android.widget.Toast
 import com.airbnb.lottie.LottieCompositionFactory
-import kotlinx.android.synthetic.main.activity_login.*
 import com.mgt.zalo.R
 import com.mgt.zalo.base.BaseActivity
 import com.mgt.zalo.ui.home.HomeActivity
 import com.mgt.zalo.ui.intro.IntroActivity
+import kotlinx.android.synthetic.main.activity_login.*
 
 
 class LoginActivity : BaseActivity() {

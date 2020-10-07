@@ -1,4 +1,4 @@
-package com.mgt.zalo.util
+package com.mgt.zalo.util.diff_callback
 
 import android.annotation.SuppressLint
 import androidx.recyclerview.widget.DiffUtil

@@ -10,9 +10,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.WindowManager
 import android.widget.PopupWindow
-import kotlinx.android.synthetic.main.activity_chat.*
 import com.mgt.zalo.R
 import com.mgt.zalo.base.KeyboardHeightObserver
+import kotlinx.android.synthetic.main.activity_chat.*
 
 
 /*

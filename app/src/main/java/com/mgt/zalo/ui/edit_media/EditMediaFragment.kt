@@ -19,15 +19,13 @@ import com.google.firebase.ml.vision.common.FirebaseVisionImageMetadata
 import com.google.firebase.ml.vision.face.FirebaseVisionFace
 import com.google.firebase.ml.vision.face.FirebaseVisionFaceDetector
 import com.google.firebase.ml.vision.face.FirebaseVisionFaceDetectorOptions
-import com.squareup.picasso.Picasso
-import kotlinx.android.synthetic.main.fragment_edit_media.*
 import com.mgt.zalo.R
 import com.mgt.zalo.base.BaseFragment
 import com.mgt.zalo.base.BaseView
 import com.mgt.zalo.data_model.media.Media
 import com.mgt.zalo.util.TAG
-import com.mgt.zalo.util.smartLoad
 import com.mgt.zalo.widget.FaceView
+import kotlinx.android.synthetic.main.fragment_edit_media.*
 import kotlin.math.ceil
 import kotlin.math.min
 
@@ -55,7 +53,7 @@ class EditMediaFragment(private val type:Int) : BaseFragment() {
     override fun onBindViews() {
         when(type){
             TYPE_CREATE_STORY -> {
-                Picasso.get().smartLoad(sessionManager.curUser!!.avatarUrl, resourceManager, avatarImgView) {
+                imageLoader.load(sessionManager.curUser!!.avatarUrl, avatarImgView) {
                     it.fit().centerCrop().error(R.drawable.default_peer_avatar)
                 }
 

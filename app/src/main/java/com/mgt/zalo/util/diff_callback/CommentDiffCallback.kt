@@ -1,21 +1,19 @@
-package com.mgt.zalo.util
+package com.mgt.zalo.util.diff_callback
 
-import android.annotation.SuppressLint
 import androidx.recyclerview.widget.DiffUtil
-import com.mgt.zalo.data_model.react.ReactPage
+import com.mgt.zalo.data_model.Comment
 import javax.inject.Inject
 
-class ReactPageDiffCallback @Inject constructor() : DiffUtil.ItemCallback<ReactPage>() {
-    override fun areItemsTheSame(oldItem: ReactPage, newItem: ReactPage): Boolean {
-        return oldItem.reactType == newItem.reactType
+class CommentDiffCallback @Inject constructor() : DiffUtil.ItemCallback<Comment>() {
+    override fun areItemsTheSame(oldItem: Comment, newItem: Comment): Boolean {
+        return oldItem.id == newItem.id
     }
 
-    @SuppressLint("DiffUtilEquals")
-    override fun areContentsTheSame(oldItem: ReactPage, newItem: ReactPage): Boolean {
+    override fun areContentsTheSame(oldItem: Comment, newItem: Comment): Boolean {
         return oldItem == newItem
     }
 
-    override fun getChangePayload(oldItem: ReactPage, newItem: ReactPage): Any? {
+    override fun getChangePayload(oldItem: Comment, newItem: Comment): Any? {
         val res = ArrayList<Int?>()
 //        if(oldItem is SeenMessage){
 //            if (oldItem.seenMembers != (newItem as SeenMessage).seenMembers) {

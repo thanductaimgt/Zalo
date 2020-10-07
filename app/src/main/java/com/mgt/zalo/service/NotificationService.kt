@@ -18,8 +18,6 @@ import androidx.core.graphics.drawable.IconCompat
 import androidx.core.graphics.drawable.toBitmap
 import androidx.core.util.set
 import com.google.firebase.firestore.ListenerRegistration
-import com.squareup.picasso.Picasso
-import com.squareup.picasso.Target
 import com.mgt.zalo.R
 import com.mgt.zalo.ZaloApplication
 import com.mgt.zalo.data_model.ChatNotification
@@ -33,6 +31,8 @@ import com.mgt.zalo.ui.chat.ChatActivity
 import com.mgt.zalo.util.Constants
 import com.mgt.zalo.util.TAG
 import com.mgt.zalo.util.smartLoad
+import com.squareup.picasso.Picasso
+import com.squareup.picasso.Target
 import javax.inject.Inject
 
 
@@ -112,8 +112,9 @@ class AlwaysRunningNotificationService @Inject constructor(
         Handler(Looper.getMainLooper()).post {
             val toast = Toast(application)
 
-            toast.view = View(application)
-            toast.view.visibility = View.GONE
+            toast.view = View(application).apply {
+                visibility = View.GONE
+            }
             toast.duration = Toast.LENGTH_LONG
 //            val toast = Toast.makeText(context, "${Random().nextInt()}", Toast.LENGTH_LONG)
 

@@ -4,10 +4,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import kotlinx.android.synthetic.main.item_sticker.view.*
 import com.mgt.zalo.R
 import com.mgt.zalo.base.BaseViewHolder
 import com.mgt.zalo.data_model.Sticker
+import kotlinx.android.synthetic.main.item_sticker.view.*
 import javax.inject.Inject
 
 class StickerSetAdapter @Inject constructor(

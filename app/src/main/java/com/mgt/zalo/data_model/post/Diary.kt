@@ -4,8 +4,8 @@ import android.os.Bundle
 import android.os.Parcel
 import android.os.Parcelable
 import com.google.firebase.firestore.DocumentSnapshot
-import com.mgt.zalo.data_model.react.React
 import com.mgt.zalo.data_model.media.Media
+import com.mgt.zalo.data_model.react.React
 
 data class Diary(
         override var id: String? = null,

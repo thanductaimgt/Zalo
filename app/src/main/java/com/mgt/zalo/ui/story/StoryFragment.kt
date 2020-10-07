@@ -17,11 +17,6 @@ import androidx.viewpager2.widget.ViewPager2
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
-import kotlinx.android.synthetic.main.bottom_add_highlight_story.*
-import kotlinx.android.synthetic.main.bottom_add_highlight_story.view.*
-import kotlinx.android.synthetic.main.fragment_story.*
-import kotlinx.android.synthetic.main.item_story_base.view.*
-import kotlinx.android.synthetic.main.item_story_other.*
 import com.mgt.zalo.R
 import com.mgt.zalo.base.BaseFragment
 import com.mgt.zalo.common.StoryGroupPreviewAdapter
@@ -33,6 +28,11 @@ import com.mgt.zalo.data_model.story.VideoStory
 import com.mgt.zalo.repository.Storage
 import com.mgt.zalo.util.animatePagerTransition
 import com.mgt.zalo.widget.CubeOutTransformer
+import kotlinx.android.synthetic.main.bottom_add_highlight_story.*
+import kotlinx.android.synthetic.main.bottom_add_highlight_story.view.*
+import kotlinx.android.synthetic.main.fragment_story.*
+import kotlinx.android.synthetic.main.item_story_base.view.*
+import kotlinx.android.synthetic.main.item_story_other.*
 import javax.inject.Inject
 
 class StoryFragment(

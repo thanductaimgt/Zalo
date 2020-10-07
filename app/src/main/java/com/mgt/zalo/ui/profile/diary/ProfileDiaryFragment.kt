@@ -7,8 +7,6 @@ import android.widget.Toast
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
-import kotlinx.android.synthetic.main.fragment_profile.*
-import kotlinx.android.synthetic.main.fragment_profile_diary.*
 import com.mgt.zalo.R
 import com.mgt.zalo.base.BaseFragment
 import com.mgt.zalo.common.MediaPreviewAdapter
@@ -17,8 +15,10 @@ import com.mgt.zalo.ui.home.HomeActivity
 import com.mgt.zalo.ui.home.diary.DiaryAdapter
 import com.mgt.zalo.ui.profile.ProfileFragment
 import com.mgt.zalo.ui.profile.ProfileViewModel
-import com.mgt.zalo.util.DiaryDiffCallback
+import com.mgt.zalo.util.diff_callback.DiaryDiffCallback
 import com.mgt.zalo.widget.MediaGridView
+import kotlinx.android.synthetic.main.fragment_profile.*
+import kotlinx.android.synthetic.main.fragment_profile_diary.*
 import javax.inject.Inject
 
 class ProfileDiaryFragment : BaseFragment() {
@@ -36,7 +36,7 @@ class ProfileDiaryFragment : BaseFragment() {
 
     override fun onBindViews() {
         recyclerViewLayoutManager = LinearLayoutManager(requireContext())
-        diaryAdapter = DiaryAdapter(this, resourceManager, utils, playbackManager, sessionManager, DiaryDiffCallback())
+        diaryAdapter = DiaryAdapter(this, DiaryDiffCallback())
         recyclerView.apply {
             adapter = diaryAdapter
             layoutManager = recyclerViewLayoutManager

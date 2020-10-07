@@ -2,18 +2,19 @@ package com.mgt.zalo.ui.home
 
 import android.animation.ObjectAnimator
 import android.os.Handler
+import android.os.Looper
 import android.view.MenuItem
 import android.widget.Toast
 import androidx.lifecycle.MutableLiveData
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
-import kotlinx.android.synthetic.main.activity_home.*
 import com.mgt.zalo.R
 import com.mgt.zalo.base.BaseActivity
 import com.mgt.zalo.base.BaseView
 import com.mgt.zalo.ui.camera.CameraFragment
 import com.mgt.zalo.ui.edit_media.EditMediaFragment
 import com.mgt.zalo.widget.AppBarStateChangeListener
+import kotlinx.android.synthetic.main.activity_home.*
 import javax.inject.Inject
 
 
@@ -195,7 +196,7 @@ class HomeActivity : BaseActivity() {
                 this.doubleBackToExitPressedOnce = true
                 Toast.makeText(this, getString(R.string.description_back_again_to_exit), Toast.LENGTH_SHORT).show()
 
-                Handler().postDelayed({ doubleBackToExitPressedOnce = false }, 2000)
+                Handler(Looper.getMainLooper()).postDelayed({ doubleBackToExitPressedOnce = false }, 2000)
             }
         }
     }

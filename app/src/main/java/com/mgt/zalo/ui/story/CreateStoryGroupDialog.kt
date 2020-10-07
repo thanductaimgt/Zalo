@@ -6,20 +6,18 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.FragmentManager
-import com.squareup.picasso.Picasso
-import kotlinx.android.synthetic.main.dialog_create_story_group.*
-import kotlinx.android.synthetic.main.dialog_create_story_group.addButton
-import kotlinx.android.synthetic.main.dialog_create_story_group.nameEditText
-import kotlinx.android.synthetic.main.dialog_create_story_group.view.*
 import com.mgt.zalo.R
 import com.mgt.zalo.base.BaseDialog
-import com.mgt.zalo.manager.ResourceManager
 import com.mgt.zalo.data_model.story.ImageStory
 import com.mgt.zalo.data_model.story.Story
 import com.mgt.zalo.data_model.story.VideoStory
+import com.mgt.zalo.manager.ResourceManager
 import com.mgt.zalo.util.TAG
 import com.mgt.zalo.util.Utils
 import com.mgt.zalo.util.smartLoad
+import com.squareup.picasso.Picasso
+import kotlinx.android.synthetic.main.dialog_create_story_group.*
+import kotlinx.android.synthetic.main.dialog_create_story_group.view.*
 import javax.inject.Inject
 
 class CreateStoryGroupDialog @Inject constructor(

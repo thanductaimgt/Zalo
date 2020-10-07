@@ -1,4 +1,4 @@
-package com.mgt.zalo.util
+package com.mgt.zalo.util.diff_callback
 
 import androidx.recyclerview.widget.DiffUtil
 import com.mgt.zalo.data_model.RoomMember

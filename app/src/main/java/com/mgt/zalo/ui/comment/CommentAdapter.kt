@@ -5,8 +5,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
-import com.squareup.picasso.Picasso
-import kotlinx.android.synthetic.main.item_comment.view.*
 import com.mgt.zalo.R
 import com.mgt.zalo.base.BaseListAdapter
 import com.mgt.zalo.base.BaseOnEventListener
@@ -18,18 +16,16 @@ import com.mgt.zalo.data_model.media.VideoMedia
 import com.mgt.zalo.data_model.react.React
 import com.mgt.zalo.manager.ResourceManager
 import com.mgt.zalo.manager.SessionManager
-import com.mgt.zalo.util.CommentDiffCallback
+import com.mgt.zalo.util.ImageLoader
 import com.mgt.zalo.util.Utils
-import com.mgt.zalo.util.smartLoad
+import com.mgt.zalo.util.diff_callback.CommentDiffCallback
+import kotlinx.android.synthetic.main.item_comment.view.*
 import javax.inject.Inject
 import kotlin.math.min
 
 
 class CommentAdapter @Inject constructor(
         private val eventListener: BaseOnEventListener,
-        private val resourceManager: ResourceManager,
-        private val sessionManager: SessionManager,
-        private val utils: Utils,
         diffCallback: CommentDiffCallback
 ) : BaseListAdapter<Comment, CommentAdapter.CommentViewHolder>(diffCallback) {
     var isReply = false
@@ -37,7 +33,7 @@ class CommentAdapter @Inject constructor(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CommentViewHolder {
         val holder = CommentViewHolder(
                 LayoutInflater.from(parent.context).inflate(R.layout.item_comment, parent, false),
-                eventListener, sessionManager, utils, resourceManager
+                eventListener, sessionManager, utils, resourceManager, imageLoader
         )
         return holder.apply { bindOnClick() }
     }
@@ -59,8 +55,9 @@ class CommentAdapter @Inject constructor(
             private val eventListener: BaseOnEventListener,
             private val sessionManager: SessionManager,
             private val utils: Utils,
-            private val resourceManager: ResourceManager
-    ) : BaseViewHolder(itemView) {
+            private val resourceManager: ResourceManager,
+            private val imageLoader: ImageLoader
+            ) : BaseViewHolder(itemView) {
         fun bind(comment: Comment) {
             bindOwner(comment)
             bindText(comment)
@@ -125,7 +122,7 @@ class CommentAdapter @Inject constructor(
 
         fun bindOwner(comment: Comment) {
             itemView.apply {
-                Picasso.get().smartLoad(comment.ownerAvatarUrl, resourceManager, avatarImgView) {
+                imageLoader.load(comment.ownerAvatarUrl, avatarImgView) {
                     it.fit().centerCrop()
                 }
 
@@ -153,14 +150,14 @@ class CommentAdapter @Inject constructor(
 
                     when (media) {
                         is ImageMedia -> {
-                            Picasso.get().smartLoad(media.uri, resourceManager, imageView) {
+                            imageLoader.load(media.uri, imageView) {
                                 it.fit().centerCrop()
                             }
                             playIcon.visibility = View.GONE
                         }
                         is VideoMedia -> {
                             resourceManager.getVideoThumbUri(media.uri!!) { uri ->
-                                Picasso.get().smartLoad(uri, resourceManager, imageView) {
+                                imageLoader.load(uri, imageView) {
                                     it.fit().centerCrop()
                                 }
                             }

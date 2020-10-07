@@ -5,10 +5,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.FragmentManager
-import kotlinx.android.synthetic.main.dialog_alert.*
 import com.mgt.zalo.R
 import com.mgt.zalo.base.BaseDialog
 import com.mgt.zalo.util.TAG
+import kotlinx.android.synthetic.main.dialog_alert.*
 import javax.inject.Inject
 import javax.inject.Singleton
 

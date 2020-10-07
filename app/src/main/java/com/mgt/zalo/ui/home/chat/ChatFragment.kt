@@ -9,8 +9,6 @@ import androidx.core.view.isNotEmpty
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
-import kotlinx.android.synthetic.main.activity_home.*
-import kotlinx.android.synthetic.main.fragment_chat.*
 import com.mgt.zalo.R
 import com.mgt.zalo.base.BaseFragment
 import com.mgt.zalo.data_model.room.RoomItemPeer
@@ -18,6 +16,8 @@ import com.mgt.zalo.ui.chat.ChatActivity
 import com.mgt.zalo.ui.create_group.CreateGroupActivity
 import com.mgt.zalo.ui.home.HomeActivity
 import com.mgt.zalo.util.Constants
+import kotlinx.android.synthetic.main.activity_home.*
+import kotlinx.android.synthetic.main.fragment_chat.*
 import javax.inject.Inject
 
 

@@ -12,21 +12,19 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.google.android.material.tabs.TabLayoutMediator.TabConfigurationStrategy
-import com.squareup.picasso.Picasso
-import kotlinx.android.synthetic.main.activity_create_group.*
-import kotlinx.android.synthetic.main.bottom_sheet_upload.view.*
 import com.mgt.zalo.R
 import com.mgt.zalo.base.BaseActivity
 import com.mgt.zalo.common.ChooseRoomItemAdapter
-import com.mgt.zalo.manager.ExternalIntentManager
 import com.mgt.zalo.data_model.RoomMember
 import com.mgt.zalo.data_model.room.RoomGroup
 import com.mgt.zalo.data_model.room.RoomItem
 import com.mgt.zalo.data_model.room.RoomItemPeer
+import com.mgt.zalo.manager.ExternalIntentManager
 import com.mgt.zalo.ui.chat.ChatActivity
 import com.mgt.zalo.util.Constants
 import com.mgt.zalo.util.TAG
-import com.mgt.zalo.util.smartLoad
+import kotlinx.android.synthetic.main.activity_create_group.*
+import kotlinx.android.synthetic.main.bottom_sheet_upload.view.*
 import java.util.*
 import javax.inject.Inject
 
@@ -222,7 +220,7 @@ class CreateGroupActivity : BaseActivity() {
     }
 
     private fun updateRoomAvatar(localUri: String?) {
-        Picasso.get().smartLoad(localUri, resourceManager, uploadAvatarImgView) {
+        imageLoader.load(localUri, uploadAvatarImgView) {
             it.fit()
                     .centerCrop()
         }

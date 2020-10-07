@@ -5,10 +5,6 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.squareup.picasso.Picasso
-import kotlinx.android.synthetic.main.item_story_base.view.*
-import kotlinx.android.synthetic.main.item_story_other.view.*
-import kotlinx.android.synthetic.main.item_story_self.view.*
 import com.mgt.zalo.R
 import com.mgt.zalo.base.BaseListAdapter
 import com.mgt.zalo.base.BaseViewHolder
@@ -16,19 +12,19 @@ import com.mgt.zalo.data_model.story.ImageStory
 import com.mgt.zalo.data_model.story.Story
 import com.mgt.zalo.data_model.story.StoryGroup
 import com.mgt.zalo.data_model.story.VideoStory
-import com.mgt.zalo.manager.PlaybackManager
-import com.mgt.zalo.manager.ResourceManager
-import com.mgt.zalo.manager.SessionManager
-import com.mgt.zalo.util.*
+import com.mgt.zalo.util.TAG
+import com.mgt.zalo.util.diff_callback.StoryGroupDiffCallback
+import com.mgt.zalo.util.setOnHoldListener
+import com.mgt.zalo.util.smartLoad
 import com.mgt.zalo.widget.StoriesProgressView
+import com.squareup.picasso.Picasso
+import kotlinx.android.synthetic.main.item_story_base.view.*
+import kotlinx.android.synthetic.main.item_story_other.view.*
+import kotlinx.android.synthetic.main.item_story_self.view.*
 import javax.inject.Inject
 
 class StoryGroupAdapter @Inject constructor(
         private val storyFragment: StoryFragment,
-        private val resourceManager: ResourceManager,
-        private val utils: Utils,
-        private val sessionManager: SessionManager,
-        private val playbackManager: PlaybackManager,
         diffCallback: StoryGroupDiffCallback
 ) : BaseListAdapter<StoryGroup, StoryGroupAdapter.StoryGroupViewHolder>(diffCallback) {
     override fun onViewDetachedFromWindow(holder: StoryGroupViewHolder) {

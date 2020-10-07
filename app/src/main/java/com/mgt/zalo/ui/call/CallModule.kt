@@ -2,12 +2,12 @@ package com.mgt.zalo.ui.call
 
 import android.content.Intent
 import androidx.lifecycle.ViewModel
+import com.mgt.zalo.di.ViewModelKey
+import com.mgt.zalo.manager.CallService
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.multibindings.IntoMap
-import com.mgt.zalo.di.ViewModelKey
-import com.mgt.zalo.manager.CallService
 
 @Module(includes = [CallModule.ProvideModule::class])
 interface CallModule {

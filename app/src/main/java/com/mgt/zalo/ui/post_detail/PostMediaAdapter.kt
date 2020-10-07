@@ -4,26 +4,22 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.constraintlayout.widget.ConstraintLayout
-import com.squareup.picasso.Picasso
-import kotlinx.android.synthetic.main.item_post_media.view.*
-import kotlinx.android.synthetic.main.part_post_actions.view.*
 import com.mgt.zalo.R
 import com.mgt.zalo.base.BaseListAdapter
 import com.mgt.zalo.base.BaseViewHolder
 import com.mgt.zalo.data_model.media.ImageMedia
 import com.mgt.zalo.data_model.media.Media
 import com.mgt.zalo.data_model.media.VideoMedia
-import com.mgt.zalo.manager.ResourceManager
-import com.mgt.zalo.util.MediaDiffCallback
-import com.mgt.zalo.util.Utils
+import com.mgt.zalo.util.diff_callback.MediaDiffCallback
 import com.mgt.zalo.util.smartLoad
+import com.squareup.picasso.Picasso
+import kotlinx.android.synthetic.main.item_post_media.view.*
+import kotlinx.android.synthetic.main.part_post_actions.view.*
 import javax.inject.Inject
 
 
 class PostMediaAdapter @Inject constructor(
         private val postDetailFragment: PostDetailFragment,
-        private val resourceManager: ResourceManager,
-        private val utils: Utils,
         diffCallback: MediaDiffCallback
 ) : BaseListAdapter<Media, PostMediaAdapter.MediaViewHolder>(diffCallback) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MediaViewHolder {

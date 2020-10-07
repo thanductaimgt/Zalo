@@ -1,8 +1,8 @@
 package com.mgt.zalo.data_model.post
 
 import com.google.firebase.firestore.DocumentSnapshot
-import com.mgt.zalo.data_model.react.React
 import com.mgt.zalo.data_model.media.VideoMedia
+import com.mgt.zalo.data_model.react.React
 
 data class Watch(
         override var id: String? = null,

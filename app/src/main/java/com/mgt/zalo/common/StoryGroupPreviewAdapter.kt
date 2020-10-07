@@ -3,23 +3,19 @@ package com.mgt.zalo.common
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.squareup.picasso.Picasso
-import kotlinx.android.synthetic.main.item_story_group_preview.view.*
 import com.mgt.zalo.R
 import com.mgt.zalo.base.BaseListAdapter
 import com.mgt.zalo.base.BaseOnEventListener
 import com.mgt.zalo.base.BaseViewHolder
 import com.mgt.zalo.data_model.story.StoryGroup
-import com.mgt.zalo.manager.ResourceManager
-import com.mgt.zalo.manager.SessionManager
-import com.mgt.zalo.util.StoryGroupDiffCallback
+import com.mgt.zalo.util.diff_callback.StoryGroupDiffCallback
 import com.mgt.zalo.util.smartLoad
+import com.squareup.picasso.Picasso
+import kotlinx.android.synthetic.main.item_story_group_preview.view.*
 import javax.inject.Inject
 
 class StoryGroupPreviewAdapter @Inject constructor(
         private val eventListener: BaseOnEventListener,
-        private val resourceManager: ResourceManager,
-        private val sessionManager: SessionManager,
         diffCallback: StoryGroupDiffCallback
 ) : BaseListAdapter<StoryGroup, StoryGroupPreviewAdapter.StoryViewHolder>(diffCallback) {
     var addedGroupsId: List<String> = ArrayList()

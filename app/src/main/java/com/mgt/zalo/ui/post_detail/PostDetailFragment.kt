@@ -8,15 +8,15 @@ import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.core.widget.ImageViewCompat
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.squareup.picasso.Picasso
-import kotlinx.android.synthetic.main.fragment_post_detail.*
-import kotlinx.android.synthetic.main.part_post_actions.*
 import com.mgt.zalo.R
 import com.mgt.zalo.base.BaseFragment
 import com.mgt.zalo.base.BaseView
 import com.mgt.zalo.data_model.post.Diary
 import com.mgt.zalo.data_model.react.React
 import com.mgt.zalo.util.smartLoad
+import com.squareup.picasso.Picasso
+import kotlinx.android.synthetic.main.fragment_post_detail.*
+import kotlinx.android.synthetic.main.part_post_actions.*
 import javax.inject.Inject
 
 class PostDetailFragment(

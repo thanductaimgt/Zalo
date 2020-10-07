@@ -9,11 +9,6 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
-import com.squareup.picasso.Picasso
-import kotlinx.android.synthetic.main.activity_home.*
-import kotlinx.android.synthetic.main.fragment_profile.*
-import kotlinx.android.synthetic.main.fragment_profile.viewPager
-import kotlinx.android.synthetic.main.item_story_group_preview.view.*
 import com.mgt.zalo.R
 import com.mgt.zalo.base.BaseFragment
 import com.mgt.zalo.base.BaseView
@@ -23,6 +18,11 @@ import com.mgt.zalo.data_model.media.ImageMedia
 import com.mgt.zalo.data_model.story.StoryGroup
 import com.mgt.zalo.ui.home.HomeActivity
 import com.mgt.zalo.util.smartLoad
+import com.squareup.picasso.Picasso
+import kotlinx.android.synthetic.main.activity_home.*
+import kotlinx.android.synthetic.main.fragment_profile.*
+import kotlinx.android.synthetic.main.fragment_profile.viewPager
+import kotlinx.android.synthetic.main.item_story_group_preview.view.*
 import javax.inject.Inject
 
 class ProfileFragment(

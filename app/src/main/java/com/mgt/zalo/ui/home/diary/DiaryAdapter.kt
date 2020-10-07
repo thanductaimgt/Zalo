@@ -6,9 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.core.widget.ImageViewCompat
-import com.squareup.picasso.Picasso
-import kotlinx.android.synthetic.main.item_diary.view.*
-import kotlinx.android.synthetic.main.part_post_actions.view.*
 import com.mgt.zalo.R
 import com.mgt.zalo.base.BaseListAdapter
 import com.mgt.zalo.base.BaseOnEventListener
@@ -16,22 +13,15 @@ import com.mgt.zalo.base.BaseViewHolder
 import com.mgt.zalo.common.MediaPreviewAdapter
 import com.mgt.zalo.data_model.post.Diary
 import com.mgt.zalo.data_model.post.Post
-import com.mgt.zalo.manager.PlaybackManager
-import com.mgt.zalo.manager.ResourceManager
-import com.mgt.zalo.manager.SessionManager
-import com.mgt.zalo.util.DiaryDiffCallback
-import com.mgt.zalo.util.MediaDiffCallback
-import com.mgt.zalo.util.Utils
-import com.mgt.zalo.util.smartLoad
+import com.mgt.zalo.util.diff_callback.DiaryDiffCallback
+import com.mgt.zalo.util.diff_callback.MediaDiffCallback
+import kotlinx.android.synthetic.main.item_diary.view.*
+import kotlinx.android.synthetic.main.part_post_actions.view.*
 import javax.inject.Inject
 
 
 class DiaryAdapter @Inject constructor(
         private val eventListener: BaseOnEventListener,
-        private val resourceManager: ResourceManager,
-        private val utils: Utils,
-        private val playbackManager: PlaybackManager,
-        private val sessionManager: SessionManager,
         diffCallback: DiaryDiffCallback
 ) : BaseListAdapter<Diary, DiaryAdapter.DiaryViewHolder>(diffCallback) {
     private val diffCallback = MediaDiffCallback()
@@ -82,7 +72,7 @@ class DiaryAdapter @Inject constructor(
 
         private fun bindOwner(diary: Diary) {
             itemView.apply {
-                Picasso.get().smartLoad(diary.ownerAvatarUrl, resourceManager, avatarImgView) {
+                imageLoader.load(diary.ownerAvatarUrl, avatarImgView) {
                     it.fit().centerCrop()
                 }
 
@@ -104,7 +94,7 @@ class DiaryAdapter @Inject constructor(
 
         private fun bindMedias(diary: Diary) {
             itemView.apply {
-                val adapter = MediaPreviewAdapter(eventListener, resourceManager, utils, playbackManager, diffCallback)
+                val adapter = MediaPreviewAdapter(eventListener, diffCallback)
                 adapter.doLooping = true
                 mediaGridView.adapter = adapter
                 adapter.submitListLimit(diary.medias)

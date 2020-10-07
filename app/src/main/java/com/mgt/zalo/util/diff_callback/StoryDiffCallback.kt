@@ -1,21 +1,21 @@
-package com.mgt.zalo.util
+package com.mgt.zalo.util.diff_callback
 
 import android.annotation.SuppressLint
 import androidx.recyclerview.widget.DiffUtil
-import com.mgt.zalo.data_model.post.Diary
+import com.mgt.zalo.data_model.story.Story
 import javax.inject.Inject
 
-class DiaryDiffCallback @Inject constructor() : DiffUtil.ItemCallback<Diary>() {
-    override fun areItemsTheSame(oldItem: Diary, newItem: Diary): Boolean {
+class StoryDiffCallback @Inject constructor() : DiffUtil.ItemCallback<Story>() {
+    override fun areItemsTheSame(oldItem: Story, newItem: Story): Boolean {
         return oldItem.id == newItem.id
     }
 
     @SuppressLint("DiffUtilEquals")
-    override fun areContentsTheSame(oldItem: Diary, newItem: Diary): Boolean {
+    override fun areContentsTheSame(oldItem: Story, newItem: Story): Boolean {
         return oldItem == newItem
     }
 
-    override fun getChangePayload(oldItem: Diary, newItem: Diary): Any? {
+    override fun getChangePayload(oldItem: Story, newItem: Story): Any? {
         val res = ArrayList<Int?>()
 //        if(oldItem is SeenMessage){
 //            if (oldItem.seenMembers != (newItem as SeenMessage).seenMembers) {

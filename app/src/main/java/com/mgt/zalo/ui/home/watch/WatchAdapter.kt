@@ -10,28 +10,18 @@ import android.view.animation.Animation
 import android.view.animation.LinearInterpolator
 import android.widget.ImageView
 import com.google.android.exoplayer2.ui.AspectRatioFrameLayout
-import com.squareup.picasso.Picasso
-import kotlinx.android.synthetic.main.item_watch.view.*
 import com.mgt.zalo.R
 import com.mgt.zalo.base.BaseListAdapter
 import com.mgt.zalo.base.BaseViewHolder
 import com.mgt.zalo.data_model.post.Watch
-import com.mgt.zalo.manager.PlaybackManager
-import com.mgt.zalo.manager.ResourceManager
-import com.mgt.zalo.manager.SharedPrefsManager
 import com.mgt.zalo.util.TAG
-import com.mgt.zalo.util.Utils
-import com.mgt.zalo.util.WatchDiffCallback
-import com.mgt.zalo.util.smartLoad
+import com.mgt.zalo.util.diff_callback.WatchDiffCallback
+import kotlinx.android.synthetic.main.item_watch.view.*
 import javax.inject.Inject
 
 
 class WatchAdapter @Inject constructor(
         private val watchFragment: WatchFragment,
-        private val resourceManager: ResourceManager,
-        private val sharedPrefsManager: SharedPrefsManager,
-        private val utils: Utils,
-        private val playbackManager: PlaybackManager,
         diffCallback: WatchDiffCallback
 ) : BaseListAdapter<Watch, WatchAdapter.WatchViewHolder>(diffCallback) {
     private val objectAnimator = ObjectAnimator().apply {
@@ -161,7 +151,7 @@ class WatchAdapter @Inject constructor(
             val watch = currentList[position]
             itemView.apply {
 //                setViewConstrainRatio(videoMessageLayout, videoMessage.ratio!!)
-                Picasso.get().smartLoad(watch.ownerAvatarUrl, resourceManager, watchOwnerAvatarImgView) {
+                imageLoader.load(watch.ownerAvatarUrl, watchOwnerAvatarImgView) {
                     it.fit().centerCrop()
                 }
 
@@ -204,7 +194,7 @@ class WatchAdapter @Inject constructor(
         private fun bindVideoThumb(watch: Watch) {
             itemView.apply {
                 resourceManager.getVideoThumbUri(watch.videoMedia!!.uri!!) { uri ->
-                    Picasso.get().smartLoad(uri, resourceManager, previewImgView) {
+                    imageLoader.load(uri, previewImgView) {
                         it.fit().centerInside()
                     }
                 }

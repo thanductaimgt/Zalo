@@ -1,9 +1,9 @@
 package com.mgt.zalo.manager
 
-import dagger.Lazy
 import com.mgt.zalo.data_model.User
 import com.mgt.zalo.repository.Database
 import com.mgt.zalo.service.NotificationService
+import dagger.Lazy
 import javax.inject.Inject
 import javax.inject.Singleton
 

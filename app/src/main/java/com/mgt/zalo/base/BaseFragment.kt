@@ -9,7 +9,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.lifecycle.ViewModelProvider
-import dagger.android.support.DaggerFragment
 import com.mgt.zalo.R
 import com.mgt.zalo.ZaloApplication
 import com.mgt.zalo.common.AlertDialog
@@ -18,8 +17,10 @@ import com.mgt.zalo.manager.*
 import com.mgt.zalo.repository.Database
 import com.mgt.zalo.repository.Storage
 import com.mgt.zalo.service.NotificationService
+import com.mgt.zalo.util.ImageLoader
 import com.mgt.zalo.util.TAG
 import com.mgt.zalo.util.Utils
+import dagger.android.support.DaggerFragment
 import javax.inject.Inject
 
 abstract class BaseFragment : DaggerFragment(), BaseOnEventListener, BaseView {
@@ -72,6 +73,9 @@ abstract class BaseFragment : DaggerFragment(), BaseOnEventListener, BaseView {
     lateinit var viewModelFactory: ViewModelProvider.Factory
 
     @Inject lateinit var playbackManager: PlaybackManager
+
+    @Inject
+    lateinit var imageLoader: ImageLoader
 
     var isOnTop: Boolean = false
 

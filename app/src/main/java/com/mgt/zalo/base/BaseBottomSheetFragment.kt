@@ -14,10 +14,6 @@ import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import dagger.android.AndroidInjector
-import dagger.android.DispatchingAndroidInjector
-import dagger.android.HasAndroidInjector
-import dagger.android.support.AndroidSupportInjection
 import com.mgt.zalo.R
 import com.mgt.zalo.ZaloApplication
 import com.mgt.zalo.common.AlertDialog
@@ -26,8 +22,13 @@ import com.mgt.zalo.manager.*
 import com.mgt.zalo.repository.Database
 import com.mgt.zalo.repository.Storage
 import com.mgt.zalo.service.NotificationService
+import com.mgt.zalo.util.ImageLoader
 import com.mgt.zalo.util.TAG
 import com.mgt.zalo.util.Utils
+import dagger.android.AndroidInjector
+import dagger.android.DispatchingAndroidInjector
+import dagger.android.HasAndroidInjector
+import dagger.android.support.AndroidSupportInjection
 import javax.inject.Inject
 
 
@@ -82,6 +83,9 @@ abstract class BaseBottomSheetFragment : BottomSheetDialogFragment(), BaseOnEven
 
     @Inject
     lateinit var playbackManager: PlaybackManager
+
+    @Inject
+    lateinit var imageLoader: ImageLoader
 
     var isOnTop: Boolean = false
 

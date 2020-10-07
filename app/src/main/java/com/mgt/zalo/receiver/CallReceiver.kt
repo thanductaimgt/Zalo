@@ -4,9 +4,9 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.util.Log
+import com.mgt.zalo.ui.call.CallActivity
 import com.mgt.zalo.util.Constants
 import com.mgt.zalo.util.TAG
-import com.mgt.zalo.ui.call.CallActivity
 
 class CallReceiver : BroadcastReceiver() {
 

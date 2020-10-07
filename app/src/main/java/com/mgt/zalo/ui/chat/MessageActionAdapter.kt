@@ -4,13 +4,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.squareup.picasso.Picasso
-import kotlinx.android.synthetic.main.item_message_action.view.*
 import com.mgt.zalo.R
+import com.mgt.zalo.util.ImageLoader
+import kotlinx.android.synthetic.main.item_message_action.view.*
 import javax.inject.Inject
 
 class MessageActionAdapter @Inject constructor(
-        private val chatActivity: ChatActivity
+        private val chatActivity: ChatActivity,
+        private val imageLoader: ImageLoader
 ) :RecyclerView.Adapter<MessageActionAdapter.MessageActionViewHolder>(){
     var actions = ArrayList<Pair<Int, Int>>()
 
@@ -35,7 +36,7 @@ class MessageActionAdapter @Inject constructor(
             val actionTextResId = action.second
 
             itemView.apply {
-                Picasso.get().load(actionIconResId).into(iconImgView)
+                imageLoader.load(actionIconResId, iconImgView)
                 labelTextView.text = context.getString(actionTextResId)
             }
         }

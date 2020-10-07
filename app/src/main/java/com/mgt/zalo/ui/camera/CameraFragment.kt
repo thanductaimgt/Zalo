@@ -16,8 +16,6 @@ import com.google.android.gms.common.util.concurrent.HandlerExecutor
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.common.util.concurrent.ListenableFuture
-import kotlinx.android.synthetic.main.bottom_sheet_choose_gallery.view.*
-import kotlinx.android.synthetic.main.fragment_camera.*
 import com.mgt.zalo.R
 import com.mgt.zalo.base.BaseFragment
 import com.mgt.zalo.base.BaseView
@@ -27,6 +25,8 @@ import com.mgt.zalo.util.Constants
 import com.mgt.zalo.util.TAG
 import com.mgt.zalo.util.setOnDoubleClickListener
 import com.mgt.zalo.util.toBitmap
+import kotlinx.android.synthetic.main.bottom_sheet_choose_gallery.view.*
+import kotlinx.android.synthetic.main.fragment_camera.*
 
 @SuppressLint("UnsafeExperimentalUsageError", "RestrictedApi")
 class CameraFragment : BaseFragment() {

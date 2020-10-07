@@ -1,23 +1,22 @@
-package com.mgt.zalo.util
+package com.mgt.zalo.util.diff_callback
 
 import android.annotation.SuppressLint
 import androidx.recyclerview.widget.DiffUtil
-import com.mgt.zalo.data_model.post.Watch
+import com.mgt.zalo.data_model.react.React
 import javax.inject.Inject
 
-class WatchDiffCallback @Inject constructor() : DiffUtil.ItemCallback<Watch>() {
-
-    override fun areItemsTheSame(oldItem: Watch, newItem: Watch): Boolean {
-        return oldItem.id == newItem.id
+class ReactDiffCallback @Inject constructor() : DiffUtil.ItemCallback<React>() {
+    override fun areItemsTheSame(oldItem: React, newItem: React): Boolean {
+        return oldItem.ownerId == newItem.ownerId
     }
 
     @SuppressLint("DiffUtilEquals")
-    override fun areContentsTheSame(oldItem: Watch, newItem: Watch): Boolean {
+    override fun areContentsTheSame(oldItem: React, newItem: React): Boolean {
         return oldItem == newItem
     }
 
-//    override fun getChangePayload(oldItem: Watch, newItem: Watch): Any? {
-//        val res = ArrayList<Int?>()
+    override fun getChangePayload(oldItem: React, newItem: React): Any? {
+        val res = ArrayList<Int?>()
 //        if(oldItem is SeenMessage){
 //            if (oldItem.seenMembers != (newItem as SeenMessage).seenMembers) {
 //                res.add(Message.PAYLOAD_SEEN)
@@ -33,6 +32,6 @@ class WatchDiffCallback @Inject constructor() : DiffUtil.ItemCallback<Watch>() {
 //                res.add(Message.PAYLOAD_SEND_STATUS)
 //            }
 //        }
-//        return res
-//    }
+        return res
+    }
 }

@@ -2,10 +2,10 @@ package com.mgt.zalo.ui.intro
 
 import android.content.Intent
 import android.view.View
-import kotlinx.android.synthetic.main.activity_intro.*
 import com.mgt.zalo.R
 import com.mgt.zalo.base.BaseActivity
 import com.mgt.zalo.ui.login.LoginActivity
+import kotlinx.android.synthetic.main.activity_intro.*
 
 class IntroActivity : BaseActivity(){
     override fun onBindViews() {

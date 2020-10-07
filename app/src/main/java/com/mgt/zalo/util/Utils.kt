@@ -8,7 +8,6 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Matrix
-import android.graphics.drawable.Drawable
 import android.icu.lang.UCharacter.GraphemeClusterBreak.T
 import android.net.Uri
 import android.util.DisplayMetrics
@@ -17,22 +16,19 @@ import android.util.Size
 import android.view.View
 import android.view.animation.LinearInterpolator
 import android.view.inputmethod.InputMethodManager
-import android.widget.ImageView
 import androidx.camera.core.ImageProxy
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.gms.tasks.Task
 import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.Query
-import com.squareup.picasso.*
-import com.squareup.picasso.Target
-import dagger.Lazy
-import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.disposables.Disposable
 import com.mgt.zalo.R
 import com.mgt.zalo.ZaloApplication
 import com.mgt.zalo.base.OnDoubleClickListener
 import com.mgt.zalo.base.OnHoldListener
 import com.mgt.zalo.manager.ResourceManager
+import dagger.Lazy
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.disposables.Disposable
 import java.io.File
 import java.io.InputStream
 import java.nio.ByteBuffer
@@ -379,71 +375,6 @@ val <T> T?.TAG: String
         return T.javaClass.let { it.enclosingClass?.name ?: it.name }
 //        return T::class.java.simpleName
     }
-
-private fun Picasso.loadCompat(url: String?, resourceManager: ResourceManager): RequestCreator {
-    val doCache: Boolean
-    val urlToLoad: String?
-    if (url == null || resourceManager.isNetworkUri(url) || resourceManager.isContentUri(url)) {
-        urlToLoad = url
-        doCache = url != null && resourceManager.isNetworkUri(url)
-    } else {
-        urlToLoad = "file://$url"
-        doCache = false
-    }
-    return load(urlToLoad).let { if (!doCache) it.networkPolicy(NetworkPolicy.NO_STORE) else it }
-}
-
-fun Picasso.smartLoad(url: String?, resourceManager: ResourceManager, imageView: ImageView, applyConfig: ((requestCreator: RequestCreator) -> Unit)? = null) {
-    var requestCreator = loadCompat(url, resourceManager)
-    applyConfig?.invoke(requestCreator)
-
-    requestCreator.networkPolicy(NetworkPolicy.OFFLINE)
-            .into(imageView, object : Callback.EmptyCallback() {
-                override fun onError(e: Exception?) {
-                    requestCreator = Picasso.get().loadCompat(url, resourceManager)
-                    applyConfig?.invoke(requestCreator)
-
-                    requestCreator.networkPolicy(NetworkPolicy.NO_CACHE)
-                            .memoryPolicy(MemoryPolicy.NO_CACHE)
-                            .into(imageView)
-                }
-            })
-}
-
-fun Picasso.smartLoad(url: String?, resourceManager: ResourceManager, target: Target, applyConfig: ((requestCreator: RequestCreator) -> Unit)? = null) {
-    var requestCreator = loadCompat(url, resourceManager)
-    applyConfig?.invoke(requestCreator)
-
-    requestCreator.networkPolicy(NetworkPolicy.OFFLINE)
-            .into(object : Target {
-                override fun onPrepareLoad(placeHolderDrawable: Drawable?) {
-                    target.onPrepareLoad(placeHolderDrawable)
-                }
-
-                override fun onBitmapFailed(e: java.lang.Exception?, errorDrawable: Drawable?) {
-                    requestCreator = Picasso.get().loadCompat(url, resourceManager)
-                    applyConfig?.invoke(requestCreator)
-
-                    requestCreator.networkPolicy(NetworkPolicy.NO_CACHE)
-                            .memoryPolicy(MemoryPolicy.NO_CACHE)
-                            .into(object : Target {
-                                override fun onPrepareLoad(placeHolderDrawable: Drawable?) {}
-
-                                override fun onBitmapFailed(e: java.lang.Exception?, errorDrawable: Drawable?) {
-                                    target.onBitmapFailed(e, errorDrawable)
-                                }
-
-                                override fun onBitmapLoaded(bitmap: Bitmap?, from: Picasso.LoadedFrom?) {
-                                    target.onBitmapLoaded(bitmap, from)
-                                }
-                            })
-                }
-
-                override fun onBitmapLoaded(bitmap: Bitmap?, from: Picasso.LoadedFrom?) {
-                    target.onBitmapLoaded(bitmap, from)
-                }
-            })
-}
 
 //fun Image.toBitmap(): Bitmap {
 //    val yBuffer = planes[0].buffer // Y

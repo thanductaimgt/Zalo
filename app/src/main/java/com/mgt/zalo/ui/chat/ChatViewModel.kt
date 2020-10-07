@@ -3,10 +3,10 @@ package com.mgt.zalo.ui.chat
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.google.firebase.firestore.ListenerRegistration
-import io.reactivex.Observer
 import com.mgt.zalo.base.BaseViewModel
 import com.mgt.zalo.data_model.RoomMember
 import com.mgt.zalo.data_model.message.Message
@@ -18,6 +18,7 @@ import com.mgt.zalo.data_model.room.RoomItem
 import com.mgt.zalo.data_model.room.RoomPeer
 import com.mgt.zalo.util.Constants
 import com.mgt.zalo.util.TAG
+import io.reactivex.Observer
 import javax.inject.Inject
 
 
@@ -247,7 +248,7 @@ class ChatViewModel @Inject constructor(intent: Intent) : BaseViewModel() {
                 liveMessageMap.value = lastMessageMap
                 lastSubmittedTime = curTime
             } else {
-                Handler().postDelayed({ updateLiveMessageMap() }, gap)
+                Handler(Looper.getMainLooper()).postDelayed({ updateLiveMessageMap() }, gap)
             }
         }
     }

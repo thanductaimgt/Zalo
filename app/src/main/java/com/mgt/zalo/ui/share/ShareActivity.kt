@@ -6,7 +6,6 @@ import androidx.activity.viewModels
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import kotlinx.android.synthetic.main.activity_share.*
 import com.mgt.zalo.R
 import com.mgt.zalo.base.BaseActivity
 import com.mgt.zalo.base.NotScrollableLinearLayoutManager
@@ -14,7 +13,8 @@ import com.mgt.zalo.common.ChooseRoomItemAdapter
 import com.mgt.zalo.common.SelectRoomItemAdapter
 import com.mgt.zalo.data_model.room.Room
 import com.mgt.zalo.data_model.room.RoomItem
-import com.mgt.zalo.util.RoomItemDiffCallback
+import com.mgt.zalo.util.diff_callback.RoomItemDiffCallback
+import kotlinx.android.synthetic.main.activity_share.*
 import javax.inject.Inject
 
 class ShareActivity : BaseActivity() {
@@ -30,27 +30,27 @@ class ShareActivity : BaseActivity() {
         requestFullScreen()
         setContentView(R.layout.activity_share, true)
 
-        selectedRecyclerViewAdapter = ChooseRoomItemAdapter(this, resourceManager, RoomItemDiffCallback())
+        selectedRecyclerViewAdapter = ChooseRoomItemAdapter(this, RoomItemDiffCallback())
         recyclerView.apply {
             adapter = selectedRecyclerViewAdapter
             layoutManager = LinearLayoutManager(this@ShareActivity, RecyclerView.HORIZONTAL, false)
         }
 
-        recentRecyclerViewAdapter = SelectRoomItemAdapter(RoomItemDiffCallback(), false, viewModel.liveSelectedRoomItems, utils, resourceManager)
+        recentRecyclerViewAdapter = SelectRoomItemAdapter(RoomItemDiffCallback(), false, viewModel.liveSelectedRoomItems)
         recentRecyclerView.apply {
             adapter = recentRecyclerViewAdapter
             layoutManager = NotScrollableLinearLayoutManager(this@ShareActivity)
             isNestedScrollingEnabled = false
         }
 
-        groupRecyclerViewAdapter = SelectRoomItemAdapter(RoomItemDiffCallback(), false, viewModel.liveSelectedRoomItems, utils, resourceManager)
+        groupRecyclerViewAdapter = SelectRoomItemAdapter(RoomItemDiffCallback(), false, viewModel.liveSelectedRoomItems)
         groupRecyclerView.apply {
             adapter = groupRecyclerViewAdapter
             layoutManager = NotScrollableLinearLayoutManager(this@ShareActivity)
             isNestedScrollingEnabled = false
         }
 
-        peerRecyclerViewAdapter = SelectRoomItemAdapter(RoomItemDiffCallback(), false, viewModel.liveSelectedRoomItems, utils, resourceManager)
+        peerRecyclerViewAdapter = SelectRoomItemAdapter(RoomItemDiffCallback(), false, viewModel.liveSelectedRoomItems)
         peerRecyclerView.apply {
             adapter = peerRecyclerViewAdapter
             layoutManager = NotScrollableLinearLayoutManager(this@ShareActivity)

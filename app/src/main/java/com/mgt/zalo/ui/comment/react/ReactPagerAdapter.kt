@@ -4,18 +4,16 @@ import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import kotlinx.android.synthetic.main.item_react_page.view.*
 import com.mgt.zalo.R
 import com.mgt.zalo.base.*
 import com.mgt.zalo.data_model.react.ReactPage
-import com.mgt.zalo.manager.ResourceManager
 import com.mgt.zalo.ui.story.story_detail.ReactAdapter
-import com.mgt.zalo.util.ReactDiffCallback
-import com.mgt.zalo.util.ReactPageDiffCallback
+import com.mgt.zalo.util.diff_callback.ReactDiffCallback
+import com.mgt.zalo.util.diff_callback.ReactPageDiffCallback
+import kotlinx.android.synthetic.main.item_react_page.view.*
 import javax.inject.Inject
 
 class ReactPagerAdapter @Inject constructor(
-        private val resourceManager: ResourceManager,
         diffCallback: ReactPageDiffCallback
 ) : BaseListAdapter<ReactPage, BaseViewHolder>(diffCallback) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseViewHolder {
@@ -27,7 +25,7 @@ class ReactPagerAdapter @Inject constructor(
     }
 
     inner class ReactPageViewHolder(itemView: View) : BaseViewHolder(itemView), BaseOnEventListener {
-        private val reactAdapter:ReactAdapter = ReactAdapter(this, resourceManager, ReactDiffCallback())
+        private val reactAdapter:ReactAdapter = ReactAdapter(this, ReactDiffCallback())
 
         override fun bind(position: Int) {
             itemView.recyclerView.adapter = reactAdapter

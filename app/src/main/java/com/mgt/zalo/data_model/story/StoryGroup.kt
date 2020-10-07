@@ -2,7 +2,7 @@ package com.mgt.zalo.data_model.story
 
 import com.google.firebase.firestore.DocumentSnapshot
 import com.mgt.zalo.data_model.User
-import java.util.HashMap
+import java.util.*
 
 data class StoryGroup(
         var id: String? = null,

@@ -22,13 +22,12 @@ import com.airbnb.lottie.LottieComposition;
 import com.airbnb.lottie.LottieCompositionFactory;
 import com.airbnb.lottie.LottieDrawable;
 import com.airbnb.lottie.RenderMode;
+import com.mgt.zalo.R;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 import javax.annotation.Nullable;
-
-import com.mgt.zalo.R;
 
 public class FaceView extends FrameLayout {
     public static final int POSITION_TOP_START = 0;

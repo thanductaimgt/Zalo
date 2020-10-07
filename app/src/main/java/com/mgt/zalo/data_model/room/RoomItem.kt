@@ -2,8 +2,8 @@ package com.mgt.zalo.data_model.room
 
 import com.google.firebase.firestore.DocumentSnapshot
 import com.mgt.zalo.data_model.BaseDataModel
-import com.mgt.zalo.manager.ResourceManager
 import com.mgt.zalo.data_model.RoomMember
+import com.mgt.zalo.manager.ResourceManager
 import java.util.*
 
 //mapping firestore data to POJO needs empty constructor

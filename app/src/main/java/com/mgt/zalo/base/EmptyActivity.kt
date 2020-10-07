@@ -1,7 +1,6 @@
 package com.mgt.zalo.base
 
 import android.view.ViewGroup
-import kotlinx.android.synthetic.main.activity_empty.*
 import com.mgt.zalo.R
 import com.mgt.zalo.data_model.media.Media
 import com.mgt.zalo.data_model.post.Diary
@@ -40,8 +39,8 @@ class EmptyActivity : BaseActivity() {
     }
 
     override fun onBackPressed() {
-        zaloFragmentManager.popTopFragment()
-        rootView.post(checkFinishRunnable)
+        zaloFragmentManager.popTopFragmentExceptLast()
+//        rootView.post(checkFinishRunnable)
     }
 
     companion object{

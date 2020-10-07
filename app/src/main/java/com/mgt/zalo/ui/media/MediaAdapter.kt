@@ -4,27 +4,23 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.squareup.picasso.Picasso
-import kotlinx.android.synthetic.main.fragment_media.*
-import kotlinx.android.synthetic.main.item_media_image.view.*
-import kotlinx.android.synthetic.main.item_media_video.view.*
 import com.mgt.zalo.R
 import com.mgt.zalo.base.BaseListAdapter
 import com.mgt.zalo.base.BaseViewHolder
 import com.mgt.zalo.data_model.media.ImageMedia
 import com.mgt.zalo.data_model.media.Media
 import com.mgt.zalo.data_model.media.VideoMedia
-import com.mgt.zalo.manager.PlaybackManager
-import com.mgt.zalo.manager.ResourceManager
-import com.mgt.zalo.util.MediaDiffCallback
 import com.mgt.zalo.util.TAG
+import com.mgt.zalo.util.diff_callback.MediaDiffCallback
 import com.mgt.zalo.util.smartLoad
+import com.squareup.picasso.Picasso
+import kotlinx.android.synthetic.main.fragment_media.*
+import kotlinx.android.synthetic.main.item_media_image.view.*
+import kotlinx.android.synthetic.main.item_media_video.view.*
 import javax.inject.Inject
 
 class MediaAdapter @Inject constructor(
         private val mediaFragment: MediaFragment,
-        private val resourceManager: ResourceManager,
-        private val playbackManager: PlaybackManager,
         diffCallback: MediaDiffCallback
 ) : BaseListAdapter<Media, BaseViewHolder>(diffCallback) {
     override fun getItemViewType(position: Int): Int {

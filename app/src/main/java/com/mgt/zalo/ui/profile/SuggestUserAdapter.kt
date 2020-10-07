@@ -4,21 +4,19 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
-import com.squareup.picasso.Picasso
-import kotlinx.android.synthetic.main.item_suggest_user.view.*
 import com.mgt.zalo.R
 import com.mgt.zalo.base.BaseListAdapter
 import com.mgt.zalo.base.BaseOnEventListener
 import com.mgt.zalo.base.BaseViewHolder
 import com.mgt.zalo.data_model.User
-import com.mgt.zalo.manager.ResourceManager
-import com.mgt.zalo.util.UserDiffCallback
+import com.mgt.zalo.util.diff_callback.UserDiffCallback
 import com.mgt.zalo.util.smartLoad
+import com.squareup.picasso.Picasso
+import kotlinx.android.synthetic.main.item_suggest_user.view.*
 import javax.inject.Inject
 
 class SuggestUserAdapter @Inject constructor(
         private val eventListener: BaseOnEventListener,
-        private val resourceManager: ResourceManager,
         diffCallback: UserDiffCallback
 ) : BaseListAdapter<User, SuggestUserAdapter.UserViewHolder>(diffCallback) {
     val followingUserIds = hashSetOf("0123456789")

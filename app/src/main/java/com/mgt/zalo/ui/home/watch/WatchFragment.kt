@@ -10,15 +10,15 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
-import kotlinx.android.synthetic.main.activity_home.*
-import kotlinx.android.synthetic.main.fragment_watch.*
-import kotlinx.android.synthetic.main.fragment_watch.viewPager
-import kotlinx.android.synthetic.main.item_watch.view.*
 import com.mgt.zalo.R
 import com.mgt.zalo.base.BaseFragment
 import com.mgt.zalo.data_model.post.Watch
 import com.mgt.zalo.ui.home.HomeActivity
 import com.mgt.zalo.util.TAG
+import kotlinx.android.synthetic.main.activity_home.*
+import kotlinx.android.synthetic.main.fragment_watch.*
+import kotlinx.android.synthetic.main.fragment_watch.viewPager
+import kotlinx.android.synthetic.main.item_watch.view.*
 import javax.inject.Inject
 
 

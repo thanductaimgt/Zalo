@@ -1,12 +1,12 @@
 package com.mgt.zalo.ui.comment.react
 
 import androidx.lifecycle.ViewModel
+import com.mgt.zalo.data_model.react.React
+import com.mgt.zalo.di.ViewModelKey
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.multibindings.IntoMap
-import com.mgt.zalo.data_model.react.React
-import com.mgt.zalo.di.ViewModelKey
 
 @Module(includes = [ReactModule.ProvideModule::class])
 interface ReactModule {

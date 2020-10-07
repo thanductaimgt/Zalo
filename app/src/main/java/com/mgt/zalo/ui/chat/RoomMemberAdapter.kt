@@ -3,18 +3,14 @@ package com.mgt.zalo.ui.chat
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.squareup.picasso.Picasso
-import kotlinx.android.synthetic.main.item_small_user_icon.view.*
 import com.mgt.zalo.R
-import com.mgt.zalo.base.BaseViewHolder
 import com.mgt.zalo.base.BaseListAdapter
-import com.mgt.zalo.manager.ResourceManager
+import com.mgt.zalo.base.BaseViewHolder
 import com.mgt.zalo.data_model.RoomMember
-import com.mgt.zalo.util.RoomMemberDiffCallback
-import com.mgt.zalo.util.smartLoad
+import com.mgt.zalo.util.diff_callback.RoomMemberDiffCallback
+import kotlinx.android.synthetic.main.item_small_user_icon.view.*
 
 class RoomMemberAdapter(
-        private val resourceManager: ResourceManager,
         roomMemberDiffCallback: RoomMemberDiffCallback
 ) : BaseListAdapter<RoomMember, RoomMemberAdapter.UserIconViewHolder>(roomMemberDiffCallback) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): UserIconViewHolder {
@@ -27,7 +23,7 @@ class RoomMemberAdapter(
 
     inner class UserIconViewHolder(itemView: View) : BaseViewHolder(itemView) {
         override fun bind(position: Int) {
-            Picasso.get().smartLoad(currentList[position].avatarUrl, resourceManager, itemView.userIconImgView) {
+            imageLoader.load(currentList[position].avatarUrl, itemView.userIconImgView) {
                 it.placeholder(R.drawable.default_peer_avatar)
                         .fit()
                         .centerCrop()

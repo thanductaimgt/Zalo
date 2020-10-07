@@ -2,13 +2,13 @@ package com.mgt.zalo.base
 
 import androidx.lifecycle.ViewModel
 import com.google.firebase.firestore.ListenerRegistration
-import io.reactivex.disposables.CompositeDisposable
 import com.mgt.zalo.ZaloApplication
 import com.mgt.zalo.manager.*
 import com.mgt.zalo.repository.Database
 import com.mgt.zalo.repository.Storage
 import com.mgt.zalo.service.NotificationService
 import com.mgt.zalo.util.Utils
+import io.reactivex.disposables.CompositeDisposable
 import javax.inject.Inject
 
 abstract class BaseViewModel: ViewModel() {

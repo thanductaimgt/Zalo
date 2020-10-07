@@ -1,12 +1,12 @@
 package com.mgt.zalo.manager
 
 import android.util.Log
+import com.mgt.zalo.util.TAG
+import com.mgt.zalo.util.addTo
 import io.reactivex.*
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
-import com.mgt.zalo.util.TAG
-import com.mgt.zalo.util.addTo
 import javax.inject.Inject
 import javax.inject.Singleton
 

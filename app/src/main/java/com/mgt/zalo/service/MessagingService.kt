@@ -2,9 +2,9 @@ package com.mgt.zalo.service
 
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
-import dagger.android.AndroidInjection
 import com.mgt.zalo.manager.SharedPrefsManager
 import com.mgt.zalo.repository.Database
+import dagger.android.AndroidInjection
 import javax.inject.Inject
 
 class MessagingService : FirebaseMessagingService() {

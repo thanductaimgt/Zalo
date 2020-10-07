@@ -12,11 +12,6 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.squareup.picasso.Picasso
-import kotlinx.android.synthetic.main.fragment_reply.*
-import kotlinx.android.synthetic.main.item_comment.*
-import kotlinx.android.synthetic.main.part_footer_comment_fragment.*
-import kotlinx.android.synthetic.main.part_footer_comment_fragment.playIcon
 import com.mgt.zalo.R
 import com.mgt.zalo.base.BaseFragment
 import com.mgt.zalo.base.BaseOnEventListener
@@ -29,10 +24,13 @@ import com.mgt.zalo.data_model.media.VideoMedia
 import com.mgt.zalo.data_model.react.React
 import com.mgt.zalo.manager.ExternalIntentManager
 import com.mgt.zalo.ui.comment.CommentAdapter
-import com.mgt.zalo.util.CommentDiffCallback
 import com.mgt.zalo.util.Constants
 import com.mgt.zalo.util.TAG
-import com.mgt.zalo.util.smartLoad
+import com.mgt.zalo.util.diff_callback.CommentDiffCallback
+import kotlinx.android.synthetic.main.fragment_reply.*
+import kotlinx.android.synthetic.main.item_comment.*
+import kotlinx.android.synthetic.main.part_footer_comment_fragment.*
+import kotlinx.android.synthetic.main.part_footer_comment_fragment.playIcon
 
 
 class ReplyFragment(val comment: Comment) : BaseFragment() {
@@ -49,7 +47,7 @@ class ReplyFragment(val comment: Comment) : BaseFragment() {
     }
 
     override fun onBindViews() {
-        replyAdapter = CommentAdapter(this, resourceManager, sessionManager, utils, CommentDiffCallback())
+        replyAdapter = CommentAdapter(this, CommentDiffCallback())
         replyAdapter.isReply = true
 
         recyclerView.adapter = replyAdapter
@@ -104,7 +102,7 @@ class ReplyFragment(val comment: Comment) : BaseFragment() {
         commentViewHolder = CommentAdapter.CommentViewHolder(
                 rootItemView,
                 commentEventListener,
-                sessionManager, utils, resourceManager
+                sessionManager, utils, resourceManager, imageLoader
         )
 
         commentViewHolder.apply {
@@ -290,14 +288,14 @@ class ReplyFragment(val comment: Comment) : BaseFragment() {
 
             when (media) {
                 is ImageMedia -> {
-                    Picasso.get().smartLoad(media.uri, resourceManager, mediaPreviewImgView) {
+                    imageLoader.load(media.uri, mediaPreviewImgView) {
                         it.fit().centerCrop()
                     }
                     playIcon.visibility = View.GONE
                 }
                 is VideoMedia -> {
                     resourceManager.getVideoThumbUri(media.uri!!) { uri ->
-                        Picasso.get().smartLoad(uri, resourceManager, mediaPreviewImgView) {
+                        imageLoader.load(uri, mediaPreviewImgView) {
                             it.fit().centerCrop()
                         }
                     }

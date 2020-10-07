@@ -2,13 +2,13 @@ package com.mgt.zalo.di
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import dagger.Binds
-import dagger.Module
-import dagger.multibindings.Multibinds
 import com.mgt.zalo.manager.CallService
 import com.mgt.zalo.manager.SipCallService
 import com.mgt.zalo.service.AlwaysRunningNotificationService
 import com.mgt.zalo.service.NotificationService
+import dagger.Binds
+import dagger.Module
+import dagger.multibindings.Multibinds
 import javax.inject.Singleton
 
 @Module

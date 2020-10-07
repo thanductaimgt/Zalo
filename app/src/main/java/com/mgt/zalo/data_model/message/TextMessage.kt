@@ -2,7 +2,7 @@ package com.mgt.zalo.data_model.message
 
 import android.content.Context
 import com.google.firebase.firestore.DocumentSnapshot
-import java.util.HashMap
+import java.util.*
 
 data class TextMessage(
         override var id: String? = null,

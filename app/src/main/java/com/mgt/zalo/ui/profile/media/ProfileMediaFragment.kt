@@ -5,7 +5,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import kotlinx.android.synthetic.main.fragment_profile_media.*
 import com.mgt.zalo.R
 import com.mgt.zalo.base.BaseFragment
 import com.mgt.zalo.common.MediaPreviewAdapter
@@ -13,7 +12,8 @@ import com.mgt.zalo.data_model.media.Media
 import com.mgt.zalo.ui.home.HomeActivity
 import com.mgt.zalo.ui.profile.ProfileFragment
 import com.mgt.zalo.ui.profile.ProfileViewModel
-import com.mgt.zalo.util.MediaDiffCallback
+import com.mgt.zalo.util.diff_callback.MediaDiffCallback
+import kotlinx.android.synthetic.main.fragment_profile_media.*
 import javax.inject.Inject
 
 class ProfileMediaFragment : BaseFragment() {
@@ -29,7 +29,7 @@ class ProfileMediaFragment : BaseFragment() {
     }
 
     override fun onBindViews() {
-        mediaPreviewAdapter = MediaPreviewAdapter(this, resourceManager, utils, playbackManager, MediaDiffCallback())
+        mediaPreviewAdapter = MediaPreviewAdapter(this, MediaDiffCallback())
         mediaGridView.adapter = mediaPreviewAdapter
     }
 

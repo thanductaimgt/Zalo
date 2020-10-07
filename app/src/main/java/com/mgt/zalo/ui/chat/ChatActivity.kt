@@ -21,14 +21,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
-import com.squareup.picasso.Picasso
-import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.disposables.Disposable
-import kotlinx.android.synthetic.main.activity_chat.*
-import kotlinx.android.synthetic.main.activity_chat.view.*
-import kotlinx.android.synthetic.main.bottom_sheet_message_actions.view.*
-import kotlinx.android.synthetic.main.bottom_sheet_upload.view.*
-import kotlinx.android.synthetic.main.part_message_sticker.view.*
 import com.mgt.zalo.R
 import com.mgt.zalo.base.BaseActivity
 import com.mgt.zalo.base.BaseView
@@ -42,7 +34,17 @@ import com.mgt.zalo.data_model.room.Room
 import com.mgt.zalo.data_model.room.RoomPeer
 import com.mgt.zalo.manager.ExternalIntentManager
 import com.mgt.zalo.ui.chat.emoji.EmojiFragment
-import com.mgt.zalo.util.*
+import com.mgt.zalo.util.Constants
+import com.mgt.zalo.util.GridSpacingItemDecoration
+import com.mgt.zalo.util.KeyboardHeightProvider
+import com.mgt.zalo.util.TAG
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.disposables.Disposable
+import kotlinx.android.synthetic.main.activity_chat.*
+import kotlinx.android.synthetic.main.activity_chat.view.*
+import kotlinx.android.synthetic.main.bottom_sheet_message_actions.view.*
+import kotlinx.android.synthetic.main.bottom_sheet_upload.view.*
+import kotlinx.android.synthetic.main.part_message_sticker.view.*
 import java.io.FileNotFoundException
 import java.util.concurrent.atomic.AtomicInteger
 import javax.inject.Inject
@@ -619,14 +621,12 @@ class ChatActivity : BaseActivity(), KeyboardHeightObserver {
                 Message.TYPE_TEXT -> imageView.visibility = View.GONE
                 Message.TYPE_CALL -> imageView.visibility = View.GONE
                 Message.TYPE_FILE -> {
-                    Picasso.get().load(utils.getResIdFromFileExtension(
-                            utils.getFileExtension((message as FileMessage).fileName)))
-                            .into(imageView)
+                    imageLoader.load(utils.getResIdFromFileExtension(
+                            utils.getFileExtension((message as FileMessage).fileName)), imageView)
                     imageView.visibility = View.VISIBLE
                 }
                 Message.TYPE_IMAGE -> {
-                    Picasso.get()
-                            .smartLoad((message as ImageMessage).url, resourceManager, imageView) {
+                    imageLoader.load((message as ImageMessage).url, imageView) {
                                 it.fit().centerCrop()
                             }
 
@@ -638,7 +638,7 @@ class ChatActivity : BaseActivity(), KeyboardHeightObserver {
                 }
                 Message.TYPE_VIDEO -> {
                     resourceManager.getVideoThumbUri((message as VideoMessage).url) { uri ->
-                        Picasso.get().smartLoad(uri, resourceManager, imageView) {
+                        imageLoader.load(uri, imageView) {
                             it.fit()
                                     .centerCrop()
                                     .error(R.drawable.load_image_fail)

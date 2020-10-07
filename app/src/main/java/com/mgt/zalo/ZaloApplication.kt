@@ -13,8 +13,6 @@ import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ProcessLifecycleOwner
 import androidx.multidex.MultiDex
-import dagger.android.AndroidInjector
-import dagger.android.DaggerApplication
 import com.mgt.zalo.di.DaggerAppComponent
 import com.mgt.zalo.manager.PermissionManager
 import com.mgt.zalo.manager.SessionManager
@@ -23,6 +21,8 @@ import com.mgt.zalo.repository.Database
 import com.mgt.zalo.repository.Storage
 import com.mgt.zalo.util.Constants
 import com.mgt.zalo.util.TAG
+import dagger.android.AndroidInjector
+import dagger.android.DaggerApplication
 import javax.inject.Inject
 
 class ZaloApplication : DaggerApplication(), CameraXConfig.Provider {

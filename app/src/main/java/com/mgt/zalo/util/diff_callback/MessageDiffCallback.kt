@@ -1,9 +1,9 @@
-package com.mgt.zalo.util
+package com.mgt.zalo.util.diff_callback
 
 import android.annotation.SuppressLint
 import androidx.recyclerview.widget.DiffUtil
-import com.mgt.zalo.data_model.message.Message
 import com.mgt.zalo.data_model.message.MediaMessage
+import com.mgt.zalo.data_model.message.Message
 import com.mgt.zalo.data_model.message.SeenMessage
 import javax.inject.Inject
 

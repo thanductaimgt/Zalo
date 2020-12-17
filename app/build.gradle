@@ -42,12 +42,12 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation 'androidx.appcompat:appcompat:1.2.0-alpha03'
-    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
+    implementation 'androidx.appcompat:appcompat:1.3.0-alpha02'
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.2'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-    testImplementation 'junit:junit:4.12'
-    androidTestImplementation 'androidx.test:runner:1.3.0-alpha05'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0-alpha05'
+    testImplementation 'junit:junit:4.13'
+    androidTestImplementation 'androidx.test:runner:1.3.0'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
 
     //material design
     //noinspection GradleDependency
@@ -62,12 +62,17 @@ dependencies {
     //recyclerView
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
 
-    //firebase
-    implementation 'com.google.firebase:firebase-database:19.2.1'
-    implementation 'com.google.firebase:firebase-core:17.3.0'
-    implementation 'com.google.firebase:firebase-firestore:21.4.2'
-    implementation 'com.google.firebase:firebase-storage:19.1.1'
-    implementation 'com.google.firebase:firebase-messaging:20.1.4'
+    implementation 'com.google.firebase:firebase-core:17.5.1'
+    implementation 'com.google.firebase:firebase-auth:19.4.0'
+    implementation 'com.google.firebase:firebase-database:19.5.0'
+    implementation 'com.google.firebase:firebase-firestore:21.7.1'
+    implementation 'com.google.firebase:firebase-storage:19.2.0'
+    implementation 'com.google.firebase:firebase-messaging:20.3.0'
+    //face detection
+    implementation 'com.google.firebase:firebase-ml-vision:19.0.2'
+    // If you want to detect face contours (landmark detection and classification
+    // don't require this additional model):
+//    implementation 'com.google.firebase:firebase-ml-vision-face-model'
 
     //lifecycle(livedata, process lifecycle, ...)
     implementation "androidx.lifecycle:lifecycle-extensions:2.2.0"
@@ -84,12 +89,12 @@ dependencies {
     implementation 'de.hdodenhof:circleimageview:3.0.0'
 
     // kotlin
-    implementation "androidx.core:core-ktx:1.2.0"
+    implementation "androidx.core:core-ktx:1.3.2"
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
 
     //lottie
-    implementation "com.airbnb.android:lottie:3.0.7"
+    implementation "com.airbnb.android:lottie:3.4.2"
 
     //rx java2
     implementation 'io.reactivex.rxjava2:rxandroid:2.1.1'
@@ -113,26 +118,30 @@ dependencies {
     kapt "com.google.dagger:dagger-android-processor:$daggerVersion"
 
     //by viewmodels
-    implementation 'androidx.fragment:fragment-ktx:1.2.3'
+    implementation 'androidx.fragment:fragment-ktx:1.2.5'
 
     //camerax
-    def camerax_version = '1.0.0-beta01'
+    def camerax_version = '1.0.0-beta10'
     implementation "androidx.camera:camera-core:${camerax_version}"
     implementation "androidx.camera:camera-camera2:${camerax_version}"
     // If you want to use the CameraX View class
-    implementation "androidx.camera:camera-view:1.0.0-alpha08"
+    implementation "androidx.camera:camera-view:1.0.0-alpha17"
     // If you want to use the CameraX Lifecycle library
     implementation "androidx.camera:camera-lifecycle:${camerax_version}"
     implementation 'com.google.guava:listenablefuture:9999.0-empty-to-avoid-conflict-with-guava'
 
-    //face detection
-    implementation 'com.google.firebase:firebase-ml-vision:24.0.1'
-    // If you want to detect face contours (landmark detection and classification
-    // don't require this additional model):
-    implementation 'com.google.firebase:firebase-ml-vision-face-model:19.0.0'
-
     // auto size edit text
     implementation 'com.github.ViksaaSkool:AutoFitEditText:53238e2d29'
+
+    //facebook sdk
+    implementation 'com.facebook.android:facebook-android-sdk:5.15.3'
+
+    //sms verify view
+    implementation ('com.alimuzaffar.lib:pinentryedittext:2.0.6') {
+        // Exclude is only needed if you already have
+        // androidx.appcompat as a dependency in your app.
+        exclude group: 'androidx.appcompat', module: 'appcompat'
+    }
 }
 repositories {
     mavenCentral()

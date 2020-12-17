@@ -13,8 +13,8 @@ import javax.inject.Inject
 
 
 class CallViewModel @Inject constructor(
-        intent: Intent,
-        listenerAudio:CallService.AudioCallListener
+        private val intent: Intent,
+        private val listenerAudio: CallService.AudioCallListener
 ) : BaseViewModel() {
     var isExternalSpeakerEnabled = false
     var isRecorderEnabled = true
@@ -29,7 +29,7 @@ class CallViewModel @Inject constructor(
 
     val liveCallState = MutableLiveData(SipSession.State.READY_TO_CALL)
 
-    val audioCall:CallService.AudioCall
+    lateinit var audioCall: CallService.AudioCall
 
     init {
         isCaller = intent.getBooleanExtra(Constants.IS_CALLER, false)
@@ -47,36 +47,40 @@ class CallViewModel @Inject constructor(
                 liveRoom.value!!.createdTime = it.createdTime
                 liveRoom.value!!.memberMap = it.memberMap
 
-                if(doNeedAddMessage){
+                if (doNeedAddMessage) {
                     messageManager.addNewMessagesToFirestore(liveRoom.value!!, contents, Message.TYPE_CALL)
                 }
-            }
-
-            audioCall = callService.makeAudioCall(liveRoom.value!!.peerId!!, listenerAudio)
-        } else {
-            audioCall = callService.takeAudioCall(intent, listenerAudio)
-
-            val peerPhone = audioCall.getPeerPhone()
-
-            database.getUserRoomPeer(peerPhone) {
-                liveRoom.value = RoomPeer(
-                        avatarUrl = it.avatarUrl,
-                        id = it.roomId,
-                        name = it.name,
-                        peerId = it.peerId
-                )
             }
         }
     }
 
-    fun addNewCallMessage(callType:Int, callTime:Int, isMissed:Boolean, isCancel:Boolean=false) {
+    fun makeAudioCall() {
+        audioCall = callService.makeAudioCall(liveRoom.value!!.peerId!!, listenerAudio)
+    }
+
+    fun takeAudioCall() {
+        audioCall = callService.takeAudioCall(intent, listenerAudio)
+
+        val peerPhone = audioCall.getPeerPhone()
+
+        database.getUserRoomPeer(peerPhone) {
+            liveRoom.value = RoomPeer(
+                    avatarUrl = it.avatarUrl,
+                    id = it.roomId,
+                    name = it.name,
+                    peerId = it.peerId
+            )
+        }
+    }
+
+    fun addNewCallMessage(callType: Int, callTime: Int, isMissed: Boolean, isCancel: Boolean = false) {
         val contents = ArrayList<String>().apply {
             add("$callType.$callTime.$isMissed.$isCancel")
         }
-        if(liveRoom.value!!.memberMap==null){
+        if (liveRoom.value!!.memberMap == null) {
             this.contents = contents
             doNeedAddMessage = true
-        }else{
+        } else {
             messageManager.addNewMessagesToFirestore(liveRoom.value!!, contents, Message.TYPE_CALL)
         }
     }

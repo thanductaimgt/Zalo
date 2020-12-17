@@ -87,6 +87,11 @@
     <string name="label_upload_service">Dịch vụ upload</string>
     <string name="label_follow">Theo dõi</string>
     <string name="label_report_comment">Tìm hỗ trợ hoặc báo cáo bình luận</string>
+    <string name="label_validate_phone">Xác nhận số điện thoại</string>
+    <string name="label_change">Thay đổi</string>
+    <string name="label_confirm">Xác nhận</string>
+    <string name="label_validate_code">Nhập mã kích hoạt</string>
+    <string name="label_resend_code">Gửi lại mã</string>
 
     <string name="label_like">Thích</string>
     <string name="label_love">Thả tim</string>
@@ -174,9 +179,18 @@
     <string name="description_all">Tất cả</string>
     <string name="description_react">Bày tỏ cảm xúc về bình luận này</string>
     <string name="description_comment_deleted">Đã xóa bình luận</string>
+    <string name="description_register_name">Sử dụng tên thật giúp bạn bè dễ dàng nhận ra bạn.</string>
+    <string name="description_register_phone">Nhập số điện thoại của bạn để tạo tài khoản mới.</string>
+    <string name="description_policy">Tiếp tục có nghĩa là bạn đồng ý với các <u>điều khoản</u> sử dụng Zalo</string>
+    <string name="description_validate_phone">Chúng tôi sẽ gửi mã xác nhận đến số điện thoại trên. Vui lòng xác nhận số điện thoại này là đúng.</string>
+    <string name="description_validate_code">Vui lòng không chia sẽ mã xác thực để tránh mất tài khoản</string>
+    <string name="description_validate_code_sent">Đã gửi mã đến số %s</string>
+    <string name="description_check_sms">Xin kiểm tra SMS và điền mã xác nhận bên dưới</string>
+    <string name="description_invalid_phone">Số điện thoại không hợp lệ</string>
 
 
     <string name="hint_phone_number">Số điện thoại</string>
+    <string name="hint_name">Tên đầy đủ</string>
     <string name="hint_password">Mật khẩu</string>
     <string name="hint_message">Tin nhắn</string>
     <string name="hint_search">Tìm kiếm</string>

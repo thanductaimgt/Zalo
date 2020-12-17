@@ -26,6 +26,7 @@ import com.mgt.zalo.ui.edit_media.EditMediaFragment
 import com.mgt.zalo.ui.media.MediaFragment
 import com.mgt.zalo.ui.post_detail.PostDetailFragment
 import com.mgt.zalo.ui.profile.ProfileFragment
+import com.mgt.zalo.ui.sign_up.validate_phone.ValidatePhoneFragment
 import com.mgt.zalo.ui.story.StoryFragment
 import com.mgt.zalo.ui.story.story_detail.StoryDetailFragment
 import com.mgt.zalo.util.TAG
@@ -203,6 +204,12 @@ class ZaloFragmentManager @Inject constructor(
 
     fun removeStoryDetailFragment() {
         removeFragment((null as StoryDetailFragment?).TAG)
+    }
+
+    fun addValidatePhoneFragment(phone:String): ValidatePhoneFragment {
+        return addFragment(ValidatePhoneFragment::class, Bundle().apply {
+            putString(BaseFragment.ARG_1, phone)
+        })
     }
 
     // return true if any fragment popped out of stack

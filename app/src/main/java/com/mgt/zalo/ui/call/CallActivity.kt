@@ -47,20 +47,6 @@ class CallActivity : BaseActivity() {
         }
     }
 
-    override fun initAll() {
-        try {
-            onBindViews()
-            onViewsBound()
-        } catch (e: Exception) {
-            alertDialog.show(supportFragmentManager,
-                    getString(R.string.label_error_occurred),
-                    "${getString(R.string.label_error)}: ${e.message}",
-                    button1Action = { finish() })
-
-            e.printStackTrace()
-        }
-    }
-
     @Suppress("DEPRECATION")
     override fun onBindViews() {
         // show activity if screen is locked or turn off
@@ -84,12 +70,7 @@ class CallActivity : BaseActivity() {
 
         setContentView(R.layout.activity_call, true)
 
-        if (viewModel.isCaller) {
-            nameTextView.text = viewModel.liveRoom.value!!.getDisplayName(resourceManager)
-            imageLoader.load(viewModel.liveRoom.value!!.avatarUrl, watchOwnerAvatarImgView) {
-                it.fit().centerCrop()
-            }
-        } else {
+        if (!viewModel.isCaller) {
             statusTextView.text = getString(R.string.description_incoming_call)
 
             answerImgView.visibility = View.VISIBLE
@@ -142,16 +123,33 @@ class CallActivity : BaseActivity() {
             }
         })
 
-        viewModel.liveRoom.observe(this, Observer { roomPeer ->
-            nameTextView.text = roomPeer.getDisplayName(resourceManager)
-            imageLoader.load(roomPeer.avatarUrl, watchOwnerAvatarImgView) {
-                it.fit().centerCrop()
+        viewModel.liveRoom.observe(this, Observer {
+            if (viewModel.isCaller) {
+                nameTextView.text = viewModel.liveRoom.value!!.getDisplayName(resourceManager)
+                imageLoader.load(viewModel.liveRoom.value!!.avatarUrl, watchOwnerAvatarImgView) {
+                    it.fit().centerCrop()
+                }
             }
         })
 
         initAudioManager()
 
         keyguardManager = getSystemService(Context.KEYGUARD_SERVICE) as KeyguardManager
+
+        try {
+            if (viewModel.isCaller) {
+                viewModel.makeAudioCall()
+            } else {
+                viewModel.takeAudioCall()
+            }
+        } catch (t: Throwable) {
+            alertDialog.show(supportFragmentManager,
+                    getString(R.string.label_error_occurred),
+                    "${getString(R.string.label_error)}: ${t.message}",
+                    button1Action = { finish() })
+
+            t.printStackTrace()
+        }
     }
 
     private fun initAudioManager() {

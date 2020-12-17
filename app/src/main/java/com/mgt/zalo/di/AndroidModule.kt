@@ -28,6 +28,8 @@ import com.mgt.zalo.ui.profile.ProfileFragment
 import com.mgt.zalo.ui.profile.ProfileModule
 import com.mgt.zalo.ui.share.ShareActivity
 import com.mgt.zalo.ui.share.ShareModule
+import com.mgt.zalo.ui.sign_up.SignUpActivity
+import com.mgt.zalo.ui.sign_up.validate_phone.ValidatePhoneFragment
 import com.mgt.zalo.ui.story.StoryFragment
 import com.mgt.zalo.ui.story.StoryModule
 import com.mgt.zalo.ui.story.story_detail.StoryDetailFragment
@@ -70,6 +72,9 @@ interface AndroidModule {
     @ContributesAndroidInjector
     fun emptyActivity(): EmptyActivity
 
+    @ContributesAndroidInjector
+    fun signUpActivity(): SignUpActivity
+
     //service
 
     @ContributesAndroidInjector
@@ -103,4 +108,7 @@ interface AndroidModule {
 
     @ContributesAndroidInjector(modules = [StoryDetailModule::class])
     fun storyDetailFragment(): StoryDetailFragment
+
+    @ContributesAndroidInjector
+    fun validatePhoneFragment(): ValidatePhoneFragment
 }

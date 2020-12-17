@@ -24,7 +24,7 @@ abstract class OnHoldListener : View.OnTouchListener {
             MotionEvent.ACTION_DOWN -> {
                 initX = event.x
                 initY = event.y
-                handler.postDelayed(mLongPressed, ViewConfiguration.getLongPressTimeout().toLong())
+                handler.postDelayed(mLongPressed, ViewConfiguration.getLongPressTimeout().toLong()/2)
                 true
             }
             MotionEvent.ACTION_CANCEL, MotionEvent.ACTION_MOVE -> {

@@ -91,12 +91,16 @@ abstract class BaseFragment : DaggerFragment(), BaseOnEventListener, BaseView {
     }
 
     private fun initParentFM() {
-        this.parentZaloFragmentManager = if (parent is BaseActivity) {
-            (parent as BaseActivity).zaloFragmentManager
-        } else if (parent is BaseFragment) {
-            (parent as BaseFragment).fragmentManager()
-        } else {
-            (parent as BaseBottomSheetFragment).zaloFragmentManager
+        this.parentZaloFragmentManager = when (parent) {
+            is BaseActivity -> {
+                (parent as BaseActivity).zaloFragmentManager
+            }
+            is BaseFragment -> {
+                (parent as BaseFragment).fragmentManager()
+            }
+            else -> {
+                (parent as BaseBottomSheetFragment).zaloFragmentManager
+            }
         }
     }
 

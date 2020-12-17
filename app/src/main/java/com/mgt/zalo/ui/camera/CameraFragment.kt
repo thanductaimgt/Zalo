@@ -119,7 +119,7 @@ class CameraFragment : BaseFragment() {
                 preview = Preview.Builder()
                         .setTargetResolution(resolution)
                         .build()
-                        .apply { setSurfaceProvider(previewView.previewSurfaceProvider) }
+                        .apply { setSurfaceProvider(previewView.surfaceProvider) }
 
                 imageCapture = ImageCapture.Builder()
                         .setTargetResolution(resolution)
@@ -135,7 +135,7 @@ class CameraFragment : BaseFragment() {
         Log.d(TAG, "unbind all")
 
         if (isCameraBinding) {
-            CameraX.unbindAll()
+            cameraProviderFuture.get().unbindAll()
             isCameraBinding = false
         }
     }

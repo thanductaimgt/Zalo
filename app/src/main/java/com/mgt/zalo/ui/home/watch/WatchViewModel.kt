@@ -59,7 +59,7 @@ class WatchViewModel @Inject constructor() : BaseViewModel() {
                 numberLimit = 10
         ) { watches ->
             lastWatches = watches
-            upperBoundTime = watches.minBy { it.createdTime!! }?.createdTime
+            upperBoundTime = watches.minByOrNull { it.createdTime!! }?.createdTime
             Log.d(TAG, "more upper: $upperBoundTime")
             updateLiveWatches()
             isLoading = false

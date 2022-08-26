@@ -92,7 +92,7 @@ class DiaryViewModel @Inject constructor() : BaseViewModel() {
                 numberLimit = 15
         ) { diaries ->
             lastDiaries = diaries
-            upperBoundTime = diaries.minBy { it.createdTime!! }?.createdTime
+            upperBoundTime = diaries.minByOrNull { it.createdTime!! }?.createdTime
             Log.d(TAG, "more upper: $upperBoundTime")
             updateLiveDiaries()
             isLoading = false

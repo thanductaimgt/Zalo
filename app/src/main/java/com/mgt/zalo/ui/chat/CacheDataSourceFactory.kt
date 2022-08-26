@@ -1,17 +1,18 @@
 package com.mgt.zalo.ui.chat
 
 import android.content.Context
-import com.google.android.exoplayer2.upstream.*
+import com.google.android.exoplayer2.upstream.DataSource
+import com.google.android.exoplayer2.upstream.DefaultDataSource
+import com.google.android.exoplayer2.upstream.FileDataSource
 import com.google.android.exoplayer2.upstream.cache.CacheDataSink
 import com.google.android.exoplayer2.upstream.cache.CacheDataSource
 import com.google.android.exoplayer2.upstream.cache.LeastRecentlyUsedCacheEvictor
 import com.google.android.exoplayer2.upstream.cache.SimpleCache
-import com.google.android.exoplayer2.util.Util
-import com.mgt.zalo.R
 import java.io.File
 
 class CacheDataSourceFactory(private val context: Context, private val maxCacheSize: Long, private val maxFileSize: Long) : DataSource.Factory {
-    private val defaultDataSourceFactory: DefaultDataSourceFactory
+    private val defaultDataSourceFactory: DefaultDataSource.Factory =
+        DefaultDataSource.Factory(this.context)
 
     @Suppress("DEPRECATION")
     override fun createDataSource(): DataSource {
@@ -27,14 +28,6 @@ class CacheDataSourceFactory(private val context: Context, private val maxCacheS
             }
         }
         return dataSource!!
-    }
-
-    init {
-        val userAgent: String = Util.getUserAgent(context, context.getString(R.string.label_app_name))
-        val bandwidthMeter = DefaultBandwidthMeter.Builder(context).build()
-        defaultDataSourceFactory = DefaultDataSourceFactory(this.context,
-                bandwidthMeter,
-                DefaultHttpDataSourceFactory(userAgent, bandwidthMeter))
     }
 
     companion object {

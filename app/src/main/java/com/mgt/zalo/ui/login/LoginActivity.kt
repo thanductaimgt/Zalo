@@ -62,16 +62,16 @@ class LoginActivity : BaseActivity() {
                         setComposition(it)
                         playAnimation()
                         addAnimatorListener(object : Animator.AnimatorListener {
-                            override fun onAnimationRepeat(p0: Animator?) {
+                            override fun onAnimationRepeat(p0: Animator) {
                             }
 
-                            override fun onAnimationCancel(p0: Animator?) {
+                            override fun onAnimationCancel(p0: Animator) {
                             }
 
-                            override fun onAnimationStart(p0: Animator?) {
+                            override fun onAnimationStart(p0: Animator) {
                             }
 
-                            override fun onAnimationEnd(p0: Animator?) {
+                            override fun onAnimationEnd(p0: Animator) {
                                 startActivity(Intent(this@LoginActivity, HomeActivity::class.java))
 
                                 finish()

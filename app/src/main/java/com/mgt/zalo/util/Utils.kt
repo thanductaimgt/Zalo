@@ -37,7 +37,6 @@ import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
 import javax.inject.Singleton
-import kotlin.collections.HashMap
 import kotlin.math.max
 import kotlin.math.min
 
@@ -410,16 +409,16 @@ fun ImageProxy.toBitmap(): Bitmap {
 fun ViewPager2.animatePagerTransition(forward: Boolean) {
     val animator: ValueAnimator = ValueAnimator.ofInt(0, width - if (forward) paddingLeft else paddingRight)
     animator.addListener(object : Animator.AnimatorListener {
-        override fun onAnimationStart(animation: Animator?) {}
-        override fun onAnimationEnd(animation: Animator?) {
+        override fun onAnimationStart(animation: Animator) {}
+        override fun onAnimationEnd(animation: Animator) {
             endFakeDrag()
         }
 
-        override fun onAnimationCancel(animation: Animator?) {
+        override fun onAnimationCancel(animation: Animator) {
             endFakeDrag()
         }
 
-        override fun onAnimationRepeat(animation: Animator?) {}
+        override fun onAnimationRepeat(animation: Animator) {}
     })
     animator.interpolator = LinearInterpolator()
     animator.addUpdateListener(object : ValueAnimator.AnimatorUpdateListener {

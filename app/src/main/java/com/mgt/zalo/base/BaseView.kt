@@ -57,7 +57,11 @@ interface BaseView {
 //        rootView.updatePadding(top = statusBarHeight)
     }
 
-    private fun makeRoomForStatusBarInternal(targetView: View, statusBarHeight: Int, @MakeRoomType makeRoomType: Int = MAKE_ROOM_TYPE_PADDING) {
+    fun makeRoomForStatusBarInternal(
+        targetView: View,
+        statusBarHeight: Int,
+        @MakeRoomType makeRoomType: Int = MAKE_ROOM_TYPE_PADDING
+    ) {
         if (makeRoomType == MAKE_ROOM_TYPE_PADDING) {
             targetView.updatePadding(top = targetView.paddingTop + statusBarHeight)
         } else {

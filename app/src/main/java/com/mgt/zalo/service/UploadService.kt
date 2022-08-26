@@ -58,7 +58,7 @@ class UploadService : BaseService() {
                 application,
                 notificationId,
                 notificationIntent,
-                PendingIntent.FLAG_UPDATE_CURRENT
+                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
 
         val cancelIntent = Intent(application, UploadService::class.java).apply {
@@ -73,8 +73,12 @@ class UploadService : BaseService() {
                 .setContentIntent(notificationPendingIntent)
                 .setSmallIcon(R.drawable.app_icon_transparent)
 //                .setLargeIcon(roomAvatarBitmap)
-                .addAction(R.drawable.cancel, application.getString(R.string.label_cancel),
-                        PendingIntent.getActivity(application, getNotificationActionRequestCode(notificationId), cancelIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+                .addAction(
+                    R.drawable.cancel, application.getString(R.string.label_cancel),
+                    PendingIntent.getActivity(
+                        application, getNotificationActionRequestCode(notificationId), cancelIntent,
+                        PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE
+                    )
                 )
                 .setAutoCancel(false)
                 .setOnlyAlertOnce(true)
@@ -120,7 +124,7 @@ class UploadService : BaseService() {
                                     application,
                                     notificationId,
                                     notificationIntent,
-                                    PendingIntent.FLAG_UPDATE_CURRENT
+                                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
                             )
 
                             NotificationManagerCompat.from(this).notify(

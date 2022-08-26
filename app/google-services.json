@@ -34,6 +34,35 @@
           ]
         }
       }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:345164104932:android:a04aaaa677119e4de158f1",
+        "android_client_info": {
+          "package_name": "com.mgt.zalo.debug"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "345164104932-5q05t6vboq4brnkb8n3urvcqr9t47n7c.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDIreRPE1lqsvkSi7BpZlaUaZe3lwxiMLw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "345164104932-5q05t6vboq4brnkb8n3urvcqr9t47n7c.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
     }
   ],
   "configuration_version": "1"

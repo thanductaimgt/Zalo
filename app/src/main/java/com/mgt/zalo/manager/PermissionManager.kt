@@ -2,6 +2,7 @@ package com.mgt.zalo.manager
 
 import android.Manifest
 import android.app.Activity
+import android.os.Build
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.PermissionChecker
@@ -35,19 +36,14 @@ class PermissionManager @Inject constructor(
     }
 
     companion object {
-        private val allPermissionsId = arrayOf(
-                Manifest.permission.USE_SIP,
-                Manifest.permission.INTERNET,
-                Manifest.permission.READ_EXTERNAL_STORAGE,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                Manifest.permission.ACCESS_WIFI_STATE,
-                Manifest.permission.RECORD_AUDIO,
-                Manifest.permission.WAKE_LOCK,
-                Manifest.permission.MODIFY_AUDIO_SETTINGS,
-                Manifest.permission.RECEIVE_BOOT_COMPLETED,
-                Manifest.permission.CAMERA,
-                Manifest.permission.FOREGROUND_SERVICE
-        )
+        private val allPermissionsId = arrayListOf(
+            Manifest.permission.RECORD_AUDIO,
+            Manifest.permission.CAMERA
+        ).apply {
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {
+                add(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+            }
+        }.toTypedArray()
 
         const val PERMISSIONS_REQUEST = 1234
     }

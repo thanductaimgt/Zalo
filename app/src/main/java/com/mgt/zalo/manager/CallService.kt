@@ -104,7 +104,12 @@ class SipCallService @Inject constructor(
         sipManager = SipManager.newInstance(application)
 
         val intent = Intent(Constants.ACTION_CALL)
-        val pendingIntent: PendingIntent = PendingIntent.getBroadcast(application, 0, intent, Intent.FILL_IN_DATA)
+        val pendingIntent: PendingIntent = PendingIntent.getBroadcast(
+            application,
+            0,
+            intent,
+            Intent.FILL_IN_DATA or PendingIntent.FLAG_MUTABLE
+        )
 
         openSip(pendingIntent)
 

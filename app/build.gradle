@@ -1,113 +1,289 @@
-apply plugin: 'com.android.application'
-apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-android-extensions'
-apply plugin: 'kotlin-kapt'
-apply plugin: 'com.google.gms.google-services'
-
-android {
-    compileSdkVersion 30
-    buildToolsVersion "30.0.2"
-    defaultConfig {
-        applicationId "com.mgt.zalo"
-        minSdkVersion 21
-        targetSdkVersion 30
-        versionCode 1
-        versionName "1.0"
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-
-        multiDexEnabled true
-
-        vectorDrawables.useSupportLibrary = true
-    }
-    buildTypes {
-        release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            multiDexKeepFile file('multidex-config.txt')
-        }
-    }
-    compileOptions {
-        sourceCompatibility = '1.8'
-        targetCompatibility = '1.8'
-    }
-    kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_1_8.toString()
-    }
-//    android {
-//        lintOptions {
-//            disable 'RestrictedApi'
+//apply plugin: 'com.android.application'
+//apply plugin: 'kotlin-android'
+//apply plugin: 'kotlin-android-extensions'
+//apply plugin: 'kotlin-kapt'
+//apply plugin: 'com.google.gms.google-services'
+//
+//android {
+//    compileSdkVersion 30
+//    buildToolsVersion "30.0.2"
+//    defaultConfig {
+//        applicationId "com.mgt.zalo"
+//        minSdkVersion 21
+//        targetSdkVersion 30
+//        versionCode 1
+//        versionName "1.0"
+//        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+//
+//        multiDexEnabled true
+//
+//        vectorDrawables.useSupportLibrary = true
+//    }
+//    buildTypes {
+//        release {
+//            minifyEnabled false
+//            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+//            multiDexKeepFile file('multidex-config.txt')
 //        }
 //    }
+//    compileOptions {
+//        sourceCompatibility = '1.8'
+//        targetCompatibility = '1.8'
+//    }
+//    kotlinOptions {
+//        jvmTarget = JavaVersion.VERSION_1_8.toString()
+//    }
+////    android {
+////        lintOptions {
+////            disable 'RestrictedApi'
+////        }
+////    }
+//}
+//
+//dependencies {
+//    implementation fileTree(dir: 'libs', include: ['*.jar'])
+//    implementation 'androidx.appcompat:appcompat:1.3.0-alpha02'
+//    implementation 'androidx.constraintlayout:constraintlayout:2.0.2'
+//    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+//    testImplementation 'junit:junit:4.13'
+//    androidTestImplementation 'androidx.test:runner:1.3.0'
+//    androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
+//
+//    //material design
+//    //noinspection GradleDependency
+//    implementation 'com.google.android.material:material:1.2.0-alpha02'
+//
+//    //view pager
+//    implementation "androidx.viewpager2:viewpager2:1.0.0"
+//
+//    //picasso
+//    implementation 'com.squareup.picasso:picasso:2.71828'
+//
+//    //recyclerView
+//    implementation 'androidx.recyclerview:recyclerview:1.1.0'
+//
+//    implementation 'com.google.firebase:firebase-core:17.5.1'
+//    implementation 'com.google.firebase:firebase-auth:19.4.0'
+//    implementation 'com.google.firebase:firebase-database:19.5.0'
+//    implementation 'com.google.firebase:firebase-firestore:21.7.1'
+//    implementation 'com.google.firebase:firebase-storage:19.2.0'
+//    implementation 'com.google.firebase:firebase-messaging:20.3.0'
+//    //face detection
+//    implementation 'com.google.firebase:firebase-ml-vision:19.0.2'
+//    // If you want to detect face contours (landmark detection and classification
+//    // don't require this additional model):
+////    implementation 'com.google.firebase:firebase-ml-vision-face-model'
+//
+//    //lifecycle(livedata, process lifecycle, ...)
+//    implementation "androidx.lifecycle:lifecycle-extensions:2.2.0"
+//    implementation "androidx.lifecycle:lifecycle-common-java8:2.2.0"
+//
+//    //view model
+//    implementation "androidx.lifecycle:lifecycle-viewmodel:2.2.0"
+//    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.2.0"
+//
+//    //multiDex
+//    implementation 'com.android.support:multidex:1.0.3'
+//
+//    //circular imageView
+//    implementation 'de.hdodenhof:circleimageview:3.0.0'
+//
+//    // kotlin
+//    implementation "androidx.core:core-ktx:1.3.2"
+//    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+//    implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
+//
+//    //lottie
+//    implementation "com.airbnb.android:lottie:3.4.2"
+//
+//    //rx java2
+//    implementation 'io.reactivex.rxjava2:rxandroid:2.1.1'
+//    implementation 'io.reactivex.rxjava2:rxjava:2.2.9'
+//
+//    //zoom, drag, ... image
+//    implementation 'com.github.chrisbanes:PhotoView:2.3.0'
+//
+//    //round corners imageview
+//    implementation 'com.makeramen:roundedimageview:2.3.0'
+//
+//    //play video
+//    implementation 'com.google.android.exoplayer:exoplayer:2.11.1'
+//
+//    //dagger
+//    api "com.google.dagger:dagger:$daggerVersion"
+//    kapt "com.google.dagger:dagger-compiler:$daggerVersion"
+//    api "com.google.dagger:dagger-android:$daggerVersion"
+//    api "com.google.dagger:dagger-android-support:$daggerVersion"
+//    // if you use the support libraries
+//    kapt "com.google.dagger:dagger-android-processor:$daggerVersion"
+//
+//    //by viewmodels
+//    implementation 'androidx.fragment:fragment-ktx:1.2.5'
+//
+//    //camerax
+//    def camerax_version = '1.2.0-alpha02'
+//    implementation "androidx.camera:camera-core:${camerax_version}"
+//    implementation "androidx.camera:camera-camera2:${camerax_version}"
+//    // If you want to use the CameraX View class
+//    implementation "androidx.camera:camera-view:${camerax_version}"
+//    // If you want to use the CameraX Lifecycle library
+//    implementation "androidx.camera:camera-lifecycle:${camerax_version}"
+//    implementation 'com.google.guava:listenablefuture:9999.0-empty-to-avoid-conflict-with-guava'
+//
+//    // auto size edit text
+//    implementation 'com.github.ViksaaSkool:AutoFitEditText:53238e2d29'
+//
+//    //facebook sdk
+//    implementation 'com.facebook.android:facebook-android-sdk:5.15.3'
+//
+//    //sms verify view
+//    implementation ('com.alimuzaffar.lib:pinentryedittext:2.0.6') {
+//        // Exclude is only needed if you already have
+//        // androidx.appcompat as a dependency in your app.
+//        exclude group: 'androidx.appcompat', module: 'appcompat'
+//    }
+//}
+//repositories {
+//    mavenCentral()
+//}
+
+//
+
+plugins {
+    id 'com.android.application'
+    id 'org.jetbrains.kotlin.android'
+//    id 'kotlin-parcelize'
+    id 'kotlin-kapt'
+    id 'com.google.gms.google-services'
+    id 'com.google.firebase.crashlytics'
+    id 'kotlin-android-extensions'
+}
+
+android {
+    compileSdk buildConfig.compileSdk
+
+//    signingConfigs {
+//        release {
+//            storeFile file(getProp("signConfigs.storeFile"))
+//            storePassword getProp("signConfigs.storePassword")
+//            keyAlias getProp("signConfigs.keyAlias")
+//            keyPassword getProp("signConfigs.keyPassword")
+//        }
+//    }
+
+    defaultConfig {
+        applicationId "com.mgt.zalo"
+        minSdk buildConfig.minSdkVersion
+        targetSdk buildConfig.targetSdk
+        versionCode buildConfig.versionCode
+        versionName buildConfig.versionName
+        setProperty("archivesBaseName", "zalo-${versionName}")
+
+//        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+//
+//        resValue "string", "BASE_URL_MANAGEMENT_TEST", getProp("baseUrl.managementTest")
+//        resValue "string", "BASE_URL_MANAGEMENT_LIVE", getProp("baseUrl.managementLive")
+//        resValue "string", "BASE_URL_BUSINESS_TEST", getProp("baseUrl.businessTest")
+//        resValue "string", "BASE_URL_BUSINESS_LIVE", getProp("baseUrl.businessLive")
+    }
+
+    buildTypes {
+//        release {
+//            signingConfig signingConfigs.release
+//
+//            minifyEnabled true
+//            debuggable false
+//            shrinkResources true
+//            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+//        }
+        debug {
+            applicationIdSuffix '.debug'
+
+            debuggable true
+            shrinkResources false
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = '1.8'
+        freeCompilerArgs = ['-Xjvm-default=all-compatibility']
+    }
+    buildFeatures {
+        viewBinding true
+    }
 }
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation 'androidx.appcompat:appcompat:1.3.0-alpha02'
-    implementation 'androidx.constraintlayout:constraintlayout:2.0.2'
-    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-    testImplementation 'junit:junit:4.13'
-    androidTestImplementation 'androidx.test:runner:1.3.0'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
+//    implementation project(":dls")
+//    implementation project(":livedata")
 
-    //material design
-    //noinspection GradleDependency
-    implementation 'com.google.android.material:material:1.2.0-alpha02'
+    implementation deps.support.coreKtx
+    implementation deps.support.appcompat
+    implementation deps.support.constraintlayout
+    implementation deps.support.material
+//    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
 
-    //view pager
+    //    testImplementation 'junit:junit:4.13.2'
+//    androidTestImplementation 'androidx.test.ext:junit:1.1.3'
+//    androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
+
     implementation "androidx.viewpager2:viewpager2:1.0.0"
 
-    //picasso
     implementation 'com.squareup.picasso:picasso:2.71828'
 
-    //recyclerView
-    implementation 'androidx.recyclerview:recyclerview:1.1.0'
+////lifecycle(livedata, process lifecycle, ...)
+    implementation "androidx.lifecycle:lifecycle-extensions:2.2.0"
+//    implementation "androidx.lifecycle:lifecycle-common-java8:2.2.0"
+    implementation "androidx.lifecycle:lifecycle-viewmodel:2.4.0"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.4.0"
 
-    implementation 'com.google.firebase:firebase-core:17.5.1'
-    implementation 'com.google.firebase:firebase-auth:19.4.0'
-    implementation 'com.google.firebase:firebase-database:19.5.0'
-    implementation 'com.google.firebase:firebase-firestore:21.7.1'
-    implementation 'com.google.firebase:firebase-storage:19.2.0'
-    implementation 'com.google.firebase:firebase-messaging:20.3.0'
+    // Import the Firebase BoM
+    implementation platform('com.google.firebase:firebase-bom:30.3.1')
+    // Add the dependency for the Firebase SDK for Google Analytics
+    // When using the BoM, don't specify versions in Firebase dependencies
+    implementation 'com.google.firebase:firebase-core'
+    implementation 'com.google.firebase:firebase-auth'
+    implementation 'com.google.firebase:firebase-database'
+    implementation 'com.google.firebase:firebase-firestore'
+    implementation 'com.google.firebase:firebase-storage'
+    implementation 'com.google.firebase:firebase-messaging'
+//    implementation 'com.google.firebase:firebase-analytics-ktx'
+//    implementation 'com.google.firebase:firebase-crashlytics-ktx'
     //face detection
-    implementation 'com.google.firebase:firebase-ml-vision:19.0.2'
+    implementation 'com.google.android.gms:play-services-vision:20.0.0'
+    implementation 'com.google.firebase:firebase-ml-vision:24.0.3'
     // If you want to detect face contours (landmark detection and classification
     // don't require this additional model):
 //    implementation 'com.google.firebase:firebase-ml-vision-face-model'
 
-    //lifecycle(livedata, process lifecycle, ...)
-    implementation "androidx.lifecycle:lifecycle-extensions:2.2.0"
-    implementation "androidx.lifecycle:lifecycle-common-java8:2.2.0"
-
-    //view model
-    implementation "androidx.lifecycle:lifecycle-viewmodel:2.2.0"
-    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.2.0"
+    //round corners imageview
+    implementation deps.roundedImageView
+    implementation deps.circleImageView
 
     //multiDex
     implementation 'com.android.support:multidex:1.0.3'
 
-    //circular imageView
-    implementation 'de.hdodenhof:circleimageview:3.0.0'
-
-    // kotlin
-    implementation "androidx.core:core-ktx:1.3.2"
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
+//    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+//    implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
 
     //lottie
     implementation "com.airbnb.android:lottie:3.4.2"
 
     //rx java2
     implementation 'io.reactivex.rxjava2:rxandroid:2.1.1'
-    implementation 'io.reactivex.rxjava2:rxjava:2.2.9'
+//    implementation 'io.reactivex.rxjava2:rxjava:2.2.9'
 
     //zoom, drag, ... image
     implementation 'com.github.chrisbanes:PhotoView:2.3.0'
 
-    //round corners imageview
-    implementation 'com.makeramen:roundedimageview:2.3.0'
-
     //play video
-    implementation 'com.google.android.exoplayer:exoplayer:2.11.1'
+    implementation 'com.google.android.exoplayer:exoplayer:2.18.1'
 
     //dagger
     api "com.google.dagger:dagger:$daggerVersion"
@@ -117,15 +293,14 @@ dependencies {
     // if you use the support libraries
     kapt "com.google.dagger:dagger-android-processor:$daggerVersion"
 
-    //by viewmodels
-    implementation 'androidx.fragment:fragment-ktx:1.2.5'
+    implementation "androidx.fragment:fragment-ktx:1.4.1"
 
     //camerax
-    def camerax_version = '1.0.0-beta10'
+    def camerax_version = '1.2.0-alpha02'
     implementation "androidx.camera:camera-core:${camerax_version}"
     implementation "androidx.camera:camera-camera2:${camerax_version}"
     // If you want to use the CameraX View class
-    implementation "androidx.camera:camera-view:1.0.0-alpha17"
+    implementation "androidx.camera:camera-view:${camerax_version}"
     // If you want to use the CameraX Lifecycle library
     implementation "androidx.camera:camera-lifecycle:${camerax_version}"
     implementation 'com.google.guava:listenablefuture:9999.0-empty-to-avoid-conflict-with-guava'
@@ -137,12 +312,19 @@ dependencies {
     implementation 'com.facebook.android:facebook-android-sdk:5.15.3'
 
     //sms verify view
-    implementation ('com.alimuzaffar.lib:pinentryedittext:2.0.6') {
+    implementation('com.alimuzaffar.lib:pinentryedittext:2.0.6') {
         // Exclude is only needed if you already have
         // androidx.appcompat as a dependency in your app.
         exclude group: 'androidx.appcompat', module: 'appcompat'
     }
-}
-repositories {
-    mavenCentral()
+
+//    def retrofitVersion = "2.9.0"
+//    implementation "com.squareup.retrofit2:retrofit:$retrofitVersion"
+//    implementation "com.squareup.retrofit2:converter-gson:$retrofitVersion"
+//    //For serialising JSONP add converter-scalars
+//    implementation 'com.squareup.retrofit2:converter-scalars:2.4.0'
+//
+//    def room_version = "2.4.2"
+//    implementation "androidx.room:room-runtime:$room_version"
+//    kapt "androidx.room:room-compiler:$room_version"
 }

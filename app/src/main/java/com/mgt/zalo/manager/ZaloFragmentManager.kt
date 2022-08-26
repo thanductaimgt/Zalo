@@ -6,7 +6,6 @@ import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.IdRes
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
 import com.mgt.zalo.ZaloApplication
@@ -108,15 +107,15 @@ class ZaloFragmentManager @Inject constructor(
 
     fun addEditMediaFragment(bitmap: Bitmap, type: Int): EditMediaFragment {
         return addFragment(EditMediaFragment::class, Bundle().apply {
-            putParcelable(BaseFragment.ARG_1, bitmap)
-            putInt(BaseFragment.ARG_2, type)
+            putInt(BaseFragment.ARG_1, type)
+            putParcelable(BaseFragment.ARG_2, bitmap)
         })
     }
 
     fun addEditMediaFragment(videoUri: String, type: Int): EditMediaFragment {
         return addFragment(EditMediaFragment::class, Bundle().apply {
-            putString(BaseFragment.ARG_1, videoUri)
-            putInt(BaseFragment.ARG_3, type)
+            putInt(BaseFragment.ARG_1, type)
+            putString(BaseFragment.ARG_3, videoUri)
         })
     }
 

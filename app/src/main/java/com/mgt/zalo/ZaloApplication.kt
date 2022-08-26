@@ -13,6 +13,7 @@ import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ProcessLifecycleOwner
 import androidx.multidex.MultiDex
+import com.mgt.zalo.di.AppComponent
 import com.mgt.zalo.di.DaggerAppComponent
 import com.mgt.zalo.manager.PermissionManager
 import com.mgt.zalo.manager.SessionManager
@@ -52,7 +53,7 @@ class ZaloApplication : DaggerApplication(), CameraXConfig.Provider {
     }
 
     override fun applicationInjector(): AndroidInjector<out DaggerApplication> {
-        appComponent = DaggerAppComponent.factory().create(this) as DaggerAppComponent
+        appComponent = DaggerAppComponent.factory().create(this) as AppComponent
         return appComponent
     }
 
@@ -115,6 +116,6 @@ class ZaloApplication : DaggerApplication(), CameraXConfig.Provider {
     }
 
     companion object {
-        lateinit var appComponent: DaggerAppComponent
+        lateinit var appComponent: AppComponent
     }
 }

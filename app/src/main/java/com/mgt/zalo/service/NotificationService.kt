@@ -16,7 +16,6 @@ import androidx.core.app.Person
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.IconCompat
 import androidx.core.graphics.drawable.toBitmap
-import androidx.core.util.set
 import com.google.firebase.firestore.ListenerRegistration
 import com.mgt.zalo.R
 import com.mgt.zalo.ZaloApplication
@@ -34,6 +33,12 @@ import com.mgt.zalo.util.smartLoad
 import com.squareup.picasso.Picasso
 import com.squareup.picasso.Target
 import javax.inject.Inject
+import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
+import kotlin.collections.filter
+import kotlin.collections.forEach
+import kotlin.collections.get
+import kotlin.collections.set
 
 
 interface NotificationService {
@@ -218,20 +223,30 @@ class AlwaysRunningNotificationService @Inject constructor(
                 application,
                 notificationId,
                 notificationIntent,
-                PendingIntent.FLAG_UPDATE_CURRENT
+                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE
         )
 
         val roomPerson = Person.Builder()
-                .setKey(roomItem.roomId)
-                .setName(roomItem.getDisplayName(resourceManager))
-                .setIcon(IconCompat.createWithBitmap(chatNotification.bitmapMap[roomItem.roomId!!]))
+            .setKey(roomItem.roomId)
+            .setName(roomItem.getDisplayName(resourceManager))
+            .setIcon(chatNotification.bitmapMap[roomItem.roomId!!]?.let {
+                IconCompat.createWithBitmap(
+                    it
+                )
+            })
                 .build()
 
         val lastSenderPerson = Person.Builder()
-                .setKey(roomItem.lastSenderId)
-                .setName(resourceManager.getNameFromId(roomItem.lastSenderId!!)
-                        ?: roomItem.lastSenderName)
-                .setIcon(IconCompat.createWithBitmap(chatNotification.bitmapMap[roomItem.lastSenderId!!]))
+            .setKey(roomItem.lastSenderId)
+            .setName(
+                resourceManager.getNameFromId(roomItem.lastSenderId!!)
+                    ?: roomItem.lastSenderName
+            )
+            .setIcon(chatNotification.bitmapMap[roomItem.lastSenderId!!]?.let {
+                IconCompat.createWithBitmap(
+                    it
+                )
+            })
                 .build()
 
         if (!chatNotification.containsMessage(roomItem.lastMsgTime!!)) {
@@ -263,8 +278,12 @@ class AlwaysRunningNotificationService @Inject constructor(
 //                .setLargeIcon(roomAvatarBitmap)
                 .setStyle(notificationStyle)
                 .addAction(R.drawable.like, application.getString(R.string.label_like), null)
-                .addAction(R.drawable.reply, application.getString(R.string.label_reply),
-                        PendingIntent.getActivity(application, getNotificationActionRequestCode(notificationId), replyIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+                .addAction(
+                    R.drawable.reply, application.getString(R.string.label_reply),
+                    PendingIntent.getActivity(
+                        application, getNotificationActionRequestCode(notificationId), replyIntent,
+                        PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE
+                    )
                 )
                 .setAutoCancel(true)
                 .build()

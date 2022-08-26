@@ -61,6 +61,7 @@
         <activity
             android:name=".ui.share.ShareActivity"
             android:launchMode="singleTop"
+            android:exported="true"
             android:theme="@style/AppTheme.Light.NoActionBar.LightStatusBar">
             <intent-filter>
                 <action android:name="android.intent.action.SEND_MULTIPLE" />
@@ -101,6 +102,7 @@
             android:theme="@style/AppTheme.Light.NoActionBar.LightStatusBar" />
         <activity
             android:name=".ui.SplashActivity"
+            android:exported="true"
             android:theme="@style/AppTheme.SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

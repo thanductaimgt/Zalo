@@ -1,10 +1,12 @@
 package com.mgt.zalo.manager
 
 import com.google.android.exoplayer2.ExoPlayer
+import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.SimpleExoPlayer
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory
 import com.google.android.exoplayer2.source.LoopingMediaSource
+import com.google.android.exoplayer2.source.MediaSource
 import com.google.android.exoplayer2.source.MediaSourceFactory
 import com.google.android.exoplayer2.source.ProgressiveMediaSource
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
@@ -20,10 +22,10 @@ class PlaybackManager @Inject constructor(
         application: ZaloApplication,
         private val utils: Utils
 ) {
-    private val mediaSourceFactory: MediaSourceFactory = createMediaSourceFactory(application)
+    private val mediaSourceFactory: MediaSource.Factory = createMediaSourceFactory(application)
     var isPreparing = false
     var lastPlaybackState: Int? = null
-    private val playerEventListener = object : Player.EventListener {
+    private val playerEventListener = object : Player.Listener {
         override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
 //            if (isPreparing && playbackState == ExoPlayer.STATE_READY) {
 //                onReady?.invoke()
@@ -76,7 +78,7 @@ class PlaybackManager @Inject constructor(
         }
 
         try {
-            var mediaSource = mediaSourceFactory.createMediaSource(utils.getUri(uri))
+            var mediaSource = mediaSourceFactory.createMediaSource(MediaItem.fromUri(uri))
             if (doLooping) {
                 mediaSource = LoopingMediaSource(mediaSource)
             }

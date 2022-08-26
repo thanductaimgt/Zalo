@@ -184,7 +184,10 @@ class ProfileFragment: BaseFragment() {
                 val storyGroup = storyGroupPreviewAdapter.currentList[position]
 
                 database.getStories(arrayListOf(storyGroup)) {
-                    parentZaloFragmentManager.addStoryFragment(storyGroup, storyGroupPreviewAdapter.currentList as ArrayList)
+                    parentZaloFragmentManager.addStoryFragment(
+                        storyGroup,
+                        ArrayList(storyGroupPreviewAdapter.currentList)
+                    )
 
                     view.loadingAnimView.visibility = View.GONE
                 }
